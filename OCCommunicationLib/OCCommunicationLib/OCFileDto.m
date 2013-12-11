@@ -28,6 +28,5 @@
 
 @implementation OCFileDto
 
-@synthesize filePath, fileName, isDirectory, size, date, etag;
 
 @end

@@ -26,14 +26,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCFileDto : NSObject {
-    NSString *filePath;
-    NSString *fileName;
-    BOOL isDirectory;
-    long size;
-    long date;
-    long long etag;
-}
+@interface OCFileDto : NSObject
 
 @property (nonatomic, copy) NSString *filePath;
 @property (nonatomic, copy) NSString *fileName;
