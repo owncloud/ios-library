@@ -28,7 +28,6 @@
 #import "OCWebDavClient.h"
 #import "OCCommunication.h"
 #import "UtilsFramework.h"
-#import "AFHTTPRequestOperation.h"
 #import "OCFrameworkConstants.h"
 #import "OCChunkDto.h"
 #import "OCChunkInputStream.h"

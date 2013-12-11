@@ -2,7 +2,7 @@
 //  OCWebDAVClient.h
 //  OCWebDAVClient
 //
-//  This class is based in https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes.
+// This class is based in https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes.
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
 //
@@ -29,6 +29,10 @@
 #import "AFHTTPClient.h"
 #import "OCHTTPRequestOperation.h"
 
+@class OCCommunication;
+@class OCChunkDto;
+@class OCChunkInputStream;
+
 /** The key for a uniform (MIME) type identifier returned from the property request methods. */
 extern NSString *OCWebDAVContentTypeKey;
 
@@ -43,11 +47,6 @@ extern NSString *OCWebDAVCreationDateKey;
 
 /** The key for last modification date of an entity. */
 extern NSString *OCWebDAVModificationDateKey;
-
-@class OCCommunication;
-@class OCChunkDto;
-@class OCChunkInputStream;
-
 
 @interface OCWebDAVClient : AFHTTPClient
 

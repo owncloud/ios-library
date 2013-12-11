@@ -23,7 +23,6 @@
 // THE SOFTWARE.
 //
 
-
 #import "AFHTTPRequestOperation.h"
 
 typedef enum {
@@ -34,7 +33,6 @@ typedef enum {
 
 
 @interface OCHTTPRequestOperation : AFHTTPRequestOperation
-
 
 @property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
 @property (nonatomic, strong) NSString *redirectedServer;

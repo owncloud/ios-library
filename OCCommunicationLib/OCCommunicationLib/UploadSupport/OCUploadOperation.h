@@ -26,7 +26,6 @@
 #import <Foundation/Foundation.h>
 
 @class OCCommunication;
-@class AFHTTPRequestOperation;
 
 @interface OCUploadOperation : NSOperation
 

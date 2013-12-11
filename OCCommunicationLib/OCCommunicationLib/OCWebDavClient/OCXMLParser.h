@@ -23,27 +23,17 @@
 // THE SOFTWARE.
 //
 
-
-
 #import <Foundation/Foundation.h>
 #import "OCFileDto.h"
-
-/*enum {
- OCWebDAVDirectoryListing    = 1,
- };*/
 
 
 @interface OCXMLParser : NSObject <NSXMLParserDelegate>{
     
     NSMutableString *_xmlChars;
     NSMutableDictionary *_xmlBucket;
-    //  NSUInteger _parseState;
-    
     NSMutableArray *_directoryList;
     OCFileDto *_currentFile;
-    
     BOOL isNotFirstFileOfList;
-    
     
 }
 
