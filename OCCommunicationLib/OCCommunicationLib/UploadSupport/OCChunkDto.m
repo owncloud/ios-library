@@ -27,6 +27,4 @@
 
 @implementation OCChunkDto
 
-@synthesize position, remotePath, size;
-
 @end

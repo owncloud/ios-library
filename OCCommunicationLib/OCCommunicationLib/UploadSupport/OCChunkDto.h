@@ -25,12 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCChunkDto : NSObject {
-
-    NSNumber *position;
-    NSNumber *size;
-    NSString *remotePath;
-}
+@interface OCChunkDto : NSObject 
 
 @property (nonatomic, copy) NSNumber *position;
 @property (nonatomic, copy) NSNumber *size;
