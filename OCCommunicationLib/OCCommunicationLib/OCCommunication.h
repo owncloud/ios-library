@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-
-@class AFHTTPRequestOperation;
+@class OCHTTPRequestOperation;
 
 @interface OCCommunication : NSObject
 
@@ -271,6 +270,26 @@ typedef enum {
 - (NSOperation *) downloadFile:(NSString *)remoteFilePath toDestiny:(NSString *)localFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
+///-----------------------------------
+/// @name Upload File
+///-----------------------------------
+
+/**
+ * Method to upload a file. All the files will be upload one by one in a queue.
+ *
+ * @param NSString -> localFilePath the path where is the file that we want upload
+ * @param NSString -> remoteFilePath the path where we want upload the file
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return NSOperation -> You can cancel the upload using this object
+ * Ex: [operation cancel]
+ *
+ * @warning remember that you must to set the Credentials before call this method or any other.
+ *
+ */
+
+- (NSOperation *) uploadFile:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+
 
 #pragma mark - OC API Calls
 
@@ -293,32 +312,12 @@ typedef enum {
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, NSData *, NSString *))success
                      failure:(void(^)(NSHTTPURLResponse *, NSError *))failure;
 
-///-----------------------------------
-/// @name Upload File
-///-----------------------------------
-
-/**
- * Method to upload a file. All the files will be upload one by one in a queue.
- *
- * @param NSString -> localFilePath the path where is the file that we want upload
- * @param NSString -> remoteFilePath the path where we want upload the file
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return NSOperation -> You can cancel the upload using this object
- * Ex: [operation cancel]
- *
- * @warning remember that you must to set the Credentials before call this method or any other.
- *
- */
-
-- (NSOperation *) uploadFile:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-
 
 #pragma mark - Queue system
 /*
- * Method that add an operation to the correspondent queue
+ * Method that add an operation to the appropiate queue
  */
-- (void) addOperationToTheNetworkQueue:(AFHTTPRequestOperation *) operation;
+- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation;
 
 
 @end
