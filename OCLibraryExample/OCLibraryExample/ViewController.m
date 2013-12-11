@@ -2,8 +2,26 @@
 //  ViewController.m
 //  OCLibraryExample
 //
-//  Created by Gonzalo Gonzalez on 21/11/13.
-//  Copyright (c) 2013 ownCloud. All rights reserved.
+// Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 //
 
 #import "ViewController.h"
@@ -83,6 +101,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 #pragma mark - OCComunication Methods
 
+///-----------------------------------
+/// @name Set Credentials in OCCommunication
+///-----------------------------------
+
+/**
+ * Set username and password in the OCComunicacion
+ *
+ */
 - (void) setCredencialsInOCCommunication {
     
     //Sett credencials
@@ -90,6 +116,15 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
+///-----------------------------------
+/// @name Show Root Folder
+///-----------------------------------
+
+/**
+ * This method has block to read the root folder of the specific account,
+ * add the data to itemsOfPath array and reload the table view.
+ *
+ */
 - (void) showRootFolder {
     
     _goInfoLabel.text = @"Loading...";
@@ -126,6 +161,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
+///-----------------------------------
+/// @name Create Folder
+///-----------------------------------
+
+/**
+ * Method to create folder in the root folder
+ *
+ */
 - (void)createFolder {
     
     NSString *folder = [NSString stringWithFormat:@"%@Tests/%@",baseUrl,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
@@ -144,6 +187,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 }
 
+///-----------------------------------
+/// @name Download file
+///-----------------------------------
+
+/**
+ * Method that download a specific file to the system Document directory
+ *
+ */
 - (void)downloadFile {
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -157,9 +208,9 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     NSLog(@"Server URL: %@", serverUrl);
     
-    __block NSOperation *operation = nil;
-
-    operation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
+    _downloadOperation = nil;
+    
+    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
         _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", totalBytesRead];
         
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
@@ -176,8 +227,34 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         _downloadButton.enabled = YES;
         
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        [operation cancel];
+        [_downloadOperation cancel];
     }];
+    
+}
+
+- (void)uploadFile {
+    
+    NSOperation *operation = nil;
+    
+   
+    
+}
+
+#pragma mark - Close View
+
+
+- (IBAction)closeView:(id)sender{
+    
+    //if there are a operation in progress cancel 
+    if (_downloadOperation) {
+        [_downloadOperation cancel];
+        _downloadOperation = nil;
+        //Remove download file
+        [self deleteDownloadedFile:nil];
+    }
+    
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 
@@ -218,10 +295,6 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     return cell;
 }
 
-
-/*-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 20;
-}*/
 
 
 @end
