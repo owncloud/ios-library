@@ -12,9 +12,9 @@
 #import "AppDelegate.h"
 
 //User, pass and server to make the tests
-static NSString *user = @"jgonzalez";
-static NSString *password = @"javi";
-static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/";
+static NSString *user = @"oclibrarytest";
+static NSString *password = @"123456";
+static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
 
 
 @interface ViewController ()
@@ -152,7 +152,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
     NSString *localPath = [documentsDirectory stringByAppendingString:@"/image.png"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/Test Download/test image.PNG", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@LibExampleDownload/why so serious.jpg", baseUrl];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
