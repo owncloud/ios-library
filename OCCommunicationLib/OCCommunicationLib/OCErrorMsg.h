@@ -27,7 +27,7 @@
 #define kOCErrorServerUnauthorized 401
 #define kOCErrorServerForbidden 403
 #define kOCErrorServerPathNotFound 404
-#define kOCErrorServerMethodNotPermitted 405c
+#define kOCErrorServerMethodNotPermitted 405
 #define kOCErrorProxyAuth 407
 #define kOCErrorServerTimeout 408
 
