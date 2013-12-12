@@ -32,9 +32,9 @@
 @implementation OCCommunicationLibTests
 
 //User, pass and server to make the tests
-static NSString *user = @"jgonzalez";
-static NSString *password = @"javi";
-static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/";
+static NSString *user = @"oclibrarytest";
+static NSString *password = @"123456";
+static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
 
 /*Structure to test on server:
  /Tests/Folder A/Test.jpeg
@@ -55,15 +55,96 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
 	
-    // Set-up code here.
+    
+    //Create some folders
+    
+    //1. Create Tests folder
+    [self createFolderWithName:@"Tests"];
+    
+    //2. Create Tests/Folder A
+    [self createFolderWithName:@"Tests/Folder A"];
+    
+    //3. Create Test/Folder B
+    [self createFolderWithName:@"Tests/Folder B"];
+    
+    //4. Create Test/Folder C
+    [self createFolderWithName:@"Tests/Folder C"];
+    
+    
+    
+    
+    
 }
 
 - (void)tearDown
 {
-    // Tear-down code here.
+    // 1. Delete Test folder
+    [self deleteFolderWithName:@"Tests"];
     
     [super tearDown];
 }
+
+#pragma mark - SetUp Methods
+
+- (void) createFolderWithName:(NSString*)path{
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    NSString *folder = [NSString stringWithFormat:@"%@%@",baseUrl,path];
+     folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        //Folder created
+        NSLog(@"Folder %@ created", folder);
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+       NSLog(@"Error created:%@ folder", folder);
+        // Signal that block has completed
+        dispatch_semaphore_signal(semaphore);
+    } errorBeforeRequest:^(NSError *error) {
+        NSLog(@"Error created:%@ folder", folder);
+        // Signal that block has completed
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    dispatch_release(semaphore);
+
+}
+
+- (void) deleteFolderWithName:(NSString *)path{
+    
+    NSString *folder = [NSString stringWithFormat:@"%@%@",baseUrl,path];
+    folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication deleteFileOrFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse * response, NSString *redirectedServer) {
+        //Folder deleted
+        NSLog(@"Folder deleted");
+        dispatch_semaphore_signal(semaphore);
+    } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+        //Error
+        XCTFail(@"Error testDeleteFolder: %@", error);
+        // Signal that block has completed
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+    dispatch_release(semaphore);
+    
+    
+}
+
+
+#pragma mark - Tests
 
 ///-----------------------------------
 /// @name testCreateFolder
@@ -111,7 +192,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * @warning The special characters are: "\","<",">",":",""","|","?","*"
  */
 
-- (void)testCreateFolderWithForbiddenCharacters
+/*- (void)testCreateFolderWithForbiddenCharacters
 {
     NSArray* arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
@@ -142,7 +223,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}
+}*/
 
 ///-----------------------------------
 /// @name testMoveFileOnSameFolder
@@ -151,7 +232,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to test move file on the same folder
  */
-- (void)testMoveFileOnSameFolder {
+/*- (void)testMoveFileOnSameFolder {
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
     
@@ -179,7 +260,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testMoveFile
@@ -188,7 +269,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to try move a file
  */
-- (void)testMoveFile {
+/*- (void)testMoveFile {
     
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
@@ -212,7 +293,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testMoveFileForbiddenCharacters
@@ -221,7 +302,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to try to move a file with destiny name have forbidden characters
  */
-- (void)testMoveFileForbiddenCharacters {
+/*- (void)testMoveFileForbiddenCharacters {
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
@@ -254,7 +335,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}
+}*/
 
 ///-----------------------------------
 /// @name testMoveFolderInsideHimself
@@ -263,7 +344,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to try to move a folder inside himself
  */
-- (void)testMoveFolderInsideHimself {
+/*- (void)testMoveFolderInsideHimself {
     
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder A/Folder A/", baseUrl];
@@ -292,7 +373,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testMoveFolder
@@ -301,7 +382,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to try to move a folder
  */
-- (void)testMoveFolder {
+/*- (void)testMoveFolder {
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Folder A/", baseUrl];
     
@@ -324,7 +405,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testRenameFileWithForbiddenCharacters
@@ -334,7 +415,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * Method  try to rename a file with forbidden characters
  *
  */
-- (void)testRenameFileWithForbiddenCharacters {
+/*- (void)testRenameFileWithForbiddenCharacters {
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
@@ -368,7 +449,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}
+}*/
 
 ///-----------------------------------
 /// @name testRenameFile
@@ -378,7 +459,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * Method  try to rename a file
  *
  */
-- (void)testRenameFile {
+/*- (void)testRenameFile {
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Test Renamed.jpeg", baseUrl];
     
@@ -401,7 +482,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testRenameFolderWithForbiddenCharacters
@@ -411,7 +492,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * Method  try to rename a folder with forbidden characters
  *
  */
-- (void)testRenameFolderWithForbiddenCharacters {
+/*- (void)testRenameFolderWithForbiddenCharacters {
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
@@ -444,7 +525,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}
+}*/
 
 ///-----------------------------------
 /// @name testRenameFolder
@@ -454,7 +535,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * Method  try to rename a folder
  *
  */
-- (void)testRenameFolder {
+/*- (void)testRenameFolder {
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/", baseUrl];
     NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/", baseUrl];
     
@@ -477,7 +558,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name testRestoreServerToNextTests
@@ -488,7 +569,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  *
  * @warning If this test not pass the next execution of the other test could not pass.
  */
-- (void)testRestoreServerToNextTests {
+/*- (void)testRestoreServerToNextTests {
     
     //Desrenaming the file
     NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/Test Renamed.jpeg", baseUrl];
@@ -588,7 +669,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
     
     
     
-}
+}*/
 
 ///-----------------------------------
 /// @name testToDeleteAFolder
@@ -597,7 +678,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
 /**
  * Method to test if we can create a folder
  */
-- (void)testDeleteAFolder
+/*- (void)testDeleteAFolder
 {
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -644,7 +725,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name Test Read Folder
@@ -657,7 +738,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * 3.- Check the parser checking a specific number of files and folders
  *
  */
-- (void)testReadFolder{
+/*- (void)testReadFolder{
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -724,7 +805,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}
+}*/
 
 ///-----------------------------------
 /// @name Test Read File
@@ -735,7 +816,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * we do changes in the folder in order to know the etag changed
  *
  */
--(void)testReadFile{
+/*-(void)testReadFile{
     
     //1.- Get and Store the etag of a specific folder
     
@@ -886,7 +967,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
         
     }
     
-}
+}*/
 
 
 ///-----------------------------------
@@ -898,7 +979,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * It the file download the test is ok
  *
  */
-- (void) testDownloadFile {
+/*- (void) testDownloadFile {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -967,7 +1048,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
     
     
     
-}
+}*/
 
 ///-----------------------------------
 /// @name Test download not existing file
@@ -978,7 +1059,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * The test works if the file is not download
  *
  */
-- (void) testDownloadNotExistingFile {
+/*- (void) testDownloadNotExistingFile {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1046,7 +1127,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}
+}*/
 
 ///-----------------------------------
 /// @name Test to upload a small file
@@ -1056,7 +1137,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * This test try to uplad a file without chunks
  *
  */
-- (void) testUploadAFileNoChunks {
+/*- (void) testUploadAFileNoChunks {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1105,7 +1186,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}
+}*/
 
 ///-----------------------------------
 /// @name Test to upload a big file
@@ -1115,7 +1196,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * This test try to uplad a file with chunks
  * To test it we need at first download a file from the server
  */
-- (void) testUploadAFileWithChunks {
+/*- (void) testUploadAFileWithChunks {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1224,7 +1305,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
     } else {
         XCTFail(@"Error Downloading the file. We can not make the testUploadAFileWithChunks");
     }
-}
+}*/
 
 ///-----------------------------------
 /// @name Test to upload a file that does not exist
@@ -1235,7 +1316,7 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
  * This test is passed if we detect that the file does not exist
  *
  */
-- (void) testUploadAFileThatDoesNotExist {
+/*- (void) testUploadAFileThatDoesNotExist {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1284,6 +1365,6 @@ static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}
+}*/
 
 @end

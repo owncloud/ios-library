@@ -306,8 +306,6 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         [_uploadOperation cancel];
     }];
     
-   
-    
 }
 
 ///-----------------------------------
