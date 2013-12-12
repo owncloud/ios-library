@@ -36,13 +36,20 @@
 @property (nonatomic,strong)IBOutlet UIButton *downloadButton;
 @property (nonatomic,strong)IBOutlet UIButton *deleteLocalFile;
 @property (nonatomic,strong)IBOutlet UIImageView *downloadedImageView;
+@property (nonatomic,strong)IBOutlet UILabel *uploadProgressLabel;
+@property (nonatomic,strong)IBOutlet UIButton *uploadButton;
+@property (nonatomic,strong)IBOutlet UIButton *deleteRemoteFile;
+
 
 //
 @property (nonatomic,strong)NSString *pathOfDownloadFile;
 @property (nonatomic,strong)NSArray *itemsOfPath;
+@property (nonatomic,strong)NSString *pathOfRemoteUploadedFile;
+@property (nonatomic,strong)NSString *pathOfLocalUploadedFile;
 
 //Operations
 @property(nonatomic,strong)NSOperation *downloadOperation;
+@property(nonatomic,strong)NSOperation *uploadOperation;
 
 
 //Read Folder actions
@@ -51,6 +58,10 @@
 //Download actions
 - (IBAction)downloadImage:(id)sender;
 - (IBAction)deleteDownloadedFile:(id)sender;
+
+//Upload actions
+- (IBAction)uploadImage:(id)sender;
+- (IBAction)deleteUploadedFile:(id)sender;
 
 //Close View
 - (IBAction)closeView:(id)sender;

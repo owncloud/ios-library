@@ -23,6 +23,8 @@
 		EA7CC971183E199C00B6A4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC96F183E199C00B6A4B4 /* InfoPlist.strings */; };
 		EA7CC973183E199C00B6A4B4 /* OCLibraryExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC972183E199C00B6A4B4 /* OCLibraryExampleTests.m */; };
 		EAABAA2A183E27A600909831 /* libOCCommunicationLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC982183E1A5200B6A4B4 /* libOCCommunicationLib.a */; };
+		EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
+		EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +80,7 @@
 		EA7CC970183E199C00B6A4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EA7CC972183E199C00B6A4B4 /* OCLibraryExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCLibraryExampleTests.m; sourceTree = "<group>"; };
 		EA7CC97C183E1A5200B6A4B4 /* OCCommunicationLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCCommunicationLib.xcodeproj; path = ../OCCommunicationLib/OCCommunicationLib.xcodeproj; sourceTree = "<group>"; };
+		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +157,7 @@
 		EA7CC94B183E199B00B6A4B4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				EAABAB301858D83800909831 /* Resources */,
 				EA7CC94C183E199B00B6A4B4 /* OCLibraryExample-Info.plist */,
 				EA7CC94D183E199B00B6A4B4 /* InfoPlist.strings */,
 				EA7CC950183E199B00B6A4B4 /* main.m */,
@@ -187,6 +191,14 @@
 				EA7CC984183E1A5200B6A4B4 /* OCCommunicationLibTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EAABAB301858D83800909831 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EAABAB311858D84600909831 /* image_to_upload.jpg */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,6 +303,7 @@
 			files = (
 				EA7CC95B183E199B00B6A4B4 /* Main_iPad.storyboard in Resources */,
 				EA7CC960183E199B00B6A4B4 /* Images.xcassets in Resources */,
+				EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */,
 				EA7CC958183E199B00B6A4B4 /* Main_iPhone.storyboard in Resources */,
 				EA7CC94F183E199B00B6A4B4 /* InfoPlist.strings in Resources */,
 			);
@@ -301,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA7CC971183E199C00B6A4B4 /* InfoPlist.strings in Resources */,
+				EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

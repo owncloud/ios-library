@@ -99,6 +99,32 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 }
 
 
+- (IBAction)uploadImage:(id)sender{
+    
+    _uploadButton.enabled = NO;
+    
+    [self uploadFile];
+    
+}
+
+
+- (IBAction)deleteUploadedFile:(id)sender{
+    _uploadProgressLabel.text = @"Deleting file...";
+    _deleteRemoteFile.enabled = NO;
+    [self deleteFile];
+    
+
+}
+
+- (void)deleteUploadLocalFile{
+    
+    //Delete the file
+    NSError *theError = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:_pathOfLocalUploadedFile error:&theError];
+    
+}
+
+
 #pragma mark - OCComunication Methods
 
 ///-----------------------------------
@@ -148,7 +174,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [_itemsTableView reloadData];
          _goButton.enabled = YES;
         
-         _goInfoLabel.text = @"Succes";
+         _goInfoLabel.text = @"Success";
 
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
         NSLog(@"Fail");
@@ -204,6 +230,8 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     //Path of server file file
     NSString *serverUrl = [NSString stringWithFormat:@"%@LibExampleDownload/why so serious.jpg", baseUrl];
+    
+    //Encoding
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -232,11 +260,83 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
+///-----------------------------------
+/// @name Upload File
+///-----------------------------------
+
+/**
+ *
+ *
+ */
 - (void)uploadFile {
     
-    NSOperation *operation = nil;
+    //Copy the specific file to the Documents directory
+    UIImage *uploadImage = [UIImage imageNamed:@"image_to_upload.jpg"];
+    
+    //Convert UIImage to JPEG
+    NSData *imgData = UIImageJPEGRepresentation(uploadImage, 1); // 1 is compression quality
+    
+    //Identify the home directory and file name
+    NSString  *imagePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Test.jpg"];
+    
+    // Write the file.
+    [imgData writeToFile:imagePath atomically:YES];
+    
+    _pathOfLocalUploadedFile = imagePath;
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@1_image_uploaded.jpg", baseUrl];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    _uploadOperation = nil;
+    
+    _uploadOperation = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] progressUpload:^(NSUInteger bytesWrite, long long totalBytesWrite, long long totalExpectedBytesWrite) {
+         _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %lld bytes", totalBytesWrite];
+        
+    } successRequest:^(NSHTTPURLResponse *response) {
+        _pathOfRemoteUploadedFile = serverUrl;
+        _uploadProgressLabel.text = @"Success";
+        _deleteRemoteFile.enabled = YES;
+        
+        //Remove the local file
+        [self deleteUploadLocalFile];
+        
+        //Refresh the file list
+        [self readFolder:nil];
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+        NSLog(@"error while upload a file: %@", error);
+        _uploadProgressLabel.text = @"Error in download";
+        _uploadButton.enabled = YES;
+        
+    } failureBeforeRequest:^(NSError *error) {
+        NSLog(@"error while upload a file: %@", error);
+        _uploadProgressLabel.text = @"Error in download";
+        _uploadButton.enabled = YES;
+        
+    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        [_uploadOperation cancel];
+    }];
     
    
+    
+}
+
+- (void) deleteFile {
+    
+    [[AppDelegate sharedOCCommunication] deleteFileOrFolder:_pathOfRemoteUploadedFile onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        _uploadProgressLabel.text = @"";
+        _uploadButton.enabled = YES;
+        _deleteRemoteFile.enabled = NO;
+        
+        //Refresh the file list
+        [self readFolder:nil];
+        
+    } failureRquest:^(NSHTTPURLResponse *response, NSError *error) {
+        NSLog(@"error while delete a file: %@", error);
+        _uploadProgressLabel.text = @"Error in delete file";
+        _deleteRemoteFile.enabled = YES;
+    }];
     
 }
 
