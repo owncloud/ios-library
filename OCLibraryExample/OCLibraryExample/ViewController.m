@@ -30,9 +30,16 @@
 #import "AppDelegate.h"
 
 //User, pass and server to make the tests
-static NSString *user = @"oclibrarytest";
-static NSString *password = @"123456";
-static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
+static NSString *user = @"oclibrarytest"; //@"username";
+static NSString *password = @"123456"; //@"password";
+static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/"; //@"https://beta.owncloud.com/owncloud/remote.php/webdav/"
+
+//To test the download you must be put a path of specific file
+static NSString *pathOfDownloadFile = @"LibExampleDownload/why so serious.jpg"; //@"path of file to download";
+
+
+//For upload and delete
+static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
 
 @interface ViewController ()
@@ -67,6 +74,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 #pragma mark - Actions
 
+//Refresh button tapped
 - (IBAction)readFolder:(id)sender{
     
     _itemsOfPath = nil;
@@ -77,13 +85,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
+//Download button tapped
 - (IBAction)downloadImage:(id)sender{
     
     _downloadButton.enabled = NO;
-    
     [self downloadFile];
 }
 
+//Delete downloaded file button tapped
 - (IBAction)deleteDownloadedFile:(id)sender{
     
     //Delete the file
@@ -98,16 +107,16 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
-
+//Upload file button tapped
 - (IBAction)uploadImage:(id)sender{
     
     _uploadButton.enabled = NO;
-    
     [self uploadFile];
     
 }
 
 
+//Delete uploaded file button tapped
 - (IBAction)deleteUploadedFile:(id)sender{
     _uploadProgressLabel.text = @"Deleting file...";
     _deleteRemoteFile.enabled = NO;
@@ -116,6 +125,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 }
 
+//Delete local upload file
 - (void)deleteUploadLocalFile{
     
     //Delete the file
@@ -133,7 +143,6 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 /**
  * Set username and password in the OCComunicacion
- *
  */
 - (void) setCredencialsInOCCommunication {
     
@@ -149,7 +158,6 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * This method has block to read the root folder of the specific account,
  * add the data to itemsOfPath array and reload the table view.
- *
  */
 - (void) showRootFolder {
     
@@ -161,6 +169,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     [[AppDelegate sharedOCCommunication] readFolder:path onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirected) {
+        //Success
         NSLog(@"succes");
         for (OCFileDto *itemDto in items) {
             //Check parser
@@ -173,45 +182,18 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         
         [_itemsTableView reloadData];
          _goButton.enabled = YES;
-        
          _goInfoLabel.text = @"Success";
 
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        NSLog(@"Fail");
-        
+        //Request failure
         NSLog(@"Error: %@", error);
          _goButton.enabled = YES;
-        
          _goInfoLabel.text = @"Fail";
     }];
     
 }
 
-///-----------------------------------
-/// @name Create Folder
-///-----------------------------------
 
-/**
- * Method to create folder in the root folder
- *
- */
-- (void)createFolder {
-    
-    NSString *folder = [NSString stringWithFormat:@"%@Tests/%@",baseUrl,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
-    
-    [[AppDelegate sharedOCCommunication] createFolder:folder onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        //Folder created
-        NSLog(@"Folder created");
-        
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        NSLog(@"Error testCreateFolder: %@", error);
-        
-    } errorBeforeRequest:^(NSError *error) {
-        NSLog(@"Error testCreateFolder: %@", error);
-               
-    }];
-
-}
 
 ///-----------------------------------
 /// @name Download file
@@ -219,7 +201,6 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 /**
  * Method that download a specific file to the system Document directory
- *
  */
 - (void)downloadFile {
     
@@ -229,19 +210,19 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     NSString *localPath = [documentsDirectory stringByAppendingString:@"/image.png"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@LibExampleDownload/why so serious.jpg", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfDownloadFile];
     
     //Encoding
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     _downloadOperation = nil;
     
     _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
+        //Progress
         _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", totalBytesRead];
         
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        //Success
         NSLog(@"LocalFile : %@", localPath);
         _pathOfDownloadFile = localPath;
         UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
@@ -250,11 +231,13 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         _deleteLocalFile.enabled = YES;
         
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        //Request failure
         NSLog(@"error while download a file: %@", error);
         _progressLabel.text = @"Error in download";
         _downloadButton.enabled = YES;
         
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        //Specifies that the operation should continue execution after the app has entered the background, and the expiration handler for that background task.
         [_downloadOperation cancel];
     }];
     
@@ -265,12 +248,11 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 ///-----------------------------------
 
 /**
- *
- *
+ * Method that upload a specific file of a specific path of ownCloud server.
  */
 - (void)uploadFile {
     
-    //Copy the specific file to the Documents directory
+    //Copy the specific file of bundle to the Documents directory
     UIImage *uploadImage = [UIImage imageNamed:@"image_to_upload.jpg"];
     
     //Convert UIImage to JPEG
@@ -285,15 +267,18 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     _pathOfLocalUploadedFile = imagePath;
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@1_image_uploaded.jpg", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfUploadFile];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     _uploadOperation = nil;
     
+    //Upload block
     _uploadOperation = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] progressUpload:^(NSUInteger bytesWrite, long long totalBytesWrite, long long totalExpectedBytesWrite) {
+        //Progress
          _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %lld bytes", totalBytesWrite];
         
     } successRequest:^(NSHTTPURLResponse *response) {
+        //Success
         _pathOfRemoteUploadedFile = serverUrl;
         _uploadProgressLabel.text = @"Success";
         _deleteRemoteFile.enabled = YES;
@@ -305,16 +290,19 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [self readFolder:nil];
         
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+        //Request failure
         NSLog(@"error while upload a file: %@", error);
         _uploadProgressLabel.text = @"Error in download";
         _uploadButton.enabled = YES;
         
     } failureBeforeRequest:^(NSError *error) {
+        //Failure before the request
         NSLog(@"error while upload a file: %@", error);
         _uploadProgressLabel.text = @"Error in download";
         _uploadButton.enabled = YES;
         
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        //Specifies that the operation should continue execution after the app has entered the background, and the expiration handler for that background task.
         [_uploadOperation cancel];
     }];
     
@@ -322,9 +310,18 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 }
 
+///-----------------------------------
+/// @name Delete file
+///-----------------------------------
+
+/**
+ * This method delete the uploaded file in the ownCloud server
+ */
 - (void) deleteFile {
     
+    //Delete Block
     [[AppDelegate sharedOCCommunication] deleteFileOrFolder:_pathOfRemoteUploadedFile onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        //Success
         _uploadProgressLabel.text = @"";
         _uploadButton.enabled = YES;
         _deleteRemoteFile.enabled = NO;
@@ -333,6 +330,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [self readFolder:nil];
         
     } failureRquest:^(NSHTTPURLResponse *response, NSError *error) {
+        //Failure
         NSLog(@"error while delete a file: %@", error);
         _uploadProgressLabel.text = @"Error in delete file";
         _deleteRemoteFile.enabled = YES;
@@ -345,7 +343,9 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 - (IBAction)closeView:(id)sender{
     
-    //if there are a operation in progress cancel 
+    //if there are a operation in progress cancel
+    
+    //if download operation in progress
     if (_downloadOperation) {
         [_downloadOperation cancel];
         _downloadOperation = nil;
@@ -353,6 +353,13 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [self deleteDownloadedFile:nil];
     }
     
+    //if upload operation in progress
+    if (_uploadOperation) {
+        [_uploadOperation cancel];
+        _uploadOperation = nil;
+        //Remove local file to upload
+        [self deleteUploadLocalFile];
+    }
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
