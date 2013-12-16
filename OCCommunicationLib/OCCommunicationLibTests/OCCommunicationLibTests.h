@@ -30,4 +30,5 @@
 
 @property (nonatomic, strong) OCCommunication *sharedOCCommunication;
 
+
 @end

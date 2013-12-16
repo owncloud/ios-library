@@ -56,6 +56,9 @@
 		EAABAB231858594A00909831 /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
 		EAABAB2618585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
 		EAABAB2718585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
+		EAABAB39185B353100909831 /* test.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB38185B353100909831 /* test.jpeg */; };
+		EAABAB3C185EE33B00909831 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAABAB3B185EE33B00909831 /* UIKit.framework */; };
+		EAABAB40185F225300909831 /* video.MOV in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB3F185F225300909831 /* video.MOV */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +139,9 @@
 		EAABAB1D1858594A00909831 /* OCUploadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCUploadOperation.m; path = UploadSupport/OCUploadOperation.m; sourceTree = "<group>"; };
 		EAABAB2418585C5200909831 /* NSString+Encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Encode.h"; path = "Utils/NSString+Encode.h"; sourceTree = "<group>"; };
 		EAABAB2518585C5200909831 /* NSString+Encode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Encode.m"; path = "Utils/NSString+Encode.m"; sourceTree = "<group>"; };
+		EAABAB38185B353100909831 /* test.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = test.jpeg; path = Resources/test.jpeg; sourceTree = "<group>"; };
+		EAABAB3B185EE33B00909831 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		EAABAB3F185F225300909831 /* video.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; name = video.MOV; path = Resources/video.MOV; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAABAB3C185EE33B00909831 /* UIKit.framework in Frameworks */,
 				EA7CC8AF183E11E600B6A4B4 /* libOCCommunicationLib.a in Frameworks */,
 				EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */,
 				EA7CC8AC183E11E600B6A4B4 /* UIKit.framework in Frameworks */,
@@ -183,6 +190,7 @@
 		EA7CC899183E11E600B6A4B4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EAABAB3B185EE33B00909831 /* UIKit.framework */,
 				EA7CC89A183E11E600B6A4B4 /* Foundation.framework */,
 				EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */,
 				EA7CC8AB183E11E600B6A4B4 /* UIKit.framework */,
@@ -210,6 +218,7 @@
 		EA7CC89D183E11E600B6A4B4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				EAABAB37185B352500909831 /* Resources */,
 				EA7CC8C0183E126B00B6A4B4 /* ExternalLibs */,
 				EA7CC89E183E11E600B6A4B4 /* OCCommunicationLib-Prefix.pch */,
 			);
@@ -310,6 +319,15 @@
 			name = UploadSupport;
 			sourceTree = "<group>";
 		};
+		EAABAB37185B352500909831 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EAABAB38185B353100909831 /* test.jpeg */,
+				EAABAB3F185F225300909831 /* video.MOV */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -381,6 +399,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA7CC8B5183E11E600B6A4B4 /* InfoPlist.strings in Resources */,
+				EAABAB40185F225300909831 /* video.MOV in Resources */,
+				EAABAB39185B353100909831 /* test.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

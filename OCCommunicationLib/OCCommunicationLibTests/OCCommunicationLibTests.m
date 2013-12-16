@@ -29,17 +29,18 @@
 #import "OCFrameworkConstants.h"
 #import "OCFileDto.h"
 
+#import <UIKit/UIKit.h>
+
+
 @implementation OCCommunicationLibTests
 
 //User, pass and server to make the tests
 static NSString *user = @"oclibrarytest";
 static NSString *password = @"123456";
 static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
+static NSString *pathTestFolder = @"Test";
 
-/*Structure to test on server:
- /Tests/Folder A/Test.jpeg
- /Tests/Folder B/
- */
+
 
 ///-----------------------------------
 /// @name setUp
@@ -54,38 +55,33 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
+    
+    //Create Tests folder
+    [self createFolderWithName:pathTestFolder];
 	
-    
-    //Create some folders
-    
-    //1. Create Tests folder
-    [self createFolderWithName:@"Tests"];
-    
-    //2. Create Tests/Folder A
-    [self createFolderWithName:@"Tests/Folder A"];
-    
-    //3. Create Test/Folder B
-    [self createFolderWithName:@"Tests/Folder B"];
-    
-    //4. Create Test/Folder C
-    [self createFolderWithName:@"Tests/Folder C"];
-    
-    
-    
-    
-    
 }
 
 - (void)tearDown
 {
-    // 1. Delete Test folder
-    [self deleteFolderWithName:@"Tests"];
+    
+    //Delete Test folder
+    [self deleteFolderWithName:pathTestFolder];
     
     [super tearDown];
+    
 }
 
-#pragma mark - SetUp Methods
+#pragma mark - Util Methods to Set Up the Tests
 
+///-----------------------------------
+/// @name Create Folder With Name
+///-----------------------------------
+
+/**
+ * This method create a new folder with the name passed in the server
+ *
+ * @param NSString -> path
+ */
 - (void) createFolderWithName:(NSString*)path{
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -115,6 +111,16 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 
 }
 
+///-----------------------------------
+/// @name Delete folder With Name
+///-----------------------------------
+
+/**
+ * This method delete a folder with the name passed
+ *
+ * @param NSString -> path
+ */
+
 - (void) deleteFolderWithName:(NSString *)path{
     
     NSString *folder = [NSString stringWithFormat:@"%@%@",baseUrl,path];
@@ -125,11 +131,11 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     [_sharedOCCommunication deleteFileOrFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse * response, NSString *redirectedServer) {
         //Folder deleted
-        NSLog(@"Folder deleted");
+        NSLog(@"Folder %@ deleted", path);
         dispatch_semaphore_signal(semaphore);
     } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
         //Error
-        XCTFail(@"Error testDeleteFolder: %@", error);
+        NSLog(@"Error deleted %@ folder", path);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -140,11 +146,60 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
     dispatch_release(semaphore);
     
+}
+
+///-----------------------------------
+/// @name Upload File
+///-----------------------------------
+
+/**
+ * This method upload a file from local path to remote path
+ *
+ * @param NSString -> localPath
+ *
+ * @param NSString -> remotePath
+ */
+- (void) uploadFilePath:(NSString*)localPath inRemotePath:(NSString*)remotePath{
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Create the complete url
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@",baseUrl,remotePath];
+    
+    //Path of server file file
+    remotePath = [remotePath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    __block NSOperation *operation = nil;
+    
+    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
+        
+    } successRequest:^(NSHTTPURLResponse *response) {
+        NSLog(@"File: %@ uploaded", localPath);
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+         NSLog(@"Failed uploading: %@", localPath);
+        NSLog(@"Error uploading: %@", error);
+        dispatch_semaphore_signal(semaphore);
+    } failureBeforeRequest:^(NSError *error) {
+         NSLog(@"Failed uploading: %@", localPath);
+         NSLog(@"Error uploading: %@", error);
+        dispatch_semaphore_signal(semaphore);
+    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        [operation cancel];
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    dispatch_release(semaphore);
     
 }
 
-
 #pragma mark - Tests
+
 
 ///-----------------------------------
 /// @name testCreateFolder
@@ -158,7 +213,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    NSString *folder = [NSString stringWithFormat:@"%@Tests/%@",baseUrl,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
+    NSString *folder = [NSString stringWithFormat:@"%@%@/%@",baseUrl,pathTestFolder,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
     
     [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Folder created
@@ -192,12 +247,12 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * @warning The special characters are: "\","<",">",":",""","|","?","*"
  */
 
-/*- (void)testCreateFolderWithForbiddenCharacters
+- (void)testCreateFolderWithForbiddenCharacters
 {
     NSArray* arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacer in arrayForbiddenCharacters) {
-        NSString *folder = [NSString stringWithFormat:@"%@Tests/%@",baseUrl,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacer]];
+        NSString *folder = [NSString stringWithFormat:@"%@%@/%@",baseUrl,pathTestFolder,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacer]];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -223,7 +278,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}*/
+}
 
 ///-----------------------------------
 /// @name testMoveFileOnSameFolder
@@ -232,9 +287,20 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to test move file on the same folder
  */
-/*- (void)testMoveFileOnSameFolder {
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
+- (void)testMoveFileOnSameFolder {
+    
+    //Create Folder A for the Test
+    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", pathTestFolder];
+    [self createFolderWithName:testPath];
+    
+    //Upload file /Tests/Folder A/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:remotePath];
+
+    
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -260,7 +326,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name testMoveFile
@@ -269,10 +335,25 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to try move a file
  */
-/*- (void)testMoveFile {
+- (void)testMoveFile {
     
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
+    //Create Folder A for the Test
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", pathTestFolder];
+    [self createFolderWithName:testPathA];
+    
+    //Create Folder B for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
+    
+    //Upload file /Tests/Folder A/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+
+    
+    
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -293,7 +374,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name testMoveFileForbiddenCharacters
@@ -302,13 +383,27 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to try to move a file with destiny name have forbidden characters
  */
-/*- (void)testMoveFileForbiddenCharacters {
+- (void)testMoveFileForbiddenCharacters {
+    
+    //Create Folder A for the Test
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", pathTestFolder];
+    [self createFolderWithName:testPathA];
+    
+    //Create Folder C for the Test
+    NSString *testPathC = [NSString stringWithFormat:@"%@/Folder C", pathTestFolder];
+    [self createFolderWithName:testPathC];
+    
+    //Upload file /Tests/Folder A/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+    
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
-        NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
-        NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder C/Test%@.jpeg", baseUrl, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", baseUrl, pathTestFolder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder C/Test%@.jpeg", baseUrl,pathTestFolder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -335,7 +430,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}*/
+}
 
 ///-----------------------------------
 /// @name testMoveFolderInsideHimself
@@ -344,10 +439,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to try to move a folder inside himself
  */
-/*- (void)testMoveFolderInsideHimself {
+- (void)testMoveFolderInsideHimself {
     
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder A/Folder A/", baseUrl];
+    //Create Folder A for the Test
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", pathTestFolder];
+    [self createFolderWithName:testPathA];
+
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Folder A/", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -373,7 +472,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name testMoveFolder
@@ -382,9 +481,18 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to try to move a folder
  */
-/*- (void)testMoveFolder {
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder A/", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Folder A/", baseUrl];
+- (void)testMoveFolder {
+    
+    //Create Folder A for the Test
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", pathTestFolder];
+    [self createFolderWithName:testPathA];
+    
+    //Create Folder C for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
+    
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Folder A/", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -405,7 +513,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name testRenameFileWithForbiddenCharacters
@@ -415,14 +523,23 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * Method  try to rename a file with forbidden characters
  *
  */
-/*- (void)testRenameFileWithForbiddenCharacters {
+- (void)testRenameFileWithForbiddenCharacters {
     
+    //Create Folder B for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
+    
+    //Upload file /Tests/Folder B/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
         
-        NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
-        NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Test-%@.jpeg", baseUrl, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", baseUrl, pathTestFolder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test-%@.jpeg", baseUrl, pathTestFolder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -449,7 +566,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}*/
+}
 
 ///-----------------------------------
 /// @name testRenameFile
@@ -459,9 +576,19 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * Method  try to rename a file
  *
  */
-/*- (void)testRenameFile {
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B/Test Renamed.jpeg", baseUrl];
+- (void)testRenameFile {
+    
+    //Create Folder B for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
+    
+    //Upload file /Tests/Folder B/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test Renamed.jpeg", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -482,7 +609,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name testRenameFolderWithForbiddenCharacters
@@ -492,13 +619,17 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * Method  try to rename a folder with forbidden characters
  *
  */
-/*- (void)testRenameFolderWithForbiddenCharacters {
+- (void)testRenameFolderWithForbiddenCharacters {
+    
+    //Create Folder A for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
-        NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/", baseUrl];
-        NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B-%@/", baseUrl, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", baseUrl, pathTestFolder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B-%@/", baseUrl, pathTestFolder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -525,7 +656,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
         dispatch_release(semaphore);
     }
-}*/
+}
 
 ///-----------------------------------
 /// @name testRenameFolder
@@ -535,9 +666,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * Method  try to rename a folder
  *
  */
-/*- (void)testRenameFolder {
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B/", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/", baseUrl];
+- (void)testRenameFolder {
+    
+    //Create Folder A for the Test
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", pathTestFolder];
+    [self createFolderWithName:testPathB];
+    
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", baseUrl, pathTestFolder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B Renamed/", baseUrl, pathTestFolder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -558,118 +694,8 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
-///-----------------------------------
-/// @name testRestoreServerToNextTests
-///-----------------------------------
-
-/**
- * Method to restore all the files and folders in order to can test again everything
- *
- * @warning If this test not pass the next execution of the other test could not pass.
- */
-/*- (void)testRestoreServerToNextTests {
-    
-    //Desrenaming the file
-    NSString *origin = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/Test Renamed.jpeg", baseUrl];
-    NSString *destiny = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/Test.jpeg", baseUrl];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File Renamed");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error renaming file Response: %@ and Error: %@", response, error);
-        dispatch_semaphore_signal(semaphore);
-    } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error renaming file: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
-    
-    //Desrenaming the folder
-    origin = [NSString stringWithFormat:@"%@Tests/Folder B Renamed/", baseUrl];
-    destiny = [NSString stringWithFormat:@"%@Tests/Folder B/", baseUrl];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    semaphore = dispatch_semaphore_create(0);
-    
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"Folder Renamed");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error renaming folder Response: %@ and Error: %@", response, error);
-        dispatch_semaphore_signal(semaphore);
-    } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error renaming folder: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
-    
-    //Restore the folder
-    origin = [NSString stringWithFormat:@"%@Tests/Folder B/Folder A/", baseUrl];
-    destiny = [NSString stringWithFormat:@"%@Tests/Folder A/", baseUrl];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    semaphore = dispatch_semaphore_create(0);
-    
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"Folder restored");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error restoring folder Response: %@ and Error: %@", response, error);
-        dispatch_semaphore_signal(semaphore);
-    } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error restoring folder: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
-    
-    //Restore the file
-    origin = [NSString stringWithFormat:@"%@Tests/Folder B/Test.jpeg", baseUrl];
-    destiny = [NSString stringWithFormat:@"%@Tests/Folder A/Test.jpeg", baseUrl];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    semaphore = dispatch_semaphore_create(0);
-    
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File restored");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error restoring file Response: %@ and Error: %@", response, error);
-        dispatch_semaphore_signal(semaphore);
-    } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error restoring file: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
-    
-    
-    
-}*/
 
 ///-----------------------------------
 /// @name testToDeleteAFolder
@@ -678,36 +704,17 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
 /**
  * Method to test if we can create a folder
  */
-/*- (void)testDeleteAFolder
+- (void)testDeleteAFolder
 {
+    //5. Create Tests/DeleteFolder
+    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", pathTestFolder];
+    [self createFolderWithName:testPathDelete];
+    
+    NSString *folder = [NSString stringWithFormat:@"%@%@/DeleteFolder", baseUrl, pathTestFolder];
+
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    NSString *folder = [NSString stringWithFormat:@"%@Tests/%@",baseUrl,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
-    folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        //Folder created
-        NSLog(@"Folder created");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error testCreateFolder: %@", error);
-        // Signal that block has completed
-        dispatch_semaphore_signal(semaphore);
-    } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error testCreateFolder: %@", error);
-        // Signal that block has completed
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    semaphore = dispatch_semaphore_create(0);
     
     [_sharedOCCommunication deleteFileOrFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse * response, NSString *redirectedServer) {
         //Folder deleted
@@ -725,7 +732,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name Test Read Folder
@@ -738,13 +745,46 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * 3.- Check the parser checking a specific number of files and folders
  *
  */
-/*- (void)testReadFolder{
+- (void)testReadFolder{
+    
+    //Create Tests/Test Read Folder
+    NSString *testPathReadFolder = [NSString stringWithFormat:@"%@/Test Read Folder", pathTestFolder];
+    [self createFolderWithName:testPathReadFolder];
+    
+    //Create Tests/Test Read Folder/Folder1
+    NSString *testPathReadFolder1 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder1", pathTestFolder];
+    [self createFolderWithName:testPathReadFolder1];
+    
+    //Create Tests/Test Read Folder/Folder2
+    NSString *testPathReadFolder2 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder2", pathTestFolder];
+    [self createFolderWithName:testPathReadFolder2];
+    
+    //Create Tests/Test Read Folder/Folder3
+    NSString *testPathReadFolder3 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder3", pathTestFolder];
+    [self createFolderWithName:testPathReadFolder3];
+    
+    
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    
+    //Upload file Tests/Test Read Folder/File1
+    NSString *uploadPath1 = [NSString stringWithFormat:@"%@/Test Read Folder/File1.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath1];
+    
+    //Upload file Tests/Test Read Folder/File2
+    NSString *uploadPath2 = [NSString stringWithFormat:@"%@/Test Read Folder/File2.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath2];
+    
+    //Upload file Tests/Test Read Folder/File3
+    NSString *uploadPath3 = [NSString stringWithFormat:@"%@/Test Read Folder/File3.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath3];
+    
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
+
+
     //Path with 7 elements: {3 files, 3 folders and the parent folder}
-    NSString *path = [NSString stringWithFormat:@"%@Tests/Test Read Folder/", baseUrl];
+    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read Folder/", baseUrl, pathTestFolder];
     NSLog(@"Path: %@", path);
     
     
@@ -805,7 +845,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-}*/
+}
 
 ///-----------------------------------
 /// @name Test Read File
@@ -816,7 +856,12 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * we do changes in the folder in order to know the etag changed
  *
  */
-/*-(void)testReadFile{
+-(void)testReadFile{
+    
+    //Create Tests/Test Read File
+    NSString *testReadFilePath = [NSString stringWithFormat:@"%@/Test Read File", pathTestFolder];
+    [self createFolderWithName:testReadFilePath];
+    
     
     //1.- Get and Store the etag of a specific folder
     
@@ -831,14 +876,14 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     
     //Path of new folder
-    NSString *newFolder = [NSString stringWithFormat:@"%@Tests/Test Read File/DeletedFolder/", baseUrl];
+    NSString *newFolder = [NSString stringWithFormat:@"%@%@/Test Read File/DeletedFolder/", baseUrl, pathTestFolder];
     newFolder = [newFolder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Path to the test
-    NSString *path = [NSString stringWithFormat:@"%@Tests/Test Read File/", baseUrl];
+    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read File/", baseUrl, pathTestFolder];
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"Path: %@", path);
     
@@ -967,7 +1012,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
         
     }
     
-}*/
+}
 
 
 ///-----------------------------------
@@ -979,7 +1024,19 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * It the file download the test is ok
  *
  */
-/*- (void) testDownloadFile {
+- (void) testDownloadFile {
+    
+    //Create Tests/Test Upload
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", pathTestFolder];
+    [self createFolderWithName:downloadPath];
+    
+    //Upload test file
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    
+    //Upload file /Tests/Test Download/test.jpeg
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+    
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -997,10 +1054,10 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     
     //Documents/Test Download/image.png
-    localPath = [localPath stringByAppendingString:@"/image.png"];
+    localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/Test Download/test image.PNG", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", baseUrl, pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1048,7 +1105,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     
     
     
-}*/
+}
 
 ///-----------------------------------
 /// @name Test download not existing file
@@ -1059,7 +1116,11 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * The test works if the file is not download
  *
  */
-/*- (void) testDownloadNotExistingFile {
+- (void) testDownloadNotExistingFile {
+    
+    //Create Tests/Test Upload
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", pathTestFolder];
+    [self createFolderWithName:downloadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1080,7 +1141,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     localPath = [localPath stringByAppendingString:@"/image.png"];
     
     //Path of server file that not exist
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/Test Download/test image not exist.PNG", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/test image not exist.PNG", baseUrl, pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Local Paht: %@", localPath);
@@ -1127,7 +1188,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}*/
+}
 
 ///-----------------------------------
 /// @name Test to upload a small file
@@ -1137,16 +1198,20 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * This test try to uplad a file without chunks
  *
  */
-/*- (void) testUploadAFileNoChunks {
+- (void) testUploadAFileNoChunks {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", pathTestFolder];
+    [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    //Create Folder in File Sytem to test
-    NSString *localPath = [NSString stringWithFormat:@"%@/CompanyLogo.png", [[NSBundle mainBundle] resourcePath]];
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/Test Upload/CompanyLogo.png", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", baseUrl, pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1186,7 +1251,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}*/
+}
 
 ///-----------------------------------
 /// @name Test to upload a big file
@@ -1196,116 +1261,59 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * This test try to uplad a file with chunks
  * To test it we need at first download a file from the server
  */
-/*- (void) testUploadAFileWithChunks {
+- (void) testUploadAFileWithChunks {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", pathTestFolder];
+    [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    //Create Folder in File Sytem to test
-    NSString *localPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"audio.mp3"];
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/audio.mp3", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", baseUrl, pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
     
     __block NSOperation *operation = nil;
     
-    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
+        if(totalBytesExpectedToWrote/1024 == 0) {
+            
+            if (bytesWrote>0) {
+                float percent;
+                
+                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
+                percent = percent / 100;
+                
+                NSLog(@"percent: %f", percent*100);
+            }
+        }
         
-        NSLog(@"Download :%d bytes of %lld bytes", bytesRead, totalBytesExpectedToRead);
-        
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        
-        NSLog(@"Download file ok");
-        
-        //Delete the file
-        
-        //NSError *theError = nil;
-        //[[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
-        
+    } successRequest:^(NSHTTPURLResponse *response) {
+        NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
-        
-        
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        
-        XCTFail(@"Error download a file - Response: %@ - Error: %@", response, error);
-        
-        //Delete the file
-        NSError *theError = nil;
-        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
+    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+        XCTFail(@"Error. File do not uploaded: %@", error);
         dispatch_semaphore_signal(semaphore);
-        
-        
+    } failureBeforeRequest:^(NSError *error) {
+        XCTFail(@"Error File does not exist");
+        dispatch_semaphore_signal(semaphore);
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        
-        NSLog(@"Cancel download");
-        [operation cancel];
-        
+        XCTFail(@"Error Credentials. File do not uploaded");
+        dispatch_semaphore_signal(semaphore);
     }];
-    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:localPath]) {
-        
-        semaphore = dispatch_semaphore_create(0);
-        
-        //Path of server file file
-        NSString *serverUrlToUpload = [NSString stringWithFormat:@"%@Tests/Test Upload/audio.mp3", baseUrl];
-        serverUrlToUpload = [serverUrlToUpload stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
-        NSLog(@"Server URL: %@", serverUrl);
-        
-        operation = nil;
-        
-        operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrlToUpload onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-            
-            NSLog(@"NSLog: %lld - %lld", totalBytesWrote, totalBytesExpectedToWrote);
-            
-            if(totalBytesExpectedToWrote/1024 != 0) {
-                if (bytesWrote>0) {
-                    float percent;
-                    
-                    percent=totalBytesWrote*100/totalBytesExpectedToWrote;
-                    
-                    NSLog(@"percent: %f", percent);
-                }
-            }
-            
-        } successRequest:^(NSHTTPURLResponse *response) {
-            NSLog(@"File Uploaded");
-            dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer,NSError *error) {
-            XCTFail(@"Error. File do not uploaded: %@", error);
-            dispatch_semaphore_signal(semaphore);
-        } failureBeforeRequest:^(NSError *error) {
-            XCTFail(@"Error File does not exist");
-            dispatch_semaphore_signal(semaphore);
-        } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-            XCTFail(@"Error Credentials. File do not uploaded");
-            dispatch_semaphore_signal(semaphore);
-        }];
-        
-        // Run loop
-        while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                     beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
-        
-        //Delete the file
-        NSError *theError = nil;
-        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
-        
-    } else {
-        XCTFail(@"Error Downloading the file. We can not make the testUploadAFileWithChunks");
-    }
-}*/
+}
 
 ///-----------------------------------
 /// @name Test to upload a file that does not exist
@@ -1316,7 +1324,11 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
  * This test is passed if we detect that the file does not exist
  *
  */
-/*- (void) testUploadAFileThatDoesNotExist {
+- (void) testUploadAFileThatDoesNotExist {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", pathTestFolder];
+    [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1325,7 +1337,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
     NSString *localPath = [NSString stringWithFormat:@"%@/Name of the file that does not exist.png", [[NSBundle mainBundle] resourcePath]];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@Tests/Test Upload/Name of the file that does not exist.png", baseUrl];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/Name of the file that does not exist.png", baseUrl, pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1365,6 +1377,7 @@ static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webda
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
     
-}*/
+}
+
 
 @end
