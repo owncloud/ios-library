@@ -706,7 +706,7 @@ static NSString *pathTestFolder = @"Test";
  */
 - (void)testDeleteAFolder
 {
-    //5. Create Tests/DeleteFolder
+    //Create Tests/DeleteFolder
     NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", pathTestFolder];
     [self createFolderWithName:testPathDelete];
     
@@ -733,6 +733,53 @@ static NSString *pathTestFolder = @"Test";
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
     dispatch_release(semaphore);
 }
+
+
+
+///-----------------------------------
+/// @name test to Delete a File
+///-----------------------------------
+
+/**
+ * Method to test if we can delete a folder
+ */
+- (void)testDeleteFile
+{
+    //Create Tests/DeleteFolder
+    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", pathTestFolder];
+    [self createFolderWithName:testPathDelete];
+    
+    //Upload a file
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    
+    //Upload file Tests/Test Read Folder/File1
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/DeleteFolder/File1.jpeg", pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+    
+    NSString *filePath = [NSString stringWithFormat:@"%@%@/DeleteFolder/File1.jpeg", baseUrl, pathTestFolder];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    
+    [_sharedOCCommunication deleteFileOrFolder:filePath onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse * response, NSString *redirectedServer) {
+        //File deleted
+        NSLog(@"File deleted");
+        dispatch_semaphore_signal(semaphore);
+    } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+        //Error
+        XCTFail(@"Error test delete file: %@", error);
+        // Signal that block has completed
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+    dispatch_release(semaphore);
+}
+
 
 ///-----------------------------------
 /// @name Test Read Folder
