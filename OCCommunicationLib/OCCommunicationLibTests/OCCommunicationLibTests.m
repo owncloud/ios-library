@@ -38,7 +38,7 @@
 static NSString *user = @"oclibrarytest";
 static NSString *password = @"123456";
 static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
-static NSString *pathTestFolder = @"Test";
+static NSString *pathTestFolder = @"Tests";
 
 
 

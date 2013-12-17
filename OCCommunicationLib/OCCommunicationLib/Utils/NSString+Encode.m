@@ -30,10 +30,6 @@
 - (NSString *)encodeString:(NSStringEncoding)encoding
 {
     
-    /*NSString *output = (__bridge NSString *) CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self,
-                                                                                     NULL, (CFStringRef)@";/?:@&=$+{}<>,",
-                                                                                     CFStringConvertNSStringEncodingToEncoding(encoding));*/
-    
     CFStringRef stringRef = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self,
                                                                     NULL, (CFStringRef)@";?@&=$+{}<>,",
                                                                     CFStringConvertNSStringEncodingToEncoding(encoding));

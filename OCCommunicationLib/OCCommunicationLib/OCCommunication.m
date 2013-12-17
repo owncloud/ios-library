@@ -34,7 +34,6 @@
 
 @implementation OCCommunication
 
-//TODO: Remove the methods from the OCWebDAVClient.h to not be accessible from the developer side.
 
 -(id) init {
     
@@ -315,7 +314,6 @@
             successRequest(operation.response, directoryList, operation.redirectedServer);
         }
         
-        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
         
@@ -414,14 +412,10 @@
     //Finally we add the new operation to the queue
     [self.networkOperationsQueue addOperation:operation];
     
-    
-    
-    
-    /*[self clearCookiesForURL];
-     [self eraseCredentials];*/
 }
 
 #pragma mark - Clear Cookies and Cache
+
 - (void)clearCookiesFromURL:(NSURL*) url {
     
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
@@ -435,10 +429,6 @@
 
 - (void)eraseURLCache
 {
-    //  NSURL *loginUrl = [NSURL URLWithString:self.connectString];
-    //  NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc]initWithURL:loginUrl];
-    // [NSMutableURLRequest requestWithURL:loginUrl];
-    //  [[NSURLCache sharedURLCache] removeCachedResponseForRequest:urlRequest];
     [[NSURLCache sharedURLCache] setMemoryCapacity:0];
     [[NSURLCache sharedURLCache] setDiskCapacity:0];
 }
