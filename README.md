@@ -79,16 +79,16 @@ THE SOFTWARE.
 
 #### Third part libraries
 
-ownCloud webDAV library for iOS use AFNetworking version 1.3.0 which is not the latest one. AFNetworking is available under the MIT license. 
+ownCloud webDAV library for iOS uses AFNetworking version 1.3.0 which is not the latest one. AFNetworking is available under the MIT license. 
 
-ownCloud webDAV library for iOS use some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes.
+ownCloud webDAV library for iOS uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes.
 
 
 ### Compatibility
 
-ownCloud webDAV library for iOS support iOS 6/ iOS 7 and works in Xcode 5.
+ownCloud webDAV library for iOS supports iOS 6 / iOS 7 and works in Xcode 5.
 
-ownCloud webDAV library support server since version 4.5.
+ownCloud webDAV library supports ownCloud server from version 4.5.
 
 
 
