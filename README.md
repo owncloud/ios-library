@@ -11,6 +11,7 @@ Get this code and compile with Xcode 5. In the repository it is not only the lib
 There are two ways of adding this library to your code:
 
 Method 1. Reference the headers and the library binary file (.a) directly.
+
 Method 2. Include the library project as a Subproject.
 
 Choosing one method or the other one just depends on your own preferences as well as whether you have the source code and the project file of the static library at your disposal.
