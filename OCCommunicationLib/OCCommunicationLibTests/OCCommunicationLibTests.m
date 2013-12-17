@@ -1426,5 +1426,66 @@ static NSString *pathTestFolder = @"Tests";
     
 }
 
+///-----------------------------------
+/// @name Test to upload a file with Forbbiden Characters
+///-----------------------------------
+
+/**
+ * This test try to uplad with special characters in destiny name
+ */
+- (void) testUploadAFileWithSpecialCharacters {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", pathTestFolder];
+    [self createFolderWithName:uploadPath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    
+    //Path of server file file (Special character added in file name)
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", baseUrl, pathTestFolder];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Server URL: %@", serverUrl);
+    
+    __block NSOperation *operation = nil;
+    
+    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
+        if(totalBytesExpectedToWrote/1024 == 0) {
+            
+            if (bytesWrote>0) {
+                float percent;
+                
+                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
+                percent = percent / 100;
+                
+                NSLog(@"percent: %f", percent*100);
+            }
+        }
+        
+    } successRequest:^(NSHTTPURLResponse *response) {
+        NSLog(@"File Uploaded with Special Characters");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+        XCTFail(@"Error. File do not uploaded: %@", error);
+        dispatch_semaphore_signal(semaphore);
+    } failureBeforeRequest:^(NSError *error) {
+        XCTFail(@"Error File does not exist");
+        dispatch_semaphore_signal(semaphore);
+    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        XCTFail(@"Error Credentials. File do not uploaded");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    dispatch_release(semaphore);
+}
+
 
 @end
