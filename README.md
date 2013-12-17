@@ -5,9 +5,9 @@ Using ownCloud WebDav library for iOS you have the easy way to communicate with 
 
 ### Install Library
 #### 2.1. Information how to get the library
-You can get this code and compile with Xcode 5. In the repository there are the library project “OCCommunicationLib” and the example project “OCLibraryExample”. Open the “OCLibraryExample” you can see how use the library. 
+You can get this code and compile with Xcode 5. In the repository it is not onlye the library project “OCCommunicationLib” but also the example project “OCLibraryExample”. Thanks to the “OCLibraryExample” you will see how to use the library.
 #### 2.2. Add library to your project
-To add the library of your project there are two ways:
+There are two ways of adding this library to your code:
 
 Method 1. Reference the headers and the library binary file (.a) directly.
 Method 2. Include the library project as a Subproject.
