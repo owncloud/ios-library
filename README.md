@@ -26,8 +26,8 @@ __Library File__
 
 __Library Classes__
 
-* OCComunication.h (Accesors) Import in the communication clases
-* OCErrorMsg.h (Error messages) Import in the communication clases
+* OCComunication.h (Accesors) Import in the communication classes
+* OCErrorMsg.h (Error messages) Import in the communication classes
 * OCFileDto.h (File/Folder object) Import when you use readFolder and readFile methods
 * OCFileDto.m
 * OCFrameworkConstants.h (Customize constants)
