@@ -29,16 +29,21 @@
 #import "OCFileDto.h"
 #import "AppDelegate.h"
 
-//User, pass and server to make the tests
-static NSString *user = @"oclibrarytest"; //@"username";
-static NSString *password = @"123456"; //@"password";
-static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/"; //@"https://beta.owncloud.com/owncloud/remote.php/webdav/"
 
-//To test the download you must be put a path of specific file
-static NSString *pathOfDownloadFile = @"LibExampleDownload/why so serious.jpg"; //@"path of file to download";
+//For the example works you must be enter your server data
 
+//Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
+static NSString *baseUrl = @"";
 
-//For upload and delete
+//user
+static NSString *user = @""; //@"username";
+//password
+static NSString *password = @""; //@"password";
+
+//To test the download you must be enter a path of specific file
+static NSString *pathOfDownloadFile = @"path of file to download"; //@"LibExampleDownload/default.png";
+
+//Optional. Set the path of the file to upload
 static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
 

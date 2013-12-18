@@ -34,10 +34,16 @@
 
 @implementation OCCommunicationLibTests
 
-//User, pass and server to make the tests
-static NSString *user = @"oclibrarytest";
-static NSString *password = @"123456";
-static NSString *baseUrl = @"https://beta.owncloud.com/owncloud/remote.php/webdav/";
+//You must enter this information of your server in order that the unit test works
+
+//Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
+static NSString *baseUrl = @"";
+//Your user
+static NSString *user = @""; //@"username";
+//Your password
+static NSString *password = @""; //@"password";
+
+//Optional. You can change the folder of tests.
 static NSString *pathTestFolder = @"Tests";
 
 
