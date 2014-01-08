@@ -20,18 +20,18 @@ typedef enum {
 } enumDownload;
 
 @property BOOL isDirectory;
-@property int itemSource;
-@property int parent;
-@property int shareType;
+@property NSInteger itemSource;
+@property NSInteger parent;
+@property NSInteger shareType;
 @property (nonatomic, copy) NSString *shareWith;
-@property int fileSource;
+@property NSInteger fileSource;
 @property (nonatomic, copy) NSString *path;
-@property int permissions;
+@property NSInteger permissions;
 @property long sharedDate;
 @property long expirationDate;
 @property (nonatomic, copy) NSString *token;
-@property int storage;
-@property int mailSend;
+@property NSInteger storage;
+@property NSInteger mailSend;
 @property (nonatomic, copy) NSString *uidOwner;
 @property (nonatomic, copy) NSString *shareWithDisplayName;
 @property (nonatomic, copy) NSString *displayNameOwner;
