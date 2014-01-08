@@ -27,6 +27,7 @@
 #import "OCHTTPRequestOperation.h"
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
+#import "OCXMLSharedParser.h"
 #import "NSString+Encode.h"
 #import "OCFrameworkConstants.h"
 #import "OCUploadOperation.h"
@@ -338,6 +339,36 @@
         success(operation.response, operation.responseData, operation.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
+    }];
+}
+
+- (void) readSharedByServer: (NSString *) serverPath
+    onCommunication:(OCCommunication *)sharedOCCommunication
+     successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request listSharedByServer:serverPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            //Return success
+            successRequest(operation.response, sharedList, operation.redirectedServer);
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
     }];
 }
 

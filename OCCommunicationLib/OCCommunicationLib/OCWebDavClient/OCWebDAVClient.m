@@ -160,6 +160,28 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 }
 
+- (void)mr_sharedByServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication
+            success:(void(^)(OCHTTPRequestOperation *, id))success
+            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+	NSParameterAssert(success);
+	NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:serverPath parameters:nil];
+    
+    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    [operation setTypeOfOperation:NavigationQueue];
+    
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        success((OCHTTPRequestOperation*)operation, responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure((OCHTTPRequestOperation*)operation, operation.error);
+    }];
+    
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
+}
+
 - (void)propertiesOfPath:(NSString *)path
          onCommunication: (OCCommunication *)sharedOCCommunication
                  success:(void(^)(OCHTTPRequestOperation *, id ))success
@@ -330,6 +352,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
+- (void)listSharedByServer:(NSString *)serverPath
+ onCommunication:(OCCommunication *)sharedOCCommunication
+         success:(void(^)(OCHTTPRequestOperation *, id))success
+         failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+	[self mr_sharedByServer:serverPath onCommunication:sharedOCCommunication success:success failure:failure];
 }
 
 @end

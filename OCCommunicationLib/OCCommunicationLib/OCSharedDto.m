@@ -1,5 +1,5 @@
 //
-//  OCFrameworkConstants.h
+//  OCSharedDto.m
 //  Owncloud iOs Client
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
@@ -23,16 +23,8 @@
 // THE SOFTWARE.
 //
 
-//Timeout to weddav requests
-#define k_timeout_webdav 30 //seconds
+#import "OCSharedDto.h"
 
-//Timeout to upload
-#define k_timeout_upload 40 //seconds
+@implementation OCSharedDto
 
-//Chunk length
-#define k_lenght_chunk 1048576
-
-#define k_domain_error_code @"com.owncloud"
-
-//Url to access to Shared API to create
-#define k_url_acces_shared_api @"ocs/v1.php/apps/files_sharing/api/v1/shares"
+@end

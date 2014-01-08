@@ -214,4 +214,23 @@ extern NSString *OCWebDAVModificationDateKey;
 (OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
                          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
+/**
+ Enqueues a request to list the contents of a single collection and
+ the properties of each object, including the properties of the
+ collection itself, using a `PROPFIND` request.
+ 
+ @param path The directory for which to list the contents.
+ @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a dictionary with the properties of the directory and its contents.
+ @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
+ 
+ @see propertiesOfPath:success:failure:
+ @see recursiveListPath:success:failure:
+ */
+//TODO: change the comment
+- (void)listSharedByServer:(NSString *)serverPath
+ onCommunication: (OCCommunication *)sharedOCCommunication
+         success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
+         failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
 @end

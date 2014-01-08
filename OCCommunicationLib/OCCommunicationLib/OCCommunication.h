@@ -329,6 +329,11 @@ typedef enum {
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, NSData *, NSString *))success
                      failure:(void(^)(NSHTTPURLResponse *, NSError *))failure;
 
+//TODO:Add comments here
+- (void) readSharedByServer: (NSString *) serverPath
+         onCommunication:(OCCommunication *)sharedOCCommunication
+          successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+          failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
 #pragma mark - Queue system
 /*
