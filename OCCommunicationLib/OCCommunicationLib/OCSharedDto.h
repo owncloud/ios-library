@@ -19,6 +19,7 @@ typedef enum {
     shareTypeRemote = 6
 } enumShareType;
 
+@property NSInteger idRemoteShared;
 @property BOOL isDirectory;
 @property NSInteger itemSource;
 @property NSInteger parent;

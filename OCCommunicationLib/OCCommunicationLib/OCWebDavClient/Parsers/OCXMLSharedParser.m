@@ -87,16 +87,19 @@
     @property (nonatomic, copy) NSString *shareWithDisplayname;
      */
     
-    if ([elementName isEqualToString:@"item_type"]) {
+    if ([elementName isEqualToString:@"id"]) {
+        
         _currentShared = [[OCSharedDto alloc] init];
+        _currentShared.idRemoteShared = [_xmlChars intValue];
+        
+    } else if ([elementName isEqualToString:@"item_type"]) {
         
         if([_xmlChars isEqualToString:@"file"]) {
             _currentShared.isDirectory = NO;
         } else {
             _currentShared.isDirectory = YES;
         }
-            
-    } else if ([elementName isEqualToString:@"item_source"]) {
+    }  else if ([elementName isEqualToString:@"item_source"]) {
         
         _currentShared.itemSource = [_xmlChars intValue];
     
