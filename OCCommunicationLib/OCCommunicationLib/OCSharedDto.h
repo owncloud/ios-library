@@ -17,7 +17,7 @@ typedef enum {
     shareTypeEmail = 4,
     shareTypeContact = 5,
     shareTypeRemote = 6
-} enumDownload;
+} enumShareType;
 
 @property BOOL isDirectory;
 @property NSInteger itemSource;
