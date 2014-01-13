@@ -335,6 +335,11 @@ typedef enum {
           successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
+- (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+
 #pragma mark - Queue system
 /*
  * Method that add an operation to the appropiate queue

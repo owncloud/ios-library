@@ -233,4 +233,20 @@ extern NSString *OCWebDAVModificationDateKey;
          success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
          failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 
+///-----------------------------------
+/// @name shareFileOrFolderByServer
+///-----------------------------------
+
+/**
+ * Method to share a file or folder
+ *
+ * @param serverPath -> NSString: Server path where we want to sare a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
+ * @param filePath -> NSString: Path of the server where is the file. Ex: /File.pdf
+ *
+ */
+- (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath
+                  onCommunication:(OCCommunication *)sharedOCCommunication
+                          success:(void(^)(OCHTTPRequestOperation *, id))success
+                          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
 @end
