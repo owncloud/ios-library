@@ -53,9 +53,9 @@
         if (k_redirected_code == 302 || k_other_redirected_code == 307) {
             
             //URL of redirected server
-           /* NSString *responseURLString = redirectResponse.URL.absoluteString;
+            NSString *responseURLString = redirectResponse.URL.absoluteString;
             NSLog(@"Response url is: %@", responseURLString);
-            NSLog(@"Request url is: %@", requestRed.URL.absoluteString);*/
+            NSLog(@"Request url is: %@", requestRed.URL.absoluteString);
             
             //we stores the redirection of the response
             _redirectedServer = redirectResponse.URL.absoluteString;

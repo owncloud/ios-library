@@ -35,6 +35,8 @@
 
 #define k_api_user_url_xml @"index.php/ocs/cloud/user"
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
+#define k_server_information_json @"status.php"
+
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
 NSString const *OCWebDAVETagKey				= @"getetag";
@@ -340,7 +342,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSString *apiUserUrl = nil;
     apiUserUrl = [NSString stringWithFormat:@"%@%@", self.baseURL, k_api_user_url_json];
     
-    //NSLog(@"api user name call: %@", apiUserUrl);
+    NSLog(@"api user name call: %@", apiUserUrl);
     
     NSMutableURLRequest *request = [self requestWithMethod: @"GET" path: apiUserUrl parameters: nil];
 	[request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
@@ -354,11 +356,27 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
+- (void) getTheStatusOfTheServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
+                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure  {
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", serverPath, k_server_information_json];
+    
+    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path: urlString parameters: nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
+}
+
 - (void)listSharedByServer:(NSString *)serverPath
  onCommunication:(OCCommunication *)sharedOCCommunication
          success:(void(^)(OCHTTPRequestOperation *, id))success
          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
 	[self mr_sharedByServer:serverPath onCommunication:sharedOCCommunication success:success failure:failure];
 }
+
+
 
 @end

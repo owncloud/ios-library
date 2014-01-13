@@ -33,6 +33,8 @@
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 
+
+
 @implementation OCCommunication
 
 
@@ -340,6 +342,46 @@
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
+}
+
+- (void) hasServerShareSupport:(NSString*) serverPath onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure{
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:serverPath]];
+   
+    [request getTheStatusOfTheServer:serverPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        BOOL hasSharedSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                versionString = [jsonArray valueForKey:@"versionstring"];
+            }
+            
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+        NSLog(@"version string: %@", versionString);
+        
+        float version = [versionString floatValue];
+        
+        NSLog(@"version: %f", version);
+        
+        
+        success(operation.response, hasSharedSupport, operation.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+    
 }
 
 - (void) readSharedByServer: (NSString *) serverPath
