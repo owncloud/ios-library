@@ -34,6 +34,8 @@
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 
+#define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"13", nil]
+
 @implementation OCCommunication
 
 
@@ -341,6 +343,117 @@
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
+}
+
+- (void) hasServerShareSupport:(NSString*) serverPath onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure{
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:serverPath]];
+   
+    [request getTheStatusOfTheServer:serverPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        __block BOOL hasSharedSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                versionString = [jsonArray valueForKey:@"versionstring"];
+            }
+            
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+       // NSLog(@"version string: %@", versionString);
+        
+        //Split the strings - Type 5.0.13
+        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
+        
+        
+        NSMutableArray *currentVersionArrray = [NSMutableArray new];
+        for (NSString *string in spliteVersion) {
+            [currentVersionArrray addObject:string];
+        }
+        
+        NSArray *firstVersionSupportShared = k_version_support_shared;
+        
+       // NSLog(@"First version that supported Shared API: %@", firstVersionSupportShared);
+        //NSLog(@"Current version: %@", currentVersionArrray);
+        
+        //Loop of compare
+        [firstVersionSupportShared enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSString *firstVersionString = obj;
+            NSString *currentVersionString = [currentVersionArrray objectAtIndex:idx];
+            
+            int firstVersionInt = [firstVersionString intValue];
+            int currentVersionInt = [currentVersionString intValue];
+            
+            //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
+            //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
+            
+            //Comparation secure
+            switch (idx) {
+                case 0:
+                    //if the first number is higher
+                    if (currentVersionInt > firstVersionInt) {
+                        hasSharedSupport = YES;
+                        *stop=YES;
+                    }
+                    //if the first number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        hasSharedSupport = NO;
+                        *stop=YES;
+                    }
+                    
+                    break;
+                    
+                case 1:
+                    //if the seccond number is higger
+                    if (currentVersionInt > firstVersionInt) {
+                        hasSharedSupport = YES;
+                        *stop=YES;
+                    }
+                    //if the second number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        hasSharedSupport = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                case 2:
+                    //if the third number is higger or equal
+                    if (currentVersionInt >= firstVersionInt) {
+                        hasSharedSupport = YES;
+                        *stop=YES;
+                    }else{
+                        //if the third number is lower
+                        hasSharedSupport = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                default:
+                    
+                    break;
+            }
+ 
+            
+        }];
+        
+
+        
+        success(operation.response, hasSharedSupport, operation.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+    
 }
 
 - (void) readSharedByServer: (NSString *) serverPath

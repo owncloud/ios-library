@@ -329,7 +329,36 @@ typedef enum {
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, NSData *, NSString *))success
                      failure:(void(^)(NSHTTPURLResponse *, NSError *))failure;
 
-//TODO:Add comments here
+///-----------------------------------
+/// @name Has Server Share Support
+///-----------------------------------
+
+/**
+ * Method to get if the server has Share API support or not
+ *
+ * @param path -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return BOOL in the success about the support
+ *
+ */
+- (void) hasServerShareSupport:(NSString*) serverPath onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure;
+
+///-----------------------------------
+/// @name readSharedByServer
+///-----------------------------------
+
+/**
+ * Method to return all the files and folders shareds on the server by the current user
+ *
+ * @param serverPath -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return NSArray with all the OCSharedDto of shareds files
+ *
+ */
 - (void) readSharedByServer: (NSString *) serverPath
          onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest

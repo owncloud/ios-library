@@ -214,6 +214,24 @@ extern NSString *OCWebDAVModificationDateKey;
 (OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
                          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
+
+///-----------------------------------
+/// @name Get the status of the server
+///-----------------------------------
+
+/**
+ * Method to get the json of the status.php common in the ownCloud servers
+ *
+ * @param serverPath -> url of the server
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ *
+ */
+- (void) getTheStatusOfTheServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
+                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
 /**
  Enqueues a request to list the contents of a single collection and
  the properties of each object, including the properties of the
