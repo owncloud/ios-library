@@ -346,7 +346,19 @@ typedef enum {
                 successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure;
 
-//TODO:Add comments here
+///-----------------------------------
+/// @name readSharedByServer
+///-----------------------------------
+
+/**
+ * Method to return all the files and folders shareds on the server by the current user
+ *
+ * @param serverPath -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return NSArray with all the OCSharedDto of shareds files
+ *
+ */
 - (void) readSharedByServer: (NSString *) serverPath
          onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
