@@ -74,17 +74,24 @@
 }
 
 
-
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
     
     NSLog(@"elementName: %@:%@", elementName,_xmlChars);
-    
+    /*
+    @property BOOL isDirectory;
+    @property int itemSource;
+    @property int shareType;
+    @property (nonatomic, copy) NSString *shareWith;
+    @property int fileSource;
+    @property (nonatomic, copy) NSString *path;
+    @property int permissions;
+    @property long sharedDate;
+    @property long expirationDate;
+    @property (nonatomic, copy) NSString *token;
+    @property (nonatomic, copy) NSString *shareWithDisplayname;
+     */
     
     if ([elementName isEqualToString:@"id"]) {
-        
-        if (_currentShared) {
-            _currentShared = nil;
-        }
         
         _currentShared = [[OCSharedDto alloc] init];
         _currentShared.idRemoteShared = [_xmlChars intValue];
@@ -163,6 +170,7 @@
             _currentShared.shareWithDisplayName = @"";
         }
 
+        
     }
 }
 
@@ -171,10 +179,11 @@
 }
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
+    
+    NSLog(@"Finish xml directory list parse");
     if (_currentShared) {
         [_shareList addObject:_currentShared];
     }
-    NSLog(@"Finish xml directory list parse");
 }
 
 
