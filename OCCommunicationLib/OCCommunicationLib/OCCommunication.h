@@ -337,7 +337,7 @@ typedef enum {
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
 #pragma mark - Queue system

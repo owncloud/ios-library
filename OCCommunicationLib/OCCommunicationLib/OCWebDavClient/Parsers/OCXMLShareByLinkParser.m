@@ -10,7 +10,6 @@
 
 @implementation OCXMLShareByLinkParser
 
-@synthesize shareList=_shareList;
 @synthesize token=_token;
 
 /*
@@ -18,8 +17,6 @@
  * @data -> XML webDav data from the owncloud server
  */
 - (void)initParserWithData: (NSData*)data{
-    
-    _shareList = [[NSMutableArray alloc]init];
     
     NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
     [parser setDelegate:self];

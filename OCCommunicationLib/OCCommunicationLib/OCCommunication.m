@@ -32,6 +32,7 @@
 #import "OCFrameworkConstants.h"
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
+#import "OCXMLShareByLinkParser.h"
 
 @implementation OCCommunication
 
@@ -374,7 +375,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
     
     serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -386,15 +387,17 @@
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
-            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
-            
-            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-            
+            OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+          
             [parser initParserWithData:response];
-            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            NSString *token = parser.token;
+            
+            //We remove the \n and the empty spaces " "
+            token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+            token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
             
             //Return success
-            successRequest(operation.response, sharedList, operation.redirectedServer);
+            successRequest(operation.response, token, operation.redirectedServer);
         }
 
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
