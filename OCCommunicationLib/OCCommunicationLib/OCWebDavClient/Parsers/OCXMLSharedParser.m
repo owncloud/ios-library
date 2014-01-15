@@ -48,6 +48,10 @@
     
     if ([elementName isEqualToString:@"element"]) {
         _xmlBucket = [NSMutableDictionary dictionary];
+        
+        if (_currentShared) {
+            [_shareList addObject:_currentShared];
+        }
     }
 }
 
@@ -166,8 +170,7 @@
             _currentShared.shareWithDisplayName = @"";
         }
 
-        [_shareList addObject:_currentShared];
-        _currentShared = [OCSharedDto new];
+        
     }
 }
 
@@ -178,6 +181,9 @@
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
     NSLog(@"Finish xml directory list parse");
+    if (_currentShared) {
+        [_shareList addObject:_currentShared];
+    }
 }
 
 
