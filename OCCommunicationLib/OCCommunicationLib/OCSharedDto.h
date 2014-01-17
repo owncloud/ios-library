@@ -1,5 +1,5 @@
 //
-//  OCFileDto.m
+//  OCSharedDto.h
 //  OCCommunicationLib
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
@@ -22,11 +22,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+//
 
+#import <Foundation/Foundation.h>
 
-#import "OCFileDto.h"
+@interface OCSharedDto : NSObject
 
-@implementation OCFileDto
+typedef enum {
+    shareTypeUser = 0,
+    shareTypeGroup = 1,
+    shareTypeLink = 3,
+    shareTypeEmail = 4,
+    shareTypeContact = 5,
+    shareTypeRemote = 6
+} enumShareType;
+
+@property NSInteger idRemoteShared;
+@property BOOL isDirectory;
+@property NSInteger itemSource;
+@property NSInteger parent;
+@property NSInteger shareType;
+@property (nonatomic, copy) NSString *shareWith;
+@property NSInteger fileSource;
+@property (nonatomic, copy) NSString *path;
+@property NSInteger permissions;
+@property long sharedDate;
+@property long expirationDate;
+@property (nonatomic, copy) NSString *token;
+@property NSInteger storage;
+@property NSInteger mailSend;
+@property (nonatomic, copy) NSString *uidOwner;
+@property (nonatomic, copy) NSString *shareWithDisplayName;
+@property (nonatomic, copy) NSString *displayNameOwner;
 
 
 @end

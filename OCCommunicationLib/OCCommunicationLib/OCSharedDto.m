@@ -1,6 +1,6 @@
 //
-//  OCFileDto.m
-//  OCCommunicationLib
+//  OCSharedDto.m
+//  Owncloud iOs Client
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
 //
@@ -23,10 +23,8 @@
 // THE SOFTWARE.
 //
 
+#import "OCSharedDto.h"
 
-#import "OCFileDto.h"
-
-@implementation OCFileDto
-
+@implementation OCSharedDto
 
 @end

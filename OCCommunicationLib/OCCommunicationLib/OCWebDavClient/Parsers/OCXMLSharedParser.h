@@ -1,5 +1,5 @@
 //
-//  OCFileDto.m
+//  OCXMLSharedParser.h
 //  OCCommunicationLib
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
@@ -22,11 +22,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+//
 
+#import <Foundation/Foundation.h>
+#import "OCSharedDto.h"
 
-#import "OCFileDto.h"
+@interface OCXMLSharedParser :  NSObject <NSXMLParserDelegate>{
+    
+    NSMutableString *_xmlChars;
+    NSMutableDictionary *_xmlBucket;
+    NSMutableArray *_shareList;
+    OCSharedDto *_currentShared;
+    BOOL isNotFirstFileOfList;
+    
+}
 
-@implementation OCFileDto
+@property(nonatomic,strong) NSMutableArray *shareList;
+@property(nonatomic,strong) OCSharedDto *currentShared;
 
+- (void)initParserWithData: (NSData*)data;
 
 @end

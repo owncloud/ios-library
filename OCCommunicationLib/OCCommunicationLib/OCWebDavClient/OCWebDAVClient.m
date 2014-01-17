@@ -35,6 +35,8 @@
 
 #define k_api_user_url_xml @"index.php/ocs/cloud/user"
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
+#define k_server_information_json @"status.php"
+
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
 NSString const *OCWebDAVETagKey				= @"getetag";
@@ -144,6 +146,28 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"utf-8\" ?><D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
+    
+    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    [operation setTypeOfOperation:NavigationQueue];
+    
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        success((OCHTTPRequestOperation*)operation, responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure((OCHTTPRequestOperation*)operation, operation.error);
+    }];
+    
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
+}
+
+- (void)mr_sharedByServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication
+            success:(void(^)(OCHTTPRequestOperation *, id))success
+            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+	NSParameterAssert(success);
+	NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:serverPath parameters:nil];
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
@@ -318,7 +342,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSString *apiUserUrl = nil;
     apiUserUrl = [NSString stringWithFormat:@"%@%@", self.baseURL, k_api_user_url_json];
     
-    //NSLog(@"api user name call: %@", apiUserUrl);
+    NSLog(@"api user name call: %@", apiUserUrl);
     
     NSMutableURLRequest *request = [self requestWithMethod: @"GET" path: apiUserUrl parameters: nil];
 	[request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
@@ -331,5 +355,28 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [operation setTypeOfOperation:NavigationQueue];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
+
+- (void) getTheStatusOfTheServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
+                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure  {
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", serverPath, k_server_information_json];
+    
+    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path: urlString parameters: nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
+}
+
+- (void)listSharedByServer:(NSString *)serverPath
+ onCommunication:(OCCommunication *)sharedOCCommunication
+         success:(void(^)(OCHTTPRequestOperation *, id))success
+         failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+	[self mr_sharedByServer:serverPath onCommunication:sharedOCCommunication success:success failure:failure];
+}
+
+
 
 @end
