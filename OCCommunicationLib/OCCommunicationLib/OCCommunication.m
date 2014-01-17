@@ -518,6 +518,30 @@
     }];
 }
 
+- (void) unShareFileOrFolderByServer: (NSString *) serverPath andIdRemoteShared: (int) idRemoteSared
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request unShareFileOrFolderByServer:serverPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            
+            //Return success
+            successRequest(operation.response, operation.redirectedServer);
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
 #pragma mark - Queue System
 
 /*
