@@ -33,7 +33,7 @@
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 
-#define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"13", nil]
+
 
 @implementation OCCommunication
 
