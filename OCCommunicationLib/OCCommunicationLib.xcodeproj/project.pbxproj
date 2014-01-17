@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		131C67B9187C3E360009030E /* OCXMLSharedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 131C67B8187C3E360009030E /* OCXMLSharedParser.m */; };
+		13AA8636187C211900A10927 /* OCSharedDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA8635187C211900A10927 /* OCSharedDto.m */; };
+		13AA8640187C3B9700A10927 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA863F187C3B9700A10927 /* OCXMLParser.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
 		EA7CC8AA183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
@@ -42,8 +45,6 @@
 		EA7CC92D183E14A100B6A4B4 /* OCHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */; };
 		EA7CC92E183E14A100B6A4B4 /* OCWebDAVClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */; };
 		EA7CC92F183E14A100B6A4B4 /* OCWebDAVClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */; };
-		EA7CC930183E14A100B6A4B4 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC927183E14A100B6A4B4 /* OCXMLParser.m */; };
-		EA7CC931183E14A100B6A4B4 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC927183E14A100B6A4B4 /* OCXMLParser.m */; };
 		EA7CC934183E150000B6A4B4 /* OCCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC933183E150000B6A4B4 /* OCCommunication.m */; };
 		EA7CC935183E150000B6A4B4 /* OCCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC933183E150000B6A4B4 /* OCCommunication.m */; };
 		EAABAA32183E688900909831 /* OCFileDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAA31183E688900909831 /* OCFileDto.m */; };
@@ -84,6 +85,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		131C67B7187C3E360009030E /* OCXMLSharedParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLSharedParser.h; path = OCWebDavClient/Parsers/OCXMLSharedParser.h; sourceTree = "<group>"; };
+		131C67B8187C3E360009030E /* OCXMLSharedParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCXMLSharedParser.m; path = OCWebDavClient/Parsers/OCXMLSharedParser.m; sourceTree = "<group>"; };
+		13AA8634187C211900A10927 /* OCSharedDto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCSharedDto.h; sourceTree = "<group>"; };
+		13AA8635187C211900A10927 /* OCSharedDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCSharedDto.m; sourceTree = "<group>"; };
+		13AA863E187C3B9700A10927 /* OCXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLParser.h; path = OCWebDavClient/Parsers/OCXMLParser.h; sourceTree = "<group>"; };
+		13AA863F187C3B9700A10927 /* OCXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCXMLParser.m; path = OCWebDavClient/Parsers/OCXMLParser.m; sourceTree = "<group>"; };
 		EA7CC897183E11E600B6A4B4 /* libOCCommunicationLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOCCommunicationLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC89A183E11E600B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EA7CC89E183E11E600B6A4B4 /* OCCommunicationLib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OCCommunicationLib-Prefix.pch"; sourceTree = "<group>"; };
@@ -122,8 +129,6 @@
 		EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCHTTPRequestOperation.m; path = OCWebDavClient/OCHTTPRequestOperation.m; sourceTree = "<group>"; };
 		EA7CC924183E14A100B6A4B4 /* OCWebDAVClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCWebDAVClient.h; path = OCWebDavClient/OCWebDAVClient.h; sourceTree = "<group>"; };
 		EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCWebDAVClient.m; path = OCWebDavClient/OCWebDAVClient.m; sourceTree = "<group>"; };
-		EA7CC926183E14A100B6A4B4 /* OCXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLParser.h; path = OCWebDavClient/OCXMLParser.h; sourceTree = "<group>"; };
-		EA7CC927183E14A100B6A4B4 /* OCXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCXMLParser.m; path = OCWebDavClient/OCXMLParser.m; sourceTree = "<group>"; };
 		EA7CC932183E150000B6A4B4 /* OCCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCCommunication.h; sourceTree = "<group>"; };
 		EA7CC933183E150000B6A4B4 /* OCCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCCommunication.m; sourceTree = "<group>"; };
 		EA7CC936183E15C000B6A4B4 /* OCCommunicationLibTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCCommunicationLibTests.h; sourceTree = "<group>"; };
@@ -168,6 +173,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		13AA8637187C331F00A10927 /* Parsers */ = {
+			isa = PBXGroup;
+			children = (
+				131C67B7187C3E360009030E /* OCXMLSharedParser.h */,
+				131C67B8187C3E360009030E /* OCXMLSharedParser.m */,
+				13AA863E187C3B9700A10927 /* OCXMLParser.h */,
+				13AA863F187C3B9700A10927 /* OCXMLParser.m */,
+			);
+			name = Parsers;
+			sourceTree = "<group>";
+		};
 		EA7CC88E183E11E600B6A4B4 = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +219,8 @@
 			children = (
 				EAABAA30183E688900909831 /* OCFileDto.h */,
 				EAABAA31183E688900909831 /* OCFileDto.m */,
+				13AA8634187C211900A10927 /* OCSharedDto.h */,
+				13AA8635187C211900A10927 /* OCSharedDto.m */,
 				EAABAA2F183E687000909831 /* OCFrameworkConstants.h */,
 				EA7CC932183E150000B6A4B4 /* OCCommunication.h */,
 				EA7CC933183E150000B6A4B4 /* OCCommunication.m */,
@@ -292,6 +310,7 @@
 		EA7CC91C183E147C00B6A4B4 /* OCWebDavClient */ = {
 			isa = PBXGroup;
 			children = (
+				13AA8637187C331F00A10927 /* Parsers */,
 				EA7CC91D183E14A100B6A4B4 /* NSDate+ISO8601.h */,
 				EA7CC91E183E14A100B6A4B4 /* NSDate+ISO8601.m */,
 				EA7CC91F183E14A100B6A4B4 /* NSDate+RFC1123.h */,
@@ -300,8 +319,6 @@
 				EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */,
 				EA7CC924183E14A100B6A4B4 /* OCWebDAVClient.h */,
 				EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */,
-				EA7CC926183E14A100B6A4B4 /* OCXMLParser.h */,
-				EA7CC927183E14A100B6A4B4 /* OCXMLParser.m */,
 			);
 			name = OCWebDavClient;
 			sourceTree = "<group>";
@@ -420,13 +437,15 @@
 				EAABAB201858594A00909831 /* OCChunkInputStream.m in Sources */,
 				EAABAA32183E688900909831 /* OCFileDto.m in Sources */,
 				EA7CC934183E150000B6A4B4 /* OCCommunication.m in Sources */,
+				131C67B9187C3E360009030E /* OCXMLSharedParser.m in Sources */,
 				EA7CC907183E13C400B6A4B4 /* AFPropertyListRequestOperation.m in Sources */,
 				EA7CC8FF183E13C400B6A4B4 /* AFHTTPRequestOperation.m in Sources */,
 				EA7CC905183E13C400B6A4B4 /* AFNetworkActivityIndicatorManager.m in Sources */,
+				13AA8640187C3B9700A10927 /* OCXMLParser.m in Sources */,
 				EAABAB221858594A00909831 /* OCUploadOperation.m in Sources */,
 				EA7CC912183E146000B6A4B4 /* UtilsFramework.m in Sources */,
 				EA7CC92A183E14A100B6A4B4 /* NSDate+RFC1123.m in Sources */,
-				EA7CC930183E14A100B6A4B4 /* OCXMLParser.m in Sources */,
+				13AA8636187C211900A10927 /* OCSharedDto.m in Sources */,
 				EA7CC928183E14A100B6A4B4 /* NSDate+ISO8601.m in Sources */,
 				EAABAB2618585C5200909831 /* NSString+Encode.m in Sources */,
 				EA7CC903183E13C400B6A4B4 /* AFJSONRequestOperation.m in Sources */,
@@ -454,7 +473,6 @@
 				EA7CC913183E146000B6A4B4 /* UtilsFramework.m in Sources */,
 				EA7CC92B183E14A100B6A4B4 /* NSDate+RFC1123.m in Sources */,
 				EAABAA33183E688900909831 /* OCFileDto.m in Sources */,
-				EA7CC931183E14A100B6A4B4 /* OCXMLParser.m in Sources */,
 				EA7CC8B7183E11E600B6A4B4 /* OCCommunicationLibTests.m in Sources */,
 				EA7CC929183E14A100B6A4B4 /* NSDate+ISO8601.m in Sources */,
 				EA7CC904183E13C400B6A4B4 /* AFJSONRequestOperation.m in Sources */,
