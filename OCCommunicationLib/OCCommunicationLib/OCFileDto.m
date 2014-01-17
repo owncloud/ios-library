@@ -1,6 +1,6 @@
 //
 //  OCFileDto.m
-//  Owncloud iOs Client
+//  OCCommunicationLib
 //
 // Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
 //
