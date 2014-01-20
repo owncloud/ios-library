@@ -138,10 +138,11 @@
         
         _currentShared.sharedDate = [_xmlChars longLongValue];
         
+        
     } else if ([elementName isEqualToString:@"expiration"]) {
         
         NSDate *date = [[self class] parseDateString:_xmlChars];
-        _currentShared.sharedDate = [date timeIntervalSince1970];
+        _currentShared.expirationDate = [date timeIntervalSince1970];
         
     } else if ([elementName isEqualToString:@"token"]) {
         
