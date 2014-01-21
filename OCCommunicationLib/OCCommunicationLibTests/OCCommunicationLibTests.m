@@ -38,13 +38,13 @@
 //You must enter this information of your server in order that the unit test works
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"";
+static NSString *baseUrl = @"http://10.0.1.10/owncloud/";
 //Server with webdav url
-static NSString *webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
+NSString *webdavBaseUrl = @"";
 //Your user
-static NSString *user = @""; //@"username";
+static NSString *user = @"javi"; //@"username";
 //Your password
-static NSString *password = @""; //@"password";
+static NSString *password = @"javi"; //@"password";
 
 //Optional. You can change the folder of tests.
 static NSString *pathTestFolder = @"Tests";
@@ -61,6 +61,8 @@ static NSString *pathTestFolder = @"Tests";
 - (void)setUp
 {
     [super setUp];
+    
+    webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
@@ -1524,16 +1526,28 @@ static NSString *pathTestFolder = @"Tests";
     dispatch_release(semaphore);
 }
 
+///-----------------------------------
+/// @name Test read shares items
+///-----------------------------------
+
+/**
+ * This test try to check if a shared folder is shared and obtain his information
+ */
 - (void) testReadShared {
+    
+    //1. create the folder and share it
+    [self testShareAFolder];
+    
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
+    //2. Check if the folder is shared
     [_sharedOCCommunication readSharedByServer:baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:pathTestFolder]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
                 isFolderShared = YES;
             }
         }
@@ -1547,17 +1561,79 @@ static NSString *pathTestFolder = @"Tests";
         dispatch_semaphore_signal(semaphore);
         
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-       
-        XCTFail(@"Error sharing folder");
+        
+        XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
         
     }];
+    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     dispatch_release(semaphore);
+}
+
+///-----------------------------------
+/// @name Test unshare items
+///-----------------------------------
+
+/**
+ * This test try unshare a item
+ */
+- (void) testUnShareAFolder {
+    
+    //1. create the folder and share it
+    [self testShareAFolder];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //2. read the folder to obtain the info of OCSharedDto
+    [_sharedOCCommunication readSharedByServer:baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+        
+        OCSharedDto *shared;
+        
+        for (OCSharedDto *current in listOfShared) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
+                shared = current;
+            }
+        }
+        
+        if (shared) {
+            
+            //3. Unshare the folder
+            [_sharedOCCommunication unShareFileOrFolderByServer:baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+                NSLog(@"File unshared");
+                dispatch_semaphore_signal(semaphore);
+                
+            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                XCTFail(@"Error unsharing folder");
+                dispatch_semaphore_signal(semaphore);
+            }];
+            
+            
+            
+        } else {
+            XCTFail(@"Folder not shared on testUnShareAFolder");
+            dispatch_semaphore_signal(semaphore);
+        }
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        
+        XCTFail(@"Error reading shares on testUnShareAFolder");
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    dispatch_release(semaphore);
+
 }
 
 
