@@ -1493,5 +1493,17 @@ static NSString *pathTestFolder = @"Tests";
     dispatch_release(semaphore);
 }
 
+///-----------------------------------
+/// @name Test the share a folder
+///-----------------------------------
+
+/**
+ * This test try to share a folder
+ */
+
+- (void) testShareAFolder {
+    
+}
+
 
 @end
