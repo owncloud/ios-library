@@ -32,6 +32,7 @@
 #import "OCFrameworkConstants.h"
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
+#import "OCXMLShareByLinkParser.h"
 
 
 
@@ -480,6 +481,38 @@
             successRequest(operation.response, sharedList, operation.redirectedServer);
         }
         
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
+- (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            NSData *response = (NSData*) responseObject;
+            OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+          
+            [parser initParserWithData:response];
+            NSString *token = parser.token;
+            
+            //We remove the \n and the empty spaces " "
+            token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+            token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+            
+            //Return success
+            successRequest(operation.response, token, operation.redirectedServer);
+        }
+
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
     }];
