@@ -33,7 +33,7 @@
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
-
+#import "OCErrorMsg.h"
 
 
 @implementation OCCommunication
@@ -509,8 +509,15 @@
             token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
             token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
             
-            //Return success
-            successRequest(operation.response, token, operation.redirectedServer);
+            if (token) {
+                //Return success
+                successRequest(operation.response, token, operation.redirectedServer);
+            } else {
+                //Token is nill so it does not exist
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                
+                failureRequest(operation.response, error);
+            }
         }
 
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {

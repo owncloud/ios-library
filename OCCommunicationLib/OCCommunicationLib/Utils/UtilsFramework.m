@@ -27,6 +27,7 @@
 #import "UtilsFramework.h"
 #import "OCCommunication.h"
 #import "OCFrameworkConstants.h"
+#import "OCErrorMsg.h"
 
 @implementation UtilsFramework
 
@@ -130,6 +131,15 @@
             [details setValue:@"You are trying to move a folder inside himself" forKey:NSLocalizedDescriptionKey];
             
             error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingFolderInsideHimself userInfo:details];
+            break;
+        }
+            
+        case kOCErrorServerPathNotFound:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"You are trying to access to a file that does not exist" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerPathNotFound userInfo:details];
             break;
         }
             
