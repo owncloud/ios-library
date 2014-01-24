@@ -38,16 +38,16 @@
 //You must enter this information of your server in order that the unit test works
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"http://10.0.1.10/owncloud/";
+static NSString *baseUrl = @"";
 //Server with webdav url
 NSString *webdavBaseUrl = @"";
 //Your user
-static NSString *user = @"javi"; //@"username";
+static NSString *user = @""; //@"username";
 //Your password
-static NSString *password = @"javi"; //@"password";
+static NSString *password = @""; //@"password";
 
 //Optional. You can change the folder of tests.
-static NSString *pathTestFolder = @"Tests";
+static NSString *pathTestFolder = @"";
 
 
 
