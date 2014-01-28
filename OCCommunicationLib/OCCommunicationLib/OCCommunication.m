@@ -472,7 +472,7 @@
             NSData *response = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:response];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
@@ -500,10 +500,13 @@
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
-            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
-          
+        
+            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
             [parser initParserWithData:response];
+        
             
             switch (parser.statusCode) {
                 case kOCErrorServerUnauthorized:
@@ -592,8 +595,8 @@
     
     NSArray *operationArray = [_networkOperationsQueue operations];
     
-    NSLog(@"operations array has: %d operations", operationArray.count);
-    NSLog(@"current operation description: %@", operation.description);
+    //NSLog(@"operations array has: %d operations", operationArray.count);
+    //NSLog(@"current operation description: %@", operation.description);
     
     OCHTTPRequestOperation *lastOperationDownload;
     OCHTTPRequestOperation *lastOperationUpload;
@@ -661,7 +664,7 @@
     NSArray *cookies = [cookieStorage cookiesForURL:url];
     for (NSHTTPCookie *cookie in cookies)
     {
-        NSLog(@"Delete cookie");
+        //NSLog(@"Delete cookie");
         [cookieStorage deleteCookie:cookie];
     }
 }

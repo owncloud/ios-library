@@ -49,7 +49,7 @@
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
     
-    NSLog(@"elementName: %@:%@", elementName,_xmlChars);
+    //NSLog(@"elementName: %@:%@", elementName,_xmlChars);
     
     if ([elementName isEqualToString:@"statuscode"]) {
         _statusCode = [_xmlChars intValue];
@@ -66,7 +66,7 @@
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
-    NSLog(@"Finish xml directory list parse");
+    //NSLog(@"Finish xml directory list parse");
 }
 
 @end
