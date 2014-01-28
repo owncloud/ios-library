@@ -500,23 +500,54 @@
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
+            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
           
             [parser initParserWithData:response];
-            NSString *token = parser.token;
             
-            //We remove the \n and the empty spaces " "
-            token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-            
-            if (token) {
-                //Return success
-                successRequest(operation.response, token, operation.redirectedServer);
-            } else {
-                //Token is nill so it does not exist
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
-                
-                failureRequest(operation.response, error);
+            switch (parser.statusCode) {
+                case kOCErrorServerUnauthorized:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerForbidden:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerPathNotFound:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                default:
+                {
+                    
+                    NSString *token = parser.token;
+                    
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
+                    if (token) {
+                        //Return success
+                        successRequest(operation.response, token, operation.redirectedServer);
+                    } else {
+                        //Token is nill so it does not exist
+                        NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                        
+                        failureRequest(operation.response, error);
+                    }
+                    
+                    break;
+                }
             }
         }
 
