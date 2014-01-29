@@ -33,7 +33,7 @@
 #import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
-
+#import "OCErrorMsg.h"
 
 
 @implementation OCCommunication
@@ -472,7 +472,7 @@
             NSData *response = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:response];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
@@ -500,19 +500,84 @@
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
+            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
-          
+        
+            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
             [parser initParserWithData:response];
-            NSString *token = parser.token;
+        
             
-            //We remove the \n and the empty spaces " "
-            token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-            
-            //Return success
-            successRequest(operation.response, token, operation.redirectedServer);
+            switch (parser.statusCode) {
+                case kOCErrorServerUnauthorized:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerForbidden:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerPathNotFound:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                default:
+                {
+                    
+                    NSString *token = parser.token;
+                    
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
+                    if (token) {
+                        //Return success
+                        successRequest(operation.response, token, operation.redirectedServer);
+                    } else {
+                        //Token is nill so it does not exist
+                        NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                        
+                        failureRequest(operation.response, error);
+                    }
+                    
+                    break;
+                }
+            }
         }
 
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
+- (void) unShareFileOrFolderByServer: (NSString *) serverPath andIdRemoteShared: (int) idRemoteSared
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request unShareFileOrFolderByServer:serverPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            
+            //Return success
+            successRequest(operation.response, operation.redirectedServer);
+        }
+        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
     }];
@@ -530,8 +595,8 @@
     
     NSArray *operationArray = [_networkOperationsQueue operations];
     
-    NSLog(@"operations array has: %d operations", operationArray.count);
-    NSLog(@"current operation description: %@", operation.description);
+    //NSLog(@"operations array has: %d operations", operationArray.count);
+    //NSLog(@"current operation description: %@", operation.description);
     
     OCHTTPRequestOperation *lastOperationDownload;
     OCHTTPRequestOperation *lastOperationUpload;
@@ -599,7 +664,7 @@
     NSArray *cookies = [cookieStorage cookiesForURL:url];
     for (NSHTTPCookie *cookie in cookies)
     {
-        NSLog(@"Delete cookie");
+        //NSLog(@"Delete cookie");
         [cookieStorage deleteCookie:cookie];
     }
 }

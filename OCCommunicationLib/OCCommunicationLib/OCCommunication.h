@@ -364,10 +364,42 @@ typedef enum {
           successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
+///-----------------------------------
+/// @name shareFileOrFolderByServer
+///-----------------------------------
+
+/**
+ * Method to share a file or folder
+ *
+ * @param serverPath -> NSString server path
+ * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ *
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+
+///-----------------------------------
+/// @name unShareFileOrFolderByServer
+///-----------------------------------
+
+/**
+ * Method to share a file or folder
+ *
+ * @param serverPath -> NSString server path
+ * @param idRemoteSared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ */
+- (void) unShareFileOrFolderByServer: (NSString *) serverPath andIdRemoteShared: (int) idRemoteSared
+                     onCommunication:(OCCommunication *)sharedOCCommunication
+                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
 #pragma mark - Queue system
 /*

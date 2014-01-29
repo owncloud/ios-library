@@ -15,9 +15,11 @@
     NSString *token;
     BOOL isNotFirstFileOfList;
     
+    
 }
 
-@property(nonatomic,strong) NSString *token;
+@property (nonatomic, strong) NSString *token;
+@property int statusCode;
 
 - (void)initParserWithData: (NSData*)data;
 
