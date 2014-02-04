@@ -128,7 +128,12 @@
         
     } else if ([elementName isEqualToString:@"path"]) {
     
-        _currentShared.path = _xmlChars;
+        if (_currentShared.isDirectory) {
+            _currentShared.path = [_xmlChars stringByAppendingString:@"/"];
+        } else {
+            _currentShared.path = _xmlChars;
+        }
+        
     
     } else if ([elementName isEqualToString:@"permissions"]) {
         
