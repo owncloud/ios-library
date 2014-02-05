@@ -42,7 +42,31 @@
              willSendRequest: (NSURLRequest *)requestRed
             redirectResponse: (NSURLResponse *)redirectResponse;
 {
+    
+    //If there is a redireccion
     if (redirectResponse) {
+        NSLog(@"redirecction");
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) redirectResponse;
+        int statusCode = [httpResponse statusCode];
+        NSLog(@"HTTP status %d", statusCode);
+        
+        if (k_redirected_code == statusCode || k_other_redirected_code == statusCode || statusCode == 301) {
+            //We get all the headers in order to obtain the Location
+            NSHTTPURLResponse *hr = (NSHTTPURLResponse*)redirectResponse;
+            NSDictionary *dict = [hr allHeaderFields];
+            
+            //Server path of redirected server
+            NSString *responseURLString = [dict objectForKey:@"Location"];
+            
+            [self.request setURL: [NSURL URLWithString:responseURLString]];
+            
+            return self.request;
+        }
+    }
+    
+    return requestRed;
+    
+    /*if (redirectResponse) {
         
         NSLog(@"redirecction");
         
@@ -77,7 +101,7 @@
     } else {
         //NSLog(@"no redirection");
         return requestRed;
-    }
+    }*/
 }
 
 
