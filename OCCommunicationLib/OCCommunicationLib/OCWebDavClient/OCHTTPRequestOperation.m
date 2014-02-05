@@ -25,6 +25,8 @@
 
 
 #import "OCHTTPRequestOperation.h"
+#import "OCChunkInputStream.h"
+#import "OCFrameworkConstants.h"
 
 #define k_redirected_code 302
 #define k_other_redirected_code 307
@@ -60,9 +62,19 @@
             
             [self.request setURL: [NSURL URLWithString:responseURLString]];
             
+            if (_localSource) {
+                //Only for uploads without chunks
+                [self.request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:_localSource]];
+            }
+            if (_chunkInputStream) {
+                //Only for uploads with chunks
+                [self.request setHTTPBodyStream:_chunkInputStream];
+            }
+            
             return self.request;
         }
     }
+
     
     return requestRed;
     

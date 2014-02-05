@@ -266,11 +266,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setHTTPShouldHandleCookies:NO];
+    [request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
     //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
-    
-    [operation setInputStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
+    operation.localSource = localSource;
     
     [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
@@ -297,7 +297,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return operation;
 }
 
-- (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream andInputStreamForRedirection:(OCChunkInputStream *) chunkInputStreamForRedirection atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
     [request setTimeoutInterval:k_timeout_upload];
@@ -306,8 +306,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPShouldHandleCookies:NO];
     [request addValue:@"1" forHTTPHeaderField:@"oc-chunked"];
     [request setHTTPBodyStream:chunkInputStream];
+    //[request setHTTPBody:data];
     
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    operation.chunkInputStream = chunkInputStreamForRedirection;
     
     [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error

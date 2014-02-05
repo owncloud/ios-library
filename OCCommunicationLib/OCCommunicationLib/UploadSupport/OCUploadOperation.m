@@ -79,13 +79,17 @@
         NSArray *listOfChunksDto = [self prepareChunksByFile:localFilePath andRemoteFilePath:remoteFilePath];
         
         NSInputStream *input = [NSInputStream inputStreamWithFileAtPath:localFilePath];
+        NSInputStream *inputForRedirection = [NSInputStream inputStreamWithFileAtPath:localFilePath];
+        
+        //We create two different InputStream for the same because if we work with a redirected server the redirection happens after begin to read the inputStream
         OCChunkInputStream *chunkInputStream = [[OCChunkInputStream alloc]initWithInputStream:input andBytesToRead:totalBytesExpectedToWrote];
+        OCChunkInputStream *chunkInputStreamForRedirection = [[OCChunkInputStream alloc]initWithInputStream:inputForRedirection andBytesToRead:totalBytesExpectedToWrote];
         
         for (OCChunkDto *currentChunkDto in listOfChunksDto) {
-            
+          
             NSLog(@"Creating chunks operation %d of %d", ([listOfChunksDto indexOfObject:currentChunkDto]+1),[listOfChunksDto count]);
             
-            [_listOfOperationsToUploadAFile addObject: [request putChunk:currentChunkDto fromInputStream:chunkInputStream atRemotePath:currentChunkDto.remotePath onCommunication:sharedOCCommunication
+            [_listOfOperationsToUploadAFile addObject: [request putChunk:currentChunkDto fromInputStream:chunkInputStream andInputStreamForRedirection:chunkInputStreamForRedirection atRemotePath:currentChunkDto.remotePath onCommunication:sharedOCCommunication
             progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
                 
                 totalBytesWrote = (_chunkPositionUploading * k_lenght_chunk) + totalBytesWrote;
