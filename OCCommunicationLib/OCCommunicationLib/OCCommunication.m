@@ -173,6 +173,7 @@
     } else {
         
         source = [source encodeString:NSUTF8StringEncoding];
+        destiny = [destiny encodeString:NSUTF8StringEncoding];
         
         OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
         request = [self getRequestWithCredentials:request];
