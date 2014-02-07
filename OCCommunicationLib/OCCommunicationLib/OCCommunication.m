@@ -173,6 +173,7 @@
     } else {
         
         source = [source encodeString:NSUTF8StringEncoding];
+        destiny = [destiny encodeString:NSUTF8StringEncoding];
         
         OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
         request = [self getRequestWithCredentials:request];
@@ -472,7 +473,7 @@
             NSData *response = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:response];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];

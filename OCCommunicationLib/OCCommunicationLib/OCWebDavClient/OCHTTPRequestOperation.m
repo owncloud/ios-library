@@ -25,9 +25,12 @@
 
 
 #import "OCHTTPRequestOperation.h"
+#import "OCChunkInputStream.h"
+#import "OCFrameworkConstants.h"
 
-#define k_redirected_code 302
-#define k_other_redirected_code 307
+#define k_redirected_code_1 301
+#define k_redirected_code_2 302
+#define k_redirected_code_3 307
 
 @interface OCHTTPRequestOperation ()
 @property (readwrite, nonatomic, strong) NSMutableURLRequest *request;
@@ -42,42 +45,44 @@
              willSendRequest: (NSURLRequest *)requestRed
             redirectResponse: (NSURLResponse *)redirectResponse;
 {
+    
+    //If there is a redireccion
     if (redirectResponse) {
-        
         NSLog(@"redirecction");
-        
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) redirectResponse;
         int statusCode = [httpResponse statusCode];
         NSLog(@"HTTP status %d", statusCode);
         
-        if (k_redirected_code == 302 || k_other_redirected_code == 307) {
+        if (k_redirected_code_1 == statusCode || k_redirected_code_2 == statusCode || k_redirected_code_3 == statusCode) {
+            //We get all the headers in order to obtain the Location
+            NSHTTPURLResponse *hr = (NSHTTPURLResponse*)redirectResponse;
+            NSDictionary *dict = [hr allHeaderFields];
             
-            //URL of redirected server
-            NSString *responseURLString = redirectResponse.URL.absoluteString;
-            NSLog(@"Response url is: %@", responseURLString);
-            NSLog(@"Request url is: %@", requestRed.URL.absoluteString);
-            
-            //we stores the redirection of the response
-            _redirectedServer = redirectResponse.URL.absoluteString;
+            //Server path of redirected server
+            NSString *responseURLString = [dict objectForKey:@"Location"];
             
             //For uploads we store the redirections of the request
             if (_typeOfOperation == UploadQueue) {
                 _redirectedServer = requestRed.URL.absoluteString;
-                
-                //Cancel the upload
-                
-                //[self cancel];
             }
+            
+            [self.request setURL: [NSURL URLWithString:responseURLString]];
+            
+            if (_localSource) {
+                //Only for uploads without chunks
+                [self.request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:_localSource]];
+            }
+            if (_chunkInputStream) {
+                //Only for uploads with chunks
+                [self.request setHTTPBodyStream:_chunkInputStream];
+            }
+            
+            return self.request;
         }
-        
-        [self.request setURL: [requestRed URL]];
-        
-        return self.request;
-        
-    } else {
-        //NSLog(@"no redirection");
-        return requestRed;
     }
+
+    
+    return requestRed;
 }
 
 
