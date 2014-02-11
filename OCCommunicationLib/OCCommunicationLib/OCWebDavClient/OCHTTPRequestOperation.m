@@ -77,10 +77,12 @@
                 [self.request setHTTPBodyStream:_chunkInputStream];
             }
             
+            self.redirectedServer = redirectResponse.URL.absoluteString;
+            
             return self.request;
         }
     }
-
+    
     
     return requestRed;
 }
