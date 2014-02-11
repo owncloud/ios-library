@@ -15,7 +15,7 @@
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
 		EA7CC8AA183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8AC183E11E600B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8AB183E11E600B6A4B4 /* UIKit.framework */; };
-		EA7CC8AF183E11E600B6A4B4 /* libOCCommunicationLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC897183E11E600B6A4B4 /* libOCCommunicationLib.a */; };
+		EA7CC8AF183E11E600B6A4B4 /* libownCloud iOS library.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC897183E11E600B6A4B4 /* libownCloud iOS library.a */; };
 		EA7CC8B5183E11E600B6A4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC8B3183E11E600B6A4B4 /* InfoPlist.strings */; };
 		EA7CC8B7183E11E600B6A4B4 /* OCCommunicationLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8B6183E11E600B6A4B4 /* OCCommunicationLibTests.m */; };
 		EA7CC8FD183E13C400B6A4B4 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8EB183E13C400B6A4B4 /* AFHTTPClient.m */; };
@@ -94,13 +94,13 @@
 		13AA8635187C211900A10927 /* OCSharedDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCSharedDto.m; sourceTree = "<group>"; };
 		13AA863E187C3B9700A10927 /* OCXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLParser.h; path = OCWebDavClient/Parsers/OCXMLParser.h; sourceTree = "<group>"; };
 		13AA863F187C3B9700A10927 /* OCXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCXMLParser.m; path = OCWebDavClient/Parsers/OCXMLParser.m; sourceTree = "<group>"; };
-		EA7CC897183E11E600B6A4B4 /* libOCCommunicationLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOCCommunicationLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA7CC897183E11E600B6A4B4 /* libownCloud iOS library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libownCloud iOS library.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC89A183E11E600B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		EA7CC89E183E11E600B6A4B4 /* OCCommunicationLib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OCCommunicationLib-Prefix.pch"; sourceTree = "<group>"; };
-		EA7CC8A7183E11E600B6A4B4 /* OCCommunicationLibTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OCCommunicationLibTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA7CC89E183E11E600B6A4B4 /* ownCloud iOS library-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ownCloud iOS library-Prefix.pch"; sourceTree = "<group>"; };
+		EA7CC8A7183E11E600B6A4B4 /* ownCloud iOS libraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ownCloud iOS libraryTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EA7CC8AB183E11E600B6A4B4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		EA7CC8B2183E11E600B6A4B4 /* OCCommunicationLibTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OCCommunicationLibTests-Info.plist"; sourceTree = "<group>"; };
+		EA7CC8B2183E11E600B6A4B4 /* ownCloud iOS libraryTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ownCloud iOS libraryTests-Info.plist"; sourceTree = "<group>"; };
 		EA7CC8B4183E11E600B6A4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EA7CC8B6183E11E600B6A4B4 /* OCCommunicationLibTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCCommunicationLibTests.m; sourceTree = "<group>"; };
 		EA7CC8EA183E13C400B6A4B4 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFHTTPClient.h; path = ExternalLibs/AFNetworking/AFHTTPClient.h; sourceTree = "<group>"; };
@@ -166,7 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EAABAB3C185EE33B00909831 /* UIKit.framework in Frameworks */,
-				EA7CC8AF183E11E600B6A4B4 /* libOCCommunicationLib.a in Frameworks */,
+				EA7CC8AF183E11E600B6A4B4 /* libownCloud iOS library.a in Frameworks */,
 				EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */,
 				EA7CC8AC183E11E600B6A4B4 /* UIKit.framework in Frameworks */,
 				EA7CC8AA183E11E600B6A4B4 /* Foundation.framework in Frameworks */,
@@ -202,8 +202,8 @@
 		EA7CC898183E11E600B6A4B4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EA7CC897183E11E600B6A4B4 /* libOCCommunicationLib.a */,
-				EA7CC8A7183E11E600B6A4B4 /* OCCommunicationLibTests.xctest */,
+				EA7CC897183E11E600B6A4B4 /* libownCloud iOS library.a */,
+				EA7CC8A7183E11E600B6A4B4 /* ownCloud iOS libraryTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -243,7 +243,7 @@
 			children = (
 				EAABAB37185B352500909831 /* Resources */,
 				EA7CC8C0183E126B00B6A4B4 /* ExternalLibs */,
-				EA7CC89E183E11E600B6A4B4 /* OCCommunicationLib-Prefix.pch */,
+				EA7CC89E183E11E600B6A4B4 /* ownCloud iOS library-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -261,7 +261,7 @@
 		EA7CC8B1183E11E600B6A4B4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				EA7CC8B2183E11E600B6A4B4 /* OCCommunicationLibTests-Info.plist */,
+				EA7CC8B2183E11E600B6A4B4 /* ownCloud iOS libraryTests-Info.plist */,
 				EA7CC8B3183E11E600B6A4B4 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -353,9 +353,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EA7CC896183E11E600B6A4B4 /* OCCommunicationLib */ = {
+		EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "OCCommunicationLib" */;
+			buildConfigurationList = EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS library" */;
 			buildPhases = (
 				EA7CC893183E11E600B6A4B4 /* Sources */,
 				EA7CC894183E11E600B6A4B4 /* Frameworks */,
@@ -365,14 +365,14 @@
 			);
 			dependencies = (
 			);
-			name = OCCommunicationLib;
+			name = "ownCloud iOS library";
 			productName = OCCommunicationLib;
-			productReference = EA7CC897183E11E600B6A4B4 /* libOCCommunicationLib.a */;
+			productReference = EA7CC897183E11E600B6A4B4 /* libownCloud iOS library.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		EA7CC8A6183E11E600B6A4B4 /* OCCommunicationLibTests */ = {
+		EA7CC8A6183E11E600B6A4B4 /* ownCloud iOS libraryTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EA7CC8BD183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "OCCommunicationLibTests" */;
+			buildConfigurationList = EA7CC8BD183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS libraryTests" */;
 			buildPhases = (
 				EA7CC8A3183E11E600B6A4B4 /* Sources */,
 				EA7CC8A4183E11E600B6A4B4 /* Frameworks */,
@@ -383,9 +383,9 @@
 			dependencies = (
 				EA7CC8AE183E11E600B6A4B4 /* PBXTargetDependency */,
 			);
-			name = OCCommunicationLibTests;
+			name = "ownCloud iOS libraryTests";
 			productName = OCCommunicationLibTests;
-			productReference = EA7CC8A7183E11E600B6A4B4 /* OCCommunicationLibTests.xctest */;
+			productReference = EA7CC8A7183E11E600B6A4B4 /* ownCloud iOS libraryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -397,7 +397,7 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = ownCloud;
 			};
-			buildConfigurationList = EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "OCCommunicationLib" */;
+			buildConfigurationList = EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -409,8 +409,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EA7CC896183E11E600B6A4B4 /* OCCommunicationLib */,
-				EA7CC8A6183E11E600B6A4B4 /* OCCommunicationLibTests */,
+				EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */,
+				EA7CC8A6183E11E600B6A4B4 /* ownCloud iOS libraryTests */,
 			);
 		};
 /* End PBXProject section */
@@ -493,7 +493,7 @@
 /* Begin PBXTargetDependency section */
 		EA7CC8AE183E11E600B6A4B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EA7CC896183E11E600B6A4B4 /* OCCommunicationLib */;
+			target = EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */;
 			targetProxy = EA7CC8AD183E11E600B6A4B4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -586,11 +586,11 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DSTROOT = /tmp/OCCommunicationLib.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OCCommunicationLib/OCCommunicationLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "ownCloud iOS library";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = armv7;
 			};
@@ -602,11 +602,11 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DSTROOT = /tmp/OCCommunicationLib.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OCCommunicationLib/OCCommunicationLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "ownCloud iOS library";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = armv7;
 			};
@@ -627,9 +627,9 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "OCCommunicationLibTests/OCCommunicationLibTests-Info.plist";
+				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -645,9 +645,9 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/OCCommunicationLib-Prefix.pch";
-				INFOPLIST_FILE = "OCCommunicationLibTests/OCCommunicationLibTests-Info.plist";
+				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
@@ -655,7 +655,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "OCCommunicationLib" */ = {
+		EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EA7CC8B8183E11E600B6A4B4 /* Debug */,
@@ -664,7 +664,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "OCCommunicationLib" */ = {
+		EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EA7CC8BB183E11E600B6A4B4 /* Debug */,
@@ -673,7 +673,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EA7CC8BD183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "OCCommunicationLibTests" */ = {
+		EA7CC8BD183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS libraryTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EA7CC8BE183E11E600B6A4B4 /* Debug */,
