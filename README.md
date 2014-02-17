@@ -1,12 +1,13 @@
-# ownCloud WebDav Library for iOS v1.0
+
+# ownCloud iOS Library v 0.9
 
 ### Introduction
-Using ownCloud WebDav library for iOS it will be the easiest way to communicate with ownCloud servers.
+Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
 Add this library in your project and integrate your application with ownCloud seamlessly.
 
 ### Install Library
 #### 2.1. Information how to get the library
-Get this code and compile with Xcode 5. In the repository it is not only the library project “OCCommunicationLib” but also the example project “OCLibraryExample”. Thanks to the “OCLibraryExample” you will learn how to use the library.
+Get this code and compile with Xcode 5. In the repository it is not only the library project “ownCloud iOS library” but also the example project “OCLibraryExample”. Thanks to the “OCLibraryExample” you will learn how to use the library.
 #### 2.2. Add library to your project
 There are two ways of adding this library to your code:
 
@@ -17,13 +18,13 @@ Method 2. Include the library project as a Subproject.
 Choosing one method or the other one just depends on your own preferences as well as whether you have the source code and the project file of the static library at your disposal.
 
 #####Method 1: Header and library binary files
-__Step 1__.  Compile the OCCommunicationLib and run the project, the libOCConmmunicationLib.a will be generated. 
+__Step 1__.  Compile the "ownCloud iOS library" and run the project, the libownCloudiOS.a will be generated. 
 
 You need these files: 
 
 __Library File__
 
-* libOCComunicationLibrary.a (Library) 
+* libownCloudiOS.a (Library) 
 
 __Library Classes__
 
@@ -43,7 +44,7 @@ __Step 4.__  In your project target "build settings" add the flag "-Obj-C" to th
 
 #####Method 2: Subprojects
 
-__Step 1.__ Add the file OCCommunicationLib.xcodeproj to your project using drag and drop.
+__Step 1.__ Add the file "ownCloud iOS library.xcodeproj" to your project using drag and drop.
 
 
 __Step 2.__ In your project target go to "build phases" -> "Target Dependencies" and tap in "+" and select the library target.
@@ -60,9 +61,33 @@ RayWenderlich.com <http://www.raywenderlich.com/41377/creating-a-static-library-
  
 Apple.com <https://developer.apple.com/library/ios/technotes/iOSStaticLibraries/Articles/configuration.html#/apple_ref/doc/uid/TP40012554-CH3-SW2>
 
+###  Branching strategy
+
+The repository holds two main branches with an infinite lifetime:
+
+- master
+- develop 
+
+Branch __origin/master__ is considered the main branch where the source code of HEAD always reflects a production-ready state.
+
+Branch __origin/develop__ is considered the main branch where the source code of HEAD always reflects a state with the latest delivered development changes for the next release.
+
+When the source code in the develop branch reaches a stable point and is ready to be released, all of the changes should be merged back into master somehow and then tagged with a release number. 
+
+Other branches, some supporting branches are used to aid parallel development between team members, ease tracking of features, prepare for production releases and to assist in quickly fixing live production problems. Unlike the main branches, these branches always have a limited life time, since they will be removed eventually.
+
+The different types of branches we may use are:
+
+- Branch __perNewFeature__    
+- Branch  __releaseBranches__
+
+Both of them branch off from develop and must merge back into develo branch through a Pull Request in Github. Once the PR is approved and merged, the US branch may be deleted
+
+Source: http://nvie.com/posts/a-successful-git-branching-model  
+
 ###  License
 
-ownCloud webDAV Library for iOS is available under the MIT License. 
+ownCloud iOS library is available under the MIT License. 
  
 Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
 
@@ -81,16 +106,16 @@ THE SOFTWARE.
 
 #### Third part libraries
 
-ownCloud webDAV library for iOS uses AFNetworking version 1.3.0 which is not the latest one. AFNetworking is available under the MIT license. 
+ownCloud iOS library uses AFNetworking version 1.3.0 which is not the latest one. AFNetworking is available under the MIT license. 
 
-ownCloud webDAV library for iOS uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes under the MIT license.
+ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes under the MIT license.
 
 
 ### Compatibility
 
-ownCloud webDAV library for iOS supports both iOS 6 and iOS 7 and works in Xcode 5.
+ownCloud iOS library supports both iOS 6 and iOS 7 and works in Xcode 5.
 
-ownCloud webDAV library supports ownCloud server from version 4.5.
+ownCloud iOS library supports ownCloud server from version 4.5.
 
 
 

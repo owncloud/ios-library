@@ -111,21 +111,21 @@ typedef enum {
 /**
  * Method to create a folder giving the full address where we want put the folder
  *
- * @param pathOfNewFolder -> NSString with the url where we want put the folder.
+ * @param path -> NSString with the url where we want put the folder.
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  *
- * @warning the "pathOfNewFolder" must not be on URL Encoding.
+ * @warning the "path" must not be on URL Encoding.
  * Ex:
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Pop Music/
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Pop%20Music/
  *
  * @warning the folder name must not contain the next forbidden characers: "\", "/","<",">",":",""","|","?","*"
  */
-- (void) createFolder: (NSString *) pathOfNewFolder
+- (void) createFolder: (NSString *) path
       onCommunication:(OCCommunication *)sharedOCCommunication
        successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest
@@ -140,38 +140,38 @@ typedef enum {
  * Method to move or rename a file/folder
  *
  * MOVE
- * @param source -> NSString with the url of the file or folder that you want move
+ * @param sourcePath -> NSString with the url of the file or folder that you want move
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
- * @param toPath -> NSString with the new url where we cant move the file or folder
+ * @param destinyPath -> NSString with the new url where we cant move the file or folder
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/Music
  *
  * RENAME
- * @param source -> NSString with the url of the file or folder that you want move
+ * @param sourcePath -> NSString with the url of the file or folder that you want move
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
- * @param toPath -> NSString with the new url where we cant move the file or folder
+ * @param destinyPath -> NSString with the new url where we cant move the file or folder
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Movies
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @warning the move will overwritte an existing file on the destiny. To prevent it we recommend to use //TODO: finish this comment after make propfind method
+ * @warning the move will overwritte an existing file on the destiny.
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  *
- * @warning the "source" and "path" must not be on URL Encoding.
+ * @warning the "sourcePath" and "destinyPath" must not be on URL Encoding.
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/Music
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/Music
  *
- * @warning: to move a folder the "source" and "path" must end on "/" character
+ * @warning: to move a folder the "sourcePath" and "destinyPath" must end on "/" character
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music/
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
- * @warning: to move a file the "source" and "path" must not end on "/" character
+ * @warning: to move a file the "sourcePath" and "destinyPath" must not end on "/" character
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music.mp3
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music.mp3/
  */
 
-- (void) moveFileOrFolder:(NSString *)source
-                toDestiny:(NSString *)destiny
+- (void) moveFileOrFolder:(NSString *)sourcePath
+                toDestiny:(NSString *)destinyPath
           onCommunication:(OCCommunication *)sharedOCCommunication
            successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
            failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest
@@ -186,19 +186,19 @@ typedef enum {
 /**
  * Block to get the list of files/folders for a path
  *
- * @param remotePath -> NSString with the url of the path
+ * @param path -> NSString with the url of the path
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @warning the "source" and "remotePath" must not be on URL Encoding.
+ * @warning the "path" must not be on URL Encoding.
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/Music
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/Music
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) readFolder: (NSString *) remotePath
+- (void) readFolder: (NSString *) path
     onCommunication:(OCCommunication *)sharedOCCommunication
      successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
@@ -212,17 +212,17 @@ typedef enum {
 /**
  * Block to get the unique file/folder of a path. Used to get the properties of the file.
  *
- * @param remotePath -> NSString with the url of the path
+ * @param path -> NSString with the url of the path
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @warning the "remotePath" must not be on URL Encoding.
+ * @warning the "path" must not be on URL Encoding.
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/Music
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/Music
  *
  */
-- (void) readFile: (NSString *) remotePath
+- (void) readFile: (NSString *) path
   onCommunication:(OCCommunication *)sharedOCCommunication
    successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
@@ -235,19 +235,19 @@ typedef enum {
 /**
  * This method delete a file or a folder
  *
- * @param patToDelete -> NSString with the url of the file or the folder that the user want to delete
+ * @param path -> NSString with the url of the file or the folder that the user want to delete
  * Ex:http://www.myowncloudserver.com/owncloud/remote.php/webdav/Folder
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @warning the "pathToDelete" must not be on URL Encoding.
+ * @warning the "path" must not be on URL Encoding.
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/Music
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/Music
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  *
  */
-- (void) deleteFileOrFolder:(NSString *)pathToDelete
+- (void) deleteFileOrFolder:(NSString *)path
             onCommunication:(OCCommunication *)sharedOCCommunication
              successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
               failureRquest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest;
@@ -266,10 +266,10 @@ typedef enum {
  * shouldExectuteAsBackgroundTaskWithExpirationHandler: called when the system is in background and the file are downloading and the system will close the process
  * We normally cancel the download in this case
  *
- * @param remoteFilePath -> NSString with the url of the file that the user want to download
+ * @param remotePath -> NSString with the url of the file that the user want to download
  * Ex:http://www.myowncloudserver.com/owncloud/remote.php/webdav/Folder/image.jpg
  *
- * @param localFilePath -> NSString with the system path where the user want to store the file
+ * @param localPath -> NSString with the system path where the user want to store the file
  * Ex: /Users/userName/Library/Application Support/iPhone Simulator/7.0.3/Applications/35E6FC65-5492-427B-B6ED-EA9E25633508/Documents/Test Download/image.png
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -277,14 +277,14 @@ typedef enum {
  * @return NSOperation -> You can cancel the download using this object.
  * Ex: [operation cancel]
  *
- * @warning the "remoteFilePath" and "localFilePath" must not be on URL Encoding.
+ * @warning the "remotePath" and "localFilePath" must not be on URL Encoding.
  * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/image.jpg
  * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/image.jpg
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  */
 
-- (NSOperation *) downloadFile:(NSString *)remoteFilePath toDestiny:(NSString *)localFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 ///-----------------------------------
@@ -294,8 +294,8 @@ typedef enum {
 /**
  * Method to upload a file. All the files will be upload one by one in a queue.
  *
- * @param NSString -> localFilePath the path where is the file that we want upload
- * @param NSString -> remoteFilePath the path where we want upload the file
+ * @param NSString -> localPath the path where is the file that we want upload
+ * @param NSString -> remotePath the path where we want upload the file
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return NSOperation -> You can cancel the upload using this object
@@ -305,7 +305,7 @@ typedef enum {
  *
  */
 
-- (NSOperation *) uploadFile:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 #pragma mark - OC API Calls
@@ -342,7 +342,7 @@ typedef enum {
  * @return BOOL in the success about the support
  *
  */
-- (void) hasServerShareSupport:(NSString*) serverPath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                 successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure;
 
@@ -353,13 +353,13 @@ typedef enum {
 /**
  * Method to return all the files and folders shareds on the server by the current user
  *
- * @param serverPath -> NSString server path
+ * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return NSArray with all the OCSharedDto of shareds files
  *
  */
-- (void) readSharedByServer: (NSString *) serverPath
+- (void) readSharedByServer: (NSString *) path
          onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
@@ -410,12 +410,12 @@ typedef enum {
 /**
  * Method to share a file or folder
  *
- * @param serverPath -> NSString server path
+ * @param path -> NSString server path
  * @param idRemoteSared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) unShareFileOrFolderByServer: (NSString *) serverPath andIdRemoteShared: (int) idRemoteSared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
