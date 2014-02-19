@@ -62,9 +62,9 @@
             NSString *responseURLString = [dict objectForKey:@"Location"];
             
             //For uploads we store the redirections of the request
-            if (_typeOfOperation == UploadQueue) {
-                _redirectedServer = requestRed.URL.absoluteString;
-            }
+//            if (_typeOfOperation == UploadQueue) {
+//                _redirectedServer = requestRed.URL.absoluteString;
+//            }
             
             [self.request setURL: [NSURL URLWithString:responseURLString]];
             
@@ -77,8 +77,7 @@
                 [self.request setHTTPBodyStream:_chunkInputStream];
             }
             
-            self.redirectedServer = redirectResponse.URL.absoluteString;
-            
+            _redirectedServer = redirectResponse.URL.absoluteString;
             return self.request;
         }
     }
