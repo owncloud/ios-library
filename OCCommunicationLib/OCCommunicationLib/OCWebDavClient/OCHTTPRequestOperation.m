@@ -75,7 +75,10 @@
             
             //For uploads we store the redirections of the request
             if (_typeOfOperation == UploadQueue) {
-                _redirectedServer = requestRed.URL.absoluteString;
+                //We only need the first redirecttion for SAML
+                if (!_redirectedServer) {
+                    _redirectedServer = requestRed.URL.absoluteString;
+                }
             } else {
                 _redirectedServer = redirectResponse.URL.absoluteString;
             }
