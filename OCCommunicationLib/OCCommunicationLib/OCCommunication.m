@@ -273,7 +273,7 @@
 /// @name Upload File
 ///-----------------------------------
 
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -281,8 +281,8 @@
     
     [operation createOperationWith:localPath toDestiny:remotePath onCommunication:sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-    } successRequest:^(NSHTTPURLResponse *response) {
-        successRequest(response);
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        successRequest(response, redirectedServer);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
         failureRequest(response, redirectedServer, error);
     } failureBeforeRequest:^(NSError *error) {
