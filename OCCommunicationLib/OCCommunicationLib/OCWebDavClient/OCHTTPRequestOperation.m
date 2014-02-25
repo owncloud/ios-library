@@ -61,10 +61,6 @@
             //Server path of redirected server
             NSString *responseURLString = [dict objectForKey:@"Location"];
             
-            //For uploads we store the redirections of the request
-            if (_typeOfOperation == UploadQueue) {
-                _redirectedServer = requestRed.URL.absoluteString;
-            }
             
             [self.request setURL: [NSURL URLWithString:responseURLString]];
             
@@ -77,10 +73,20 @@
                 [self.request setHTTPBodyStream:_chunkInputStream];
             }
             
+            //For uploads we store the redirections of the request
+            if (_typeOfOperation == UploadQueue) {
+                //We only need the first redirecttion for SAML
+                if (!_redirectedServer) {
+                    _redirectedServer = requestRed.URL.absoluteString;
+                }
+            } else {
+                _redirectedServer = redirectResponse.URL.absoluteString;
+            }
+            
             return self.request;
         }
     }
-
+    
     
     return requestRed;
 }
