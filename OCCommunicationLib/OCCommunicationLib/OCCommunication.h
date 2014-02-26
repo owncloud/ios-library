@@ -420,6 +420,23 @@ typedef enum {
                       successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
+///-----------------------------------
+/// @name isShareFileOrFolderByServer
+///-----------------------------------
+
+/**
+ * Method to know if a share item still shared
+ *
+ * @param path -> NSString server path
+ * @param idRemoteSared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ */
+- (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+                     onCommunication:(OCCommunication *)sharedOCCommunication
+                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *, BOOL)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+
 #pragma mark - Queue system
 /*
  * Method that add an operation to the appropiate queue

@@ -611,6 +611,42 @@
     }];
 }
 
+- (void) isShareFileOrFolderByServer:(NSString *)path andIdRemoteShared:(int)idRemoteSared onCommunication:(OCCommunication *)sharedOCCommunication successRequest:(void (^)(NSHTTPURLResponse *, NSString *, BOOL))successRequest failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest {
+    
+    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path stringByAppendingString:k_url_acces_shared_api];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+        
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            BOOL isShared = NO;
+            
+            if ([sharedList count] > 0) {
+                isShared = YES;
+            }
+            
+            
+            //Return success
+            successRequest(operation.response, operation.redirectedServer, isShared);
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
 #pragma mark - Queue System
 
 /*
