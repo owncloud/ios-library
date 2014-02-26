@@ -365,6 +365,25 @@ typedef enum {
           failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
 
 ///-----------------------------------
+/// @name readSharedByServer
+///-----------------------------------
+
+/**
+ * Method to return the files and folders shareds on a concrete path by the current user
+ *
+ * @param serverPath -> NSString server path
+ * @param path -> Path of the folder that we want to know that shareds that contain
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return NSArray with all the OCSharedDto of shareds files
+ *
+ */
+- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
+            onCommunication:(OCCommunication *)sharedOCCommunication
+             successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+
+///-----------------------------------
 /// @name shareFileOrFolderByServer
 ///-----------------------------------
 

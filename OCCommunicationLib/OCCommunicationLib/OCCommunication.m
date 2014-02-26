@@ -487,6 +487,33 @@
     }];
 }
 
+- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
+            onCommunication:(OCCommunication *)sharedOCCommunication
+             successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            //Return success
+            successRequest(operation.response, sharedList, operation.redirectedServer);
+        }
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
