@@ -587,14 +587,14 @@
     }];
 }
 
-- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
     
     path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
-    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -604,6 +604,42 @@
             
             //Return success
             successRequest(operation.response, operation.redirectedServer);
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
+- (void) isShareFileOrFolderByServer:(NSString *)path andIdRemoteShared:(int)idRemoteShared onCommunication:(OCCommunication *)sharedOCCommunication successRequest:(void (^)(NSHTTPURLResponse *, NSString *, BOOL))successRequest failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest {
+    
+    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path stringByAppendingString:k_url_acces_shared_api];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+        
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            BOOL isShared = NO;
+            
+            if ([sharedList count] > 0) {
+                isShared = YES;
+            }
+            
+            
+            //Return success
+            successRequest(operation.response, operation.redirectedServer, isShared);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {

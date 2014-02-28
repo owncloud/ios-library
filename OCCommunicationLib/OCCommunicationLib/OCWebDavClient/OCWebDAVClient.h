@@ -303,4 +303,21 @@ extern NSString *OCWebDAVModificationDateKey;
                     onCommunication:(OCCommunication *)sharedOCCommunication
                             success:(void(^)(OCHTTPRequestOperation *, id))success
                             failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
+///-----------------------------------
+/// @name isShareFileOrFolderByServer
+///-----------------------------------
+
+/**
+ * Method to know if a share item still shared
+ *
+ * @param serverPath -> NSString: Server path with the id of the file or folder that we want know if is shared Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares/44
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ */
+- (void)isShareFileOrFolderByServer:(NSString *)serverPath
+                    onCommunication:(OCCommunication *)sharedOCCommunication
+                            success:(void(^)(OCHTTPRequestOperation *, id))success
+                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 @end
