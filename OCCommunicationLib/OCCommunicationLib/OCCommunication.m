@@ -587,14 +587,14 @@
     }];
 }
 
-- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
     
     path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
-    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -611,11 +611,11 @@
     }];
 }
 
-- (void) isShareFileOrFolderByServer:(NSString *)path andIdRemoteShared:(int)idRemoteSared onCommunication:(OCCommunication *)sharedOCCommunication successRequest:(void (^)(NSHTTPURLResponse *, NSString *, BOOL))successRequest failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest {
+- (void) isShareFileOrFolderByServer:(NSString *)path andIdRemoteShared:(int)idRemoteShared onCommunication:(OCCommunication *)sharedOCCommunication successRequest:(void (^)(NSHTTPURLResponse *, NSString *, BOOL))successRequest failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest {
     
     path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
-    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];

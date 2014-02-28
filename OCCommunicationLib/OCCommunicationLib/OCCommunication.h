@@ -411,11 +411,11 @@ typedef enum {
  * Method to share a file or folder
  *
  * @param path -> NSString server path
- * @param idRemoteSared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
+ * @param idRemoteShared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
@@ -428,11 +428,11 @@ typedef enum {
  * Method to know if a share item still shared
  *
  * @param path -> NSString server path
- * @param idRemoteSared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
+ * @param idRemoteShared -> id number of the shared. Value obtained on the idRemoteSHared of OCSharedDto
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+- (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *, NSString *, BOOL)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
