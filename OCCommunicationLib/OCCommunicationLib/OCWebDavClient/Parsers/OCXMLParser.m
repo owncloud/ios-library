@@ -80,17 +80,16 @@ NSString *OCCWebDAVURIKey           = @"uri";
 
 + (NSDate*)parseDateString:(NSString*)dateString {
     
-    
-    //Wed, 25 Jul 2012 14:40:36 GMT
-    
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"EEE, dd LLL yyyy HH:mm:ss 'GMT'"];
-    [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    NSDate *date = [dateFormat dateFromString:dateString];
-    
-    
+    NSDate *date;
+    NSError *error = nil;
+    NSDataDetector *detector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeDate error:&error];
+    NSArray *matches = [detector matchesInString:dateString options:0 range:NSMakeRange(0, [dateString length])];
+    for (NSTextCheckingResult *match in matches) {
+        date = match.date;
+        NSLog(@"Detected Date: %@", match.date);
+        NSLog(@"Detected Time Zone: %@", match.timeZone);
+    }
     return date;
-    
 }
 
 
