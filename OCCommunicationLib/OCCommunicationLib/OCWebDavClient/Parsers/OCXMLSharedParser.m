@@ -83,9 +83,11 @@
     NSDataDetector *detector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeDate error:&error];
     NSArray *matches = [detector matchesInString:dateString options:0 range:NSMakeRange(0, [dateString length])];
     for (NSTextCheckingResult *match in matches) {
-        date = match.date;
-        NSLog(@"Detected Date: %@", match.date);
-        NSLog(@"Detected Time Zone: %@", match.timeZone);
+        if (match.date) {
+            date = match.date;
+            NSLog(@"Detected Date: %@", match.date);
+            return date;
+        }
     }
     return date;
 }

@@ -79,7 +79,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
  */
 
 + (NSDate*)parseDateString:(NSString*)dateString {
-    
+    //Parse the date in all the formats
     NSDate *date;
     NSError *error = nil;
     NSDataDetector *detector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeDate error:&error];
