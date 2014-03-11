@@ -365,9 +365,9 @@
             if(error) {
                 NSLog(@"Error parsing JSON: %@", error);
             } else {
-                versionString = [jsonArray valueForKey:@"versionstring"];
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
             }
-            
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
