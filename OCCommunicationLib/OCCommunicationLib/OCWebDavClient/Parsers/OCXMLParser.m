@@ -80,38 +80,18 @@ NSString *OCCWebDAVURIKey           = @"uri";
 
 + (NSDate*)parseDateString:(NSString*)dateString {
     //Parse the date in all the formats
-    NSDate *date = nil;
+    NSDateFormatter *rfc3339TimestampFormatterWithTimeZone = [[NSDateFormatter alloc] init];
+    [rfc3339TimestampFormatterWithTimeZone setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    [rfc3339TimestampFormatterWithTimeZone setDateFormat:@"EEE, dd MMM y HH:mm:ss zzz"];
+//    [rfc3339TimestampFormatterWithTimeZone setDateStyle:NSDateFormatterMediumStyle];
+    
+    NSDate *theDate = nil;
     NSError *error = nil;
-    NSDataDetector *detector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeDate error:&error];
-    NSArray *matches = [detector matchesInString:dateString options:0 range:NSMakeRange(0, [dateString length])];
-    for (NSTextCheckingResult *match in matches) {
-        if (match.date) {
-            NSTextCheckingResult *test = [NSTextCheckingResult dateCheckingResultWithRange:NSMakeRange(0, 0) date:match.date timeZone:[NSTimeZone localTimeZone] duration:0];
-            NSLog(@"test: %@", test);
-            NSTextCheckingResult *test2 = [NSTextCheckingResult dateCheckingResultWithRange:NSMakeRange(0, 0) date:match.date];
-            NSLog(@"test: %@", test2);
-            date = match.date;
-            
-            NSLog(@"Detected Date: %@", match.date);
-//            return date;
-        }
+    if (![rfc3339TimestampFormatterWithTimeZone getObjectValue:&theDate forString:dateString range:nil error:&error]) {
+        NSLog(@"Date '%@' could not be parsed: %@", dateString, error);
     }
     
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    // this is imporant - we set our input date format to match our input string
-    // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSDate *dateFromString = [[NSDate alloc] init];
-    // voila!
-    dateFromString = [dateFormatter dateFromString:dateString];
-    
-    NSTextCheckingResult *test = [NSTextCheckingResult dateCheckingResultWithRange:NSMakeRange(0, 0) date:dateFromString timeZone:[NSTimeZone systemTimeZone] duration:0];
-    NSLog(@"test: %@", test);
-    NSTextCheckingResult *test2 = [NSTextCheckingResult dateCheckingResultWithRange:NSMakeRange(0, 0) date:dateFromString timeZone:[NSTimeZone localTimeZone] duration:0];
-    NSLog(@"test: %@", test2);
-    return date;
+    return theDate;
 }
 
 
