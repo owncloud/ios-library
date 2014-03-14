@@ -77,17 +77,17 @@ NSString *OCCWebDAVURIKey           = @"uri";
  * Util method to make a NSDate object from a string from xml
  * @dateString -> Data string from xml
  */
-
 + (NSDate*)parseDateString:(NSString*)dateString {
     //Parse the date in all the formats
-    NSDateFormatter *rfc3339TimestampFormatterWithTimeZone = [[NSDateFormatter alloc] init];
-    [rfc3339TimestampFormatterWithTimeZone setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-    [rfc3339TimestampFormatterWithTimeZone setDateFormat:@"EEE, dd MMM y HH:mm:ss zzz"];
-//    [rfc3339TimestampFormatterWithTimeZone setDateStyle:NSDateFormatterMediumStyle];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    /*In most cases the best locale to choose is "en_US_POSIX", a locale that's specifically designed to yield US English results regardless of both user and system preferences. "en_US_POSIX" is also invariant in time (if the US, at some point in the future, changes the way it formats dates, "en_US" will change to reflect the new behaviour, but "en_US_POSIX" will not). It will behave consistently for all users.*/
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    //This is the format for the concret locale used
+    [dateFormatter setDateFormat:@"EEE, dd MMM y HH:mm:ss zzz"];
     
     NSDate *theDate = nil;
     NSError *error = nil;
-    if (![rfc3339TimestampFormatterWithTimeZone getObjectValue:&theDate forString:dateString range:nil error:&error]) {
+    if (![dateFormatter getObjectValue:&theDate forString:dateString range:nil error:&error]) {
         NSLog(@"Date '%@' could not be parsed: %@", dateString, error);
     }
     
