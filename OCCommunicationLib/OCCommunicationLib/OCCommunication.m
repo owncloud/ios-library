@@ -602,12 +602,8 @@
     
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
-            
-            
-            
             NSString* newStr = [[NSString alloc] initWithData:operation.responseData encoding:NSUTF8StringEncoding];
             NSLog(@"resopnse: %@", newStr);
-            
             //Return success
             successRequest(operation.response, operation.redirectedServer);
         }
