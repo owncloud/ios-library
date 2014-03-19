@@ -602,7 +602,6 @@
     
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
-            
             //Return success
             successRequest(operation.response, operation.redirectedServer);
         }
