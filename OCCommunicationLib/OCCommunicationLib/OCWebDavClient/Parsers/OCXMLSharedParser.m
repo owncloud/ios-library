@@ -150,8 +150,13 @@
         
     } else if ([elementName isEqualToString:@"expiration"]) {
         
-        NSDate *date = [[self class] parseDateString:_xmlChars];
-        _currentShared.expirationDate = [date timeIntervalSince1970];
+        //Check expiration, is a optional field, sometimes is empty
+        if (![_xmlChars isEqualToString:@""]) {
+            NSDate *date = [[self class] parseDateString:_xmlChars];
+            _currentShared.expirationDate = [date timeIntervalSince1970];
+        }else{
+            _currentShared.expirationDate = 0.0;
+        }
         
     } else if ([elementName isEqualToString:@"token"]) {
         
