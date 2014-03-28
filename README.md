@@ -1,4 +1,4 @@
-# ownCloud iOS Library v 0.9
+# ownCloud iOS Library v 0.9.1
 
 ### Introduction
 Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
