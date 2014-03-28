@@ -273,7 +273,7 @@
 /// @name Upload File
 ///-----------------------------------
 
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -281,8 +281,8 @@
     
     [operation createOperationWith:localPath toDestiny:remotePath onCommunication:sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-    } successRequest:^(NSHTTPURLResponse *response) {
-        successRequest(response);
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        successRequest(response, redirectedServer);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
         failureRequest(response, redirectedServer, error);
     } failureBeforeRequest:^(NSError *error) {
@@ -365,14 +365,14 @@
             if(error) {
                 NSLog(@"Error parsing JSON: %@", error);
             } else {
-                versionString = [jsonArray valueForKey:@"versionstring"];
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
             }
-            
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
         
-       // NSLog(@"version string: %@", versionString);
+        // NSLog(@"version string: %@", versionString);
         
         //Split the strings - Type 5.0.13
         NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
@@ -385,71 +385,72 @@
         
         NSArray *firstVersionSupportShared = k_version_support_shared;
         
-       // NSLog(@"First version that supported Shared API: %@", firstVersionSupportShared);
+        // NSLog(@"First version that supported Shared API: %@", firstVersionSupportShared);
         //NSLog(@"Current version: %@", currentVersionArrray);
         
         //Loop of compare
         [firstVersionSupportShared enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSString *firstVersionString = obj;
-            NSString *currentVersionString = [currentVersionArrray objectAtIndex:idx];
-            
-            int firstVersionInt = [firstVersionString intValue];
-            int currentVersionInt = [currentVersionString intValue];
-            
-            //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
-            //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
-            
-            //Comparation secure
-            switch (idx) {
-                case 0:
-                    //if the first number is higher
-                    if (currentVersionInt > firstVersionInt) {
-                        hasSharedSupport = YES;
-                        *stop=YES;
-                    }
-                    //if the first number is lower
-                    if (currentVersionInt < firstVersionInt) {
-                        hasSharedSupport = NO;
-                        *stop=YES;
-                    }
-                    
-                    break;
-                    
-                case 1:
-                    //if the seccond number is higger
-                    if (currentVersionInt > firstVersionInt) {
-                        hasSharedSupport = YES;
-                        *stop=YES;
-                    }
-                    //if the second number is lower
-                    if (currentVersionInt < firstVersionInt) {
-                        hasSharedSupport = NO;
-                        *stop=YES;
-                    }
-                    break;
-                    
-                case 2:
-                    //if the third number is higger or equal
-                    if (currentVersionInt >= firstVersionInt) {
-                        hasSharedSupport = YES;
-                        *stop=YES;
-                    }else{
-                        //if the third number is lower
-                        hasSharedSupport = NO;
-                        *stop=YES;
-                    }
-                    break;
-                    
-                default:
-                    
-                    break;
+            NSString *currentVersionString;
+            if ([currentVersionArrray count] > idx) {
+                currentVersionString = [currentVersionArrray objectAtIndex:idx];
+                
+                int firstVersionInt = [firstVersionString intValue];
+                int currentVersionInt = [currentVersionString intValue];
+                
+                //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
+                //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
+                
+                //Comparation secure
+                switch (idx) {
+                    case 0:
+                        //if the first number is higher
+                        if (currentVersionInt > firstVersionInt) {
+                            hasSharedSupport = YES;
+                            *stop=YES;
+                        }
+                        //if the first number is lower
+                        if (currentVersionInt < firstVersionInt) {
+                            hasSharedSupport = NO;
+                            *stop=YES;
+                        }
+                        
+                        break;
+                        
+                    case 1:
+                        //if the seccond number is higger
+                        if (currentVersionInt > firstVersionInt) {
+                            hasSharedSupport = YES;
+                            *stop=YES;
+                        }
+                        //if the second number is lower
+                        if (currentVersionInt < firstVersionInt) {
+                            hasSharedSupport = NO;
+                            *stop=YES;
+                        }
+                        break;
+                        
+                    case 2:
+                        //if the third number is higger or equal
+                        if (currentVersionInt >= firstVersionInt) {
+                            hasSharedSupport = YES;
+                            *stop=YES;
+                        } else {
+                            //if the third number is lower
+                            hasSharedSupport = NO;
+                            *stop=YES;
+                        }
+                        break;
+                        
+                    default:
+                        break;
+                }
+            } else {
+                hasSharedSupport = NO;
+                *stop=YES;
             }
- 
             
         }];
-        
-
-        
         success(operation.response, hasSharedSupport, operation.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
@@ -482,6 +483,33 @@
             successRequest(operation.response, sharedList, operation.redirectedServer);
         }
         
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
+- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
+            onCommunication:(OCCommunication *)sharedOCCommunication
+             successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            //Return success
+            successRequest(operation.response, sharedList, operation.redirectedServer);
+        }
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
     }];
@@ -560,23 +588,58 @@
     }];
 }
 
-- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteSared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest {
     
     path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
-    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteSared]];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
-            
             //Return success
             successRequest(operation.response, operation.redirectedServer);
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
+- (void) isShareFileOrFolderByServer:(NSString *)path andIdRemoteShared:(int)idRemoteShared onCommunication:(OCCommunication *)sharedOCCommunication successRequest:(void (^)(NSHTTPURLResponse *, NSString *, BOOL))successRequest failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest {
+    
+    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path stringByAppendingString:k_url_acces_shared_api];
+    path = [path stringByAppendingString:[NSString stringWithFormat:@"/%d",idRemoteShared]];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+        
+            NSData *response = (NSData*) responseObject;
+            OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
+            
+            // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
+            [parser initParserWithData:response];
+            NSMutableArray *sharedList = [parser.shareList mutableCopy];
+            
+            BOOL isShared = NO;
+            
+            if ([sharedList count] > 0) {
+                isShared = YES;
+            }
+            
+            
+            //Return success
+            successRequest(operation.response, operation.redirectedServer, isShared);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {

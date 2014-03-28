@@ -38,4 +38,4 @@
 #define k_url_acces_shared_api @"ocs/v1.php/apps/files_sharing/api/v1/shares"
 
 //Version of the server
-#define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"13", nil]
+#define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]

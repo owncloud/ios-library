@@ -46,7 +46,7 @@
  * @param OCCommunication -> sharedOCCommunication the OCCommunication singleton that control all the communications
  *
  */
-- (void) createOperationWith:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer, NSError *)) failureRequest failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (void) createOperationWith:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer, NSError *)) failureRequest failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [sharedOCCommunication getRequestWithCredentials:request];
@@ -103,7 +103,7 @@
                 _chunkPositionUploading++;
                 if (_chunkPositionUploading == [listOfChunksDto count]) {
                     //This is the last chunk so we finish the upload.
-                    successRequest(operation.response);
+                    successRequest(operation.response, operation.redirectedServer);
                 }
 
             } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
@@ -129,7 +129,7 @@
             progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
         } success:^(OCHTTPRequestOperation *operation, id responseObject) {
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
-            successRequest(operation.response);
+            successRequest(operation.response, operation.redirectedServer);
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
             [self cancel];
