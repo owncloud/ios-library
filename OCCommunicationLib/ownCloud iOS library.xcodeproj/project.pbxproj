@@ -622,7 +622,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OCCommunicationLib/OCCommunicationLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -644,7 +644,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OCCommunicationLib/OCCommunicationLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "ownCloud iOS libraryTests";
