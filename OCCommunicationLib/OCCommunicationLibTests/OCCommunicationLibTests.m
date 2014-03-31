@@ -2,7 +2,7 @@
 //  Owncloud_iOs_ClientTests.m
 //  Owncloud iOs ClientTests
 //
-// Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
+// Copyright (C) 2014 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -185,7 +185,7 @@ static NSString *pathTestFolder = @"";
     
     operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File: %@ uploaded", localPath);
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1289,7 +1289,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1352,7 +1352,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1415,7 +1415,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         XCTFail(@"Error We upload a file that does not exist");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1477,7 +1477,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded with Special Characters");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
