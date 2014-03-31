@@ -35,6 +35,7 @@
 /*
  *  With this implementation we allow the connection with any HTTPS server
  */
+#if DEBUG
 @implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
 
 + (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host {
@@ -42,6 +43,7 @@
 }
 
 @end
+#endif
 
 @implementation OCCommunicationLibTests
 
