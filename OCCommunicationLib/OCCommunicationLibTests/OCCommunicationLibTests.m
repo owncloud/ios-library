@@ -32,6 +32,16 @@
 
 #import <UIKit/UIKit.h>
 
+/*
+ *  With this implementation we allow the connection with any HTTPS server
+ */
+@implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
+
++ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host {
+    return YES;
+}
+
+@end
 
 @implementation OCCommunicationLibTests
 
