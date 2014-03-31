@@ -38,7 +38,7 @@
 //You must enter this information of your server in order that the unit test works
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"http://test1.oc.c/";
+static NSString *baseUrl = @"https://test1.owncloud.com/owncloud6/";
 //Server with webdav url
 NSString *webdavBaseUrl = @"";
 //Your user
