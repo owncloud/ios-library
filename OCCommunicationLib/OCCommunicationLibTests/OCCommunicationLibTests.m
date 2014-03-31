@@ -48,13 +48,13 @@
 //You must enter this information of your server in order that the unit test works
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"https://test1.owncloud.com/owncloud6/";
+static NSString *baseUrl = @"http://daily.owncloud.com/master/owncloud/";
 //Server with webdav url
 NSString *webdavBaseUrl = @"";
 //Your user
-static NSString *user = @"ios-test"; //@"username";
+static NSString *user = @"javi"; //@"username";
 //Your password
-static NSString *password = @"travis"; //@"password";
+static NSString *password = @"javi"; //@"password";
 
 //Optional. You can change the folder of tests.
 static NSString *pathTestFolder = @"test";
@@ -1557,7 +1557,7 @@ static NSString *pathTestFolder = @"test";
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", pathTestFolder]]) {
                 isFolderShared = YES;
             }
         }
@@ -1606,7 +1606,7 @@ static NSString *pathTestFolder = @"test";
         OCSharedDto *shared;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", pathTestFolder]]) {
                 shared = current;
             }
         }
