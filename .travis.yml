@@ -1,0 +1,4 @@
+language: objective-c
+xcode_project: "OCCommunicationLib/ownCloud iOS library.xcodeproj" # path to your xcodeproj folder
+xcode_scheme: ownCloud iOS library
+xcode_sdk: iphonesimulator
