@@ -32,22 +32,34 @@
 
 #import <UIKit/UIKit.h>
 
+/*
+ *  With this implementation we allow the connection with any HTTPS server
+ */
+#if DEBUG
+@implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
+
++ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host {
+    return YES;
+}
+
+@end
+#endif
 
 @implementation OCCommunicationLibTests
 
 //You must enter this information of your server in order that the unit test works
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"";
+static NSString *baseUrl = @"https://test1.owncloud.com/owncloud6/";
 //Server with webdav url
 NSString *webdavBaseUrl = @"";
 //Your user
-static NSString *user = @""; //@"username";
+static NSString *user = @"ios-test"; //@"username";
 //Your password
-static NSString *password = @""; //@"password";
+static NSString *password = @"travis"; //@"password";
 
 //Optional. You can change the folder of tests.
-static NSString *pathTestFolder = @"";
+static NSString *pathTestFolder = @"test";
 
 
 
@@ -185,7 +197,7 @@ static NSString *pathTestFolder = @"";
     
     operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File: %@ uploaded", localPath);
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1289,7 +1301,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1352,7 +1364,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1415,7 +1427,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         XCTFail(@"Error We upload a file that does not exist");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1477,7 +1489,7 @@ static NSString *pathTestFolder = @"";
             }
         }
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded with Special Characters");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1547,7 +1559,7 @@ static NSString *pathTestFolder = @"";
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", pathTestFolder]]) {
                 isFolderShared = YES;
             }
         }
@@ -1596,7 +1608,7 @@ static NSString *pathTestFolder = @"";
         OCSharedDto *shared;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@", pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", pathTestFolder]]) {
                 shared = current;
             }
         }
