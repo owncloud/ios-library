@@ -4,8 +4,8 @@ script: echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remo
 script: echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 script: echo "#define password @\"travis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 script: echo "#define pathTestFolder @\"test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-after_script:
 language: objective-c
 xcode_project: "OCCommunicationLib/ownCloud iOS library.xcodeproj" # path to your xcodeproj folder
 xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
+after_script:
