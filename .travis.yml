@@ -3,7 +3,7 @@ before_script:
 - echo "#define baseUrl @\"https://test1.owncloud.com/owncloud6/\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define password @\"travis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define password @\"travis2222\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define pathTestFolder @\"test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 
 #I add an sleep because if we execute the objective c scipts just after write the ConfigTests.h the tests crash
