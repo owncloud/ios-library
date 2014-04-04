@@ -1,10 +1,13 @@
+#Commands echo to write the credentials and url to make the tests
 before_script: echo "#define baseUrl @\"https://test1.owncloud.com/owncloud6/\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 before_script: echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 before_script: echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-before_script: echo "#define password @\"travis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+before_script: echo "#define password @\"travis2\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 before_script: echo "#define pathTestFolder @\"test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-#before_script: cat OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h #without this cat the tests does not work
+
+#I add an sleep because if we execute the objective c scipts just after write the ConfigTests.h the tests crash
 before_script: sleep 5
+
 language: objective-c
 xcode_project: "OCCommunicationLib/ownCloud iOS library.xcodeproj" # path to your xcodeproj folder
 xcode_scheme: ownCloud iOS library
