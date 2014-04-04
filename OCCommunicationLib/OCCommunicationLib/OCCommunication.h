@@ -54,6 +54,7 @@ typedef enum {
 
 //Public properties
 @property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
+@property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
 #pragma mark - Credentials
@@ -101,6 +102,21 @@ typedef enum {
  */
 - (id) getRequestWithCredentials:(id) request;
 
+#pragma mark - Options in Network
+
+///-----------------------------------
+/// @name Set Download Queue to FIFO system
+///-----------------------------------
+
+/**
+ * For default the download queue works in LIFO system.
+ * With this method you can change the behaviour to work in FIFO system or
+ * default system.
+ *
+ * @param isFIFO -> BOOL
+ *
+ */
+- (void)setDownloadQueueToLIFO:(BOOL) isLIFO;
 
 #pragma mark - Network operations
 

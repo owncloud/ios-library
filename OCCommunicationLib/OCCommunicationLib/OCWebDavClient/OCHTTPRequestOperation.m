@@ -28,15 +28,48 @@
 #import "OCChunkInputStream.h"
 #import "OCFrameworkConstants.h"
 
+
 #define k_redirected_code_1 301
 #define k_redirected_code_2 302
 #define k_redirected_code_3 307
+
+typedef enum {
+    AFOperationPausedState      = -1,
+    AFOperationReadyState       = 1,
+    AFOperationExecutingState   = 2,
+    AFOperationFinishedState    = 3,
+} _AFOperationState;
+
+typedef signed short AFOperationState;
 
 @interface OCHTTPRequestOperation ()
 @property (readwrite, nonatomic, strong) NSMutableURLRequest *request;
 @end
 
+
 @implementation OCHTTPRequestOperation
+
+//Necessary method copied of AFURLConnectionOperation class for use "start" override method
++ (void) __attribute__((noreturn)) networkRequestThreadEntryPoint:(id)__unused object {
+    do {
+        @autoreleasepool {
+            [[NSRunLoop currentRunLoop] run];
+        }
+    } while (YES);
+}
+
+//Necessary method copied of AFURLConnectionOperation class for use "start" override method
++ (NSThread *)networkRequestThread {
+    static NSThread *_networkRequestThread = nil;
+    static dispatch_once_t oncePredicate;
+    
+    dispatch_once(&oncePredicate, ^{
+        _networkRequestThread = [[NSThread alloc] initWithTarget:self selector:@selector(networkRequestThreadEntryPoint:) object:nil];
+        [_networkRequestThread start];
+    });
+    
+    return _networkRequestThread;
+}
 
 
 #pragma mark - Redirection protection
@@ -90,6 +123,28 @@
     
     return requestRed;
 }
+
+
+///-----------------------------------
+/// @name Start
+///-----------------------------------
+
+/**
+ * Override this method of AFURLConnectionOperation because when there are
+ * some downloads paused and the user cancel some of this
+ */
+- (void)start {
+    
+    [super start];
+    
+    //Check if the operation is not in execution and is a download type
+    if (!self.isExecuting && self.typeOfOperation == DownloadQueue) {
+          //Launch the start method
+          [self performSelector:@selector(operationDidStart) onThread:[[self class] networkRequestThread] withObject:nil waitUntilDone:NO modes:[self.runLoopModes allObjects]];
+    }
+
+}
+
 
 
 @end
