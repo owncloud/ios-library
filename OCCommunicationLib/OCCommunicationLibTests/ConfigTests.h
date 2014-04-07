@@ -7,13 +7,13 @@
 //
 
 
-#define baseUrl @"https://test1.owncloud.com/owncloud6/"
+#define baseUrl @""
 //Server with webdav url
-#define webdavBaseUrl @"https://test1.owncloud.com/owncloud6/remote.php/webdav/"
+#define webdavBaseUrl @""
 //Your user
-#define user @"ios-test" //@"username"
+#define user @"" //@"username"
 //Your password
-#define password @"travis" //@"password"
+#define password @"" //@"password"
 
 //Optional. You can change the folder of tests.
-#define pathTestFolder @"test"
+#define pathTestFolder @""
