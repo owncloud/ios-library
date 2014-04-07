@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 ownCloud. All rights reserved.
 //
 
-//Your entire server url. ex:https://example.owncloud.com/owncloud/
-#define baseUrl @""
+
+#define baseUrl @"https://test1.owncloud.com/owncloud6/"
 //Server with webdav url
-#define webdavBaseUrl @""
+#define webdavBaseUrl @"https://test1.owncloud.com/owncloud6/remote.php/webdav/"
 //Your user
-#define user @"" //@"username"
+#define user @"ios-test" //@"username"
 //Your password
-#define password @"" //@"password"
+#define password @"travis" //@"password"
 
 //Optional. You can change the folder of tests.
-#define pathTestFolder @""
+#define pathTestFolder @"test"
