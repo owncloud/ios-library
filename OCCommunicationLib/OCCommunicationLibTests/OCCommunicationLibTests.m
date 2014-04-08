@@ -29,9 +29,10 @@
 #import "OCFrameworkConstants.h"
 #import "OCFileDto.h"
 #import "OCSharedDto.h"
+#import "ConfigTests.h"
 
 #import <UIKit/UIKit.h>
-
+ 
 /*
  *  With this implementation we allow the connection with any HTTPS server
  */
@@ -49,17 +50,7 @@
 
 //You must enter this information of your server in order that the unit test works
 
-//Your entire server url. ex:https://example.owncloud.com/owncloud/
-static NSString *baseUrl = @"https://test1.owncloud.com/owncloud6/";
-//Server with webdav url
-NSString *webdavBaseUrl = @"";
-//Your user
-static NSString *user = @"ios-test"; //@"username";
-//Your password
-static NSString *password = @"travis"; //@"password";
 
-//Optional. You can change the folder of tests.
-static NSString *pathTestFolder = @"test";
 
 
 
@@ -74,7 +65,7 @@ static NSString *pathTestFolder = @"test";
 {
     [super setUp];
     
-    webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
+    //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
