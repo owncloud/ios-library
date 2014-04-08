@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 ownCloud. All rights reserved.
 //
 
-
 #define baseUrl @""
 //Server with webdav url
 #define webdavBaseUrl @""
