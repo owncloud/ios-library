@@ -1,6 +1,6 @@
 before_script:
 - echo "#define baseUrl @\"${baseUrl}\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\""
+- echo "#define webdavBaseUrl @\"${webdavBaseUrl}\""
   >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define password @\"travis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
@@ -13,3 +13,4 @@ xcode_sdk: iphonesimulator
 env:
   global:
     secure: LkwNF3f8HI6wyPZKQhvQ2KYnoOzboYE80ZoISccniD1Kf96hT0bOxmiCVtMx8j37D4JEtHriqQc0agA3k/MPrXe/97fyDIYwog89vmQ3GJ3QSPy86kzAbW/5WcevQ9qxpV2A5MZ5qWW7fImJWssVfwI0cs/2jXvlCpUqXDjJ7k8=
+    secure: Pu0ABanPGu1y3EqHXbBVS/tfcWGuP2/SJWv3hc+XF6lWz7B9DM7BqUUFDzA0aY5tfJP1aRAy1ZzhY4cuFaOqKkbJLzp4mxkuWuni8vkRY+tpEBvumRVPzXqpQ60/U5rSUiipnFIdp0BexpKyKitF3h0e6ikwY8pB4p6fA471ERQ=
