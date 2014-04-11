@@ -1,13 +1,15 @@
-#Commands echo to write the credentials and url to make the tests
 before_script:
-- echo "#define baseUrl @\"https://test1.owncloud.com/owncloud6/\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define baseUrl @\"${baseUrl}\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\""
+  >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define password @\"travis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define pathTestFolder @\"test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-
-#Commands to launch the compilation of the libray
 language: objective-c
-xcode_project: "OCCommunicationLib/ownCloud iOS library.xcodeproj" # path to your xcodeproj folder
+xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
 xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
+
+env:
+  global:
+    secure: LkwNF3f8HI6wyPZKQhvQ2KYnoOzboYE80ZoISccniD1Kf96hT0bOxmiCVtMx8j37D4JEtHriqQc0agA3k/MPrXe/97fyDIYwog89vmQ3GJ3QSPy86kzAbW/5WcevQ9qxpV2A5MZ5qWW7fImJWssVfwI0cs/2jXvlCpUqXDjJ7k8=
