@@ -1,9 +1,10 @@
-before_script:
+script:
 - echo "#define baseUrl @\"${baseUrl}\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define webdavBaseUrl @\"${webdavBaseUrl}\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define user @\"${user}\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define password @\"${password}\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define pathTestFolder @\"${pathTestFolder}\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+
 language: objective-c
 xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
 xcode_scheme: ownCloud iOS library
