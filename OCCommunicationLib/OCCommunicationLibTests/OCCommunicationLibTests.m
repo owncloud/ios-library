@@ -68,7 +68,7 @@
     
     //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
-    _configTests = [_configTests initWithVariables];
+    _configTests = [[ConfigTests alloc] initWithVariables];
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
