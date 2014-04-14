@@ -34,11 +34,8 @@
     NSString *passwordOwn = @""; //Server password
     NSString *pathTestFolderOwn = @""; //Optional. You can change the folder of tests. ex: tests
     
-    NSLog(@"Env vars: %@", [[NSProcessInfo processInfo] environment]);
-    
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
-        NSLog(@"baseUrlTravis: %@", [[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]);
         _baseUrl = [[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"];
     } else {
         _baseUrl = baseUrlOwn;
@@ -51,21 +48,21 @@
         _webdavBaseUrl = webdavBaseUrlOwn;
     }
     
-    //We set the baseUrl
+    //We set the user
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"userTravis"]) {
         _user = [[[NSProcessInfo processInfo] environment] objectForKey:@"userTravis"];
     } else {
         _user = userOwn;
     }
     
-    //We set the baseUrl
+    //We set the password
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"passwordTravis"]) {
         _password = [[[NSProcessInfo processInfo] environment] objectForKey:@"passwordTravis"];
     } else {
         _password = passwordOwn;
     }
     
-    //We set the baseUrl
+    //We set the pathTestFolder
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"pathTestFolderTravis"]) {
         _pathTestFolder = [[[NSProcessInfo processInfo] environment] objectForKey:@"pathTestFolderTravis"];
     } else {
