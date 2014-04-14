@@ -1,3 +1,11 @@
+env:
+  global:
+    secure: LkwNF3f8HI6wyPZKQhvQ2KYnoOzboYE80ZoISccniD1Kf96hT0bOxmiCVtMx8j37D4JEtHriqQc0agA3k/MPrXe/97fyDIYwog89vmQ3GJ3QSPy86kzAbW/5WcevQ9qxpV2A5MZ5qWW7fImJWssVfwI0cs/2jXvlCpUqXDjJ7k8=
+    secure: "OMBrxB8XnAQuqKRjVEshzbudhrb9wRWSitkWSjLTLg6wXAxmLU+dmDrZ71XJ5VTbOJDt4qpl8tW/b4hkrBe/KdVn1y+9fR7+bLjH+f0LlBf3mEjNxo+WlI/ILfDxegNWRuA+MPD1HvoIGmk9CAtURBedFpgifTnayuA3YqegKXI="
+    secure: "UP83nNnUiENe6RyG0DenXsRiHLzzTdYOQew4eB6yhSxVQjY53UtYdDFTJGShDxagbJQqm+6HjIIDkKRZZ6tfpbsQc8G+onNGzNkfZmn6Xesx5KCU4uGOSEEfaHz8wQ0x6TCLAugvf7SQQeiWD08Dt8enHIMhDNANPm6OVhIO3LQ="
+    secure: "wi+yd4gmLzM1QSd9Ec+BQyPOID3ZADOvhVEVOXrccS5m/r1rU/s4ZPXm9xT4zm0Y6DbzV6gTWU/P+9mSHbEDad/MG9BaH8QbQnv08c1dpH15RKVGvoBYpd56qiBESwD4eE8+yg64rbU2F1En1tPST7HD414/yZCnh1O7Y6kM/Ic="
+    secure: "FuEqMeqQ5Cu0yyY+D/Utj6Te1hurhizwoj4SQEMaeDJil1ThBGyUqgd1T4fj3NCsHo1ZcwD5Is26EqqoDWX2QQl7tWnyIk+q1OC2rnas6IWCmh7IQ9GchaFoYJ5KZ0syMb8Urs06Cjj3sJPqSnj2TwaLxajHEArTokZnOsvm9dM="
+
 before_script:
 - echo "#define baseUrl @\"#{baseUrl}\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define webdavBaseUrl @\"#{webdavBaseUrl}\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
@@ -8,11 +16,3 @@ language: objective-c
 xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
 xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
-
-env:
-  global:
-    secure: LkwNF3f8HI6wyPZKQhvQ2KYnoOzboYE80ZoISccniD1Kf96hT0bOxmiCVtMx8j37D4JEtHriqQc0agA3k/MPrXe/97fyDIYwog89vmQ3GJ3QSPy86kzAbW/5WcevQ9qxpV2A5MZ5qWW7fImJWssVfwI0cs/2jXvlCpUqXDjJ7k8=
-    secure: "OMBrxB8XnAQuqKRjVEshzbudhrb9wRWSitkWSjLTLg6wXAxmLU+dmDrZ71XJ5VTbOJDt4qpl8tW/b4hkrBe/KdVn1y+9fR7+bLjH+f0LlBf3mEjNxo+WlI/ILfDxegNWRuA+MPD1HvoIGmk9CAtURBedFpgifTnayuA3YqegKXI="
-    secure: "UP83nNnUiENe6RyG0DenXsRiHLzzTdYOQew4eB6yhSxVQjY53UtYdDFTJGShDxagbJQqm+6HjIIDkKRZZ6tfpbsQc8G+onNGzNkfZmn6Xesx5KCU4uGOSEEfaHz8wQ0x6TCLAugvf7SQQeiWD08Dt8enHIMhDNANPm6OVhIO3LQ="
-    secure: "wi+yd4gmLzM1QSd9Ec+BQyPOID3ZADOvhVEVOXrccS5m/r1rU/s4ZPXm9xT4zm0Y6DbzV6gTWU/P+9mSHbEDad/MG9BaH8QbQnv08c1dpH15RKVGvoBYpd56qiBESwD4eE8+yg64rbU2F1En1tPST7HD414/yZCnh1O7Y6kM/Ic="
-    secure: "FuEqMeqQ5Cu0yyY+D/Utj6Te1hurhizwoj4SQEMaeDJil1ThBGyUqgd1T4fj3NCsHo1ZcwD5Is26EqqoDWX2QQl7tWnyIk+q1OC2rnas6IWCmh7IQ9GchaFoYJ5KZ0syMb8Urs06Cjj3sJPqSnj2TwaLxajHEArTokZnOsvm9dM="
