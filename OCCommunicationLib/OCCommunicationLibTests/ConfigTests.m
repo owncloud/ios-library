@@ -71,9 +71,8 @@
     } else {
         _pathTestFolder = pathTestFolderOwn;
     }
-}
-
-return self;
+    
+    return self;
 }
 
 @end
