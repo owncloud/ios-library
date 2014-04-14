@@ -26,8 +26,11 @@
 #import <XCTest/XCTest.h>
 
 @class OCCommunication;
+@class ConfigTests;
+
 @interface OCCommunicationLibTests : XCTestCase
 
+@property (nonatomic, strong) ConfigTests *configTests;
 @property (nonatomic, strong) OCCommunication *sharedOCCommunication;
 
 

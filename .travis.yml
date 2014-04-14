@@ -1,12 +1,11 @@
-before_script:
-- echo "#define baseUrl @\"https://test1.owncloud.com/owncloud6/\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define webdavBaseUrl @\"https://test1.owncloud.com/owncloud6/remote.php/webdav/\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define user @\"ios-test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- echo "#define pathTestFolder @\"test\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 language: objective-c
 xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
 xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
 env:
   global:
-    secure: MbEShQ1+0DLmU7MXY58B65YHpm4v6j98Jy8l1yOb8w8k4+f+jpDO+gS1JOHVbxIXzeE5UaGmDrpUiaCo++Dv07S0NGlm5OyD70bBNKGS5IjkTAiYRn3jdsfYgLlUd/titvGQTJB+xrueQbJiYD7pb5SHGI4Bi+HPUFrwJy52wQg=
+  - secure: hY2h3XSXPAN1jnf2t/i+lBirozVpsOhm0WxRi+msM2NaAxRzsurovRZ9Cjjgb3dPKKomLFAjqWxTZ3vlQy4um93xPXv/UyXdgkaUZ1rWaDRgk7EnlH+SA8uoOfQOEgE5tMSSiM7YRvNf6r4nmKuQNBgqtMoK0HSiUj6DGjImDoM=
+  - secure: NvlNBduCxLf4f+WVAz14Pd/O1gDOVUvqSe8GPKf4axOdvsl8CwDZ5D65DkLbm1205/9q2MTGGKdDiyL5pS7mtxTOzHJIofLyAtO+YEV029Giuk8hv1wQcVHLtsJkBaTStpD9GKkKMvRiXewKtUkU2etpKAo4csQ7U48BQ+hqVc4=
+  - secure: KxFvsLZAlFs2NpcD/aLFtS+hLeYPWt+rVZyLk1tHtPOLOnX8NxQYLS59hqex1qnI3TYWGwv1DKq+YD4VfOoh/So16jqO9IVlqs58hwPdkj1rONDDSBGpk4gDaSKmmpbgzV0c3gRQs/TFrQomeyS9TPoXxor9atYHuUtSIy/dO2o=
+  - secure: N8rHiYshxylUrNhc1nQwYQ0WSwNx81ontrEzVFmV665SQAqtxEB3FnyG1yB7k5HB5m37SK7/Wr5Nr/pPyAfqiP6wT2fa8Vsdxl4uSazmyo2Ii/QsUUCLzdzz60XvtqaXyu6ngg+0KD7FQrc61xzh9k2MJsZ5enAY3IlQuMDyikE=
+  - secure: fw+m/wHbBMFW29siqrMtwQl3cHkh6lhV/jsjTw4gTXkaipw/Ci3S/KPSYpFqPYu13AtfzpSH5xncN4jo6/8kGYjrSrNfLqeR6UxiwDQRuReptvXq6xFImuPDycUNuDavlv/bYI+O7BCoiE9m/P7PMlg0/4vVjg70AkvYq087osQ=
