@@ -224,6 +224,9 @@
  */
 - (void)testCreateFolder
 {
+    
+    NSLog(@"Env vars: %@", [[NSProcessInfo processInfo] environment]);
+    
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
