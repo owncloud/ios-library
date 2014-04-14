@@ -758,7 +758,7 @@
                 //store in download array
                 if (firstOperationDownload) {
                     [firstOperationDownload pause];
-                    [firstOperationDownload addDependency:operation];
+                   // [firstOperationDownload addDependency:operation];
                     [_downloadOperationQueueArray addObject:firstOperationDownload];
                 }
             }
@@ -811,6 +811,7 @@
             //Call again this method to the next download
             [self resumeNextDownload];
         } else {
+           
             [nextPausedDownload resume];
             [_downloadOperationQueueArray removeLastObject];
         }
