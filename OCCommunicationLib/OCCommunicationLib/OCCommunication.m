@@ -754,11 +754,9 @@
 
             }else{
                 //LIFO system.
-                //If there are download in progress, pause, add dependency,
-                //store in download array
+                //If there are download in progress, pause and store in download array
                 if (firstOperationDownload) {
                     [firstOperationDownload pause];
-                   // [firstOperationDownload addDependency:operation];
                     [_downloadOperationQueueArray addObject:firstOperationDownload];
                 }
             }
