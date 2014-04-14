@@ -67,6 +67,8 @@
     
     //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
+    NSLog(@"Env vars: %@", [[NSProcessInfo processInfo] environment]);
+    
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
     
@@ -224,9 +226,6 @@
  */
 - (void)testCreateFolder
 {
-    
-    NSLog(@"Env vars: %@", [[NSProcessInfo processInfo] environment]);
-    
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
