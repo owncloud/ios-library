@@ -70,7 +70,7 @@
     NSLog(@"Env vars: %@", [[NSProcessInfo processInfo] environment]);
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
-    [_sharedOCCommunication setCredentialsWithUser:user andPassword:[[[NSProcessInfo processInfo] environment] objectForKey:@"password"]];
+    [_sharedOCCommunication setCredentialsWithUser:user andPassword:password];
     
     //Create Tests folder
     [self createFolderWithName:pathTestFolder];

@@ -13,7 +13,7 @@
 //Your user
 #define user @"" //@"username"
 //Your password
-//#define password [[[NSProcessInfo processInfo] environment] objectForKey:@"password"] //@"password"
+#define password [[[NSProcessInfo processInfo] environment] objectForKey:@"password"] //@"password"
 
 //Optional. You can change the folder of tests.
 #define pathTestFolder @""
