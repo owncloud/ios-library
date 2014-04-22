@@ -218,15 +218,9 @@
  */
 + (BOOL) isAFolderUnderItByNewURLString:(NSString *) newURLString andOriginURLString:(NSString *)  originalURLString{
     
-    NSLog(@"newURLString: %@", newURLString);
-    NSLog(@"originalURLString: %@", originalURLString);
-    
-    
     if([originalURLString length] < [newURLString length]) {
         
         NSString *subString = [newURLString substringToIndex: [originalURLString length]];
-        
-        NSLog(@"subString: %@", subString);
         
         if([originalURLString isEqualToString: subString]){
             
