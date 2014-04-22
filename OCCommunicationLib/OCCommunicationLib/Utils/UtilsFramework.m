@@ -218,9 +218,27 @@
  */
 + (BOOL) isAFolderUnderItByNewURLString:(NSString *) newURLString andOriginURLString:(NSString *)  originalURLString{
     
+    NSLog(@"newURLString: %@", newURLString);
+    NSLog(@"originalURLString: %@", originalURLString);
+    
+    
     if([originalURLString length] < [newURLString length]) {
-        if([originalURLString isEqualToString:[newURLString substringToIndex: [originalURLString length]]]){
-            return YES;
+        
+        NSString *subString = [newURLString substringToIndex: [originalURLString length]];
+        
+        NSLog(@"subString: %@", subString);
+        
+        if([originalURLString isEqualToString: subString]){
+            
+            newURLString = [newURLString substringFromIndex:[subString length]];
+            
+            if ([newURLString rangeOfString:@"/"].location == NSNotFound) {
+                //Is a rename of the last part of the file or folder
+                return NO;
+            } else {
+                //Is a move inside himself
+                return YES;
+            }
         }
     }
     return NO;
