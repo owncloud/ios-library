@@ -34,6 +34,7 @@
     NSString *passwordOwn = @""; //Server password
     NSString *pathTestFolderOwn = @""; //Optional. You can change the folder of tests. ex: tests
     
+    
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
         _baseUrl = [[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"];
