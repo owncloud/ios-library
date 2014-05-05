@@ -634,7 +634,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -652,7 +652,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};
