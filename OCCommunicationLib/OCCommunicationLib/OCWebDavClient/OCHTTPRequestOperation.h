@@ -25,6 +25,7 @@
 
 #import "AFHTTPRequestOperation.h"
 
+
 @class OCChunkInputStream;
 
 typedef enum {
@@ -40,5 +41,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *redirectedServer;
 @property (nonatomic, strong) NSString *localSource;
 @property (nonatomic, strong) OCChunkInputStream *chunkInputStream;
+
+
 
 @end
