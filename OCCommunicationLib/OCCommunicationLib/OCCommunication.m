@@ -685,14 +685,14 @@
         
         
         switch (operation.typeOfOperation) {
-            case DownloadLIFOQueue:{
+            case DownloadLIFOQueue:
                 if(currentOperation.typeOfOperation == DownloadLIFOQueue) {
                     //Get first download operation in progress, for LIFO option
                     if (currentOperation.isExecuting)
                         firstOperationDownload = currentOperation;
                 }
-                
-            }
+                 break;
+            
             case DownloadFIFOQueue:
                 if(currentOperation.typeOfOperation == DownloadFIFOQueue) {
                     lastOperationDownload = currentOperation;
@@ -722,6 +722,7 @@
                 [firstOperationDownload pause];
                 [_downloadOperationQueueArray addObject:firstOperationDownload];
             }
+            break;
         case DownloadFIFOQueue:
             if(lastOperationDownload)
                 [operation addDependency:lastOperationDownload];
@@ -735,7 +736,6 @@
         case NavigationQueue:
             if(lastOperationNavigation)
                 [operation addDependency:lastOperationNavigation];
-                
             
             break;
             
