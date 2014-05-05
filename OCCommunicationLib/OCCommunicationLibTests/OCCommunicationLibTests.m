@@ -124,7 +124,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 
 }
 
@@ -161,7 +160,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    dispatch_release(semaphore);
     
 }
 
@@ -211,7 +209,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
 }
 
@@ -251,7 +248,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -293,7 +289,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
     }
 }
 
@@ -342,7 +337,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -390,7 +384,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -445,7 +438,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
     }
 }
 
@@ -488,7 +480,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -529,7 +520,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -581,7 +571,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
     }
 }
 
@@ -625,7 +614,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -671,7 +659,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
     }
 }
 
@@ -710,7 +697,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 
@@ -748,7 +734,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    dispatch_release(semaphore);
 }
 
 
@@ -794,7 +779,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    dispatch_release(semaphore);
 }
 
 
@@ -890,11 +874,11 @@
             if (foldersCount == k_folders && filesCount == k_files) {
                 NSLog(@"Read Folder Test OK");
             } else {
-                XCTFail(@"Error reading a folder - There are: %d folders and %d files insead of %d folders and %d files", foldersCount, filesCount, k_folders, k_files);
+                XCTFail(@"Error reading a folder - There are: %ld folders and %ld files insead of %d folders and %d files", (long)foldersCount, (long)filesCount, k_folders, k_files);
             }
             
         } else {
-            XCTFail(@"Error reading a folder - There are: %d elements insead of 6 elements", realItemsCount);
+            XCTFail(@"Error reading a folder - There are: %ld elements insead of 6 elements", (long)realItemsCount);
         }
         
         dispatch_semaphore_signal(semaphore);
@@ -908,7 +892,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -978,7 +961,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
     //Check if etag exists
     if (etag > 0) {
@@ -1007,7 +989,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
         
         
         
@@ -1031,7 +1012,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-        dispatch_release(semaphore);
         
         
         
@@ -1072,7 +1052,6 @@
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        dispatch_release(semaphore);
         
     }
     
@@ -1130,7 +1109,7 @@
     
     operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         
-        NSLog(@"Download :%d bytes of %lld bytes", bytesRead, totalBytesExpectedToRead);
+        NSLog(@"Download :%lu bytes of %lld bytes", (unsigned long)bytesRead, totalBytesExpectedToRead);
         
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         
@@ -1165,7 +1144,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
     
     
@@ -1215,7 +1193,7 @@
     
     operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         
-        NSLog(@"Download :%d bytes of %lld bytes", bytesRead, totalBytesExpectedToRead);
+        NSLog(@"Download :%lu bytes of %lld bytes", (unsigned long)bytesRead, totalBytesExpectedToRead);
         
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         
@@ -1250,7 +1228,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
 }
 
@@ -1313,7 +1290,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
 }
 
@@ -1376,7 +1352,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -1439,7 +1414,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
     
 }
 
@@ -1501,7 +1475,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -1529,7 +1502,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -1578,7 +1550,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 }
 
 ///-----------------------------------
@@ -1638,7 +1609,6 @@
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    dispatch_release(semaphore);
 
 }
 
