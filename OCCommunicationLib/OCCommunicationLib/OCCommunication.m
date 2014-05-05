@@ -141,10 +141,7 @@
  *
  */
 - (void)setDownloadQueueToLIFO:(BOOL) isLIFO{
-    
-    if (_isDownloadQueueLIFO == isLIFO)
-        return;
-    
+
     _isDownloadQueueLIFO = isLIFO;
     
 }
