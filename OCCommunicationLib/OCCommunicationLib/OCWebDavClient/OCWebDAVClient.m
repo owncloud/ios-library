@@ -65,6 +65,60 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return self;
 }
 
+static NSString * AFBase64EncodedStringFromString(NSString *string) {
+    NSData *data = [NSData dataWithBytes:[string UTF8String] length:[string lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+    NSUInteger length = [data length];
+    NSMutableData *mutableData = [NSMutableData dataWithLength:((length + 2) / 3) * 4];
+    
+    uint8_t *input = (uint8_t *)[data bytes];
+    uint8_t *output = (uint8_t *)[mutableData mutableBytes];
+    
+    for (NSUInteger i = 0; i < length; i += 3) {
+        NSUInteger value = 0;
+        for (NSUInteger j = i; j < (i + 3); j++) {
+            value <<= 8;
+            if (j < length) {
+                value |= (0xFF & input[j]);
+            }
+        }
+        
+        static uint8_t const kAFBase64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        
+        NSUInteger idx = (i / 3) * 4;
+        output[idx + 0] = kAFBase64EncodingTable[(value >> 18) & 0x3F];
+        output[idx + 1] = kAFBase64EncodingTable[(value >> 12) & 0x3F];
+        output[idx + 2] = (i + 1) < length ? kAFBase64EncodingTable[(value >> 6)  & 0x3F] : '=';
+        output[idx + 3] = (i + 2) < length ? kAFBase64EncodingTable[(value >> 0)  & 0x3F] : '=';
+    }
+    
+    return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
+}
+
+- (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
+	NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", username, password];
+    
+    [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Basic %@", AFBase64EncodedStringFromString(basicAuthCredentials)]];
+}
+
+- (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString {
+    [self setDefaultHeader:@"Cookie" value:cookieString];
+}
+
+- (void)setAuthorizationHeaderWithToken:(NSString *)token {
+    // [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Token token=\"%@\"", token]];
+    [self setDefaultHeader:@"Authorization" value:token];
+    
+}
+
+- (void)setDefaultHeader:(NSString *)header value:(NSString *)value {
+    
+    if (!_defaultHeaders) {
+        _defaultHeaders = [NSMutableDictionary new];
+    }
+    
+	[self.defaultHeaders setValue:value forKey:header];
+}
+
 
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
@@ -81,14 +135,25 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
-    NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
+    
+    //I have problems here adding the credentials. I receive a 401
+    NSMutableURLRequest *request = [[super requestSerializer] requestWithMethod:method URLString:path parameters:_defaultHeaders error:nil];
+    
+    /*NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", @"javi", @"javi"];
+    
+    [request setValue:basicAuthCredentials forKey:@"Authorization"];*/
+    
+    //NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval: k_timeout_webdav];
     return request;
 }
 
 - (NSMutableURLRequest *)sharedRequestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
-    NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
+    
+    NSMutableURLRequest *request = [[super requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
+    
+    //NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval: k_timeout_webdav];
     //Header for use the OC API CALL
@@ -241,7 +306,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 	[request setValue:[NSString stringWithFormat:@"%d", data.length] forHTTPHeaderField:@"Content-Length"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
 	operation.inputStream = [NSInputStream inputStreamWithData:data];
-    [self enqueueHTTPRequestOperation:operation];
+    //TODO:Uncomment this
+    //[self enqueueHTTPRequestOperation:operation];
 }
 
 
@@ -261,7 +327,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.localSource = localSource;
-    
+    //TODO:Uncomment this
+    /*
     [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
@@ -275,7 +342,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
-    }];
+    }];*/
     
     [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
@@ -301,7 +368,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.chunkInputStream = chunkInputStreamForRedirection;
     
-    [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
+    //TODO:Uncomment this
+    /*[operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
@@ -310,7 +378,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
         forceCredentialsFailure(response, error);
-    }];
+    }];*/
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);

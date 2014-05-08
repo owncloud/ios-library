@@ -26,7 +26,7 @@
 //
 
 
-#import "AFHTTPClient.h"
+#import "AFHTTPRequestOperationManager.h"
 #import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;
@@ -48,7 +48,32 @@ extern NSString *OCWebDAVCreationDateKey;
 /** The key for last modification date of an entity. */
 extern NSString *OCWebDAVModificationDateKey;
 
-@interface OCWebDAVClient : AFHTTPClient
+@interface OCWebDAVClient : AFHTTPRequestOperationManager
+
+@property (readwrite, nonatomic, strong) NSMutableDictionary *defaultHeaders;
+
+/**
+ Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
+ 
+ @param username The HTTP basic auth username
+ @param password The HTTP basic auth password
+ */
+- (void)setAuthorizationHeaderWithUsername:(NSString *)username
+                                  password:(NSString *)password;
+
+/**
+ Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
+ 
+ @param cookieString The HTTP token to login on SSO Servers
+ */
+- (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString;
+
+/**
+ Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a token-based authentication value, such as an OAuth access token. This overwrites any existing value for this header.
+ 
+ @param token The authentication token
+ */
+- (void)setAuthorizationHeaderWithToken:(NSString *)token;
 
 /**
  Enqueues an operation to copy the object at a path to another path using a `COPY` request.
