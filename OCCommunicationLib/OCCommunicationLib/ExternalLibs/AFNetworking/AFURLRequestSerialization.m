@@ -296,6 +296,8 @@ NSArray * AFQueryStringPairsFromKeyAndValue(NSString *key, id value) {
     mutableRequest.timeoutInterval = self.timeoutInterval;
 
     mutableRequest = [[self requestBySerializingRequest:mutableRequest withParameters:parameters error:error] mutableCopy];
+    
+    NSLog(@"headers: %@", mutableRequest.allHTTPHeaderFields);
 
 	return mutableRequest;
 }

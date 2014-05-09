@@ -112,11 +112,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 
 - (void)setDefaultHeader:(NSString *)header value:(NSString *)value {
     
-    if (!_defaultHeaders) {
-        _defaultHeaders = [NSMutableDictionary new];
-    }
-    
-	[self.defaultHeaders setValue:value forKey:header];
+    [[self requestSerializer] setValue:value forHTTPHeaderField:header];
 }
 
 
@@ -136,22 +132,17 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
     
-    //I have problems here adding the credentials. I receive a 401
-    NSMutableURLRequest *request = [[super requestSerializer] requestWithMethod:method URLString:path parameters:_defaultHeaders error:nil];
+    NSMutableURLRequest *request = [[self requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
     
-    /*NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", @"javi", @"javi"];
-    
-    [request setValue:basicAuthCredentials forKey:@"Authorization"];*/
-    
-    //NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval: k_timeout_webdav];
+    
     return request;
 }
 
 - (NSMutableURLRequest *)sharedRequestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
     
-    NSMutableURLRequest *request = [[super requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
+    NSMutableURLRequest *request = [[self requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
     
     //NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
@@ -308,6 +299,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	operation.inputStream = [NSInputStream inputStreamWithData:data];
     //TODO:Uncomment this
     //[self enqueueHTTPRequestOperation:operation];
+    [self.operationQueue addOperation:operation];
 }
 
 
@@ -328,8 +320,10 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.localSource = localSource;
     //TODO:Uncomment this
-    /*
-    [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
+    
+    
+    
+    /*[operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
@@ -338,11 +332,11 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
         
         NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
         forceCredentialsFailure(response, error);
-    }];
+    }];*/
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
-    }];*/
+    }];
     
     [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();

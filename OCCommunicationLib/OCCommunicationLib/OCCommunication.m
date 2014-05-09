@@ -123,7 +123,7 @@
             break;
     }
     
-    return request;
+    return myRequest;
 }
 
 #pragma mark - Options in Network
