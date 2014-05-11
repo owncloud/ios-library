@@ -63,6 +63,10 @@
 		4750919F191FC69B00D6A18D /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FC183E13C400B6A4B4 /* UIImageView+AFNetworking.m */; };
 		475091A0191FC69C00D6A18D /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FC183E13C400B6A4B4 /* UIImageView+AFNetworking.m */; };
 		475091A1191FC6B200D6A18D /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
+		475091A3191FD4BB00D6A18D /* OCCommunication.h in Headers */ = {isa = PBXBuildFile; fileRef = EA7CC932183E150000B6A4B4 /* OCCommunication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		475091A4191FD4C700D6A18D /* OCErrorMsg.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAB1218574A7C00909831 /* OCErrorMsg.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		475091A5191FD4D000D6A18D /* OCFileDto.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAA30183E688900909831 /* OCFileDto.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		475091A6191FD4DB00D6A18D /* OCFrameworkConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAA2F183E687000909831 /* OCFrameworkConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59A3EBC918FBD4E700D31D1B /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
@@ -497,6 +501,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				475091A3191FD4BB00D6A18D /* OCCommunication.h in Headers */,
+				475091A6191FD4DB00D6A18D /* OCFrameworkConstants.h in Headers */,
+				475091A4191FD4C700D6A18D /* OCErrorMsg.h in Headers */,
+				475091A5191FD4D000D6A18D /* OCFileDto.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
