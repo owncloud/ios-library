@@ -11,6 +11,58 @@
 		1345E4601884213400153F14 /* OCXMLShareByLinkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1345E45F1884213400153F14 /* OCXMLShareByLinkParser.m */; };
 		13AA8636187C211900A10927 /* OCSharedDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA8635187C211900A10927 /* OCSharedDto.m */; };
 		13AA8640187C3B9700A10927 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA863F187C3B9700A10927 /* OCXMLParser.m */; };
+		47509150191FC60E00D6A18D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4750914F191FC60E00D6A18D /* Cocoa.framework */; };
+		47509160191FC60E00D6A18D /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
+		47509161191FC60E00D6A18D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4750914F191FC60E00D6A18D /* Cocoa.framework */; };
+		47509164191FC60E00D6A18D /* libownCloudOSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4750914E191FC60E00D6A18D /* libownCloudOSX.a */; };
+		4750916A191FC60E00D6A18D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47509168191FC60E00D6A18D /* InfoPlist.strings */; };
+		47509173191FC62200D6A18D /* OCFileDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAA31183E688900909831 /* OCFileDto.m */; };
+		47509174191FC62200D6A18D /* OCFileDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAA31183E688900909831 /* OCFileDto.m */; };
+		47509175191FC62600D6A18D /* OCSharedDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA8635187C211900A10927 /* OCSharedDto.m */; };
+		47509176191FC62B00D6A18D /* OCCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC933183E150000B6A4B4 /* OCCommunication.m */; };
+		47509177191FC62C00D6A18D /* OCCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC933183E150000B6A4B4 /* OCCommunication.m */; };
+		47509178191FC63500D6A18D /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
+		47509179191FC63600D6A18D /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
+		4750917A191FC63900D6A18D /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
+		4750917B191FC63A00D6A18D /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
+		4750917C191FC63E00D6A18D /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
+		4750917D191FC63E00D6A18D /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
+		4750917E191FC64700D6A18D /* OCXMLSharedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 131C67B8187C3E360009030E /* OCXMLSharedParser.m */; };
+		4750917F191FC64A00D6A18D /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA863F187C3B9700A10927 /* OCXMLParser.m */; };
+		47509180191FC64C00D6A18D /* OCXMLShareByLinkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1345E45F1884213400153F14 /* OCXMLShareByLinkParser.m */; };
+		47509181191FC65100D6A18D /* NSDate+ISO8601.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC91E183E14A100B6A4B4 /* NSDate+ISO8601.m */; };
+		47509182191FC65200D6A18D /* NSDate+ISO8601.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC91E183E14A100B6A4B4 /* NSDate+ISO8601.m */; };
+		47509183191FC65500D6A18D /* NSDate+RFC1123.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC920183E14A100B6A4B4 /* NSDate+RFC1123.m */; };
+		47509184191FC65600D6A18D /* NSDate+RFC1123.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC920183E14A100B6A4B4 /* NSDate+RFC1123.m */; };
+		47509185191FC65800D6A18D /* OCHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */; };
+		47509186191FC65800D6A18D /* OCHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */; };
+		47509187191FC65C00D6A18D /* OCWebDAVClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */; };
+		47509188191FC65C00D6A18D /* OCWebDAVClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */; };
+		47509189191FC66200D6A18D /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
+		4750918A191FC66300D6A18D /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
+		4750918B191FC66500D6A18D /* UtilsFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC911183E146000B6A4B4 /* UtilsFramework.m */; };
+		4750918C191FC66500D6A18D /* UtilsFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC911183E146000B6A4B4 /* UtilsFramework.m */; };
+		4750918D191FC67300D6A18D /* test.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB38185B353100909831 /* test.jpeg */; };
+		4750918E191FC67600D6A18D /* video.MOV in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB3F185F225300909831 /* video.MOV */; };
+		4750918F191FC67F00D6A18D /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8EB183E13C400B6A4B4 /* AFHTTPClient.m */; };
+		47509190191FC67F00D6A18D /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8EB183E13C400B6A4B4 /* AFHTTPClient.m */; };
+		47509191191FC68200D6A18D /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8ED183E13C400B6A4B4 /* AFHTTPRequestOperation.m */; };
+		47509192191FC68200D6A18D /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8ED183E13C400B6A4B4 /* AFHTTPRequestOperation.m */; };
+		47509193191FC68500D6A18D /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8EF183E13C400B6A4B4 /* AFImageRequestOperation.m */; };
+		47509194191FC68600D6A18D /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8EF183E13C400B6A4B4 /* AFImageRequestOperation.m */; };
+		47509195191FC68800D6A18D /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F1183E13C400B6A4B4 /* AFJSONRequestOperation.m */; };
+		47509196191FC68900D6A18D /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F1183E13C400B6A4B4 /* AFJSONRequestOperation.m */; };
+		47509197191FC68B00D6A18D /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F3183E13C400B6A4B4 /* AFNetworkActivityIndicatorManager.m */; };
+		47509198191FC68B00D6A18D /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F3183E13C400B6A4B4 /* AFNetworkActivityIndicatorManager.m */; };
+		47509199191FC68F00D6A18D /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F6183E13C400B6A4B4 /* AFPropertyListRequestOperation.m */; };
+		4750919A191FC68F00D6A18D /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F6183E13C400B6A4B4 /* AFPropertyListRequestOperation.m */; };
+		4750919B191FC69400D6A18D /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F8183E13C400B6A4B4 /* AFURLConnectionOperation.m */; };
+		4750919C191FC69500D6A18D /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8F8183E13C400B6A4B4 /* AFURLConnectionOperation.m */; };
+		4750919D191FC69800D6A18D /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FA183E13C400B6A4B4 /* AFXMLRequestOperation.m */; };
+		4750919E191FC69900D6A18D /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FA183E13C400B6A4B4 /* AFXMLRequestOperation.m */; };
+		4750919F191FC69B00D6A18D /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FC183E13C400B6A4B4 /* UIImageView+AFNetworking.m */; };
+		475091A0191FC69C00D6A18D /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8FC183E13C400B6A4B4 /* UIImageView+AFNetworking.m */; };
+		475091A1191FC6B200D6A18D /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		59A3EBC918FBD4E700D31D1B /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
@@ -65,6 +117,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		47509162191FC60E00D6A18D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA7CC88F183E11E600B6A4B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4750914D191FC60E00D6A18D;
+			remoteInfo = ownCloudOSX;
+		};
 		EA7CC8AD183E11E600B6A4B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EA7CC88F183E11E600B6A4B4 /* Project object */;
@@ -95,6 +154,15 @@
 		13AA8635187C211900A10927 /* OCSharedDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = OCSharedDto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		13AA863E187C3B9700A10927 /* OCXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = OCXMLParser.h; path = OCWebDavClient/Parsers/OCXMLParser.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		13AA863F187C3B9700A10927 /* OCXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCXMLParser.m; path = OCWebDavClient/Parsers/OCXMLParser.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		4750914E191FC60E00D6A18D /* libownCloudOSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libownCloudOSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4750914F191FC60E00D6A18D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		47509152191FC60E00D6A18D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		47509153191FC60E00D6A18D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		47509154191FC60E00D6A18D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		47509157191FC60E00D6A18D /* ownCloudOSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ownCloudOSX-Prefix.pch"; sourceTree = "<group>"; };
+		4750915F191FC60E00D6A18D /* ownCloudOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ownCloudOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		47509167191FC60E00D6A18D /* ownCloudOSXTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ownCloudOSXTests-Info.plist"; sourceTree = "<group>"; };
+		47509169191FC60E00D6A18D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		59A3EBC718FBD4E700D31D1B /* ConfigTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigTests.h; sourceTree = "<group>"; };
 		59A3EBC818FBD4E700D31D1B /* ConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigTests.m; sourceTree = "<group>"; };
 		EA7CC897183E11E600B6A4B4 /* libownCloudiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libownCloudiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +224,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4750914B191FC60E00D6A18D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				47509150191FC60E00D6A18D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4750915C191FC60E00D6A18D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				47509164191FC60E00D6A18D /* libownCloudOSX.a in Frameworks */,
+				47509161191FC60E00D6A18D /* Cocoa.framework in Frameworks */,
+				47509160191FC60E00D6A18D /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC894183E11E600B6A4B4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -192,11 +278,56 @@
 			name = Parsers;
 			sourceTree = "<group>";
 		};
+		47509151191FC60E00D6A18D /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				47509152191FC60E00D6A18D /* Foundation.framework */,
+				47509153191FC60E00D6A18D /* CoreData.framework */,
+				47509154191FC60E00D6A18D /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		47509155191FC60E00D6A18D /* ownCloudOSX */ = {
+			isa = PBXGroup;
+			children = (
+				47509156191FC60E00D6A18D /* Supporting Files */,
+			);
+			path = ownCloudOSX;
+			sourceTree = "<group>";
+		};
+		47509156191FC60E00D6A18D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				47509157191FC60E00D6A18D /* ownCloudOSX-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		47509165191FC60E00D6A18D /* ownCloudOSXTests */ = {
+			isa = PBXGroup;
+			children = (
+				47509166191FC60E00D6A18D /* Supporting Files */,
+			);
+			path = ownCloudOSXTests;
+			sourceTree = "<group>";
+		};
+		47509166191FC60E00D6A18D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				47509167191FC60E00D6A18D /* ownCloudOSXTests-Info.plist */,
+				47509168191FC60E00D6A18D /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		EA7CC88E183E11E600B6A4B4 = {
 			isa = PBXGroup;
 			children = (
 				EA7CC89C183E11E600B6A4B4 /* OCCommunicationLib */,
 				EA7CC8B0183E11E600B6A4B4 /* OCCommunicationLibTests */,
+				47509155191FC60E00D6A18D /* ownCloudOSX */,
+				47509165191FC60E00D6A18D /* ownCloudOSXTests */,
 				EA7CC899183E11E600B6A4B4 /* Frameworks */,
 				EA7CC898183E11E600B6A4B4 /* Products */,
 			);
@@ -207,6 +338,8 @@
 			children = (
 				EA7CC897183E11E600B6A4B4 /* libownCloudiOS.a */,
 				EA7CC8A7183E11E600B6A4B4 /* ownCloud iOS libraryTests.xctest */,
+				4750914E191FC60E00D6A18D /* libownCloudOSX.a */,
+				4750915F191FC60E00D6A18D /* ownCloudOSXTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -218,6 +351,8 @@
 				EA7CC89A183E11E600B6A4B4 /* Foundation.framework */,
 				EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */,
 				EA7CC8AB183E11E600B6A4B4 /* UIKit.framework */,
+				4750914F191FC60E00D6A18D /* Cocoa.framework */,
+				47509151191FC60E00D6A18D /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -357,7 +492,52 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		4750914C191FC60E00D6A18D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		4750914D191FC60E00D6A18D /* ownCloudOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 47509171191FC60E00D6A18D /* Build configuration list for PBXNativeTarget "ownCloudOSX" */;
+			buildPhases = (
+				4750914A191FC60E00D6A18D /* Sources */,
+				4750914B191FC60E00D6A18D /* Frameworks */,
+				4750914C191FC60E00D6A18D /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ownCloudOSX;
+			productName = ownCloudOSX;
+			productReference = 4750914E191FC60E00D6A18D /* libownCloudOSX.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		4750915E191FC60E00D6A18D /* ownCloudOSXTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 47509172191FC60E00D6A18D /* Build configuration list for PBXNativeTarget "ownCloudOSXTests" */;
+			buildPhases = (
+				4750915B191FC60E00D6A18D /* Sources */,
+				4750915C191FC60E00D6A18D /* Frameworks */,
+				4750915D191FC60E00D6A18D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				47509163191FC60E00D6A18D /* PBXTargetDependency */,
+			);
+			name = ownCloudOSXTests;
+			productName = ownCloudOSXTests;
+			productReference = 4750915F191FC60E00D6A18D /* ownCloudOSXTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS library" */;
@@ -416,11 +596,23 @@
 			targets = (
 				EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */,
 				EA7CC8A6183E11E600B6A4B4 /* ownCloud iOS libraryTests */,
+				4750914D191FC60E00D6A18D /* ownCloudOSX */,
+				4750915E191FC60E00D6A18D /* ownCloudOSXTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4750915D191FC60E00D6A18D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4750916A191FC60E00D6A18D /* InfoPlist.strings in Resources */,
+				4750918E191FC67600D6A18D /* video.MOV in Resources */,
+				4750918D191FC67300D6A18D /* test.jpeg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC8A5183E11E600B6A4B4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -434,6 +626,65 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4750914A191FC60E00D6A18D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				47509194191FC68600D6A18D /* AFImageRequestOperation.m in Sources */,
+				47509192191FC68200D6A18D /* AFHTTPRequestOperation.m in Sources */,
+				47509185191FC65800D6A18D /* OCHTTPRequestOperation.m in Sources */,
+				47509176191FC62B00D6A18D /* OCCommunication.m in Sources */,
+				4750919E191FC69900D6A18D /* AFXMLRequestOperation.m in Sources */,
+				4750917F191FC64A00D6A18D /* OCXMLParser.m in Sources */,
+				47509198191FC68B00D6A18D /* AFNetworkActivityIndicatorManager.m in Sources */,
+				47509178191FC63500D6A18D /* OCChunkDto.m in Sources */,
+				47509175191FC62600D6A18D /* OCSharedDto.m in Sources */,
+				4750919A191FC68F00D6A18D /* AFPropertyListRequestOperation.m in Sources */,
+				475091A0191FC69C00D6A18D /* UIImageView+AFNetworking.m in Sources */,
+				4750917A191FC63900D6A18D /* OCChunkInputStream.m in Sources */,
+				47509187191FC65C00D6A18D /* OCWebDAVClient.m in Sources */,
+				4750917E191FC64700D6A18D /* OCXMLSharedParser.m in Sources */,
+				4750919C191FC69500D6A18D /* AFURLConnectionOperation.m in Sources */,
+				47509180191FC64C00D6A18D /* OCXMLShareByLinkParser.m in Sources */,
+				4750918B191FC66500D6A18D /* UtilsFramework.m in Sources */,
+				4750918F191FC67F00D6A18D /* AFHTTPClient.m in Sources */,
+				4750917C191FC63E00D6A18D /* OCUploadOperation.m in Sources */,
+				47509189191FC66200D6A18D /* NSString+Encode.m in Sources */,
+				47509181191FC65100D6A18D /* NSDate+ISO8601.m in Sources */,
+				47509173191FC62200D6A18D /* OCFileDto.m in Sources */,
+				47509196191FC68900D6A18D /* AFJSONRequestOperation.m in Sources */,
+				47509183191FC65500D6A18D /* NSDate+RFC1123.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4750915B191FC60E00D6A18D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4750917D191FC63E00D6A18D /* OCUploadOperation.m in Sources */,
+				47509188191FC65C00D6A18D /* OCWebDAVClient.m in Sources */,
+				47509199191FC68F00D6A18D /* AFPropertyListRequestOperation.m in Sources */,
+				47509177191FC62C00D6A18D /* OCCommunication.m in Sources */,
+				4750919B191FC69400D6A18D /* AFURLConnectionOperation.m in Sources */,
+				47509182191FC65200D6A18D /* NSDate+ISO8601.m in Sources */,
+				47509190191FC67F00D6A18D /* AFHTTPClient.m in Sources */,
+				4750917B191FC63A00D6A18D /* OCChunkInputStream.m in Sources */,
+				47509193191FC68500D6A18D /* AFImageRequestOperation.m in Sources */,
+				47509197191FC68B00D6A18D /* AFNetworkActivityIndicatorManager.m in Sources */,
+				47509191191FC68200D6A18D /* AFHTTPRequestOperation.m in Sources */,
+				47509179191FC63600D6A18D /* OCChunkDto.m in Sources */,
+				47509186191FC65800D6A18D /* OCHTTPRequestOperation.m in Sources */,
+				47509174191FC62200D6A18D /* OCFileDto.m in Sources */,
+				47509184191FC65600D6A18D /* NSDate+RFC1123.m in Sources */,
+				4750919D191FC69800D6A18D /* AFXMLRequestOperation.m in Sources */,
+				475091A1191FC6B200D6A18D /* ConfigTests.m in Sources */,
+				4750918C191FC66500D6A18D /* UtilsFramework.m in Sources */,
+				47509195191FC68800D6A18D /* AFJSONRequestOperation.m in Sources */,
+				4750919F191FC69B00D6A18D /* UIImageView+AFNetworking.m in Sources */,
+				4750918A191FC66300D6A18D /* NSString+Encode.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC893183E11E600B6A4B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -497,6 +748,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		47509163191FC60E00D6A18D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4750914D191FC60E00D6A18D /* ownCloudOSX */;
+			targetProxy = 47509162191FC60E00D6A18D /* PBXContainerItemProxy */;
+		};
 		EA7CC8AE183E11E600B6A4B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */;
@@ -505,6 +761,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		47509168191FC60E00D6A18D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				47509169191FC60E00D6A18D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		EA7CC8B3183E11E600B6A4B4 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -516,6 +780,90 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4750916D191FC60E00D6A18D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ownCloudOSX/ownCloudOSX-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4750916E191FC60E00D6A18D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ownCloudOSX/ownCloudOSX-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4750916F191FC60E00D6A18D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ownCloudOSX/ownCloudOSX-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "ownCloudOSXTests/ownCloudOSXTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		47509170191FC60E00D6A18D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ownCloudOSX/ownCloudOSX-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "ownCloudOSXTests/ownCloudOSXTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
 		EA7CC8B8183E11E600B6A4B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -661,6 +1009,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		47509171191FC60E00D6A18D /* Build configuration list for PBXNativeTarget "ownCloudOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4750916D191FC60E00D6A18D /* Debug */,
+				4750916E191FC60E00D6A18D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		47509172191FC60E00D6A18D /* Build configuration list for PBXNativeTarget "ownCloudOSXTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4750916F191FC60E00D6A18D /* Debug */,
+				47509170191FC60E00D6A18D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
