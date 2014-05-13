@@ -67,6 +67,7 @@
 		475091A4191FD4C700D6A18D /* OCErrorMsg.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAB1218574A7C00909831 /* OCErrorMsg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		475091A5191FD4D000D6A18D /* OCFileDto.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAA30183E688900909831 /* OCFileDto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		475091A6191FD4DB00D6A18D /* OCFrameworkConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EAABAA2F183E687000909831 /* OCFrameworkConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		47C276481922A74B008382CC /* OCCommunicationLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC8B6183E11E600B6A4B4 /* OCCommunicationLibTests.m */; };
 		59A3EBC918FBD4E700D31D1B /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
@@ -671,6 +672,7 @@
 			files = (
 				4750917D191FC63E00D6A18D /* OCUploadOperation.m in Sources */,
 				47509188191FC65C00D6A18D /* OCWebDAVClient.m in Sources */,
+				47C276481922A74B008382CC /* OCCommunicationLibTests.m in Sources */,
 				47509199191FC68F00D6A18D /* AFPropertyListRequestOperation.m in Sources */,
 				47509177191FC62C00D6A18D /* OCCommunication.m in Sources */,
 				4750919B191FC69400D6A18D /* AFURLConnectionOperation.m in Sources */,
@@ -1024,6 +1026,7 @@
 				4750916E191FC60E00D6A18D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		47509172191FC60E00D6A18D /* Build configuration list for PBXNativeTarget "ownCloudOSXTests" */ = {
 			isa = XCConfigurationList;
@@ -1032,6 +1035,7 @@
 				47509170191FC60E00D6A18D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */ = {
 			isa = XCConfigurationList;
