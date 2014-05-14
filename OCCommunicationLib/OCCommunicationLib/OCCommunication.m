@@ -34,6 +34,7 @@
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
+#import "AFURLSessionManager.h"
 
 @interface OCCommunication ()
 //Property that define the system of download
@@ -329,6 +330,32 @@
     }];
     
     return operation;
+}
+
+///-----------------------------------
+/// @name Upload File With NSURLSession
+///-----------------------------------
+
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
+        
+    } success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        
+    } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
+        
+    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+        handler();
+    }];
+    
+    return uploadTask;
 }
 
 ///-----------------------------------
