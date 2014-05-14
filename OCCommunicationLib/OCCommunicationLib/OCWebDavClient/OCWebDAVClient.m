@@ -319,11 +319,8 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.localSource = localSource;
-    //TODO:Uncomment this
     
-    
-    
-    /*[operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
+    [operation setWillSendRequestForAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
@@ -332,7 +329,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
         
         NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
         forceCredentialsFailure(response, error);
-    }];*/
+    }];
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
@@ -362,8 +359,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.chunkInputStream = chunkInputStreamForRedirection;
     
-    //TODO:Uncomment this
-    /*[operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
+    [operation setWillSendRequestForAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
         //Credential error
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
@@ -372,7 +368,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
         
         NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
         forceCredentialsFailure(response, error);
-    }];*/
+    }];
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
