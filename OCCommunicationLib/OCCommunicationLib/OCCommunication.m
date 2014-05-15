@@ -36,12 +36,6 @@
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
 
-@interface OCCommunication ()
-//Property that define the system of download
-@property (nonatomic) BOOL isDownloadQueueLIFO;
-
-@end
-
 
 @implementation OCCommunication
 
@@ -57,9 +51,6 @@
         
         //Init the Donwload queue array
         _downloadOperationQueueArray = [NSMutableArray new];
-        
-        //Set the download queue in LIFO by default
-        _isDownloadQueueLIFO = NO;
         
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
@@ -126,27 +117,6 @@
     
     return myRequest;
 }
-
-#pragma mark - Options in Network
-
-///-----------------------------------
-/// @name Set Download Queue to LIFO system
-///-----------------------------------
-
-/**
- * For default the download queue works in FIFO system.
- * With this method you can change the behaviour to work in LIFO system or
- * default system.
- *
- * @param isLIFO -> BOOL
- *
- */
-- (void)setDownloadQueueToLIFO:(BOOL) isLIFO{
-
-    _isDownloadQueueLIFO = isLIFO;
-    
-}
-
 
 #pragma mark - Network Operations
 
@@ -277,7 +247,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -287,18 +257,19 @@
     NSLog(@"Remote File Path: %@", remotePath);
     NSLog(@"Local File Path: %@", localPath);
     
-    NSOperation *operation = [request downloadPath:remotePath toPath:localPath onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
     } success:^(OCHTTPRequestOperation *operation, id responseObject) {
         successRequest(operation.response, operation.redirectedServer);
-        if (_isDownloadQueueLIFO)
+        if (operation.typeOfOperation == DownloadLIFOQueue)
             [self resumeNextDownload];
         
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
-        if (_isDownloadQueueLIFO)
+        if (operation.typeOfOperation == DownloadLIFOQueue)
             [self resumeNextDownload];
+        
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
     }];
@@ -741,12 +712,16 @@
         
         
         switch (operation.typeOfOperation) {
-            case DownloadQueue:
-                if(currentOperation.typeOfOperation == DownloadQueue) {
+            case DownloadLIFOQueue:
+                if(currentOperation.typeOfOperation == DownloadLIFOQueue) {
                     //Get first download operation in progress, for LIFO option
                     if (currentOperation.isExecuting)
                         firstOperationDownload = currentOperation;
-                    
+                }
+                 break;
+            
+            case DownloadFIFOQueue:
+                if(currentOperation.typeOfOperation == DownloadFIFOQueue) {
                     lastOperationDownload = currentOperation;
                 }
                 break;
@@ -768,22 +743,16 @@
     
     //We add the dependency
     switch (operation.typeOfOperation) {
-        case DownloadQueue:
-            //Check if the download queue is using LIFO or FIFO system
-            if (!_isDownloadQueueLIFO) {
-                //Default system: FIFO
-                if(lastOperationDownload)
-                    [operation addDependency:lastOperationDownload];
-                
-
-            }else{
-                //LIFO system.
-                //If there are download in progress, pause and store in download array
-                if (firstOperationDownload) {
-                    [firstOperationDownload pause];
-                    [_downloadOperationQueueArray addObject:firstOperationDownload];
-                }
+        case DownloadLIFOQueue:
+            //If there are download in progress, pause and store in download array
+            if (firstOperationDownload) {
+                [firstOperationDownload pause];
+                [_downloadOperationQueueArray addObject:firstOperationDownload];
             }
+            break;
+        case DownloadFIFOQueue:
+            if(lastOperationDownload)
+                [operation addDependency:lastOperationDownload];
             
             break;
         case UploadQueue:
@@ -794,7 +763,6 @@
         case NavigationQueue:
             if(lastOperationNavigation)
                 [operation addDependency:lastOperationNavigation];
-                
             
             break;
             

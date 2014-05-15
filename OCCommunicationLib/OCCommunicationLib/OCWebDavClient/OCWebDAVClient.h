@@ -158,13 +158,14 @@ extern NSString *OCWebDAVModificationDateKey;
  
  @param remoteSource The path to be fetched, relative to the HTTP client's base URL.
  @param localDestination A local URL to save the contents of a remote file to.
+ @param isLIFO Boolean value to indicate if must be use FIFO queue or LIFO queue
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  
  @see getPath:success:failure:
  */
 
-- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 /**
