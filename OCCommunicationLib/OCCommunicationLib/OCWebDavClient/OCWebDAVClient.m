@@ -350,34 +350,61 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     return operation;
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication   progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication   progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     
     NSLog(@"localSource: %@", localSource);
     NSLog(@"remoteDestination: %@", remoteDestination);
+    
+    //NSURL *URL = [NSURL URLWithString:remoteDestination];
+    //NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
     NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setHTTPShouldHandleCookies:NO];
-    [request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
+    //[request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
     //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
-	NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"ownCloud Session Config"];
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    [manager.operationQueue setMaxConcurrentOperationCount:1];
+    //NSURL *filePath = [NSURL fileURLWithPath:@"file://path/to/image.png"];
+    //NSURL *file = [NSURL fileURLWithPath:localSource];
+    NSURL *file = [NSURL fileURLWithPath:localSource];
     
-    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithStreamedRequest:request progress:nil completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Success: %@ %@", response, responseObject);
-        }
-    }];
+    NSProgress *progressUpload;
+    
+    NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:nil
+                                                                                         completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                                                                                             if (error) {
+                                                                                                 NSLog(@"Error: %@", error);
+                                                                                                 failure(nil, error);
+                                                                                             } else {
+                                                                                                 NSLog(@"Success: %@ %@", response, responseObject);
+                                                                                                 success(response,responseObject);
+                                                                                             }
+                                                                                         }];
+    
+
+
     [uploadTask resume];
     
+    // Observe fractionCompleted using KVO
+    [progressUpload addObserver:self
+                     forKeyPath:@"fractionCompleted"
+                        options:NSKeyValueObservingOptionNew
+                        context:NULL];
+    
     return uploadTask;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    
+    if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
+        NSProgress *progress = (NSProgress *)object;
+        NSLog(@"Progress is %f", progress.fractionCompleted);
+    }
 }
 
 - (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream andInputStreamForRedirection:(OCChunkInputStream *) chunkInputStreamForRedirection atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {

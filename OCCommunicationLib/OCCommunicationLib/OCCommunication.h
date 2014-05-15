@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class OCHTTPRequestOperation;
+@class AFURLSessionManager;
 
 @interface OCCommunication : NSObject
 
@@ -56,6 +57,8 @@ typedef enum {
 @property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
 @property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
+
+@property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 
 #pragma mark - Credentials
 
@@ -310,7 +313,7 @@ typedef enum {
 
 - (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 #pragma mark - OC API Calls
