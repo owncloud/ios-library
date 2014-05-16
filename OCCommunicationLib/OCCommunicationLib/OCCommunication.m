@@ -312,7 +312,7 @@
 /// @name Upload File With NSURLSession
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     __block long long totalBytesExpectedToWrote = [UtilsFramework getSizeInBytesByPath:localPath];
     
@@ -326,8 +326,9 @@
     } success:^(NSURLResponse *response, id responseObject) {
         //TODO: The second parameter is the redirected server
         successRequest(response, @"");
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(nil, nil, error);
+    } failure:^(NSURLResponse *response, NSError *error) {
+        //TODO: The second parameter is the redirected server
+        failureRequest(response, @"", error);
     } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
         failureBeforeRequest(error);
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{

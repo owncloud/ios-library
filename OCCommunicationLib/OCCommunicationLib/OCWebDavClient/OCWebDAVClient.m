@@ -350,7 +350,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     return operation;
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     
     NSLog(@"localSource: %@", localSource);
@@ -375,7 +375,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
                                                                                          completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                                                                                              if (error) {
                                                                                                  NSLog(@"Error: %@", error);
-                                                                                                 failure(nil, error);
+                                                                                                 failure(response, error);
                                                                                              } else {
                                                                                                  NSLog(@"Success: %@ %@", response, responseObject);
                                                                                                  success(response,responseObject);
