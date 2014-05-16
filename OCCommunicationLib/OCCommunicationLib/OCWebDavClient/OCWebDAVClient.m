@@ -350,7 +350,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     return operation;
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withIdentifier:(NSString *) identifier withProgress:(NSProgress * __autoreleasing *) progressValue progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     
     NSLog(@"localSource: %@", localSource);
@@ -371,7 +371,20 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     //NSURL *file = [NSURL fileURLWithPath:localSource];
     NSURL *file = [NSURL fileURLWithPath:localSource];
     
-    NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
+    
+    /* This works using delegates
+     NSURLSessionConfiguration * backgroundConfig = [NSURLSessionConfiguration backgroundSessionConfiguration:@"backgroundtask1"];
+    NSURLSession *backgroundSeesion = [NSURLSession sessionWithConfiguration: backgroundConfig delegate:self delegateQueue: sharedOCCommunication.networkOperationsQueue];
+    
+    NSURLSessionUploadTask *uploadTask = [backgroundSeesion uploadTaskWithRequest:request fromFile:file];*/
+    
+    
+    //Network Upload queue for NSURLSession (iOS 7)
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:identifier];
+    AFURLSessionManager *uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    [uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+    
+    NSURLSessionUploadTask *uploadTask = [uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
                                                                                          completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                                                                                              if (error) {
                                                                                                  NSLog(@"Error: %@", error);
@@ -388,6 +401,21 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     return uploadTask;
 }
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+   didSendBodyData:(int64_t)bytesSent
+    totalBytesSent:(int64_t)totalBytesSent
+totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    NSLog(@"Progress: %lld", totalBytesSent);
+    
+    
+}
+
+
+
+
+
+
 
 - (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream andInputStreamForRedirection:(OCChunkInputStream *) chunkInputStreamForRedirection atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
