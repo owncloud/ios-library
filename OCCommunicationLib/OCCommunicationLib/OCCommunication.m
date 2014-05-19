@@ -59,6 +59,11 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
+        //Network Upload queue for NSURLSession (iOS 7)
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"ownCloud Session Config"];
+        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+        [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+    
     }
     
     return self;
@@ -307,7 +312,7 @@
 /// @name Upload File With NSURLSession
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withIdentifier:(NSString *) identifier withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     __block long long totalBytesExpectedToWrote = [UtilsFramework getSizeInBytesByPath:localPath];
     
@@ -316,7 +321,7 @@
     
     remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withIdentifier:identifier withProgress:progressValue progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
         progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
     } success:^(NSURLResponse *response, id responseObject) {
         //TODO: The second parameter is the redirected server
