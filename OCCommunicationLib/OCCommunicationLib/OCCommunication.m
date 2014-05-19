@@ -61,6 +61,7 @@
         
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"ownCloud Session Config"];
+        configuration.HTTPMaximumConnectionsPerHost = 1;
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
         [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
     
