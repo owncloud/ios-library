@@ -336,10 +336,24 @@
         handler();
     }];
     
-    
-    
     return uploadTask;
 }
+
+///-----------------------------------
+/// @name Set Task Did Complete Block
+///-----------------------------------
+
+- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *, NSURLSessionTask *, NSError *)) block{
+    
+    [self.uploadSessionManager setTaskDidCompleteBlock:^(NSURLSession *session, NSURLSessionTask *task, NSError *error) {
+
+        block(session, task, error);
+    }];
+    
+}
+
+
+
 
 ///-----------------------------------
 /// @name Read File

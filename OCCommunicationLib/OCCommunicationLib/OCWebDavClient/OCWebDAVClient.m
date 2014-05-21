@@ -382,8 +382,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
                                                                                              }
                                                                                          }];
     
-
-
+    
     [uploadTask resume];
     
     return uploadTask;

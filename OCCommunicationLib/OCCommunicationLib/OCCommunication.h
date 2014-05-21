@@ -316,6 +316,22 @@ typedef enum {
 - (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
+///-----------------------------------
+/// @name Set Task Did Complete Block
+///-----------------------------------
+
+
+/**
+ *
+ * Method to set the callbaks block of the pending background tasks.
+ *
+ * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
+ *
+ */
+
+- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *, NSURLSessionTask *, NSError *)) block;
+
+
 #pragma mark - OC API Calls
 
 ///-----------------------------------
