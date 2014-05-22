@@ -329,7 +329,19 @@ typedef enum {
  *
  */
 
-- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *, NSURLSessionTask *, NSError *)) block;
+- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, NSError *error)) block;
+
+
+///-----------------------------------
+/// @name Set Task Did Send Body Data Block
+///-----------------------------------
+
+/**
+ * Sets a block that get callbacks of the NSURLSessionTask progress
+ *
+ * @param block A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes five arguments: the session, the task, the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
+ */
+- (void) setTaskDidSendBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend)) block;
 
 
 #pragma mark - OC API Calls

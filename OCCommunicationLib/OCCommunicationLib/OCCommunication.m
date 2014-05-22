@@ -343,7 +343,7 @@
 /// @name Set Task Did Complete Block
 ///-----------------------------------
 
-- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *, NSURLSessionTask *, NSError *)) block{
+- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, NSError *error)) block{
     
     [self.uploadSessionManager setTaskDidCompleteBlock:^(NSURLSession *session, NSURLSessionTask *task, NSError *error) {
 
@@ -351,6 +351,23 @@
     }];
     
 }
+
+
+///-----------------------------------
+/// @name Set Task Did Send Body Data Block
+///-----------------------------------
+
+
+- (void) setTaskDidSendBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend)) block{
+    
+   [self.uploadSessionManager setTaskDidSendBodyDataBlock:^(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend) {
+       block(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend);
+   }];
+}
+
+
+
+
 
 
 
