@@ -32,7 +32,7 @@
 #import "OCSharedDto.h"
 #import "ConfigTests.h"
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 /*
  *  With this implementation we allow the connection with any HTTPS server

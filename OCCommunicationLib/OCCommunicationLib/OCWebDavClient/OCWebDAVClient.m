@@ -207,10 +207,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
     }];
     
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
     //Execute task when backgroun expired
     [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
     }];
+#endif
     
 	operation.outputStream = [NSOutputStream outputStreamToFileAtPath:localDestination append:NO];
     
@@ -281,9 +283,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         progress(bytesWrote, totalBytesWrote);
     }];
     
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
     [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
     }];
+#endif
     
     [operation setTypeOfOperation:UploadQueue];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
@@ -320,9 +324,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         progress(bytesWrote, totalBytesWrote);
     }];
     
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
     [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
     }];
+#endif
     
     [operation setTypeOfOperation:UploadQueue];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
