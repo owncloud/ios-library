@@ -282,7 +282,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Progress
          _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %lld bytes", totalBytesWrite];
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Success
         _pathOfRemoteUploadedFile = serverUrl;
         _uploadProgressLabel.text = @"Success";
