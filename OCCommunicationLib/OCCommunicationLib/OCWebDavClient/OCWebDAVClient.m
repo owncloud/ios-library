@@ -189,7 +189,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     //NSLog(@"Local destination path: %@", localDestination);
     
@@ -217,7 +217,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 	operation.outputStream = [NSOutputStream outputStreamToFileAtPath:localDestination append:NO];
     
     //Set type download operation
-    [operation setTypeOfOperation:DownloadQueue];
+    if (isLIFO) {
+        [operation setTypeOfOperation:DownloadLIFOQueue];
+    } else {
+        [operation setTypeOfOperation:DownloadFIFOQueue];
+    }
     
     //Add operation to network queue
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
