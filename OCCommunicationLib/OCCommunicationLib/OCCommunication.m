@@ -40,6 +40,7 @@
 @implementation OCCommunication
 
 
+
 -(id) init {
     
     self = [super init];
@@ -59,16 +60,23 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
+#ifdef UNIT_TEST
+        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+#else
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
         configuration.HTTPMaximumConnectionsPerHost = 1;
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-        [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
-    
+       [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+ 
+#endif
+        
+        
     }
     
     return self;
 }
+
 
 #pragma mark - Setting Credentials
 

@@ -1107,7 +1107,7 @@
     
     __block NSOperation *operation = nil;
     
-    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         
         NSLog(@"Download :%lu bytes of %lld bytes", (unsigned long)bytesRead, totalBytesExpectedToRead);
         
@@ -1191,7 +1191,7 @@
     
     __block NSOperation *operation = nil;
     
-    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         
         NSLog(@"Download :%lu bytes of %lld bytes", (unsigned long)bytesRead, totalBytesExpectedToRead);
         
@@ -1476,6 +1476,199 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
+
+///-----------------------------------
+/// @name Test to upload with session
+///-----------------------------------
+
+/**
+ * This test try to uplad a file using NSURLSession
+ *
+ */
+- (void) testUploadFileWithSession {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    [self createFolderWithName:uploadPath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Server URL: %@", serverUrl);
+    
+    NSURLSessionUploadTask *uploadTask = nil;
+    
+    NSProgress *progress = nil;
+    
+   
+    
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+        
+        NSLog(@"File Uploaded");
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
+        
+        XCTFail(@"Error. File do not uploaded: %@", error);
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+                    forKeyPath:@"fractionCompleted"
+                       options:NSKeyValueObservingOptionNew
+                       context:NULL];
+    
+    
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+//-----------------------------------
+/// @name Test to upload with session and special characters
+///-----------------------------------
+
+/**
+ * This test try to uplad a file using NSURLSession
+ *
+ */
+- (void) testUploadFileWithSessionAndSpecialCharacters {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    [self createFolderWithName:uploadPath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    
+    //Path of server file file (Special character added in file name)
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Server URL: %@", serverUrl);
+    
+    NSURLSessionUploadTask *uploadTask = nil;
+    
+    NSProgress *progress = nil;
+    
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+        
+        NSLog(@"File Uploaded");
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
+        
+        XCTFail(@"Error. File do not uploaded: %@", error);
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+///-----------------------------------
+/// @name Test to upload with session file that does not exists
+///-----------------------------------
+
+/**
+ * This test try to uplad a file using NSURLSession
+ *
+ */
+- (void) testUploadFileWithSessionFileThastDoesNotExist {
+    
+    //Create Tests/Test Upload
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    [self createFolderWithName:uploadPath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Upload test file
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    
+    //Path of server file file (Special character added in file name)
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Server URL: %@", serverUrl);
+    
+    NSURLSessionUploadTask *uploadTask = nil;
+    
+    NSProgress *progress = nil;
+    
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+        
+        XCTFail(@"Error We upload a file that does not exist");
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
+        
+         NSLog(@"File that do not exist does not upload");
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+
+//Method to get the callbacks of the upload progress
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
+        NSProgress *progress = (NSProgress *)object;
+        //DLog(@"Progress is %f", progress.fractionCompleted);
+        
+        float percent = roundf (progress.fractionCompleted * 100) / 100.0;
+        
+        //We make it on the main thread because we came from a delegate
+        dispatch_async(dispatch_get_main_queue(), ^{
+             NSLog(@"Progress is %f", percent);
+        });
+        
+    }
+    
+}
+
 
 ///-----------------------------------
 /// @name Test the share a folder
