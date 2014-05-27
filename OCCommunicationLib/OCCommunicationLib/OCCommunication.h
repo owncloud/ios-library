@@ -313,7 +313,29 @@ typedef enum {
 
 - (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+
+///-----------------------------------
+/// @name Upload File Session
+///-----------------------------------
+
+/**
+ * Method to upload a file. All the files will be upload one by one in a queue. The files upload also in background when the system close the app.
+ *
+ * @param NSString -> localPath the path where is the file that we want upload
+ * @param NSString -> remotePath the path where we want upload the file
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ * @param NSProgress -> A progress object monitoring the current upload progress
+ *
+ * @return NSURLSessionUploadTask -> You can cancel the upload using this object
+ * Ex: [uploadTask cancel]
+ *
+ * @warning remember that you must to set the Credentials before call this method or any other.
+ *
+ * @warning this method use NSURLSession only supported in iOS 7, with iOS 6 use the previous method
+ *
+ */
+
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest;
 
 
 ///-----------------------------------

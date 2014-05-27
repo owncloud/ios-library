@@ -60,7 +60,7 @@
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
         //Network Upload queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"ownCloud Session Config"];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
         configuration.HTTPMaximumConnectionsPerHost = 1;
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
         [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
@@ -310,31 +310,24 @@
 }
 
 ///-----------------------------------
-/// @name Upload File With NSURLSession
+/// @name Upload File Session
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
-    
-    __block long long totalBytesExpectedToWrote = [UtilsFramework getSizeInBytesByPath:localPath];
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     
     remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
-        progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-    } success:^(NSURLResponse *response, id responseObject) {
-        //TODO: The second parameter is the redirected server
-        successRequest(response, @"");
-    } failure:^(NSURLResponse *response, NSError *error) {
-        //TODO: The second parameter is the redirected server
-        failureRequest(response, @"", error);
-    } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
-        failureBeforeRequest(error);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
+        success:^(NSURLResponse *response, id responseObjec){
+            //TODO: The second parameter is the redirected server
+            successRequest(response, @"");
+        } failure:^(NSURLResponse *response, NSError *error) {
+            //TODO: The second parameter is the redirected server
+            failureRequest(response, @"", error);
+        }];
     
     return uploadTask;
 }
@@ -364,12 +357,6 @@
        block(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend);
    }];
 }
-
-
-
-
-
-
 
 
 ///-----------------------------------

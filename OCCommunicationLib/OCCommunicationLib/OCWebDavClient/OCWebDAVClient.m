@@ -350,25 +350,20 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     return operation;
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue progress:(void(^)(NSUInteger, long long))progress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure{
     
     
     NSLog(@"localSource: %@", localSource);
     NSLog(@"remoteDestination: %@", remoteDestination);
     
-    //NSURL *URL = [NSURL URLWithString:remoteDestination];
-    //NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
     NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setHTTPShouldHandleCookies:NO];
-    //[request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
-    //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
-    //NSURL *filePath = [NSURL fileURLWithPath:@"file://path/to/image.png"];
-    //NSURL *file = [NSURL fileURLWithPath:localSource];
     NSURL *file = [NSURL fileURLWithPath:localSource];
     
     NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
