@@ -29,6 +29,8 @@
 #import "OCFrameworkConstants.h"
 #import "OCErrorMsg.h"
 
+#define kSAMLFragmentArray [NSArray arrayWithObjects: @"wayf", @"saml", nil]
+
 @implementation UtilsFramework
 
 /*
@@ -243,5 +245,36 @@
     
     return fileLength;
 }
+
+
+
+
+
+///-----------------------------------
+/// @name isURLWithSamlFragment:
+///-----------------------------------
+
+/**
+ * Method to check a url string to looking for a SAML fragment
+ *
+ * @param urlString -> url from redirect server
+ *
+ * @return BOOL -> the result about if exist the SAML fragment or not
+ */
++ (BOOL) isURLWithSamlFragment:(NSString*)urlString {
+    
+    urlString = [urlString lowercaseString];
+    
+    if (urlString) {
+        for (NSString* samlFragment in kSAMLFragmentArray) {
+            if ([urlString rangeOfString:samlFragment options:NSCaseInsensitiveSearch].location != NSNotFound) {
+                NSLog(@"A SAML fragment is in the request url");
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 
 @end

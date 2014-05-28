@@ -82,4 +82,17 @@
 + (long long) getSizeInBytesByPath:(NSString *) path;
 
 
+///-----------------------------------
+/// @name isURLWithSamlFragment:
+///-----------------------------------
+
+/**
+ * Method to check a url string to looking for a SAML fragment
+ *
+ * @param urlString -> url from redirect server
+ *
+ * @return BOOL -> the result about if exist the SAML fragment or not
+ */
++ (BOOL) isURLWithSamlFragment:(NSString*)urlString;
+
 @end
