@@ -27,6 +27,7 @@
 #import "OCHTTPRequestOperation.h"
 #import "OCChunkInputStream.h"
 #import "OCFrameworkConstants.h"
+#import "UtilsFramework.h"
 
 #define k_redirected_code_1 301
 #define k_redirected_code_2 302
@@ -38,14 +39,31 @@
 
 @implementation OCHTTPRequestOperation
 
+@synthesize request;
 
 #pragma mark - Redirection protection
+
+///-----------------------------------
+/// @name connection:willSendRequest:redirectResponse:
+///-----------------------------------
+
+/**
+ * Connection redirected (NSURLConnection Delegate Method)
+ * This method is called when the NSURLConnection detects that
+ * there is a redirecction
+ *
+ * @param connection -> NSURLConnection
+ * @param requestRed -> NSURLRequest
+ * @param redirectResponse -> NSURLResponse
+ *
+ * @return NSURLRequest
+ *
+ */
 
 - (NSURLRequest *)connection: (NSURLConnection *)connection
              willSendRequest: (NSURLRequest *)requestRed
             redirectResponse: (NSURLResponse *)redirectResponse;
 {
-    
     //If there is a redireccion
     if (redirectResponse) {
         NSLog(@"redirecction");
@@ -55,39 +73,27 @@
         
         if (k_redirected_code_1 == statusCode || k_redirected_code_2 == statusCode || k_redirected_code_3 == statusCode) {
             //We get all the headers in order to obtain the Location
-            NSHTTPURLResponse *hr = (NSHTTPURLResponse*)redirectResponse;
-            NSDictionary *dict = [hr allHeaderFields];
-            
+            NSDictionary *dict = [httpResponse allHeaderFields];
             //Server path of redirected server
             NSString *responseURLString = [dict objectForKey:@"Location"];
-            
-            
+            //Set the URL into the request            
             [self.request setURL: [NSURL URLWithString:responseURLString]];
             
             if (_localSource) {
                 //Only for uploads without chunks
                 [self.request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:_localSource]];
-            }
-            if (_chunkInputStream) {
+            } else if (_chunkInputStream) {
                 //Only for uploads with chunks
                 [self.request setHTTPBodyStream:_chunkInputStream];
             }
-            
-            //For uploads we store the redirections of the request
-            if (_typeOfOperation == UploadQueue) {
-                //We only need the first redirecttion for SAML
-                if (!_redirectedServer) {
-                    _redirectedServer = requestRed.URL.absoluteString;
-                }
-            } else {
-                _redirectedServer = redirectResponse.URL.absoluteString;
+            //Check if there is a SAML fragment on the URL string
+            if ([UtilsFramework isURLWithSamlFragment:responseURLString]) {
+                _redirectedServer = responseURLString;
             }
             
             return self.request;
         }
     }
-    
-    
     return requestRed;
 }
 
