@@ -33,21 +33,23 @@
 //For the example works you must be enter your server data
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
-static NSString *baseUrl = @"";
+static NSString *baseUrl = @"https://s3.owncloud.com/owncloud/remote.php/webdav/";
 
 //user
-static NSString *user = @""; //@"username";
+static NSString *user = @"ggdiez"; //@"username";
 //password
-static NSString *password = @""; //@"password";
+static NSString *password = @"slipknot"; //@"password";
 
 //To test the download you must be enter a path of specific file
-static NSString *pathOfDownloadFile = @"path of file to download"; //@"LibExampleDownload/default.png";
+static NSString *pathOfDownloadFile = @"Test/bruja.JPG";//@"path of file to download"; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
 
 //Optional. Set the path of the file to upload
 static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
 
 @interface ViewController ()
+
+@property (nonatomic) BOOL usedSessions;
 
 @end
 
@@ -56,7 +58,8 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	//Properties
+    _usedSessions = NO;
     
     //Buttons
     _deleteLocalFile.enabled = NO;
@@ -114,9 +117,30 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
 //Upload file button tapped
 - (IBAction)uploadImage:(id)sender{
-    
+    _usedSessions = NO;
     _uploadButton.enabled = NO;
     [self uploadFile];
+    
+}
+
+//Upload file with session button tapped
+- (IBAction)uploadImageWithSession:(id)sender{
+    
+    if (IS_IOS7) {
+        if (IS_IPHONE) {
+            _uploadButton.enabled = NO;
+        }else{
+            _uploadWithSessionButton.enabled = NO;
+            _usedSessions = YES;
+        }
+        
+        [self uploadFileWithSession];
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    
     
 }
 
@@ -222,7 +246,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     _downloadOperation = nil;
     
-    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
+    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
         //Progress
         _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", totalBytesRead];
         
@@ -277,12 +301,14 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
     _uploadOperation = nil;
     
+    _uploadProgressLabel.text = @"";
+    
     //Upload block
     _uploadOperation = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] progressUpload:^(NSUInteger bytesWrite, long long totalBytesWrite, long long totalExpectedBytesWrite) {
         //Progress
          _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %lld bytes", totalBytesWrite];
         
-    } successRequest:^(NSHTTPURLResponse *response) {
+    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Success
         _pathOfRemoteUploadedFile = serverUrl;
         _uploadProgressLabel.text = @"Success";
@@ -313,6 +339,99 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
 }
 
+
+///-----------------------------------
+/// @name Upload File in Background with Session
+///-----------------------------------
+
+/**
+ * Method that upload a specific file of a specific path of ownCloud server using session
+ * only for iOS 7 and higher
+ */
+- (void)uploadFileWithSession {
+    
+    //Copy the specific file of bundle to the Documents directory
+    UIImage *uploadImage = [UIImage imageNamed:@"image_to_upload.jpg"];
+    
+    //Convert UIImage to JPEG
+    NSData *imgData = UIImageJPEGRepresentation(uploadImage, 1); // 1 is compression quality
+    
+    //Identify the home directory and file name
+    NSString  *imagePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Test.jpg"];
+    
+    // Write the file.
+    [imgData writeToFile:imagePath atomically:YES];
+    
+    _pathOfLocalUploadedFile = imagePath;
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfUploadFile];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionUploadTask *uploadTask = nil;
+    
+    _uploadProgressLabel.text = @"";
+    
+    NSProgress *progress = nil;
+    
+    uploadTask = [[AppDelegate sharedOCCommunication] uploadFileSession:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+        
+        //Success
+        _pathOfRemoteUploadedFile = serverUrl;
+        _uploadProgressLabel.text = @"Success";
+        _deleteRemoteFile.enabled = YES;
+        
+        //Remove the local file
+        [self deleteUploadLocalFile];
+        
+        //Refresh the file list
+        [self readFolder:nil];
+        
+        
+    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
+        
+        //Request failure
+        NSLog(@"error while upload a file: %@", error);
+        _uploadProgressLabel.text = @"Error in download";
+        
+        if (_usedSessions) {
+            _uploadWithSessionButton.enabled = YES;
+        }else{
+            _uploadButton.enabled = YES;
+        }
+        
+
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    
+}
+
+//Method to get the callbacks of the upload progress
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
+        NSProgress *progress = (NSProgress *)object;
+        //DLog(@"Progress is %f", progress.fractionCompleted);
+        
+        float percent = roundf (progress.fractionCompleted * 100);
+        
+        //We make it on the main thread because we came from a delegate
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"Progress is %f", percent);
+            
+            _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
+        });
+        
+    }
+    
+}
+
 ///-----------------------------------
 /// @name Delete file
 ///-----------------------------------
@@ -326,8 +445,9 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     [[AppDelegate sharedOCCommunication] deleteFileOrFolder:_pathOfRemoteUploadedFile onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Success
         _uploadProgressLabel.text = @"";
-        _uploadButton.enabled = YES;
         _deleteRemoteFile.enabled = NO;
+        _uploadButton.enabled = YES;
+        _uploadWithSessionButton.enabled = YES;
         
         //Refresh the file list
         [self readFolder:nil];
