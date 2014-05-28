@@ -86,9 +86,18 @@
                 //Only for uploads with chunks
                 [self.request setHTTPBodyStream:_chunkInputStream];
             }
+            
             //Check if there is a SAML fragment on the URL string
             if ([UtilsFramework isURLWithSamlFragment:responseURLString]) {
                 _redirectedServer = responseURLString;
+            } else {
+                if (!_redirectedServer) {
+                    if (_typeOfOperation == UploadQueue) {
+                        _redirectedServer = requestRed.URL.absoluteString;
+                    } else {
+                        _redirectedServer = redirectResponse.URL.absoluteString;
+                    }
+                }
             }
             
             return self.request;
