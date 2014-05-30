@@ -105,7 +105,7 @@ THE SOFTWARE.
 
 #### Third party libraries
 
-ownCloud iOS library uses AFNetworking version 2.2.4 which is not the latest one. AFNetworking is available under the MIT license. 
+ownCloud iOS library uses AFNetworking version 2.2.4. AFNetworking is available under the MIT license. 
 
 ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes under the MIT license.
 
