@@ -29,13 +29,17 @@
 #import "OCFrameworkConstants.h"
 #import "UtilsFramework.h"
 
+
 #define k_redirected_code_1 301
 #define k_redirected_code_2 302
 #define k_redirected_code_3 307
 
+
+
 @interface OCHTTPRequestOperation ()
 @property (readwrite, nonatomic, strong) NSMutableURLRequest *request;
 @end
+
 
 @implementation OCHTTPRequestOperation
 

@@ -25,12 +25,14 @@
 
 #import "AFHTTPRequestOperation.h"
 
+
 @class OCChunkInputStream;
 
 typedef enum {
-    DownloadQueue   = 0,
+    DownloadFIFOQueue = 0,
     UploadQueue     = 1,
-    NavigationQueue = 2
+    NavigationQueue = 2,
+    DownloadLIFOQueue = 3,
 } typeOfOperationQueue;
 
 
@@ -40,5 +42,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *redirectedServer;
 @property (nonatomic, strong) NSString *localSource;
 @property (nonatomic, strong) OCChunkInputStream *chunkInputStream;
+
+
 
 @end

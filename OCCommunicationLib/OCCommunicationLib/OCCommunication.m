@@ -46,14 +46,18 @@
     if (self) {
         
         //Init the Queue Array
-        _uploadOperationQueueArray = [[NSMutableArray alloc] init];
+        _uploadOperationQueueArray = [NSMutableArray new];
+        
+        //Init the Donwload queue array
+        _downloadOperationQueueArray = [NSMutableArray new];
         
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
         
         //Network Queue
-        _networkOperationsQueue =[[NSOperationQueue alloc] init];
-        [_networkOperationsQueue setMaxConcurrentOperationCount:3];
+        _networkOperationsQueue =[NSOperationQueue new];
+        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+    
     }
     
     return self;
@@ -112,9 +116,6 @@
     
     return request;
 }
-
-
-
 
 #pragma mark - Network Operations
 
@@ -245,7 +246,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -255,12 +256,19 @@
     NSLog(@"Remote File Path: %@", remotePath);
     NSLog(@"Local File Path: %@", localPath);
     
-    NSOperation *operation = [request downloadPath:remotePath toPath:localPath onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
     } success:^(OCHTTPRequestOperation *operation, id responseObject) {
         successRequest(operation.response, operation.redirectedServer);
+        if (operation.typeOfOperation == DownloadLIFOQueue)
+            [self resumeNextDownload];
+        
+        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
+        if (operation.typeOfOperation == DownloadLIFOQueue)
+            [self resumeNextDownload];
+        
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         handler();
     }];
@@ -657,14 +665,19 @@
     [self eraseURLCache];
     [self clearCookiesFromURL:operation.request.URL];
     
+    //Suspended the queue while is added a new operation
+    [_networkOperationsQueue setSuspended:YES];
+    
     NSArray *operationArray = [_networkOperationsQueue operations];
     
     //NSLog(@"operations array has: %d operations", operationArray.count);
     //NSLog(@"current operation description: %@", operation.description);
     
     OCHTTPRequestOperation *lastOperationDownload;
+    OCHTTPRequestOperation *firstOperationDownload;
     OCHTTPRequestOperation *lastOperationUpload;
     OCHTTPRequestOperation *lastOperationNavigation;
+    
     
     //We get the last operation for each type
     for (int i = 0 ; i < [operationArray count] ; i++) {
@@ -672,20 +685,28 @@
         
         
         switch (operation.typeOfOperation) {
-            case DownloadQueue:
-                if(currentOperation.typeOfOperation == DownloadQueue) {
+            case DownloadLIFOQueue:
+                if(currentOperation.typeOfOperation == DownloadLIFOQueue) {
+                    //Get first download operation in progress, for LIFO option
+                    if (currentOperation.isExecuting)
+                        firstOperationDownload = currentOperation;
+                }
+                 break;
+            
+            case DownloadFIFOQueue:
+                if(currentOperation.typeOfOperation == DownloadFIFOQueue) {
                     lastOperationDownload = currentOperation;
                 }
                 break;
             case UploadQueue:
-                if(currentOperation.typeOfOperation == UploadQueue) {
+                if(currentOperation.typeOfOperation == UploadQueue)
                     lastOperationUpload = currentOperation;
-                }
+                
                 break;
             case NavigationQueue:
-                if(currentOperation.typeOfOperation == NavigationQueue) {
+                if(currentOperation.typeOfOperation == NavigationQueue)
                     lastOperationNavigation = currentOperation;
-                }
+                
                 break;
                 
             default:
@@ -695,20 +716,27 @@
     
     //We add the dependency
     switch (operation.typeOfOperation) {
-        case DownloadQueue:
-            if(lastOperationDownload) {
-                [operation addDependency:lastOperationDownload];
+        case DownloadLIFOQueue:
+            //If there are download in progress, pause and store in download array
+            if (firstOperationDownload) {
+                [firstOperationDownload pause];
+                [_downloadOperationQueueArray addObject:firstOperationDownload];
             }
+            break;
+        case DownloadFIFOQueue:
+            if(lastOperationDownload)
+                [operation addDependency:lastOperationDownload];
+            
             break;
         case UploadQueue:
-            if(lastOperationUpload) {
+            if(lastOperationUpload)
                 [operation addDependency:lastOperationUpload];
-            }
+            
             break;
         case NavigationQueue:
-            if(lastOperationNavigation) {
+            if(lastOperationNavigation)
                 [operation addDependency:lastOperationNavigation];
-            }
+            
             break;
             
         default:
@@ -718,7 +746,41 @@
     //Finally we add the new operation to the queue
     [self.networkOperationsQueue addOperation:operation];
     
+    //Relaunch the queue again
+    [_networkOperationsQueue setSuspended:NO];
+    
 }
+
+///-----------------------------------
+/// @name Resume Next Download
+///-----------------------------------
+
+/**
+ * This method is called when the download is finished (success or failure).
+ * Here we check if exist download operation in LIFO queue array and begin with the next
+ *
+ * @warning Only we use this method when we are using LIFO queue system
+ */
+- (void) resumeNextDownload{
+    
+    //Check if there are donwloads in array
+    if (_downloadOperationQueueArray.count > 0) {
+        
+        OCHTTPRequestOperation *nextPausedDownload = [_downloadOperationQueueArray lastObject];
+        //Check if the download operation was cancelled previously
+        if (nextPausedDownload.isCancelled) {
+            [nextPausedDownload cancel];
+            [_downloadOperationQueueArray removeLastObject];
+            //Call again this method to the next download
+            [self resumeNextDownload];
+        } else {
+           
+            [nextPausedDownload resume];
+            [_downloadOperationQueueArray removeLastObject];
+        }
+    }
+}
+
 
 #pragma mark - Clear Cookies and Cache
 
