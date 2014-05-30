@@ -30,7 +30,7 @@
 #define k_timeout_upload 40 //seconds
 
 //Chunk length
-#define k_lenght_chunk 1048576
+#define k_OC_lenght_chunk 1048576
 
 #define k_domain_error_code @"com.owncloud"
 

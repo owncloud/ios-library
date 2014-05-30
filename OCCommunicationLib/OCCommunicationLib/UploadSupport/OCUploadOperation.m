@@ -70,7 +70,7 @@
         
         failureBeforeRequest(error);
         
-    } else if ([UtilsFramework getSizeInBytesByPath:localFilePath] > k_lenght_chunk) {
+    } else if ([UtilsFramework getSizeInBytesByPath:localFilePath] > k_OC_lenght_chunk) {
     //} else if (NO) { //Force not use chunks
         //The file have to be divided in chunks
         
@@ -92,7 +92,7 @@
             [_listOfOperationsToUploadAFile addObject: [request putChunk:currentChunkDto fromInputStream:chunkInputStream andInputStreamForRedirection:chunkInputStreamForRedirection atRemotePath:currentChunkDto.remotePath onCommunication:sharedOCCommunication
             progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
                 
-                totalBytesWrote = (_chunkPositionUploading * k_lenght_chunk) + totalBytesWrote;
+                totalBytesWrote = (_chunkPositionUploading * k_OC_lenght_chunk) + totalBytesWrote;
                 
                 progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
             } success:^(OCHTTPRequestOperation *operation, id responseObject) {
@@ -179,14 +179,14 @@
     
     // NSUInteger length = [fileData length];
     NSLog(@"File length: %d", length);
-    NSUInteger chunkSize = k_lenght_chunk;
+    NSUInteger chunkSize = k_OC_lenght_chunk;
     NSLog(@"ChunkSize: %d", chunkSize);
     
     NSUInteger offset = 0;
     NSUInteger chunkIndex = 0;
 
     
-    int totalChunksForThisFile = ceil((float)length/(float)k_lenght_chunk);
+    int totalChunksForThisFile = ceil((float)length/(float)k_OC_lenght_chunk);
     
     NSLog(@"Number of chunks: %d", totalChunksForThisFile);
     
