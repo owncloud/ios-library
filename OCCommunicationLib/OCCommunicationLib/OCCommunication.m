@@ -289,6 +289,12 @@
     [request listPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
+            
+            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+
+            NSLog(@"newStr: %@", newStr);
+            
+            
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:response];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
