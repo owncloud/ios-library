@@ -110,26 +110,71 @@
  */
 - (id) getRequestWithCredentials:(id) request {
     
-    OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
-    
-    switch (_kindOfCredential) {
-        case credentialNotSet:
-            //Without credentials
-            break;
-        case credentialNormal:
-            [myRequest setAuthorizationHeaderWithUsername:_user password:_password];
-            break;
-        case credentialCookie:
-            [myRequest setAuthorizationHeaderWithCookie:_password];
-            break;
-        case credentialOauth:
-            [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", _password]];
-            break;
-        default:
-            break;
+    if ([request isKindOfClass:[NSMutableURLRequest class]]) {
+        NSMutableURLRequest *myRequest = (NSMutableURLRequest *)request;
+        
+        switch (_kindOfCredential) {
+            case credentialNotSet:
+                //Without credentials
+                break;
+            case credentialNormal:
+            {
+                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", _user, _password];
+                [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
+                
+                break;
+            }
+            case credentialCookie:
+                //[myRequest setAuthorizationHeaderWithCookie:_password];
+                break;
+            case credentialOauth:
+                //[myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", _password]];
+                break;
+            default:
+                break;
+        }
+        
+        return myRequest;
+    } else if([request isKindOfClass:[OCWebDAVClient class]]) {
+        OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
+        
+        switch (_kindOfCredential) {
+            case credentialNotSet:
+                //Without credentials
+                break;
+            case credentialNormal:
+                [myRequest setAuthorizationHeaderWithUsername:_user password:_password];
+                break;
+            case credentialCookie:
+                [myRequest setAuthorizationHeaderWithCookie:_password];
+                break;
+            case credentialOauth:
+                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", _password]];
+                break;
+            default:
+                break;
+        }
+        
+        return request;
+    } else {
+        NSLog(@"We do not know witch kind of object is");
+        return  request;
     }
+}
+
+- (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
+	
     
-    return myRequest;
+    
+}
+
+- (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString {
+    //[self setDefaultHeader:@"Cookie" value:cookieString];
+}
+
+- (void)setAuthorizationHeaderWithToken:(NSString *)token {
+    //[self setDefaultHeader:@"Authorization" value:token];
+    
 }
 
 #pragma mark - Network Operations

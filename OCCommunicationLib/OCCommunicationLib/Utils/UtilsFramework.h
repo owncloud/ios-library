@@ -95,4 +95,17 @@
  */
 + (BOOL) isURLWithSamlFragment:(NSString*)urlString;
 
+///-----------------------------------
+/// @name AFBase64EncodedStringFromString:
+///-----------------------------------
+
+/**
+ * Method encode a string to base64 in order to set the credentials
+ *
+ * @param string -> string to be encoding
+ *
+ * @return NSString -> the result of the encoded string
+ */
++ (NSString *) AFBase64EncodedStringFromString:(NSString *) string;
+
 @end

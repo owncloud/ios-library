@@ -66,39 +66,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return self;
 }
 
-static NSString * AFBase64EncodedStringFromString(NSString *string) {
-    NSData *data = [NSData dataWithBytes:[string UTF8String] length:[string lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
-    NSUInteger length = [data length];
-    NSMutableData *mutableData = [NSMutableData dataWithLength:((length + 2) / 3) * 4];
-    
-    uint8_t *input = (uint8_t *)[data bytes];
-    uint8_t *output = (uint8_t *)[mutableData mutableBytes];
-    
-    for (NSUInteger i = 0; i < length; i += 3) {
-        NSUInteger value = 0;
-        for (NSUInteger j = i; j < (i + 3); j++) {
-            value <<= 8;
-            if (j < length) {
-                value |= (0xFF & input[j]);
-            }
-        }
-        
-        static uint8_t const kAFBase64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        
-        NSUInteger idx = (i / 3) * 4;
-        output[idx + 0] = kAFBase64EncodingTable[(value >> 18) & 0x3F];
-        output[idx + 1] = kAFBase64EncodingTable[(value >> 12) & 0x3F];
-        output[idx + 2] = (i + 1) < length ? kAFBase64EncodingTable[(value >> 6)  & 0x3F] : '=';
-        output[idx + 3] = (i + 2) < length ? kAFBase64EncodingTable[(value >> 0)  & 0x3F] : '=';
-    }
-    
-    return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
-}
-
 - (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
 	NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", username, password];
     
-    [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Basic %@", AFBase64EncodedStringFromString(basicAuthCredentials)]];
+    [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString: basicAuthCredentials]]];
 }
 
 - (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString {
@@ -166,6 +137,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
 }
@@ -181,6 +153,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
@@ -192,6 +165,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
 }
@@ -218,7 +192,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
-    
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -274,8 +248,10 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     //Set type download operation
     if (isLIFO) {
         [operation setTypeOfOperation:DownloadLIFOQueue];
+        operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     } else {
         [operation setTypeOfOperation:DownloadFIFOQueue];
+        operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     }
     
     //Add operation to network queue
@@ -345,6 +321,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     }];
     
     [operation setTypeOfOperation:UploadQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
     return operation;
@@ -417,6 +394,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     }];
     
     [operation setTypeOfOperation:UploadQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
     return operation;
@@ -439,6 +417,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
@@ -452,6 +431,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
 
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
 }
@@ -466,6 +446,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -492,7 +473,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
-    
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -517,6 +498,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -538,7 +520,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
-    
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -559,7 +541,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
-    
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -569,6 +551,43 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
+#pragma mark - Manage Redirections
+
+- (OCHTTPRequestOperation *) setRedirectionBlockOnOperation:(OCHTTPRequestOperation *) operation withOCCommunication: (OCCommunication *) sharedOCCommunication {
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        
+        NSLog(@"operation setRedirectResponseBlock");
+        
+        NSLog(@"request url: %@", request.URL.absoluteString);
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) redirectResponse;
+        
+        NSDictionary *dict = [httpResponse allHeaderFields];
+        //Server path of redirected server
+        NSString *responseURLString = [dict objectForKey:@"Location"];
+        //Set the URL into the request
+        
+        if (responseURLString) {
+            
+            NSLog(@"responseURLString: %@", responseURLString);
+            
+            NSMutableURLRequest *requestRedirect = [request mutableCopy];
+            
+            [requestRedirect setURL: [NSURL URLWithString:responseURLString]];
+            
+            requestRedirect = [sharedOCCommunication getRequestWithCredentials:requestRedirect];
+            
+            return requestRedirect;
+            
+        } else {
+            return request;
+        }
+    }];
+    
+    return operation;
 }
 
 @end

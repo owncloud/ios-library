@@ -63,7 +63,7 @@
  * @return NSURLRequest
  *
  */
-
+/*
 - (NSURLRequest *)connection: (NSURLConnection *)connection
              willSendRequest: (NSURLRequest *)requestRed
             redirectResponse: (NSURLResponse *)redirectResponse;
@@ -108,7 +108,7 @@
         }
     }
     return requestRed;
-}
+}*/
 
 
 @end
