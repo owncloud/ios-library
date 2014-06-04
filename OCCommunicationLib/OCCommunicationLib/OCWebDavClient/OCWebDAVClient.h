@@ -51,10 +51,10 @@ extern NSString *OCWebDAVModificationDateKey;
 @interface OCWebDAVClient : AFHTTPRequestOperationManager
 
 @property (readwrite, nonatomic, strong) NSMutableDictionary *defaultHeaders;
-
 //On redirections AFNetworking lose the request method on iOS6 and set a GET, we use this as workarround
 @property (nonatomic, strong) NSString *requestMethod;
-
+//We use this variable to return the url of a redirected server to detect if we receive any sesion expired on SSO server
+@property (nonatomic, strong) NSString *redirectedServer;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.

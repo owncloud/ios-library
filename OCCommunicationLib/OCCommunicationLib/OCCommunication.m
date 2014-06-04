@@ -201,7 +201,7 @@
         [request makeCollection:path onCommunication:sharedOCCommunication
                         success:^(OCHTTPRequestOperation *operation, id responseObject) {
                             if (successRequest) {
-                                successRequest(operation.response, operation.redirectedServer);
+                                successRequest(operation.response, request.redirectedServer);
                             }
                         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
                             failureRequest(operation.response, error);
@@ -241,7 +241,7 @@
         
         [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
             if (successRequest) {
-                successRequest(operation.response, operation.redirectedServer);
+                successRequest(operation.response, request.redirectedServer);
             }
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
             failureRequest(operation.response, error);
@@ -265,7 +265,7 @@
     
     [request deletePath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
-            successRequest(operation.response, operation.redirectedServer);
+            successRequest(operation.response, request.redirectedServer);
         }
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
@@ -300,7 +300,7 @@
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, operation.redirectedServer);
+            successRequest(operation.response, directoryList, request.redirectedServer);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
@@ -325,7 +325,7 @@
     NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
         progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
     } success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        successRequest(operation.response, operation.redirectedServer);
+        successRequest(operation.response, request.redirectedServer);
         if (operation.typeOfOperation == DownloadLIFOQueue)
             [self resumeNextDownload];
         
@@ -440,7 +440,7 @@
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, operation.redirectedServer);
+            successRequest(operation.response, directoryList, request.redirectedServer);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
@@ -464,7 +464,7 @@
     request = [self getRequestWithCredentials:request];
     
     [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        success(operation.response, operation.responseData, operation.redirectedServer);
+        success(operation.response, operation.responseData, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
@@ -575,7 +575,7 @@
             }
             
         }];
-        success(operation.response, hasSharedSupport, operation.redirectedServer);
+        success(operation.response, hasSharedSupport, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
@@ -604,7 +604,7 @@
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, operation.redirectedServer);
+            successRequest(operation.response, sharedList, request.redirectedServer);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
@@ -632,7 +632,7 @@
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, operation.redirectedServer);
+            successRequest(operation.response, sharedList, request.redirectedServer);
         }
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
@@ -694,7 +694,7 @@
                     
                     if (token) {
                         //Return success
-                        successRequest(operation.response, token, operation.redirectedServer);
+                        successRequest(operation.response, token, request.redirectedServer);
                     } else {
                         //Token is nill so it does not exist
                         NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
@@ -727,7 +727,7 @@
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         if (successRequest) {
             //Return success
-            successRequest(operation.response, operation.redirectedServer);
+            successRequest(operation.response, request.redirectedServer);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
@@ -763,7 +763,7 @@
             
             
             //Return success
-            successRequest(operation.response, operation.redirectedServer, isShared);
+            successRequest(operation.response, request.redirectedServer, isShared);
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {

@@ -103,13 +103,13 @@
                 _chunkPositionUploading++;
                 if (_chunkPositionUploading == [listOfChunksDto count]) {
                     //This is the last chunk so we finish the upload.
-                    successRequest(operation.response, operation.redirectedServer);
+                    successRequest(operation.response, request.redirectedServer);
                 }
 
             } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
                  [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
                 [self cancel];
-                failureRequest(operation.response, operation.redirectedServer, error);
+                failureRequest(operation.response, request.redirectedServer, error);
             } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
                 [self cancel];
                 NSString *redServer = @"";
@@ -129,12 +129,12 @@
             progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
         } success:^(OCHTTPRequestOperation *operation, id responseObject) {
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
-            successRequest(operation.response, operation.redirectedServer);
+            successRequest(operation.response, request.redirectedServer);
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
             [self cancel];
             NSLog(@"Error: %@", operation.response);
-            failureRequest(operation.response, operation.redirectedServer, error);
+            failureRequest(operation.response, request.redirectedServer, error);
         } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
             [self cancel];
             NSString *redServer = @"";

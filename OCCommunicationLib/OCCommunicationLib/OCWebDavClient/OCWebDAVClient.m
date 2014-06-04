@@ -607,22 +607,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             NSLog(@"responseURLString: %@", responseURLString);
             NSLog(@"requestRedirect.HTTPMethod: %@", request.HTTPMethod);
             
-            
-            /*mutableRequest.HTTPMethod = method;
-            mutableRequest.allowsCellularAccess = self.allowsCellularAccess;
-            mutableRequest.cachePolicy = self.cachePolicy;
-            mutableRequest.HTTPShouldHandleCookies = self.HTTPShouldHandleCookies;
-            mutableRequest.HTTPShouldUsePipelining = self.HTTPShouldUsePipelining;
-            mutableRequest.networkServiceType = self.networkServiceType;
-            mutableRequest.timeoutInterval = self.timeoutInterval;*/
-            
+            _redirectedServer = responseURLString;
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
             
             [requestRedirect setURL: [NSURL URLWithString:responseURLString]];
-            
             requestRedirect = [sharedOCCommunication getRequestWithCredentials:requestRedirect];
-            
             requestRedirect.HTTPMethod = _requestMethod;
             
             return requestRedirect;

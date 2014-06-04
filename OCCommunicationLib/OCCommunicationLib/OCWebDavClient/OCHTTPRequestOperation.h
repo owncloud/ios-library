@@ -39,7 +39,6 @@ typedef enum {
 @interface OCHTTPRequestOperation : AFHTTPRequestOperation
 
 @property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
-@property (nonatomic, strong) NSString *redirectedServer;
 @property (nonatomic, strong) NSString *localSource;
 @property (nonatomic, strong) OCChunkInputStream *chunkInputStream;
 
