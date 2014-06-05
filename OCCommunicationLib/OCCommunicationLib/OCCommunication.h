@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class OCHTTPRequestOperation;
-@class AFURLSessionManager;
+@class OCURLSessionManager;
 
 @interface OCCommunication : NSObject
 
@@ -58,7 +58,7 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
-@property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
+@property (nonatomic, strong) OCURLSessionManager *uploadSessionManager;
 
 
 #pragma mark - Credentials

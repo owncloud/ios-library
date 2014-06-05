@@ -34,7 +34,7 @@
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
-#import "AFURLSessionManager.h"
+#import "OCURLSessionManager.h"
 
 
 @implementation OCCommunication
@@ -66,8 +66,12 @@
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
         configuration.HTTPMaximumConnectionsPerHost = 1;
-        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-       [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        _uploadSessionManager = [[OCURLSessionManager alloc] initWithSessionConfiguration:configuration];
+        [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        [_uploadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
+            return NSURLSessionAuthChallengePerformDefaultHandling;
+        }];
  
 #endif
         
