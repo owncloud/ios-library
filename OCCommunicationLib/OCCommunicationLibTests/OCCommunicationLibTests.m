@@ -1301,58 +1301,58 @@
  * This test try to uplad a file with chunks
  * To test it we need at first download a file from the server
  */
-- (void) testUploadAFileWithChunks {
-    
-    //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
-    [self createFolderWithName:uploadPath];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
-    
-    //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
-    
-    __block NSOperation *operation = nil;
-    
-    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        if(totalBytesExpectedToWrote/1024 == 0) {
-            
-            if (bytesWrote>0) {
-                float percent;
-                
-                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
-                percent = percent / 100;
-                
-                NSLog(@"percent: %f", percent*100);
-            }
-        }
-        
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File Uploaded");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
-        XCTFail(@"Error. File do not uploaded: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    } failureBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error File does not exist");
-        dispatch_semaphore_signal(semaphore);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        XCTFail(@"Error Credentials. File do not uploaded");
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-}
+//- (void) testUploadAFileWithChunks {
+//    
+//    //Create Tests/Test Upload
+//    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+//    [self createFolderWithName:uploadPath];
+//    
+//    //We create a semaphore to wait until we recive the responses from Async calls
+//    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+//    
+//    //Upload test file
+//    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+//    
+//    //Path of server file file
+//    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+//    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    
+//    NSLog(@"Server URL: %@", serverUrl);
+//    
+//    __block NSOperation *operation = nil;
+//    
+//    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
+//        if(totalBytesExpectedToWrote/1024 == 0) {
+//            
+//            if (bytesWrote>0) {
+//                float percent;
+//                
+//                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
+//                percent = percent / 100;
+//                
+//                NSLog(@"percent: %f", percent*100);
+//            }
+//        }
+//        
+//    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+//        NSLog(@"File Uploaded");
+//        dispatch_semaphore_signal(semaphore);
+//    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+//        XCTFail(@"Error. File do not uploaded: %@", error);
+//        dispatch_semaphore_signal(semaphore);
+//    } failureBeforeRequest:^(NSError *error) {
+//        XCTFail(@"Error File does not exist");
+//        dispatch_semaphore_signal(semaphore);
+//    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+//        XCTFail(@"Error Credentials. File do not uploaded");
+//        dispatch_semaphore_signal(semaphore);
+//    }];
+//    
+//    // Run loop
+//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+//}
 
 ///-----------------------------------
 /// @name Test to upload a file that does not exist
@@ -1424,58 +1424,58 @@
 /**
  * This test try to uplad with special characters in destiny name
  */
-- (void) testUploadAFileWithSpecialCharacters {
-    
-    //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
-    [self createFolderWithName:uploadPath];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
-    
-    //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
-    
-    __block NSOperation *operation = nil;
-    
-    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        if(totalBytesExpectedToWrote/1024 == 0) {
-            
-            if (bytesWrote>0) {
-                float percent;
-                
-                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
-                percent = percent / 100;
-                
-                NSLog(@"percent: %f", percent*100);
-            }
-        }
-        
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File Uploaded with Special Characters");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
-        XCTFail(@"Error. File do not uploaded: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    } failureBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error File does not exist");
-        dispatch_semaphore_signal(semaphore);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        XCTFail(@"Error Credentials. File do not uploaded");
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-}
+//- (void) testUploadAFileWithSpecialCharacters {
+//    
+//    //Create Tests/Test Upload
+//    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+//    [self createFolderWithName:uploadPath];
+//    
+//    //We create a semaphore to wait until we recive the responses from Async calls
+//    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+//    
+//    //Upload test file
+//    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+//    
+//    //Path of server file file (Special character added in file name)
+//    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+//    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    
+//    NSLog(@"Server URL: %@", serverUrl);
+//    
+//    __block NSOperation *operation = nil;
+//    
+//    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
+//        if(totalBytesExpectedToWrote/1024 == 0) {
+//            
+//            if (bytesWrote>0) {
+//                float percent;
+//                
+//                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
+//                percent = percent / 100;
+//                
+//                NSLog(@"percent: %f", percent*100);
+//            }
+//        }
+//        
+//    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+//        NSLog(@"File Uploaded with Special Characters");
+//        dispatch_semaphore_signal(semaphore);
+//    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+//        XCTFail(@"Error. File do not uploaded: %@", error);
+//        dispatch_semaphore_signal(semaphore);
+//    } failureBeforeRequest:^(NSError *error) {
+//        XCTFail(@"Error File does not exist");
+//        dispatch_semaphore_signal(semaphore);
+//    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+//        XCTFail(@"Error Credentials. File do not uploaded");
+//        dispatch_semaphore_signal(semaphore);
+//    }];
+//    
+//    // Run loop
+//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+//}
 
 ///-----------------------------------
 /// @name Test the share a folder
@@ -1511,46 +1511,46 @@
 /**
  * This test try to check if a shared folder is shared and obtain his information
  */
-- (void) testReadShared {
-    
-    //1. create the folder and share it
-    [self testShareAFolder];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //2. Check if the folder is shared
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
-        
-        BOOL isFolderShared = NO;
-        
-        for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
-                isFolderShared = YES;
-            }
-        }
-        
-        if (!isFolderShared) {
-            XCTFail(@"Folder not shared");
-            dispatch_semaphore_signal(semaphore);
-        }
-        
-        
-        dispatch_semaphore_signal(semaphore);
-        
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        
-        XCTFail(@"Error reading shares");
-        dispatch_semaphore_signal(semaphore);
-        
-    }];
-    
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-}
+//- (void) testReadShared {
+//    
+//    //1. create the folder and share it
+//    [self testShareAFolder];
+//    
+//    //We create a semaphore to wait until we recive the responses from Async calls
+//    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+//    
+//    //2. Check if the folder is shared
+//    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+//        
+//        BOOL isFolderShared = NO;
+//        
+//        for (OCSharedDto *current in listOfShared) {
+//            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+//                isFolderShared = YES;
+//            }
+//        }
+//        
+//        if (!isFolderShared) {
+//            XCTFail(@"Folder not shared");
+//            dispatch_semaphore_signal(semaphore);
+//        }
+//        
+//        
+//        dispatch_semaphore_signal(semaphore);
+//        
+//    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+//        
+//        XCTFail(@"Error reading shares");
+//        dispatch_semaphore_signal(semaphore);
+//        
+//    }];
+//    
+//    
+//    // Run loop
+//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+//}
 
 ///-----------------------------------
 /// @name Test unshare items
@@ -1559,58 +1559,58 @@
 /**
  * This test try unshare a item
  */
-- (void) testUnShareAFolder {
-    
-    //1. create the folder and share it
-    [self testShareAFolder];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //2. read the folder to obtain the info of OCSharedDto
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
-        
-        OCSharedDto *shared;
-        
-        for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
-                shared = current;
-            }
-        }
-        
-        if (shared) {
-            
-            //3. Unshare the folder
-            [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-                NSLog(@"File unshared");
-                dispatch_semaphore_signal(semaphore);
-                
-            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-                XCTFail(@"Error unsharing folder");
-                dispatch_semaphore_signal(semaphore);
-            }];
-            
-            
-            
-        } else {
-            XCTFail(@"Folder not shared on testUnShareAFolder");
-            dispatch_semaphore_signal(semaphore);
-        }
-        
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        
-        XCTFail(@"Error reading shares on testUnShareAFolder");
-        dispatch_semaphore_signal(semaphore);
-        
-    }];
-    
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-
-}
+//- (void) testUnShareAFolder {
+//    
+//    //1. create the folder and share it
+//    [self testShareAFolder];
+//    
+//    //We create a semaphore to wait until we recive the responses from Async calls
+//    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+//    
+//    //2. read the folder to obtain the info of OCSharedDto
+//    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+//        
+//        OCSharedDto *shared;
+//        
+//        for (OCSharedDto *current in listOfShared) {
+//            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+//                shared = current;
+//            }
+//        }
+//        
+//        if (shared) {
+//            
+//            //3. Unshare the folder
+//            [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+//                NSLog(@"File unshared");
+//                dispatch_semaphore_signal(semaphore);
+//                
+//            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+//                XCTFail(@"Error unsharing folder");
+//                dispatch_semaphore_signal(semaphore);
+//            }];
+//            
+//            
+//            
+//        } else {
+//            XCTFail(@"Folder not shared on testUnShareAFolder");
+//            dispatch_semaphore_signal(semaphore);
+//        }
+//        
+//    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+//        
+//        XCTFail(@"Error reading shares on testUnShareAFolder");
+//        dispatch_semaphore_signal(semaphore);
+//        
+//    }];
+//    
+//    
+//    // Run loop
+//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+//
+//}
 
 
 @end
