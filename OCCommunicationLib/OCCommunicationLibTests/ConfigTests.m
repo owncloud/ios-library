@@ -28,11 +28,11 @@
     }
     
     //If you want execute the test on your own server fill this variables:
-    NSString *baseUrlOwn = @"https://s3.owncloud.com/owncloud/"; //Your entire server url. ex:https://example.owncloud.com/owncloud/
-    NSString *webdavBaseUrlOwn = @"https://s3.owncloud.com/owncloud/remote.php/webdav/"; //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
-    NSString *userOwn = @"rmartin"; //Server user
-    NSString *passwordOwn = @"rebe"; //Server password
-    NSString *pathTestFolderOwn = @"UnitTestFolder"; //Optional. You can change the folder of tests, but it is recommendable not use the root folder
+    NSString *baseUrlOwn = @""; //Your entire server url. ex:https://example.owncloud.com/owncloud/
+    NSString *webdavBaseUrlOwn = @""; //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
+    NSString *userOwn = @""; //Server user
+    NSString *passwordOwn = @""; //Server password
+    NSString *pathTestFolderOwn = @"UnitTestFolder"; //Optional. You can change the folder of tests. ex: tests
     
     
     //We set the baseUrl
