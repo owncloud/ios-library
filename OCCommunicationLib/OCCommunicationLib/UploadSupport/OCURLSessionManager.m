@@ -7,9 +7,10 @@
 //
 
 #import "OCURLSessionManager.h"
+#include <assert.h>
 
 @implementation OCURLSessionManager
-
+ 
 /*
  *  Delegate called when try to upload a file to a self signed server
  */
@@ -17,10 +18,10 @@
 didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    __block NSURLCredential *credential = nil;
-    
-    credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-    completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
+        __block NSURLCredential *credential = nil;
+        
+        credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+        completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
 }
 
 @end
