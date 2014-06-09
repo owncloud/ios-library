@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class OCHTTPRequestOperation;
-@class OCURLSessionManager;
+@class AFURLSessionManager;
 
 @interface OCCommunication : NSObject
 
@@ -58,8 +58,18 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
-@property (nonatomic, strong) OCURLSessionManager *uploadSessionManager;
+@property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 
+///-----------------------------------
+/// @name Init with Upload Session Manager
+///-----------------------------------
+
+/**
+ * Method to init the OCCommunication with a AFURLSessionManager to receive the SSL callbacks to support Self Signed servers
+ *
+ * @param uploadSessionManager -> AFURLSessionManager
+ */
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager;
 
 #pragma mark - Credentials
 

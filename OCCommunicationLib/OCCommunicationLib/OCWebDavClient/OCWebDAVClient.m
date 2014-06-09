@@ -32,7 +32,7 @@
 #import "OCChunkDto.h"
 #import "OCChunkInputStream.h"
 #import "UtilsFramework.h"
-#import "OCURLSessionManager.h"
+#import "AFURLSessionManager.h"
 
 #define k_api_user_url_xml @"index.php/ocs/cloud/user"
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"

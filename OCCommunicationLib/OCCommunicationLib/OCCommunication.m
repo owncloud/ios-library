@@ -34,7 +34,7 @@
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
-#import "OCURLSessionManager.h"
+#import "AFURLSessionManager.h"
 
 
 @implementation OCCommunication
@@ -67,7 +67,7 @@
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
         configuration.HTTPMaximumConnectionsPerHost = 1;
         configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        _uploadSessionManager = [[OCURLSessionManager alloc] initWithSessionConfiguration:configuration];
+        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
         [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         [_uploadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
             return NSURLSessionAuthChallengePerformDefaultHandling;
@@ -81,6 +81,30 @@
     return self;
 }
 
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager {
+
+    self = [super init];
+    
+    if (self) {
+        
+        //Init the Queue Array
+        _uploadOperationQueueArray = [NSMutableArray new];
+        
+        //Init the Donwload queue array
+        _downloadOperationQueueArray = [NSMutableArray new];
+        
+        //Credentials not set yet
+        _kindOfCredential = credentialNotSet;
+        
+        //Network Queue
+        _networkOperationsQueue =[NSOperationQueue new];
+        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        
+        _uploadSessionManager = uploadSessionManager;
+    }
+    
+    return self;
+}
 
 #pragma mark - Setting Credentials
 
