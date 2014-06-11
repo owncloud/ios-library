@@ -589,29 +589,36 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (OCHTTPRequestOperation *) setRedirectionBlockOnOperation:(OCHTTPRequestOperation *) operation withOCCommunication: (OCCommunication *) sharedOCCommunication {
     
+   __block OCHTTPRequestOperation *op = operation;
+    
     [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
         
-        NSLog(@"operation setRedirectResponseBlock");
-        
-        NSLog(@"request url: %@", request.URL.absoluteString);
-        
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) redirectResponse;
-        
         NSDictionary *dict = [httpResponse allHeaderFields];
         //Server path of redirected server
         NSString *responseURLString = [dict objectForKey:@"Location"];
-        //Set the URL into the request
         
         if (responseURLString) {
             
-            NSLog(@"responseURLString: %@", responseURLString);
-            NSLog(@"requestRedirect.HTTPMethod: %@", request.HTTPMethod);
+           // NSLog(@"responseURLString: %@", responseURLString);
+           // NSLog(@"requestRedirect.HTTPMethod: %@", request.HTTPMethod);
             
-            _redirectedServer = responseURLString;
+            if ([UtilsFramework isURLWithSamlFragment:responseURLString]) {
+                _redirectedServer = responseURLString;
+            }
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
-            
             [requestRedirect setURL: [NSURL URLWithString:responseURLString]];
+            
+            //Set the URL into the request
+            if (op.localSource) {
+                //Only for uploads without chunks
+                [requestRedirect setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:op.localSource]];
+            } else if (op.chunkInputStream) {
+                //Only for uploads with chunks
+                [requestRedirect setHTTPBodyStream:op.chunkInputStream];
+            }
+            
             requestRedirect = [sharedOCCommunication getRequestWithCredentials:requestRedirect];
             requestRedirect.HTTPMethod = _requestMethod;
             
