@@ -32,8 +32,7 @@
     NSString *webdavBaseUrlOwn = @""; //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
     NSString *userOwn = @"ggdiez"; //Server user
     NSString *passwordOwn = @""; //Server password
-    NSString *pathTestFolderOwn = @""; //Optional. You can change the folder of tests. ex: tests
-    
+    NSString *pathTestFolderOwn = @"UnitTestFolder"; //Optional. You can change the folder of tests, but it is recommendable not use the root folder
     
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
