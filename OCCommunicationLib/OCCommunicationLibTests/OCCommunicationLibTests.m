@@ -1092,8 +1092,8 @@
     
     //Make the path if not exists
     NSError *error = nil;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:documentsDirectory])
-        [[NSFileManager defaultManager] createDirectoryAtPath:documentsDirectory withIntermediateDirectories:NO attributes:nil error:&error];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:localPath])
+        [[NSFileManager defaultManager] createDirectoryAtPath:localPath withIntermediateDirectories:NO attributes:nil error:&error];
     
     
     //Documents/Test Download/image.png
