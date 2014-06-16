@@ -30,7 +30,7 @@
     //If you want execute the test on your own server fill this variables:
     NSString *baseUrlOwn = @""; //Your entire server url. ex:https://example.owncloud.com/owncloud/
     NSString *webdavBaseUrlOwn = @""; //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
-    NSString *userOwn = @"ggdiez"; //Server user
+    NSString *userOwn = @""; //Server user
     NSString *passwordOwn = @""; //Server password
     NSString *pathTestFolderOwn = @"UnitTestFolder"; //Optional. You can change the folder of tests, but it is recommendable not use the root folder
     
