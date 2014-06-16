@@ -70,56 +70,6 @@
         
         failureBeforeRequest(error);
         
-    } else if ([UtilsFramework getSizeInBytesByPath:localFilePath] > k_OC_lenght_chunk) {
-    //} else if (NO) { //Force not use chunks
-        //The file have to be divided in chunks
-        
-        NSLog(@"Upload With Chunks");
-        
-        NSArray *listOfChunksDto = [self prepareChunksByFile:localFilePath andRemoteFilePath:remoteFilePath];
-        
-        NSInputStream *input = [NSInputStream inputStreamWithFileAtPath:localFilePath];
-        NSInputStream *inputForRedirection = [NSInputStream inputStreamWithFileAtPath:localFilePath];
-        
-        //We create two different InputStream for the same because if we work with a redirected server the redirection happens after begin to read the inputStream
-        OCChunkInputStream *chunkInputStream = [[OCChunkInputStream alloc]initWithInputStream:input andBytesToRead:totalBytesExpectedToWrote];
-        OCChunkInputStream *chunkInputStreamForRedirection = [[OCChunkInputStream alloc]initWithInputStream:inputForRedirection andBytesToRead:totalBytesExpectedToWrote];
-        
-        for (OCChunkDto *currentChunkDto in listOfChunksDto) {
-          
-            NSLog(@"Creating chunks operation %d of %d", ([listOfChunksDto indexOfObject:currentChunkDto]+1),[listOfChunksDto count]);
-            
-            [_listOfOperationsToUploadAFile addObject: [request putChunk:currentChunkDto fromInputStream:chunkInputStream andInputStreamForRedirection:chunkInputStreamForRedirection atRemotePath:currentChunkDto.remotePath onCommunication:sharedOCCommunication
-            progress:^(NSUInteger bytesWrote, long long totalBytesWrote) {
-                
-                totalBytesWrote = (_chunkPositionUploading * k_OC_lenght_chunk) + totalBytesWrote;
-                
-                progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-            } success:^(OCHTTPRequestOperation *operation, id responseObject) {
-                
-                [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
-
-                
-                _chunkPositionUploading++;
-                if (_chunkPositionUploading == [listOfChunksDto count]) {
-                    //This is the last chunk so we finish the upload.
-                    successRequest(operation.response, request.redirectedServer);
-                }
-
-            } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-                 [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
-                [self cancel];
-                failureRequest(operation.response, request.redirectedServer, error);
-            } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
-                [self cancel];
-                NSString *redServer = @"";
-                failureRequest(response, redServer, error);
-            } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-                [self cancel];
-                handler();
-            }]];
-        }
-        
     } else {
         
         NSLog(@"Upload NO Chunks");
