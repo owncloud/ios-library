@@ -142,9 +142,9 @@ typedef enum {
  */
 - (void) createFolder: (NSString *) path
       onCommunication:(OCCommunication *)sharedOCCommunication
-       successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
-       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest
-   errorBeforeRequest:(void(^)(NSError *)) errorBeforeRequest;
+       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest
+   errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest;
 
 
 ///-----------------------------------
@@ -188,9 +188,9 @@ typedef enum {
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
           onCommunication:(OCCommunication *)sharedOCCommunication
-           successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
-           failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest
-       errorBeforeRequest:(void (^)(NSError *))errorBeforeRequest;
+           successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
+           failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
+       errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest;
 
 
 
@@ -215,8 +215,8 @@ typedef enum {
  */
 - (void) readFolder: (NSString *) path
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 
@@ -239,8 +239,8 @@ typedef enum {
  */
 - (void) readFile: (NSString *) path
   onCommunication:(OCCommunication *)sharedOCCommunication
-   successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-   failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+   successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
+   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 ///-----------------------------------
@@ -264,8 +264,8 @@ typedef enum {
  */
 - (void) deleteFileOrFolder:(NSString *)path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
-              failureRquest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest;
+             successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+              failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error))failureRequest;
 
 
 ///-----------------------------------
@@ -301,7 +301,7 @@ typedef enum {
  * @warning remember that you must to set the Credentials before call this method or any other.
  */
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 ///-----------------------------------
@@ -322,7 +322,7 @@ typedef enum {
  *
  */
 
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 ///-----------------------------------
@@ -395,8 +395,8 @@ typedef enum {
 
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, NSData *, NSString *))success
-                     failure:(void(^)(NSHTTPURLResponse *, NSError *))failure;
+(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure;
 
 ///-----------------------------------
 /// @name Has Server Share Support
@@ -412,8 +412,8 @@ typedef enum {
  *
  */
 - (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure;
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name readSharedByServer
@@ -430,8 +430,8 @@ typedef enum {
  */
 - (void) readSharedByServer: (NSString *) path
          onCommunication:(OCCommunication *)sharedOCCommunication
-          successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-          failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+          successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+          failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name readSharedByServer
@@ -449,8 +449,8 @@ typedef enum {
  */
 - (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-             failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+             successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
@@ -469,8 +469,8 @@ typedef enum {
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
@@ -486,8 +486,8 @@ typedef enum {
  */
 - (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
-                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name isShareFileOrFolderByServer
@@ -503,8 +503,8 @@ typedef enum {
  */
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *, BOOL)) successRequest
-                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 #pragma mark - Queue system
 /*
