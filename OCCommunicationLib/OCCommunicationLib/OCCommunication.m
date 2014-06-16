@@ -149,14 +149,13 @@
             {
                 NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", _user, _password];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
-                
                 break;
             }
             case credentialCookie:
-                //[myRequest setAuthorizationHeaderWithCookie:_password];
+                [myRequest addValue:_password forHTTPHeaderField:@"Cookie"];
                 break;
             case credentialOauth:
-                //[myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", _password]];
+                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", _password] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
                 break;
@@ -188,21 +187,6 @@
         NSLog(@"We do not know witch kind of object is");
         return  request;
     }
-}
-
-- (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
-	
-    
-    
-}
-
-- (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString {
-    //[self setDefaultHeader:@"Cookie" value:cookieString];
-}
-
-- (void)setAuthorizationHeaderWithToken:(NSString *)token {
-    //[self setDefaultHeader:@"Authorization" value:token];
-    
 }
 
 #pragma mark - Network Operations
