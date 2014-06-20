@@ -1507,8 +1507,6 @@
     
     NSProgress *progress = nil;
     
-   
-    
     uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         
         NSLog(@"File Uploaded");
@@ -1519,6 +1517,9 @@
         XCTFail(@"Error. File do not uploaded: %@", error);
         dispatch_semaphore_signal(semaphore);
         
+    } failureBeforeRequest:^(NSError *error) {
+        NSLog(@"File that do not exist does not upload");
+        dispatch_semaphore_signal(semaphore);
     }];
     
     // Observe fractionCompleted using KVO
@@ -1576,6 +1577,9 @@
         XCTFail(@"Error. File do not uploaded: %@", error);
         dispatch_semaphore_signal(semaphore);
         
+    } failureBeforeRequest:^(NSError *error) {
+        NSLog(@"File that do not exist does not upload");
+        dispatch_semaphore_signal(semaphore);
     }];
     
     // Observe fractionCompleted using KVO
@@ -1633,6 +1637,9 @@
          NSLog(@"File that do not exist does not upload");
         dispatch_semaphore_signal(semaphore);
         
+    } failureBeforeRequest:^(NSError *error) {
+        NSLog(@"File that do not exist does not upload");
+        dispatch_semaphore_signal(semaphore);
     }];
     
     // Observe fractionCompleted using KVO

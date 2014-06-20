@@ -340,36 +340,48 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure{
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     
     NSLog(@"localSource: %@", localSource);
     NSLog(@"remoteDestination: %@", remoteDestination);
     
     
-    NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
-    [request setTimeoutInterval:k_timeout_upload];
-    [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
-    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
+    if (localSource == nil) {
+        NSMutableDictionary* details = [NSMutableDictionary dictionary];
+        [details setValue:@"You are trying upload a file that does not exist" forKey:NSLocalizedDescriptionKey];
+        
+        NSError *error = [NSError errorWithDomain:k_domain_error_code code:OCErrorFileToUploadDoesNotExist userInfo:details];
+        
+        failureBeforeRequest(error);
+        
+        return nil;
+    } else {
     
-    NSURL *file = [NSURL fileURLWithPath:localSource];
-    
-    NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
-                                                                                         completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-                                                                                             if (error) {
-                                                                                                 NSLog(@"Error: %@", error);
-                                                                                                 failure(response, error);
-                                                                                             } else {
-                                                                                                 NSLog(@"Success: %@ %@", response, responseObject);
-                                                                                                 success(response,responseObject);
-                                                                                             }
-                                                                                         }];
-    
-    
-    [uploadTask resume];
-    
-    return uploadTask;
+        NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
+        [request setTimeoutInterval:k_timeout_upload];
+        [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
+        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+        [request setHTTPShouldHandleCookies:NO];
+        
+        NSURL *file = [NSURL fileURLWithPath:localSource];
+        
+        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
+                                                                                             completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                                                                                                 if (error) {
+                                                                                                     NSLog(@"Error: %@", error);
+                                                                                                     failure(response, error);
+                                                                                                 } else {
+                                                                                                     NSLog(@"Success: %@ %@", response, responseObject);
+                                                                                                     success(response,responseObject);
+                                                                                                 }
+                                                                                             }];
+        
+        
+        [uploadTask resume];
+        
+        return uploadTask;
+    }
 }
 
 - (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream andInputStreamForRedirection:(OCChunkInputStream *) chunkInputStreamForRedirection atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
