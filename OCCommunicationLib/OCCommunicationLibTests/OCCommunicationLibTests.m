@@ -259,8 +259,7 @@
  * @warning The special characters are: "\","<",">",":",""","|","?","*"
  */
 
-- (void)testCreateFolderWithForbiddenCharacters
-{
+- (void)testCreateFolderWithForbiddenCharacters {
     NSArray* arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacer in arrayForbiddenCharacters) {
