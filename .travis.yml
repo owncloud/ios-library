@@ -8,7 +8,7 @@ env:
   - secure: NvlNBduCxLf4f+WVAz14Pd/O1gDOVUvqSe8GPKf4axOdvsl8CwDZ5D65DkLbm1205/9q2MTGGKdDiyL5pS7mtxTOzHJIofLyAtO+YEV029Giuk8hv1wQcVHLtsJkBaTStpD9GKkKMvRiXewKtUkU2etpKAo4csQ7U48BQ+hqVc4=
   - secure: KxFvsLZAlFs2NpcD/aLFtS+hLeYPWt+rVZyLk1tHtPOLOnX8NxQYLS59hqex1qnI3TYWGwv1DKq+YD4VfOoh/So16jqO9IVlqs58hwPdkj1rONDDSBGpk4gDaSKmmpbgzV0c3gRQs/TFrQomeyS9TPoXxor9atYHuUtSIy/dO2o=
   - secure: fw+m/wHbBMFW29siqrMtwQl3cHkh6lhV/jsjTw4gTXkaipw/Ci3S/KPSYpFqPYu13AtfzpSH5xncN4jo6/8kGYjrSrNfLqeR6UxiwDQRuReptvXq6xFImuPDycUNuDavlv/bYI+O7BCoiE9m/P7PMlg0/4vVjg70AkvYq087osQ=
-
+  - secure: OxxBQy1Ewx3rhKM2TtcpdEJH6uiCKYgxeJekfn4gMRfOpaRwkeO4/j7bvr9lP3oPrTyJhw9CDGRx/+Mmt3w6WVVq/6fMmsiuM06FH8JfHLCSZ6HyyNz7WmSpwxk4emDgjOctaPxR52L72tCFCTH9/l01hmWlIasRQkned3bzdnM=
 
 before_install:
   - brew update
