@@ -21,7 +21,6 @@
  */
 - (id) initWithVariables;
 
-
 //Your entire server url. ex:https://example.owncloud.com/owncloud/
 @property (nonatomic, strong) NSString *baseUrl;
 //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
