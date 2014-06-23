@@ -16,7 +16,7 @@
 
 /**
  * Method init this object with the tests variables filled
- *
+ * 
  * @return -> self object
  */
 - (id) initWithVariables;
