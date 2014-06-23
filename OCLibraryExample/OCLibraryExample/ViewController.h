@@ -38,7 +38,9 @@
 @property (nonatomic,strong)IBOutlet UIImageView *downloadedImageView;
 @property (nonatomic,strong)IBOutlet UILabel *uploadProgressLabel;
 @property (nonatomic,strong)IBOutlet UIButton *uploadButton;
+@property (nonatomic,strong)IBOutlet UIButton *uploadWithSessionButton;
 @property (nonatomic,strong)IBOutlet UIButton *deleteRemoteFile;
+
 
 
 //
@@ -61,6 +63,7 @@
 
 //Upload actions
 - (IBAction)uploadImage:(id)sender;
+- (IBAction)uploadImageWithSession:(id)sender;
 - (IBAction)deleteUploadedFile:(id)sender;
 
 //Close View

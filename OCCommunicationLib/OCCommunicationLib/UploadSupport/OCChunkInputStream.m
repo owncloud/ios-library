@@ -129,7 +129,7 @@
         //We save the bytes to control when we finish completly the file
         _totalBytesRead = bytesRead + _totalBytesRead;
         
-        if (_bytesReadInThisIteration == k_lenght_chunk) {
+        if (_bytesReadInThisIteration == k_OC_lenght_chunk) {
             //Each we read the last byte of a full chunk we have to stop the process
             _isChunkComplete = YES;
         }

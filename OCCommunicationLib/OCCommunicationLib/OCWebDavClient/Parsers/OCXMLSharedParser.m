@@ -145,7 +145,7 @@
         
     } else if ([elementName isEqualToString:@"stime"]) {
         
-        _currentShared.sharedDate = [_xmlChars longLongValue];
+        _currentShared.sharedDate = (long)[_xmlChars longLongValue];
         
         
     } else if ([elementName isEqualToString:@"expiration"]) {

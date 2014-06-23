@@ -60,6 +60,34 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+#pragma mark - Background Fetch methods
+
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler
+
+{
+    NSLog(@"Upload complete");
+
+    [self presentNotification];
+    
+    completionHandler(UIBackgroundFetchResultNewData);
+    
+   
+}
+
+-(void)presentNotification{
+    UILocalNotification* localNotification = [[UILocalNotification alloc] init];
+    localNotification.alertBody = @"Updalod Complete !!";
+    localNotification.alertAction = @"Background Transfer";
+    
+    
+    //On sound
+    localNotification.soundName = UILocalNotificationDefaultSoundName;
+
+    
+    [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+}
+
+
 #pragma mark - OCCommunication Singleton
 
 #pragma mark - OCCommunications

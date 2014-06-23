@@ -218,7 +218,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
     //SIZE
     else if([elementName hasSuffix:@"d:getcontentlength"] && [_xmlChars length]) {
         //FileDto current size
-        _currentFile.size = [_xmlChars longLongValue];
+        _currentFile.size = (long)[_xmlChars longLongValue];
         
     }
     

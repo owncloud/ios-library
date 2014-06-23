@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class OCHTTPRequestOperation;
+@class AFURLSessionManager;
 
 @interface OCCommunication : NSObject
 
@@ -56,6 +57,19 @@ typedef enum {
 @property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
 @property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
+
+@property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
+
+///-----------------------------------
+/// @name Init with Upload Session Manager
+///-----------------------------------
+
+/**
+ * Method to init the OCCommunication with a AFURLSessionManager to receive the SSL callbacks to support Self Signed servers
+ *
+ * @param uploadSessionManager -> AFURLSessionManager
+ */
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager;
 
 #pragma mark - Credentials
 
@@ -128,9 +142,9 @@ typedef enum {
  */
 - (void) createFolder: (NSString *) path
       onCommunication:(OCCommunication *)sharedOCCommunication
-       successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
-       failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest
-   errorBeforeRequest:(void(^)(NSError *)) errorBeforeRequest;
+       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest
+   errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest;
 
 
 ///-----------------------------------
@@ -174,9 +188,9 @@ typedef enum {
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
           onCommunication:(OCCommunication *)sharedOCCommunication
-           successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
-           failureRequest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest
-       errorBeforeRequest:(void (^)(NSError *))errorBeforeRequest;
+           successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
+           failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
+       errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest;
 
 
 
@@ -201,8 +215,8 @@ typedef enum {
  */
 - (void) readFolder: (NSString *) path
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-     failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 
@@ -225,8 +239,8 @@ typedef enum {
  */
 - (void) readFile: (NSString *) path
   onCommunication:(OCCommunication *)sharedOCCommunication
-   successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-   failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+   successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
+   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 ///-----------------------------------
@@ -250,8 +264,8 @@ typedef enum {
  */
 - (void) deleteFileOrFolder:(NSString *)path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void (^)(NSHTTPURLResponse *, NSString *))successRequest
-              failureRquest:(void (^)(NSHTTPURLResponse *, NSError *))failureRequest;
+             successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+              failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error))failureRequest;
 
 
 ///-----------------------------------
@@ -287,7 +301,7 @@ typedef enum {
  * @warning remember that you must to set the Credentials before call this method or any other.
  */
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger, long long, long long))progressDownload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
 ///-----------------------------------
@@ -308,7 +322,59 @@ typedef enum {
  *
  */
 
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSError *)) failureRequest  failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
+
+
+///-----------------------------------
+/// @name Upload File Session
+///-----------------------------------
+
+/**
+ * Method to upload a file. All the files will be upload one by one in a queue. The files upload also in background when the system close the app.
+ *
+ * @param NSString -> localPath the path where is the file that we want upload
+ * @param NSString -> remotePath the path where we want upload the file
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ * @param NSProgress -> A progress object monitoring the current upload progress
+ *
+ * @return NSURLSessionUploadTask -> You can cancel the upload using this object
+ * Ex: [uploadTask cancel]
+ *
+ * @warning remember that you must to set the Credentials before call this method or any other.
+ *
+ * @warning this method use NSURLSession only supported in iOS 7, with iOS 6 use the previous method
+ *
+ */
+
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest;
+
+
+///-----------------------------------
+/// @name Set Task Did Complete Block
+///-----------------------------------
+
+
+/**
+ *
+ * Method to set the callbaks block of the pending background tasks.
+ *
+ * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
+ *
+ */
+
+- (void) setTaskDidCompleteBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, NSError *error)) block;
+
+
+///-----------------------------------
+/// @name Set Task Did Send Body Data Block
+///-----------------------------------
+
+/**
+ * Sets a block that get callbacks of the NSURLSessionTask progress
+ *
+ * @param block A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes five arguments: the session, the task, the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
+ */
+- (void) setTaskDidSendBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend)) block;
 
 
 #pragma mark - OC API Calls
@@ -329,8 +395,8 @@ typedef enum {
 
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, NSData *, NSString *))success
-                     failure:(void(^)(NSHTTPURLResponse *, NSError *))failure;
+(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure;
 
 ///-----------------------------------
 /// @name Has Server Share Support
@@ -346,8 +412,8 @@ typedef enum {
  *
  */
 - (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *,BOOL, NSString *)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failure;
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name readSharedByServer
@@ -364,8 +430,8 @@ typedef enum {
  */
 - (void) readSharedByServer: (NSString *) path
          onCommunication:(OCCommunication *)sharedOCCommunication
-          successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-          failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+          successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+          failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name readSharedByServer
@@ -383,8 +449,8 @@ typedef enum {
  */
 - (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void(^)(NSHTTPURLResponse *, NSArray *, NSString *)) successRequest
-             failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+             successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
@@ -403,8 +469,8 @@ typedef enum {
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *, NSString *, NSString *)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
@@ -420,8 +486,8 @@ typedef enum {
  */
 - (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *)) successRequest
-                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name isShareFileOrFolderByServer
@@ -437,8 +503,8 @@ typedef enum {
  */
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *, NSString *, BOOL)) successRequest
-                      failureRequest:(void(^)(NSHTTPURLResponse *, NSError *)) failureRequest;
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 #pragma mark - Queue system
 /*
