@@ -1076,7 +1076,7 @@
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Upload file /Tests/Test Download/test.jpeg
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", _configTests.pathTestFolder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
     
     
@@ -1087,7 +1087,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
     //Documents/Test Download/
-    NSString *localPath = [documentsDirectory stringByAppendingPathComponent:@"Test Download"];
+    NSString *localPath = @"/tmp/";
     
     //Make the path if not exists
     NSError *error = nil;
@@ -1096,10 +1096,10 @@
     
     
     //Documents/Test Download/image.png
-    localPath = [localPath stringByAppendingString:@"/test.jpeg"];
+    localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
