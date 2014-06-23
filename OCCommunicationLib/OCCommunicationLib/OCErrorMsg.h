@@ -30,3 +30,4 @@
 #define kOCErrorServerMethodNotPermitted 405
 #define kOCErrorProxyAuth 407
 #define kOCErrorServerTimeout 408
+#define kOCErrorServerInternalError 500

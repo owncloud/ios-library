@@ -30,7 +30,7 @@
 #define k_timeout_upload 40 //seconds
 
 //Chunk length
-#define k_lenght_chunk 1048576
+#define k_OC_lenght_chunk 1048576
 
 #define k_domain_error_code @"com.owncloud"
 
@@ -39,3 +39,6 @@
 
 //Version of the server
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]
+
+//Name of the session using for upload files with NSURLSession
+#define k_session_name @"com.owncloud.upload.session"

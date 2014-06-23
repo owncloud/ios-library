@@ -13,4 +13,6 @@
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
+    #define IS_IOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7)
+    #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #endif
