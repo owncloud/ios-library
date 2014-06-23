@@ -573,6 +573,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DSTROOT = /tmp/OCCommunicationLib.dst;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
@@ -589,6 +590,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DSTROOT = /tmp/OCCommunicationLib.dst;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
@@ -609,6 +611,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = UNIT_TEST;
@@ -628,6 +631,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OCCommunicationLib/ownCloud iOS library-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";

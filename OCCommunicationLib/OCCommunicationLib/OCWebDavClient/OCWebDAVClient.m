@@ -63,6 +63,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         
     }
+    
     return self;
 }
 
@@ -91,6 +92,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    
+#ifdef UNIT_TEST
+    operation.securityPolicy.allowInvalidCertificates = YES;
+#endif
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation,responseObject);

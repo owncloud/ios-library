@@ -31,6 +31,7 @@
 #import "OCFileDto.h"
 #import "OCSharedDto.h"
 #import "ConfigTests.h"
+#import "AFURLSessionManager.h"
 
 #import <UIKit/UIKit.h>
 
@@ -72,6 +73,7 @@
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
+    _sharedOCCommunication.uploadSessionManager.securityPolicy.allowInvalidCertificates = YES;
     
     //Create Tests folder
     [self createFolderWithName:_configTests.pathTestFolder];
@@ -1613,7 +1615,7 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"videoA" ofType:@"MOV"];
     
     //Path of server file file (Special character added in file name)
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
