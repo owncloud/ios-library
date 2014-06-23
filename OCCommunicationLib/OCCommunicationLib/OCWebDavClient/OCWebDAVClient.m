@@ -293,8 +293,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 	[request setValue:[NSString stringWithFormat:@"%d", data.length] forHTTPHeaderField:@"Content-Length"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
 	operation.inputStream = [NSInputStream inputStreamWithData:data];
-    //TODO:Uncomment this
-    //[self enqueueHTTPRequestOperation:operation];
+    
     [self.operationQueue addOperation:operation];
 }
 
