@@ -1087,7 +1087,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
     //Documents/Test Download/
-    NSString *localPath = @"/tmp/";
+    NSString *localPath = documentsDirectory;
     
     //Make the path if not exists
     NSError *error = nil;
