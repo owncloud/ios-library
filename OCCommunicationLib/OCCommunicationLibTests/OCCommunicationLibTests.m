@@ -227,7 +227,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    NSString *folder = [NSString stringWithFormat:@"%@%@/%@",_configTests.webdavBaseUrl,_configTests.pathTestFolder,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
+    NSString *folder = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
     
     [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Folder created
