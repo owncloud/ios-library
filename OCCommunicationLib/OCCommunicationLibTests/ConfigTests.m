@@ -33,7 +33,7 @@
     NSString *userOwn = @""; //Server user
     NSString *passwordOwn = @""; //Server password
     //Folder for the unit test on the server. This folder has the current date since a reference for avoid problems with duplicates building
-    NSString *pathTestFolderOwn = [NSString stringWithFormat:@"UnitTest%@",[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
+    NSString *pathTestFolderOwn = [NSString stringWithFormat:@"UnitTest%@",[NSString stringWithFormat:@"%f", [[NSDate new] timeIntervalSince1970]]];
     
     
     //We set the baseUrl
