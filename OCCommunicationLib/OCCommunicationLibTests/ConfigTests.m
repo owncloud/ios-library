@@ -65,12 +65,7 @@
     }
     
     //We set the pathTestFolder
-    if ([[[NSProcessInfo processInfo] environment] objectForKey:@"pathTestFolderTravis"]) {
-        _pathTestFolder = pathTestFolderOwn;
-//        _pathTestFolder = [[[NSProcessInfo processInfo] environment] objectForKey:@"pathTestFolderTravis"];
-    } else {
-        _pathTestFolder = pathTestFolderOwn;
-    }
+    _pathTestFolder = pathTestFolderOwn;
     
     return self;
 }
