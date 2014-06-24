@@ -4,10 +4,10 @@ xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
 env:
   global:
-  - secure: CjrmHhhpwnUrKLfnsbN/gnVaA2sdmkJjjdV5+8NBPt8A4lSv6+SUBJ4Ab6mAffvOhrv0LDhiCaFD+/vkXoxhNrGXv+Wk2iuLXLvaNxvOr7V3M0HuwxlwAxO4yGDLjB/mtzv9lcYUqAPjB6nk22KEbjYQEVKNj6G0jcXUH5mHi6g=
-  - secure: tYPa3w/NQyqjsKqmHMPYZSqAApSo1SEq1KhviNa8061R/2EITJZ+Pl1ttY5tCNykxCmINkXInSGuKszhZOo7sNiygkEUiDWLMDLZw+LiRav+nib5XFKzg4snGFD2TvC+DLcrZXQb2Va/4jf/MpwNp7Dy3kElHMmE+H4ThizcPzU=
-  - secure: CpdN8fSY+lGejVeavBXxCcXg2s44QqsuhgccFIgkfYjfbjg21PBrFnC8IMiC7NobskYbNSXyZpCibRlxr9mC9WO8NlHLok7Dv14BOqWU/zU3p2XpbSdYmqvnChGuM2oxNYS8NYJaSIWlAtw0zLp5JfuW/ExvCddn9NA5oqifrws=
-  - secure: QHDhhTtrqs3LmsFnaZ91h/V5IgfUgBC+GuD7KfEFOqu3vpUMb4Kq8OagHZ3aBA0bn9QX0eK+n+bYGIe9jzShCYY2He7+tXUm8BIqzGLTK1rbeQca7oJ+e6eu5BGnJcfnaMjyWb+VR8gUXERMzmbOSuB1ZMTzmuJjeY3wK44Buo8=
+  - secure: hY2h3XSXPAN1jnf2t/i+lBirozVpsOhm0WxRi+msM2NaAxRzsurovRZ9Cjjgb3dPKKomLFAjqWxTZ3vlQy4um93xPXv/UyXdgkaUZ1rWaDRgk7EnlH+SA8uoOfQOEgE5tMSSiM7YRvNf6r4nmKuQNBgqtMoK0HSiUj6DGjImDoM=
+  - secure: NvlNBduCxLf4f+WVAz14Pd/O1gDOVUvqSe8GPKf4axOdvsl8CwDZ5D65DkLbm1205/9q2MTGGKdDiyL5pS7mtxTOzHJIofLyAtO+YEV029Giuk8hv1wQcVHLtsJkBaTStpD9GKkKMvRiXewKtUkU2etpKAo4csQ7U48BQ+hqVc4=
+  - secure: KxFvsLZAlFs2NpcD/aLFtS+hLeYPWt+rVZyLk1tHtPOLOnX8NxQYLS59hqex1qnI3TYWGwv1DKq+YD4VfOoh/So16jqO9IVlqs58hwPdkj1rONDDSBGpk4gDaSKmmpbgzV0c3gRQs/TFrQomeyS9TPoXxor9atYHuUtSIy/dO2o=
+  - secure: fw+m/wHbBMFW29siqrMtwQl3cHkh6lhV/jsjTw4gTXkaipw/Ci3S/KPSYpFqPYu13AtfzpSH5xncN4jo6/8kGYjrSrNfLqeR6UxiwDQRuReptvXq6xFImuPDycUNuDavlv/bYI+O7BCoiE9m/P7PMlg0/4vVjg70AkvYq087osQ=
 
 before_install:
   - brew update
