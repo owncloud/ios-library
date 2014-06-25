@@ -56,6 +56,8 @@ extern NSString *OCWebDAVModificationDateKey;
 //We use this variable to return the url of a redirected server to detect if we receive any sesion expired on SSO server
 @property (nonatomic, strong) NSString *redirectedServer;
 
+@property (nonatomic, strong) NSString *postStringForShare;
+
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
  
