@@ -544,10 +544,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
-    NSLog(@"HTTPBody: %@", [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
-    NSLog(@"requestRedirect: %@", request);
-    NSLog(@"%@", [request allHTTPHeaderFields]);
-    
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
