@@ -127,6 +127,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     //Header for use the OC API CALL
     NSString *ocs_apiquests = @"true";
     [request setValue:ocs_apiquests forHTTPHeaderField:k_api_header_request];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
     
     return request;
 }
@@ -535,13 +537,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
 
-    NSString *postString = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
+    [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation, responseObject);
@@ -637,6 +638,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             
             requestRedirect = [sharedOCCommunication getRequestWithCredentials:requestRedirect];
             requestRedirect.HTTPMethod = _requestMethod;
+            
+            if (_postStringForShare) {
+                //It is a request to share a file by link
+                requestRedirect = [self sharedRequestWithMethod:_requestMethod path:responseURLString parameters:nil];
+                [requestRedirect setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+            }
             
             return requestRedirect;
             
