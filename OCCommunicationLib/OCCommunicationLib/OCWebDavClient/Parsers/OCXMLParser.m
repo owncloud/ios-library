@@ -167,9 +167,8 @@ NSString *OCCWebDAVURIKey           = @"uri";
         isNotFirstFileOfList = YES;
         
         //NSLog(@"1 _xmlBucked :- %@",_xmlBucket);
-    }
-    //DATE
-    else if ([elementName isEqualToString:@"d:getlastmodified"]) {
+    } else if ([elementName isEqualToString:@"d:getlastmodified"]) {
+        //DATE
         
         if ([_xmlChars length]) {
             NSDate *d = [[self class] parseDateString:_xmlChars];
@@ -185,16 +184,14 @@ NSString *OCCWebDAVURIKey           = @"uri";
                 NSLog(@"Could not parse date string '%@' for '%@'", _xmlChars, elementName);
             }
         }
-    }
-    else if ([elementName hasSuffix:@":getlastmodified"]) {
+    } else if ([elementName hasSuffix:@":getlastmodified"]) {
         // 'Thu, 30 Oct 2008 02:52:47 GMT'
         // Monday, 12-Jan-98 09:25:56 GMT
         // Value: HTTP-date  ; defined in section 3.3.1 of RFC2068
         
         
-    }
-    //ETAG
-    else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
+    } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
+        //ETAG
         NSLog(@"getetag: %@", _xmlChars);
         
         NSString *stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
@@ -209,20 +206,16 @@ NSString *OCCWebDAVURIKey           = @"uri";
         NSLog(@"the etag is: %lld", etag);
         
         _currentFile.etag = etag;
-    }
-    //CONTENT TYPE
-    else if ([elementName hasSuffix:@":getcontenttype"] && [_xmlChars length]) {
+    } else if ([elementName hasSuffix:@":getcontenttype"] && [_xmlChars length]) {
+        //CONTENT TYPE
         [_xmlBucket setObject:[_xmlChars copy] forKey:OCCWebDAVContentTypeKey];
         
-    }
-    //SIZE
-    else if([elementName hasSuffix:@"d:getcontentlength"] && [_xmlChars length]) {
+    } else if([elementName hasSuffix:@"d:getcontentlength"] && [_xmlChars length]) {
+        //SIZE
         //FileDto current size
         _currentFile.size = (long)[_xmlChars longLongValue];
         
-    }
-    
-    else if ([elementName isEqualToString:@"d:response"]) {
+    } else if ([elementName isEqualToString:@"d:response"]) {
         //NSLog(@"2 _xmlBucked :- %@",_xmlBucket);
         
         //Add to directoryList
@@ -234,6 +227,8 @@ NSString *OCCWebDAVURIKey           = @"uri";
             //[_directoryBucket addObject:_xmlBucket];
         }
         _xmlBucket = nil;
+    } else if ([elementName isEqualToString:@"oc:permissions"]) {
+        _currentFile.permissions = _xmlChars;
     }
 }
 
