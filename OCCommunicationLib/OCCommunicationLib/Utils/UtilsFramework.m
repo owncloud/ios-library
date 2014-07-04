@@ -317,6 +317,8 @@
     return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
 }
 
+#pragma mark - Manage Cookies
+
 //-----------------------------------
 /// @name addCookiesToStorageFromResponse
 ///-----------------------------------
@@ -336,6 +338,32 @@
         NSLog(@"Current: %@", current);
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
     }
+}
+
+//-----------------------------------
+/// @name getRequestWithCookiesByRequest
+///-----------------------------------
+
+/**
+ * Method to return a request with all the necessary cookies
+ *
+ * @param NSMutableURLRequest -> request
+ *
+ * @return request
+ *
+ */
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request {
+    //We add the cookies of that URL
+    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:request.URL];
+    NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
+    
+    NSLog(@"cookieStorage: %@", cookieStorage);
+    
+    for (NSString *key in cookieHeaders) {
+        [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
+    }
+    
+    return request;
 }
 
 @end

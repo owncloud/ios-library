@@ -112,6 +112,8 @@
 /// @name addCookiesToStorageFromResponse
 ///-----------------------------------
 
+#pragma mark - Manage Cookies
+
 /**
  * Method to storage all the cookies from a response in order to use them in future requests
  *
@@ -120,5 +122,18 @@
  *
  */
 + (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url;
+//-----------------------------------
+/// @name getRequestWithCookiesByRequest
+///-----------------------------------
+
+/**
+ * Method to return a request with all the necessary cookies
+ *
+ * @param NSMutableURLRequest -> request
+ *
+ * @return request
+ *
+ */
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request;
 
 @end

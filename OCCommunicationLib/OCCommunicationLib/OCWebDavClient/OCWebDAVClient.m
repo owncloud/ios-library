@@ -91,6 +91,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
+    //We add the cookies of that URL
+    request = [UtilsFramework getRequestWithCookiesByRequest:request];
+    
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     
 #ifdef UNIT_TEST
@@ -360,6 +363,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         
+        //We add the cookies of that URL
+        request = [UtilsFramework getRequestWithCookiesByRequest:request];
+        
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
         NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
@@ -598,6 +604,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 requestRedirect = [self sharedRequestWithMethod:_requestMethod path:responseURLString parameters:nil];
                 [requestRedirect setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
             }
+            
+            //We add the cookies of that URL
+            requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect];
             
             return requestRedirect;
             
