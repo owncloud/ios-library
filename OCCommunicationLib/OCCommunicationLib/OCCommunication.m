@@ -302,8 +302,7 @@
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
             
-            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-
+            //NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
             //NSLog(@"newStr: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
