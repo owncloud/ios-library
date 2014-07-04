@@ -108,4 +108,17 @@
  */
 + (NSString *) AFBase64EncodedStringFromString:(NSString *) string;
 
+//-----------------------------------
+/// @name addCookiesToStorageFromResponse
+///-----------------------------------
+
+/**
+ * Method to storage all the cookies from a response in order to use them in future requests
+ *
+ * @param NSHTTPURLResponse -> response
+ * @param NSURL -> url
+ *
+ */
++ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url;
+
 @end

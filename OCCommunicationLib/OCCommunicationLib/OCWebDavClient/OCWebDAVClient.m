@@ -111,6 +111,15 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [[self requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
     
+    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:path]];
+    NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
+    
+    NSLog(@"cookieStorage: %@", cookieStorage);
+    
+    for (NSString *key in cookieHeaders) {
+        [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
+    }
+    
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval: k_timeout_webdav];
     
@@ -312,7 +321,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
     [request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
     //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
@@ -368,7 +376,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setTimeoutInterval:k_timeout_upload];
         [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-        [request setHTTPShouldHandleCookies:NO];
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
@@ -398,7 +405,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [currentChunkDto.size longLongValue]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
     [request addValue:@"1" forHTTPHeaderField:@"oc-chunked"];
     [request setHTTPBodyStream:chunkInputStream];
     //[request setHTTPBody:data];

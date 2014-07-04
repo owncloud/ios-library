@@ -317,5 +317,25 @@
     return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
 }
 
+//-----------------------------------
+/// @name addCookiesToStorageFromResponse
+///-----------------------------------
+
+/**
+ * Method to storage all the cookies from a response in order to use them in future requests
+ *
+ * @param NSHTTPURLResponse -> response
+ * @param NSURL -> url
+ *
+ */
++ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url {
+    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
+    NSLog(@"cookies: %@", cookies);
+    
+    for (NSHTTPCookie *current in cookies) {
+        NSLog(@"Current: %@", current);
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
+    }
+}
 
 @end

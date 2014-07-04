@@ -78,9 +78,11 @@
 
             progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
         } success:^(OCHTTPRequestOperation *operation, id responseObject) {
+            [UtilsFramework addCookiesToStorageFromResponse:operation.response andPath:[NSURL URLWithString:remoteFilePath]];
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
             successRequest(operation.response, request.redirectedServer);
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+            [UtilsFramework addCookiesToStorageFromResponse:operation.response andPath:[NSURL URLWithString:remoteFilePath]];
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
             [self cancel];
             NSLog(@"Error: %@", operation.response);
@@ -94,80 +96,6 @@
             handler();
         }]];
     }
-}
-
-
-///-----------------------------------
-/// @name prepareChunksByFile
-///-----------------------------------
-
-/**
- * Method to return an array of NSStrings that contains all the chunks with the paths that we will uploads.
- *
- * @param NSString -> localFilePath the path where is the file that we want upload
- * @param NSString -> remoteFilePath the path where we want upload the file
- */
-- (NSMutableArray *) prepareChunksByFile: (NSString *) localFilePath andRemoteFilePath: (NSString *) remoteFilePath {
-    NSLog(@"Prepare chunks");
-    
-    NSMutableArray *listOfChunksDto = [NSMutableArray new];
-    
-    //Random transfer id
-    int maxNumber = 1000000;
-    int randon_number;
-    randon_number=((int)arc4random() / maxNumber);
-    //Convert negative valors
-    if (randon_number<0) {
-        randon_number=randon_number*-1;
-    }
-    
-    //NSData *fileData = [ NSData dataWithContentsOfFile:_filePath];
-    
-    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:localFilePath error:NULL];
-    NSNumber * size = [attributes objectForKey: NSFileSize];
-    NSUInteger length = [size integerValue];
-    
-    // NSUInteger length = [fileData length];
-    NSLog(@"File length: %d", length);
-    NSUInteger chunkSize = k_OC_lenght_chunk;
-    NSLog(@"ChunkSize: %d", chunkSize);
-    
-    NSUInteger offset = 0;
-    NSUInteger chunkIndex = 0;
-
-    
-    int totalChunksForThisFile = ceil((float)length/(float)k_OC_lenght_chunk);
-    
-    NSLog(@"Number of chunks: %d", totalChunksForThisFile);
-    
-    do {
-        
-        OCChunkDto *currentChunk = [OCChunkDto new];
-        
-        //Store position
-        currentChunk.position = [NSNumber numberWithInt:offset];
-        
-        //Store the chunk size
-        NSUInteger thisChunkSize = length - offset > chunkSize ? chunkSize : length - offset;
-        currentChunk.size = [NSNumber numberWithInt:thisChunkSize];
-        
-        //Avanced position
-        offset += thisChunkSize;
-        
-        
-        // Store the name of chunk
-        //https://s3.owncloud.com/owncloud/remote.php/webdav/Demo%20Delete/Video-19-11-13-01-10-24-0.MOV-chunking-1189-17-0
-        currentChunk.remotePath = [NSString stringWithFormat:@"%@-chunking-%d-%d-%d", remoteFilePath, randon_number, totalChunksForThisFile, chunkIndex];
-        
-        NSLog(@"currentChunk.remotePath: %@", currentChunk.remotePath);
-        
-        chunkIndex++;
-        
-        [listOfChunksDto addObject:currentChunk];
-        
-    } while (offset < length);
-    
-    return listOfChunksDto;
 }
 
 ///-----------------------------------
