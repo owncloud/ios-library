@@ -136,4 +136,14 @@
  */
 + (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request;
 
+//-----------------------------------
+/// @name deleteAllCookies
+///-----------------------------------
+
+/**
+ * Method to clean the CookiesStorage
+ *
+ */
++ (void) deleteAllCookies;
+    
 @end

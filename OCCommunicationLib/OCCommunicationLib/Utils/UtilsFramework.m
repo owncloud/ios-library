@@ -366,4 +366,19 @@
     return request;
 }
 
+//-----------------------------------
+/// @name deleteAllCookies
+///-----------------------------------
+
+/**
+ * Method to clean the CookiesStorage
+ *
+ */
++ (void) deleteAllCookies {
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *each in cookieStorage.cookies) {
+        [cookieStorage deleteCookie:each];
+    }
+}
+
 @end
