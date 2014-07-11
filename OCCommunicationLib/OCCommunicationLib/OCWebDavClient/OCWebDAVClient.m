@@ -91,8 +91,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
+    //If is not nil is a redirection so we keep the original url server
+    if (!_originalUrlServer) {
+        _originalUrlServer = [request.URL absoluteString];
+    }
+    
     //We add the cookies of that URL
-    request = [UtilsFramework getRequestWithCookiesByRequest:request];
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     
@@ -363,8 +368,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         
+        //If is not nil is a redirection so we keep the original url server
+        if (!_originalUrlServer) {
+            _originalUrlServer = [request.URL absoluteString];
+        }
+        
         //We add the cookies of that URL
-        request = [UtilsFramework getRequestWithCookiesByRequest:request];
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
@@ -606,7 +616,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             }
             
             //We add the cookies of that URL
-            requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect];
+            requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:_originalUrlServer];
             
             return requestRedirect;
             

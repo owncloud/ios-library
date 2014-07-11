@@ -345,16 +345,17 @@
 ///-----------------------------------
 
 /**
- * Method to return a request with all the necessary cookies
+ * Method to return a request with all the necessary cookies of the original url without redirection
  *
  * @param NSMutableURLRequest -> request
+ * @param NSString -> originalUrlServer
  *
  * @return request
  *
  */
-+ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request {
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request andOriginalUrlServer:(NSString *) originalUrlServer {
     //We add the cookies of that URL
-    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:request.URL];
+    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
     NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
     
     NSLog(@"cookieStorage: %@", cookieStorage);

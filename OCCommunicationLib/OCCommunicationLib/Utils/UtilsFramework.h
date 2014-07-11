@@ -127,14 +127,15 @@
 ///-----------------------------------
 
 /**
- * Method to return a request with all the necessary cookies
+ * Method to return a request with all the necessary cookies of the original url without redirection
  *
  * @param NSMutableURLRequest -> request
+ * @param NSString -> originalUrlServer
  *
  * @return request
  *
  */
-+ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request;
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request andOriginalUrlServer:(NSString *) originalUrlServer;
 
 //-----------------------------------
 /// @name deleteAllCookies
