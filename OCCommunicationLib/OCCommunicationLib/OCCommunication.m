@@ -302,10 +302,8 @@
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
             
-            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-
-            NSLog(@"newStr: %@", newStr);
-            
+            //NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+            //NSLog(@"newStr: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:response];
@@ -393,9 +391,11 @@
     
     NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
         success:^(NSURLResponse *response, id responseObjec){
+            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");
         } failure:^(NSURLResponse *response, NSError *error) {
+            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             failureRequest(response, @"", error);
         } failureBeforeRequest:^(NSError *error) {
@@ -796,7 +796,6 @@
 - (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
     
     [self eraseURLCache];
-    [self clearCookiesFromURL:operation.request.URL];
     
     //Suspended the queue while is added a new operation
     [_networkOperationsQueue setSuspended:YES];
@@ -915,18 +914,7 @@
 }
 
 
-#pragma mark - Clear Cookies and Cache
-
-- (void)clearCookiesFromURL:(NSURL*) url {
-    
-    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    NSArray *cookies = [cookieStorage cookiesForURL:url];
-    for (NSHTTPCookie *cookie in cookies)
-    {
-        //NSLog(@"Delete cookie");
-        [cookieStorage deleteCookie:cookie];
-    }
-}
+#pragma mark - Clear Cache
 
 - (void)eraseURLCache
 {

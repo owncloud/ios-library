@@ -55,6 +55,8 @@ extern NSString *OCWebDAVModificationDateKey;
 @property (nonatomic, strong) NSString *requestMethod;
 //We use this variable to return the url of a redirected server to detect if we receive any sesion expired on SSO server
 @property (nonatomic, strong) NSString *redirectedServer;
+//We use this variable to get the Cookies from the storage provider
+@property (nonatomic, strong) NSString *originalUrlServer;
 
 @property (nonatomic, strong) NSString *postStringForShare;
 

@@ -89,7 +89,15 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+    
+    //If is not nil is a redirection so we keep the original url server
+    if (!_originalUrlServer) {
+        _originalUrlServer = [request.URL absoluteString];
+    }
+    
+    //We add the cookies of that URL
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     
@@ -204,19 +212,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
-    
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
-    
 }
 
 - (void)propertiesOfPath:(NSString *)path
@@ -280,7 +280,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                success:(void(^)(OCHTTPRequestOperation *, id))success
                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     _requestMethod = @"MKCOL";
-	NSURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
+	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
@@ -312,7 +312,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
     [request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
     //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
@@ -368,7 +367,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setTimeoutInterval:k_timeout_upload];
         [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-        [request setHTTPShouldHandleCookies:NO];
+        
+        //If is not nil is a redirection so we keep the original url server
+        if (!_originalUrlServer) {
+            _originalUrlServer = [request.URL absoluteString];
+        }
+        
+        //We add the cookies of that URL
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
@@ -398,7 +404,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setTimeoutInterval:k_timeout_upload];
     [request setValue:[NSString stringWithFormat:@"%lld", [currentChunkDto.size longLongValue]] forHTTPHeaderField:@"Content-Length"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
     [request addValue:@"1" forHTTPHeaderField:@"oc-chunked"];
     [request setHTTPBodyStream:chunkInputStream];
     //[request setHTTPBody:data];
@@ -483,16 +488,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
@@ -512,16 +510,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
     
@@ -540,16 +531,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
@@ -564,16 +548,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
@@ -588,17 +565,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation, responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, operation.error);
-    }];
-    
-    
+        
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
@@ -644,6 +614,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 requestRedirect = [self sharedRequestWithMethod:_requestMethod path:responseURLString parameters:nil];
                 [requestRedirect setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
             }
+            
+            //We add the cookies of that URL
+            requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:_originalUrlServer];
             
             return requestRedirect;
             

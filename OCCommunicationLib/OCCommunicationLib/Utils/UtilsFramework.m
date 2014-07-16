@@ -317,5 +317,69 @@
     return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
 }
 
+#pragma mark - Manage Cookies
+
+//-----------------------------------
+/// @name addCookiesToStorageFromResponse
+///-----------------------------------
+
+/**
+ * Method to storage all the cookies from a response in order to use them in future requests
+ *
+ * @param NSHTTPURLResponse -> response
+ * @param NSURL -> url
+ *
+ */
++ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url {
+    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
+    NSLog(@"cookies: %@", cookies);
+    
+    for (NSHTTPCookie *current in cookies) {
+        NSLog(@"Current: %@", current);
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
+    }
+}
+
+//-----------------------------------
+/// @name getRequestWithCookiesByRequest
+///-----------------------------------
+
+/**
+ * Method to return a request with all the necessary cookies of the original url without redirection
+ *
+ * @param NSMutableURLRequest -> request
+ * @param NSString -> originalUrlServer
+ *
+ * @return request
+ *
+ */
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request andOriginalUrlServer:(NSString *) originalUrlServer {
+    //We add the cookies of that URL
+    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
+    NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
+    
+    NSLog(@"cookieStorage: %@", cookieStorage);
+    
+    for (NSString *key in cookieHeaders) {
+        [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
+    }
+    
+    return request;
+}
+
+//-----------------------------------
+/// @name deleteAllCookies
+///-----------------------------------
+
+/**
+ * Method to clean the CookiesStorage
+ *
+ */
++ (void) deleteAllCookies {
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *each in cookieStorage.cookies) {
+        [cookieStorage deleteCookie:each];
+    }
+}
 
 @end
