@@ -11,4 +11,3 @@ env:
 
 before_install:
   - brew update
-  - brew upgrade xctool
