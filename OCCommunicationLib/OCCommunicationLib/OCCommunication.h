@@ -59,6 +59,7 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
+@property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 
 ///-----------------------------------
 /// @name Init with Upload Session Manager
@@ -70,6 +71,9 @@ typedef enum {
  * @param uploadSessionManager -> AFURLSessionManager
  */
 -(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager;
+
+
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
 
 #pragma mark - Credentials
 
@@ -303,6 +307,11 @@ typedef enum {
 
 - (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
+///-----------------------------------
+/// @name Download File Session
+///-----------------------------------
+
+- (NSURLSessionUploadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name Upload File

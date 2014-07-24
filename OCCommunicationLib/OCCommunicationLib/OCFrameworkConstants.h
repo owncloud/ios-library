@@ -40,5 +40,8 @@
 //Version of the server
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]
 
-//Name of the session using for upload files with NSURLSession
+//Name of the upload session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
+
+//Name of the download session using for upload files with NSURLSession
+#define k_download_session_name @"com.owncloud.download.session"
