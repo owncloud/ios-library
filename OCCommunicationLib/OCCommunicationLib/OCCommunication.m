@@ -398,7 +398,7 @@
 
 
 
-- (NSURLSessionUploadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -417,19 +417,6 @@
         
                                                                       }];
     
-    
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
-                                                                  success:^(NSURLResponse *response, id responseObjec){
-                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                      //TODO: The second parameter is the redirected server
-                                                                      successRequest(response, @"");
-                                                                  } failure:^(NSURLResponse *response, NSError *error) {
-                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                      //TODO: The second parameter is the redirected server
-                                                                      failureRequest(response, @"", error);
-                                                                  } failureBeforeRequest:^(NSError *error) {
-                                                                      failureBeforeRequest(error);
-                                                                  }];
     
     return downloadTask;
 }
