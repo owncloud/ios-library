@@ -423,6 +423,39 @@
 
 
 ///-----------------------------------
+/// @name Set Download Task Complete Block
+///-----------------------------------
+
+- (void)setDownloadTaskComleteBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block withLocalPath:(NSURL *)localPath{
+    
+    [self.downloadSessionManager setDownloadTaskDidFinishDownloadingBlock:^NSURL *(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location) {
+        return localPath;
+        block(session, downloadTask, location);
+        
+    }];
+    
+}
+
+
+
+
+///-----------------------------------
+/// @name Set Download Task Did Get Body Data Block
+///-----------------------------------
+
+
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes)) block{
+    
+    [self.downloadSessionManager setDownloadTaskDidResumeBlock:^(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes) {
+        block(session,downloadTask,fileOffset,expectedTotalBytes);
+    }];
+    
+    
+}
+
+
+
+///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
 

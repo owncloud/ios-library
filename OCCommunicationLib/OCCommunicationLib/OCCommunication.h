@@ -329,8 +329,35 @@ typedef enum {
  *
  */
 
-
 - (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
+
+///-----------------------------------
+/// @name Set Download Task Complete Block
+///-----------------------------------
+
+/**
+ *
+ * Method to set the callbaks block of the pending download background tasks.
+ *
+ * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the download task, and location where is stored the file. 
+ *
+ */
+
+- (void)setDownloadTaskComleteBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block withLocalPath:(NSURL *)localPath;
+
+
+///-----------------------------------
+/// @name Set Download Task Did Get Body Data Block
+///-----------------------------------
+
+/**
+ * Sets a block that get callbacks of the NSURLDownloadSessionTask progress
+ *
+ * @param block A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes four arguments: the session, the download task, the number of the bytes read, the total bytes expected to read. This block may be called multiple times, and will execute on the main thread.
+ */
+
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes)) block;
+
 
 ///-----------------------------------
 /// @name Upload File
