@@ -307,9 +307,28 @@ typedef enum {
 
 - (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
+
 ///-----------------------------------
 /// @name Download File Session
 ///-----------------------------------
+
+/**
+ * Method to download a file. All the files will be download one by one in a queue. The files download also in background when the system close the app.
+ *
+ * @param NSString -> remotePath the path of the file
+ * @param NSString -> localPath the  local path where we want store the file
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ * @param NSProgress -> A progress object monitoring the current upload progress
+ *
+ * @return NSURLSessionDownloadTask -> You can cancel the download using this object
+ * Ex: [downloadTask cancel]
+ *
+ * @warning remember that you must to set the Credentials before call this method or any other.
+ *
+ * @warning this method use NSURLSession only supported in iOS 7, with iOS 6 use the previous method
+ *
+ */
+
 
 - (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
 
