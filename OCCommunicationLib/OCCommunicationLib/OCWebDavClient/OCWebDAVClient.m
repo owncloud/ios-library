@@ -351,8 +351,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSLog(@"localSource: %@", localSource);
     NSLog(@"remoteDestination: %@", remoteDestination);
     
+    NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    if (localSource == nil) {
+    if (localSource == nil || ![fileManager fileExistsAtPath:localSource]) {
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"You are trying upload a file that does not exist" forKey:NSLocalizedDescriptionKey];
         
