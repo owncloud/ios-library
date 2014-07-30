@@ -66,13 +66,20 @@ typedef enum {
 ///-----------------------------------
 
 /**
- * Method to init the OCCommunication with a AFURLSessionManager to receive the SSL callbacks to support Self Signed servers
+ * Method to init the OCCommunication with a AFURLSessionManager (upload session) to receive the SSL callbacks to support Self Signed servers
  *
  * @param uploadSessionManager -> AFURLSessionManager
  */
 -(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager;
 
 
+/**
+ * Method to init the OCCommunication with a AFURLSessionManager (uploads and downloads sessions) to receive the SSL callbacks to support Self Signed servers
+ *
+ * @param uploadSessionManager -> AFURLSessionManager
+ * @param downloadSessionManager -> AFURLSessionManager
+ *
+ */
 -(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
 
 #pragma mark - Credentials
@@ -337,13 +344,13 @@ typedef enum {
 
 /**
  *
- * Method to set the callbaks block of the pending download background tasks.
+ * Method to set the callbak block of the pending download background tasks.
  *
- * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the download task, and location where is stored the file. 
+ * @param block A block object to be executed when a session task is completed. The block should be return the location where the download must be stored, and takes three arguments: the session, the download task, and location where is stored the file.
  *
  */
 
-- (void)setDownloadTaskComleteBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block withLocalPath:(NSURL *)localPath;
+- (void)setDownloadTaskComleteBlock: (NSURL * (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block;
 
 
 ///-----------------------------------
@@ -356,7 +363,7 @@ typedef enum {
  * @param block A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes four arguments: the session, the download task, the number of the bytes read, the total bytes expected to read. This block may be called multiple times, and will execute on the main thread.
  */
 
-- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes)) block;
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block;
 
 
 ///-----------------------------------
@@ -413,7 +420,7 @@ typedef enum {
  *
  * Method to set the callbaks block of the pending background tasks.
  *
- * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
+ * @param block A block object to be executed when a session task is completed. The blockhas not return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
  *
  */
 

@@ -413,8 +413,7 @@
         
                                                                       } failure:^(NSURLResponse *response, NSError *error) {
                                                                           [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                          
-        
+                                                                          failureRequest(response,error);
                                                                       }];
     
     
@@ -426,17 +425,13 @@
 /// @name Set Download Task Complete Block
 ///-----------------------------------
 
-- (void)setDownloadTaskComleteBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block withLocalPath:(NSURL *)localPath{
+
+- (void)setDownloadTaskComleteBlock: (NSURL * (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block{
     
-    [self.downloadSessionManager setDownloadTaskDidFinishDownloadingBlock:^NSURL *(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location) {
-        return localPath;
-        block(session, downloadTask, location);
-        
-    }];
+    [self.downloadSessionManager setDownloadTaskDidFinishDownloadingBlock:block];
+
     
 }
-
-
 
 
 ///-----------------------------------
@@ -444,10 +439,10 @@
 ///-----------------------------------
 
 
-- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes)) block{
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block{
     
-    [self.downloadSessionManager setDownloadTaskDidResumeBlock:^(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes) {
-        block(session,downloadTask,fileOffset,expectedTotalBytes);
+    [self.downloadSessionManager setDownloadTaskDidWriteDataBlock:^(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+        block(session,downloadTask,bytesWritten,totalBytesWritten,totalBytesExpectedToWrite);
     }];
     
     
