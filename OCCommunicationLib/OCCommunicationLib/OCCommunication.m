@@ -60,6 +60,8 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
+        _isCookiesAvailable = NO;
+        
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
 #else
@@ -92,6 +94,8 @@
         
         //Init the Donwload queue array
         _downloadOperationQueueArray = [NSMutableArray new];
+        
+        _isCookiesAvailable = NO;
         
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
@@ -484,6 +488,9 @@
     }];
 }
 
+///-----------------------------------
+/// @name Get if the server support share
+///-----------------------------------
 - (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                 successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
@@ -496,7 +503,7 @@
         NSString *versionString = [NSString new];
         NSError* error=nil;
         
-        __block BOOL hasSharedSupport = NO;
+        BOOL hasSharedSupport = NO;
         
         if (data) {
             NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
@@ -523,77 +530,62 @@
         
         NSArray *firstVersionSupportShared = k_version_support_shared;
         
-        // NSLog(@"First version that supported Shared API: %@", firstVersionSupportShared);
-        //NSLog(@"Current version: %@", currentVersionArrray);
+        hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
         
-        //Loop of compare
-        [firstVersionSupportShared enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSString *firstVersionString = obj;
-            NSString *currentVersionString;
-            if ([currentVersionArrray count] > idx) {
-                currentVersionString = [currentVersionArrray objectAtIndex:idx];
-                
-                int firstVersionInt = [firstVersionString intValue];
-                int currentVersionInt = [currentVersionString intValue];
-                
-                //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
-                //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
-                
-                //Comparation secure
-                switch (idx) {
-                    case 0:
-                        //if the first number is higher
-                        if (currentVersionInt > firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        }
-                        //if the first number is lower
-                        if (currentVersionInt < firstVersionInt) {
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        
-                        break;
-                        
-                    case 1:
-                        //if the seccond number is higger
-                        if (currentVersionInt > firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        }
-                        //if the second number is lower
-                        if (currentVersionInt < firstVersionInt) {
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        break;
-                        
-                    case 2:
-                        //if the third number is higger or equal
-                        if (currentVersionInt >= firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        } else {
-                            //if the third number is lower
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        break;
-                        
-                    default:
-                        break;
-                }
-            } else {
-                hasSharedSupport = NO;
-                *stop=YES;
-            }
-            
-        }];
         success(operation.response, hasSharedSupport, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
+}
+
+///-----------------------------------
+/// @name Get if the server support cookies
+///-----------------------------------
+- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        BOOL hasCookiesSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+        // NSLog(@"version string: %@", versionString);
+        
+        //Split the strings - Type 5.0.13
+        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
+        
+        
+        NSMutableArray *currentVersionArrray = [NSMutableArray new];
+        for (NSString *string in spliteVersion) {
+            [currentVersionArrray addObject:string];
+        }
+        
+        NSArray *firstVersionSupportCookies = k_version_support_shared;
+        
+        hasCookiesSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
+        
+        success(operation.response, hasCookiesSupport, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
 }
 
 - (void) readSharedByServer: (NSString *) path
