@@ -423,7 +423,7 @@
                     }
                     //if the first number is lower
                     if (currentVersionInt < firstVersionInt) {
-                        hasSharedSupport = NO;
+                        isSupported = NO;
                         *stop=YES;
                     }
                     
