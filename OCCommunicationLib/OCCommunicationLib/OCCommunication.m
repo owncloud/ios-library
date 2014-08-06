@@ -578,7 +578,7 @@
             [currentVersionArrray addObject:string];
         }
         
-        NSArray *firstVersionSupportCookies = k_version_support_shared;
+        NSArray *firstVersionSupportCookies = k_version_support_cookies;
         
         hasCookiesSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
         
