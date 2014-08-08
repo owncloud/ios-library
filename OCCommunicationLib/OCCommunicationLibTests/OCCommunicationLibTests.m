@@ -1229,6 +1229,82 @@
     
 }
 
+
+
+///-----------------------------------
+/// @name Test Download File With Session
+///-----------------------------------
+
+/**
+ * This test try to download a specific file using NSURLSession
+ * It the file download the test is ok
+ *
+ */
+- (void) testDownloadFileWithSession {
+
+    //Create Tests/Test Download Folder
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", _configTests.pathTestFolder];
+    [self createFolderWithName:downloadPath];
+    
+    //Upload test file
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    
+    //Upload file /Tests/Test Download/test.jpeg
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", _configTests.pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:uploadPath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //Create Folder in File Sytem to test
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    //Documents/Test Download/
+    NSString *localPath = documentsDirectory;
+    
+    //Make the path if not exists
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:localPath])
+        [[NSFileManager defaultManager] createDirectoryAtPath:localPath withIntermediateDirectories:NO attributes:nil error:&error];
+    
+    //Documents/Test Download/image.png
+    localPath = [localPath stringByAppendingString:@"/image.jpeg"];
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Server URL: %@", serverUrl);
+    
+    NSURLSessionDownloadTask *downloadTask = nil;
+    NSProgress *progressValue = nil;
+    
+    
+    downloadTask = [_sharedOCCommunication downloadFileSession:localPath toDestiny:serverUrl defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progressValue successRequest:^(NSURLResponse *response, NSURL *filePath) {
+        
+        NSLog(@"File Downloaded ok");
+        //Delete the file
+        NSError *theError = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSURLResponse *response, NSError *error) {
+        
+        XCTFail(@"Error download a file - Response: %@ - Error: %@", response, error);
+        //Delete the file
+        NSError *theError = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+}
+
+
+
 ///-----------------------------------
 /// @name Test to upload a small file
 ///-----------------------------------
