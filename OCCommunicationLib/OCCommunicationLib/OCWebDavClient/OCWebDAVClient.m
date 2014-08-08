@@ -276,7 +276,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
     
     NSLog(@"localSource: %@", remoteSource);
     NSLog(@"remoteDestination: %@", localDestination);
@@ -292,6 +292,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
     
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
+
    
     NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:progressValue destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
     
@@ -310,7 +311,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }];
     
     
-    [downloadTask resume];
+    if (defaultPriority) {
+         [downloadTask resume];
+    }
     
     return downloadTask;
 
