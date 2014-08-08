@@ -88,16 +88,19 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [[self requestSerializer] setValue:value forHTTPHeaderField:header];
 }
 
-
-- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
     if (!_originalUrlServer) {
         _originalUrlServer = [request.URL absoluteString];
     }
     
-    //We add the cookies of that URL
-    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    if (sharedOCCommunication.isCookiesAvailable) {
+        //We add the cookies of that URL
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    } else {
+        [UtilsFramework deleteAllCookies];
+    }
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
     
@@ -151,7 +154,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
     [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
@@ -168,7 +171,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
     [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
@@ -182,7 +185,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     _requestMethod = @"DELETE";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
@@ -212,7 +215,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
@@ -242,7 +245,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _requestMethod = @"GET";
 	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:remoteSource parameters:nil];
     //Create Operation
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     //Progress block
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
@@ -281,24 +284,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     _requestMethod = @"MKCOL";
 	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
-
-- (void)put:(NSData *)data path:(NSString *)remoteDestination success:(void(^)(OCHTTPRequestOperation *, id))success
-    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
-    NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
-	[request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-	[request setValue:[NSString stringWithFormat:@"%d", data.length] forHTTPHeaderField:@"Content-Length"];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
-	operation.inputStream = [NSInputStream inputStreamWithData:data];
-    
-    [self.operationQueue addOperation:operation];
-}
-
 
 - (NSOperation *)putLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication   progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
@@ -315,7 +306,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPBodyStream:[NSInputStream inputStreamWithFileAtPath:localSource]];
     //[request setHTTPBody:[NSData dataWithContentsOfFile:localSource]];
     
-	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     operation.localSource = localSource;
     
     [operation setWillSendRequestForAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
@@ -374,8 +365,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             _originalUrlServer = [request.URL absoluteString];
         }
         
-        //We add the cookies of that URL
-        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+        if (sharedOCCommunication.isCookiesAvailable) {
+            //We add the cookies of that URL
+            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+        } else {
+            [UtilsFramework deleteAllCookies];
+        }
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
@@ -409,7 +404,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPBodyStream:chunkInputStream];
     //[request setHTTPBody:data];
     
-	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     operation.chunkInputStream = chunkInputStreamForRedirection;
     
     [operation setWillSendRequestForAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
@@ -455,7 +450,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
@@ -471,7 +466,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: urlString parameters: nil];
 
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
@@ -489,7 +484,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
@@ -511,7 +506,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
@@ -532,7 +527,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
@@ -549,7 +544,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
@@ -566,7 +561,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation setTypeOfOperation:NavigationQueue];
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
         
@@ -616,9 +611,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 [requestRedirect setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
             }
             
-            //We add the cookies of that URL
-            requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:_originalUrlServer];
-            
+            if (sharedOCCommunication.isCookiesAvailable) {
+                //We add the cookies of that URL
+                request = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:_originalUrlServer];
+            } else {
+                [UtilsFramework deleteAllCookies];
+            }
             return requestRedirect;
             
         } else {
