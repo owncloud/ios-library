@@ -1277,10 +1277,10 @@
     NSLog(@"Server URL: %@", serverUrl);
     
     NSURLSessionDownloadTask *downloadTask = nil;
-    NSProgress *progressValue = nil;
+    NSProgress *progress = nil;
     
     
-    downloadTask = [_sharedOCCommunication downloadFileSession:localPath toDestiny:serverUrl defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progressValue successRequest:^(NSURLResponse *response, NSURL *filePath) {
+    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
         NSLog(@"File Downloaded ok");
         //Delete the file
