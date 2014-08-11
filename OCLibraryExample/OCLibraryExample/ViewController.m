@@ -33,15 +33,15 @@
 //For the example works you must be enter your server data
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
-static NSString *baseUrl = @"";
+static NSString *baseUrl = @"http://daily.owncloud.com/master/owncloud/remote.php/webdav/";
 
 //user
-static NSString *user = @""; //@"username";
+static NSString *user = @"gon"; //@"username";
 //password
-static NSString *password = @""; //@"password";
+static NSString *password = @"pepe"; //@"password";
 
 //To test the download you must be enter a path of specific file
-static NSString *pathOfDownloadFile = @"path of file to download"; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
+static NSString *pathOfDownloadFile = @"bslogo.jpg"; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
 
 //Optional. Set the path of the file to upload
 static NSString *pathOfUploadFile = @"1_new_file.jpg";
@@ -96,8 +96,15 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 //Download button tapped
 - (IBAction)downloadImage:(id)sender{
     
-    _downloadButton.enabled = NO;
-    [self downloadFile];
+    if (IS_IOS7) {
+        _downloadButton.enabled = NO;
+        [self downloadFileWithSesison];
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+
+    
 }
 
 //Delete downloaded file button tapped
@@ -272,6 +279,51 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
 }
 
+- (void)downloadFileWithSesison{
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    
+    NSString *localPath = [documentsDirectory stringByAppendingString:@"/image.png"];
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfDownloadFile];
+    
+    //Encoding
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionDownloadTask *downloadTask = nil;
+    
+    NSProgress *progress = nil;
+    
+    downloadTask = [[AppDelegate sharedOCCommunication] downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+        
+        //Success
+        NSLog(@"LocalFile : %@", localPath);
+        _pathOfDownloadFile = localPath;
+        UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
+        _downloadedImageView.image = image;
+        _progressLabel.text = @"Success";
+        _deleteLocalFile.enabled = YES;
+        
+    } failureRequest:^(NSURLResponse *response, NSError *error) {
+        
+        //Request failure
+        NSLog(@"error while download a file: %@", error);
+        _progressLabel.text = @"Error in download";
+        _downloadButton.enabled = YES;
+        
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+
+    
+}
+
 ///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
@@ -435,7 +487,11 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"Progress is %f", percent);
             
+            
             _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
+            
+     
+            _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", progress.completedUnitCount];
         });
         
     }
