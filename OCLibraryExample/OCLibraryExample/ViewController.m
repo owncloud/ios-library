@@ -33,18 +33,22 @@
 //For the example works you must be enter your server data
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
-static NSString *baseUrl = @"http://daily.owncloud.com/master/owncloud/remote.php/webdav/";
+static NSString *baseUrl = @"";
 
 //user
-static NSString *user = @"gon"; //@"username";
+static NSString *user = @""; //@"username";
 //password
-static NSString *password = @"pepe"; //@"password";
+static NSString *password = @""; //@"password";
 
 //To test the download you must be enter a path of specific file
-static NSString *pathOfDownloadFile = @"bslogo.jpg"; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
+static NSString *pathOfDownloadFile = @""; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
 
 //Optional. Set the path of the file to upload
 static NSString *pathOfUploadFile = @"1_new_file.jpg";
+
+//Constants
+#define k_identify_download_progress @"Download_progress"
+#define k_identify_upload_progress @"Upload_progress"
 
 
 @interface ViewController ()
@@ -126,7 +130,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 - (IBAction)uploadImage:(id)sender{
     _usedSessions = NO;
     _uploadButton.enabled = NO;
-    [self uploadFile];
+    [self uploadImageWithSession:sender];
     
 }
 
@@ -320,6 +324,8 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
                forKeyPath:@"fractionCompleted"
                   options:NSKeyValueObservingOptionNew
                   context:NULL];
+    
+    [progress setKind:k_identify_download_progress];
 
     
 }
@@ -470,6 +476,8 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
                   options:NSKeyValueObservingOptionNew
                   context:NULL];
     
+     [progress setKind:k_identify_upload_progress];
+    
     
 }
 
@@ -487,11 +495,13 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"Progress is %f", percent);
             
+            if ([progress.kind isEqualToString:k_identify_upload_progress]) {
+                _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
+            }
             
-            _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
-            
-     
-            _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", progress.completedUnitCount];
+            if ([progress.kind isEqualToString:k_identify_download_progress]) {
+                _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", progress.completedUnitCount];
+            }
         });
         
     }
