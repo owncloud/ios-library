@@ -35,7 +35,7 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
-
+#import "OCHTTPSessionManager.h"
 
 @implementation OCCommunication
 
@@ -64,7 +64,8 @@
         
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        _downloadSessionManager = [[OCHTTPSessionManager alloc] initWithSessionConfiguration:nil];
+
 #else
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
@@ -78,8 +79,9 @@
         
         //Network Download queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
-        configuration.HTTPMaximumConnectionsPerHost = 1;
-        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        downConfiguration.HTTPShouldUsePipelining = YES;
+        downConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
         _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
         [_downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         [_downloadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
@@ -419,6 +421,8 @@
                                                                           [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
                                                                           failureRequest(response,error);
                                                                       }];
+    
+    
     
     
     return downloadTask;
