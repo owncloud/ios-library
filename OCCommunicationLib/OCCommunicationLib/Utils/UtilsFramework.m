@@ -382,4 +382,89 @@
     }
 }
 
+//-----------------------------------
+/// @name isServerVersionHigherThanLimitVersion
+///-----------------------------------
+
+/**
+ * Method to detect if a server version is higher than a limit version.
+ * This methos is used for example to know if the server have share API or support Cookies
+ *
+ * @param NSArray -> serverVersion
+ * @param NSArray -> limitVersion
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isServerVersion:(NSArray *) serverVersion higherThanLimitVersion:(NSArray *) limitVersion {
+    
+    __block BOOL isSupported = NO;
+    
+    //Loop of compare
+    [limitVersion enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *firstVersionString = obj;
+        NSString *currentVersionString;
+        if ([serverVersion count] > idx) {
+            currentVersionString = [serverVersion objectAtIndex:idx];
+            
+            int firstVersionInt = [firstVersionString intValue];
+            int currentVersionInt = [currentVersionString intValue];
+            
+            //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
+            //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
+            
+            //Comparation secure
+            switch (idx) {
+                case 0:
+                    //if the first number is higher
+                    if (currentVersionInt > firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    }
+                    //if the first number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    
+                    break;
+                    
+                case 1:
+                    //if the seccond number is higger
+                    if (currentVersionInt > firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    }
+                    //if the second number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                case 2:
+                    //if the third number is higger or equal
+                    if (currentVersionInt >= firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    } else {
+                        //if the third number is lower
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        } else {
+            isSupported = NO;
+            *stop=YES;
+        }
+        
+    }];
+    
+    return isSupported;
+}
+
 @end

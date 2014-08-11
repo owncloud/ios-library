@@ -61,6 +61,12 @@ typedef enum {
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 
+/*This flag control the use of cookies on the requests.
+ -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
+ -On OC7 we can do several requests at the same time with the same session so we can set this flag to YES.
+ */
+@property BOOL isCookiesAvailable;
+
 ///-----------------------------------
 /// @name Init with Upload Session Manager
 ///-----------------------------------
@@ -477,6 +483,23 @@ typedef enum {
 - (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                 successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
+
+///-----------------------------------
+/// @name Has Server Share Support
+///-----------------------------------
+
+/**
+ * Method to get if the server has Share API support or not
+ *
+ * @param path -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return BOOL in the success about the support
+ *
+ */
+- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name readSharedByServer

@@ -387,12 +387,11 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Refresh the file list
         [self readFolder:nil];
         
-        
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         
         //Request failure
         NSLog(@"error while upload a file: %@", error);
-        _uploadProgressLabel.text = @"Error in download";
+        _uploadProgressLabel.text = @"Error in upload";
         
         if (_usedSessions) {
             _uploadWithSessionButton.enabled = YES;
@@ -400,7 +399,17 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
             _uploadButton.enabled = YES;
         }
         
-
+    } failureBeforeRequest:^(NSError *error) {
+        //Failure before Request
+        NSLog(@"error while upload a file: %@", error);
+        _uploadProgressLabel.text = @"Error in upload";
+        
+        if (_usedSessions) {
+            _uploadWithSessionButton.enabled = YES;
+        }else{
+            _uploadButton.enabled = YES;
+        }
+        
     }];
     
     // Observe fractionCompleted using KVO
@@ -411,6 +420,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     
 }
+
 
 //Method to get the callbacks of the upload progress
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

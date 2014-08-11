@@ -205,19 +205,6 @@ extern NSString *OCWebDAVModificationDateKey;
                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
 /**
- Enqueues an operation to upload the specified data to a remote path using a `PUT` request.
- 
- @param data The data to write to the server.
- @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
- 
- @see putURL:path:success:failure:
- */
-- (void)put:(NSData *)data path:(NSString *)remoteDestination success:(void(^)(OCHTTPRequestOperation *, id))success
-    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
-
-/**
  Enqueues an operation to upload the contents of a specified local
  file to a remote path using a `PUT` request.
  
