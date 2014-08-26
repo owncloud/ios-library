@@ -262,17 +262,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.localSource = localSource;
     
-    [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
-        //Credential error
-        NSMutableDictionary* details = [NSMutableDictionary dictionary];
-        [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
-        
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:remoteDestination] statusCode:401 HTTPVersion: @"" headerFields:[request allHTTPHeaderFields]];
-        
-        NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
-        forceCredentialsFailure(response, error);
-    }];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
     }];
@@ -300,17 +289,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 	__weak __block OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request success:success failure:failure];
     operation.chunkInputStream = chunkInputStreamForRedirection;
-    
-    [operation setAuthenticationChallengeBlock:^(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge) {
-        //Credential error
-        NSMutableDictionary* details = [NSMutableDictionary dictionary];
-        [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
-        
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:remoteDestination] statusCode:401 HTTPVersion: @"" headerFields:[request allHTTPHeaderFields]];
-        
-        NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
-        forceCredentialsFailure(response, error);
-    }];
     
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
