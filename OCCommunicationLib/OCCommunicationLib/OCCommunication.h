@@ -59,6 +59,7 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
+@property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 
 /*This flag control the use of cookies on the requests.
  -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
@@ -71,11 +72,21 @@ typedef enum {
 ///-----------------------------------
 
 /**
- * Method to init the OCCommunication with a AFURLSessionManager to receive the SSL callbacks to support Self Signed servers
+ * Method to init the OCCommunication with a AFURLSessionManager (upload session) to receive the SSL callbacks to support Self Signed servers
  *
  * @param uploadSessionManager -> AFURLSessionManager
  */
 -(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager;
+
+
+/**
+ * Method to init the OCCommunication with a AFURLSessionManager (uploads and downloads sessions) to receive the SSL callbacks to support Self Signed servers
+ *
+ * @param uploadSessionManager -> AFURLSessionManager
+ * @param downloadSessionManager -> AFURLSessionManager
+ *
+ */
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
 
 #pragma mark - Credentials
 
@@ -311,6 +322,58 @@ typedef enum {
 
 
 ///-----------------------------------
+/// @name Download File Session
+///-----------------------------------
+
+/**
+ * Method to download a file. All the files will be download one by one in a queue. The files download also in background when the system close the app.
+ *
+ * @param NSString -> remotePath the path of the file
+ * @param NSString -> localPath the  local path where we want store the file
+ * @param BOOL -> defaultPriority define if the priority is defined by the library (default) or not. It used to manage multiple downloads from the app.
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ * @param NSProgress -> A progress object monitoring the current upload progress
+ *
+ * @return NSURLSessionDownloadTask -> You can cancel the download using this object
+ * Ex: [downloadTask cancel]
+ *
+ * @warning remember that you must to set the Credentials before call this method or any other.
+ *
+ * @warning this method use NSURLSession only supported in iOS 7, with iOS 6 use the previous method
+ *
+ */
+
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
+
+///-----------------------------------
+/// @name Set Download Task Complete Block
+///-----------------------------------
+
+/**
+ *
+ * Method to set the callbak block of the pending download background tasks.
+ *
+ * @param block A block object to be executed when a session task is completed. The block should be return the location where the download must be stored, and takes three arguments: the session, the download task, and location where is stored the file.
+ *
+ */
+
+- (void)setDownloadTaskComleteBlock: (NSURL * (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block;
+
+
+///-----------------------------------
+/// @name Set Download Task Did Get Body Data Block
+///-----------------------------------
+
+/**
+ * Sets a block that get callbacks of the NSURLDownloadSessionTask progress
+ *
+ * @param block A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes four arguments: the session, the download task, the number of the bytes read, the total bytes expected to read. This block may be called multiple times, and will execute on the main thread.
+ */
+
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block;
+
+
+///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
 
@@ -364,7 +427,7 @@ typedef enum {
  *
  * Method to set the callbaks block of the pending background tasks.
  *
- * @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
+ * @param block A block object to be executed when a session task is completed. The blockhas not return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
  *
  */
 

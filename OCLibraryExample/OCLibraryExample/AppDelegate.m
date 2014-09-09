@@ -65,7 +65,7 @@
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler
 
 {
-    NSLog(@"Upload complete");
+    NSLog(@"Transfer complete");
 
     [self presentNotification];
     
@@ -76,7 +76,7 @@
 
 -(void)presentNotification{
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-    localNotification.alertBody = @"Updalod Complete !!";
+    localNotification.alertBody = @"Trasnfrer Complete !!";
     localNotification.alertAction = @"Background Transfer";
     
     

@@ -278,6 +278,51 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return operation;
 }
 
+
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
+    
+    NSLog(@"localSource: %@", remoteSource);
+    NSLog(@"remoteDestination: %@", localDestination);
+   
+    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
+    
+    //If is not nil is a redirection so we keep the original url server
+    if (!_originalUrlServer) {
+        _originalUrlServer = [request.URL absoluteString];
+    }
+    
+    //We add the cookies of that URL
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    
+    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
+
+   
+    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:progressValue destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+    
+        return localDestinationUrl;
+        
+    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+       
+        if (error) {
+            NSLog(@"Error: %@", error);
+            failure(response, error);
+        } else {
+            NSLog(@"Success: %@ %@", response, filePath.absoluteString);
+            success(response,filePath);
+        }
+        
+    }];
+    
+    
+    if (defaultPriority) {
+         [downloadTask resume];
+    }
+    
+    return downloadTask;
+
+
+}
+
 - (void)makeCollection:(NSString *)path onCommunication:
 (OCCommunication *)sharedOCCommunication
                success:(void(^)(OCHTTPRequestOperation *, id))success

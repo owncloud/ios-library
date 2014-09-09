@@ -35,7 +35,7 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
-
+#import "OCHTTPSessionManager.h"
 
 @implementation OCCommunication
 
@@ -64,6 +64,8 @@
         
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        _downloadSessionManager = [[OCHTTPSessionManager alloc] initWithSessionConfiguration:nil];
+
 #else
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
@@ -74,6 +76,18 @@
         [_uploadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
             return NSURLSessionAuthChallengePerformDefaultHandling;
         }];
+        
+        //Network Download queue for NSURLSession (iOS 7)
+        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
+        downConfiguration.HTTPShouldUsePipelining = YES;
+        downConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
+        [_downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        [_downloadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
+            return NSURLSessionAuthChallengePerformDefaultHandling;
+        }];
+
  
 #endif
         
@@ -105,6 +119,33 @@
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
         _uploadSessionManager = uploadSessionManager;
+    }
+    
+    return self;
+}
+
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager {
+    
+    self = [super init];
+    
+    if (self) {
+        
+        //Init the Queue Array
+        _uploadOperationQueueArray = [NSMutableArray new];
+        
+        //Init the Donwload queue array
+        _downloadOperationQueueArray = [NSMutableArray new];
+        
+        //Credentials not set yet
+        _kindOfCredential = credentialNotSet;
+        
+        //Network Queue
+        _networkOperationsQueue =[NSOperationQueue new];
+        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        
+        _uploadSessionManager = uploadSessionManager;
+        
+        _downloadSessionManager = downloadSessionManager;
     }
     
     return self;
@@ -355,6 +396,66 @@
     
     return operation;
 }
+
+
+///-----------------------------------
+/// @name Download File Session
+///-----------------------------------
+
+
+
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
+                                                                      success:^(NSURLResponse *response, NSURL *filePath) {
+        
+                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                          successRequest(response,filePath);
+        
+                                                                      } failure:^(NSURLResponse *response, NSError *error) {
+                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                          failureRequest(response,error);
+                                                                      }];
+    
+    
+    
+    
+    return downloadTask;
+}
+
+
+///-----------------------------------
+/// @name Set Download Task Complete Block
+///-----------------------------------
+
+
+- (void)setDownloadTaskComleteBlock: (NSURL * (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block{
+    
+    [self.downloadSessionManager setDownloadTaskDidFinishDownloadingBlock:block];
+
+    
+}
+
+
+///-----------------------------------
+/// @name Set Download Task Did Get Body Data Block
+///-----------------------------------
+
+
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block{
+    
+    [self.downloadSessionManager setDownloadTaskDidWriteDataBlock:^(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+        block(session,downloadTask,bytesWritten,totalBytesWritten,totalBytesExpectedToWrite);
+    }];
+    
+    
+}
+
 
 
 ///-----------------------------------
