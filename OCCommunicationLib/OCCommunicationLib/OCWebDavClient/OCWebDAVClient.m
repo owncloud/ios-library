@@ -364,7 +364,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         NSError *error = [NSError errorWithDomain:k_domain_error_code code:401 userInfo:nil];
         forceCredentialsFailure(response, error);
     }];
-    
+
     [operation setUploadProgressBlock:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
         progress(bytesWrote, totalBytesWrote);
     }];
