@@ -76,7 +76,7 @@
 
 -(void)presentNotification{
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-    localNotification.alertBody = @"Trasnfrer Complete !!";
+    localNotification.alertBody = @"Trasnfer Complete !!";
     localNotification.alertAction = @"Background Transfer";
     
     
