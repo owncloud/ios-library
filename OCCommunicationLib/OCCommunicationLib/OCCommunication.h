@@ -27,6 +27,7 @@
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
+@class AFSecurityPolicy;
 
 @interface OCCommunication : NSObject
 
@@ -59,6 +60,7 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
 
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
+@property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
 
 ///-----------------------------------
 /// @name Init with Upload Session Manager
