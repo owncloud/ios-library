@@ -245,8 +245,6 @@
 
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     
-    //request = [self getRequestWithCredentials:request];
-    
     path = [path encodeString:NSUTF8StringEncoding];
     
     [request checkServer:path onCommunication:sharedOCCommunication
