@@ -323,6 +323,19 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 }
 
+- (void)checkServer:(NSString *)path onCommunication:
+(OCCommunication *)sharedOCCommunication
+               success:(void(^)(OCHTTPRequestOperation *, id))success
+               failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+    _requestMethod = @"HEAD";
+    NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
 - (void)makeCollection:(NSString *)path onCommunication:
 (OCCommunication *)sharedOCCommunication
                success:(void(^)(OCHTTPRequestOperation *, id))success

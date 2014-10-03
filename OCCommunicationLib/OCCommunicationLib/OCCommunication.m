@@ -235,6 +235,27 @@
 }
 
 #pragma mark - Network Operations
+///-----------------------------------
+/// @name Check Server
+///-----------------------------------
+- (void) checkServer: (NSString *) path
+      onCommunication:(OCCommunication *)sharedOCCommunication
+       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
+
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    
+    path = [path encodeString:NSUTF8StringEncoding];
+    
+    [request checkServer:path onCommunication:sharedOCCommunication
+                    success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                        if (successRequest) {
+                            successRequest(operation.response, request.redirectedServer);
+                        }
+                    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                        failureRequest(operation.response, error);
+                    }];
+}
 
 ///-----------------------------------
 /// @name Create a folder
