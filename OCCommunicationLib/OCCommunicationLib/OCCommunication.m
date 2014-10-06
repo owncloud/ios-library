@@ -35,7 +35,7 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
-
+#import "OCHTTPSessionManager.h"
 
 @implementation OCCommunication
 
@@ -61,8 +61,12 @@
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
         _securityPolicy = [AFSecurityPolicy defaultPolicy];
+        _isCookiesAvailable = NO;
+        
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        _downloadSessionManager = [[OCHTTPSessionManager alloc] initWithSessionConfiguration:nil];
+
 #else
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
@@ -73,6 +77,18 @@
         [_uploadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
             return NSURLSessionAuthChallengePerformDefaultHandling;
         }];
+        
+        //Network Download queue for NSURLSession (iOS 7)
+        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
+        downConfiguration.HTTPShouldUsePipelining = YES;
+        downConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
+        [_downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        [_downloadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
+            return NSURLSessionAuthChallengePerformDefaultHandling;
+        }];
+
  
 #endif
         
@@ -94,6 +110,8 @@
         //Init the Donwload queue array
         _downloadOperationQueueArray = [NSMutableArray new];
         
+        _isCookiesAvailable = NO;
+        
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
         
@@ -107,9 +125,37 @@
     return self;
 }
 
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager {
+    
+    self = [super init];
+    
+    if (self) {
+        
+        //Init the Queue Array
+        _uploadOperationQueueArray = [NSMutableArray new];
+        
+        //Init the Donwload queue array
+        _downloadOperationQueueArray = [NSMutableArray new];
+        
+        //Credentials not set yet
+        _kindOfCredential = credentialNotSet;
+        
+        //Network Queue
+        _networkOperationsQueue =[NSOperationQueue new];
+        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        
+        _uploadSessionManager = uploadSessionManager;
+        
+        _downloadSessionManager = downloadSessionManager;
+    }
+    
+    return self;
+}
+
 - (void)setSecurityPolicy:(AFSecurityPolicy *)securityPolicy {
     _securityPolicy = securityPolicy;
     _uploadSessionManager.securityPolicy = securityPolicy;
+    _downloadSessionManager.securityPolicy = securityPolicy;
 }
 
 #pragma mark - Setting Credentials
@@ -311,10 +357,8 @@
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
             
-            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-
-            NSLog(@"newStr: %@", newStr);
-            
+            //NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+            //NSLog(@"newStr: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:response];
@@ -366,6 +410,66 @@
 
 
 ///-----------------------------------
+/// @name Download File Session
+///-----------------------------------
+
+
+
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    
+    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
+                                                                      success:^(NSURLResponse *response, NSURL *filePath) {
+        
+                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                          successRequest(response,filePath);
+        
+                                                                      } failure:^(NSURLResponse *response, NSError *error) {
+                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                          failureRequest(response,error);
+                                                                      }];
+    
+    
+    
+    
+    return downloadTask;
+}
+
+
+///-----------------------------------
+/// @name Set Download Task Complete Block
+///-----------------------------------
+
+
+- (void)setDownloadTaskComleteBlock: (NSURL * (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block{
+    
+    [self.downloadSessionManager setDownloadTaskDidFinishDownloadingBlock:block];
+
+    
+}
+
+
+///-----------------------------------
+/// @name Set Download Task Did Get Body Data Block
+///-----------------------------------
+
+
+- (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block{
+    
+    [self.downloadSessionManager setDownloadTaskDidWriteDataBlock:^(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+        block(session,downloadTask,bytesWritten,totalBytesWritten,totalBytesExpectedToWrite);
+    }];
+    
+    
+}
+
+
+
+///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
 
@@ -404,9 +508,11 @@
     
     NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
         success:^(NSURLResponse *response, id responseObjec){
+            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");
         } failure:^(NSURLResponse *response, NSError *error) {
+            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             failureRequest(response, @"", error);
         } failureBeforeRequest:^(NSError *error) {
@@ -497,6 +603,9 @@
     }];
 }
 
+///-----------------------------------
+/// @name Get if the server support share
+///-----------------------------------
 - (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                 successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
@@ -510,7 +619,7 @@
         NSString *versionString = [NSString new];
         NSError* error=nil;
         
-        __block BOOL hasSharedSupport = NO;
+        BOOL hasSharedSupport = NO;
         
         if (data) {
             NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
@@ -537,77 +646,62 @@
         
         NSArray *firstVersionSupportShared = k_version_support_shared;
         
-        // NSLog(@"First version that supported Shared API: %@", firstVersionSupportShared);
-        //NSLog(@"Current version: %@", currentVersionArrray);
+        hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
         
-        //Loop of compare
-        [firstVersionSupportShared enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSString *firstVersionString = obj;
-            NSString *currentVersionString;
-            if ([currentVersionArrray count] > idx) {
-                currentVersionString = [currentVersionArrray objectAtIndex:idx];
-                
-                int firstVersionInt = [firstVersionString intValue];
-                int currentVersionInt = [currentVersionString intValue];
-                
-                //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
-                //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
-                
-                //Comparation secure
-                switch (idx) {
-                    case 0:
-                        //if the first number is higher
-                        if (currentVersionInt > firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        }
-                        //if the first number is lower
-                        if (currentVersionInt < firstVersionInt) {
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        
-                        break;
-                        
-                    case 1:
-                        //if the seccond number is higger
-                        if (currentVersionInt > firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        }
-                        //if the second number is lower
-                        if (currentVersionInt < firstVersionInt) {
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        break;
-                        
-                    case 2:
-                        //if the third number is higger or equal
-                        if (currentVersionInt >= firstVersionInt) {
-                            hasSharedSupport = YES;
-                            *stop=YES;
-                        } else {
-                            //if the third number is lower
-                            hasSharedSupport = NO;
-                            *stop=YES;
-                        }
-                        break;
-                        
-                    default:
-                        break;
-                }
-            } else {
-                hasSharedSupport = NO;
-                *stop=YES;
-            }
-            
-        }];
         success(operation.response, hasSharedSupport, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
+}
+
+///-----------------------------------
+/// @name Get if the server support cookies
+///-----------------------------------
+- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        BOOL hasCookiesSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+        // NSLog(@"version string: %@", versionString);
+        
+        //Split the strings - Type 5.0.13
+        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
+        
+        
+        NSMutableArray *currentVersionArrray = [NSMutableArray new];
+        for (NSString *string in spliteVersion) {
+            [currentVersionArrray addObject:string];
+        }
+        
+        NSArray *firstVersionSupportCookies = k_version_support_cookies;
+        
+        hasCookiesSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
+        
+        success(operation.response, hasCookiesSupport, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
 }
 
 - (void) readSharedByServer: (NSString *) path
@@ -815,7 +909,6 @@
 - (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
     
     [self eraseURLCache];
-    [self clearCookiesFromURL:operation.request.URL];
     
     //Suspended the queue while is added a new operation
     [_networkOperationsQueue setSuspended:YES];
@@ -934,18 +1027,7 @@
 }
 
 
-#pragma mark - Clear Cookies and Cache
-
-- (void)clearCookiesFromURL:(NSURL*) url {
-    
-    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    NSArray *cookies = [cookieStorage cookiesForURL:url];
-    for (NSHTTPCookie *cookie in cookies)
-    {
-        //NSLog(@"Delete cookie");
-        [cookieStorage deleteCookie:cookie];
-    }
-}
+#pragma mark - Clear Cache
 
 - (void)eraseURLCache
 {

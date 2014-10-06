@@ -108,4 +108,59 @@
  */
 + (NSString *) AFBase64EncodedStringFromString:(NSString *) string;
 
+//-----------------------------------
+/// @name addCookiesToStorageFromResponse
+///-----------------------------------
+
+#pragma mark - Manage Cookies
+
+/**
+ * Method to storage all the cookies from a response in order to use them in future requests
+ *
+ * @param NSHTTPURLResponse -> response
+ * @param NSURL -> url
+ *
+ */
++ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url;
+//-----------------------------------
+/// @name getRequestWithCookiesByRequest
+///-----------------------------------
+
+/**
+ * Method to return a request with all the necessary cookies of the original url without redirection
+ *
+ * @param NSMutableURLRequest -> request
+ * @param NSString -> originalUrlServer
+ *
+ * @return request
+ *
+ */
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request andOriginalUrlServer:(NSString *) originalUrlServer;
+
+//-----------------------------------
+/// @name deleteAllCookies
+///-----------------------------------
+
+/**
+ * Method to clean the CookiesStorage
+ *
+ */
++ (void) deleteAllCookies;
+
+//-----------------------------------
+/// @name isServerVersionHigherThanLimitVersion
+///-----------------------------------
+
+/**
+ * Method to detect if a server version is higher than a limit version.
+ * This methos is used for example to know if the server have share API or support Cookies
+ *
+ * @param NSArray -> serverVersion
+ * @param NSArray -> limitVersion
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isServerVersion:(NSArray *) serverVersion higherThanLimitVersion:(NSArray *) limitVersion;
+    
 @end

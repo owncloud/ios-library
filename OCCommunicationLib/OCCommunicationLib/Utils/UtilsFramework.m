@@ -317,5 +317,154 @@
     return [[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding];
 }
 
+#pragma mark - Manage Cookies
+
+//-----------------------------------
+/// @name addCookiesToStorageFromResponse
+///-----------------------------------
+
+/**
+ * Method to storage all the cookies from a response in order to use them in future requests
+ *
+ * @param NSHTTPURLResponse -> response
+ * @param NSURL -> url
+ *
+ */
++ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url {
+    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
+    NSLog(@"cookies: %@", cookies);
+    
+    for (NSHTTPCookie *current in cookies) {
+        NSLog(@"Current: %@", current);
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
+    }
+}
+
+//-----------------------------------
+/// @name getRequestWithCookiesByRequest
+///-----------------------------------
+
+/**
+ * Method to return a request with all the necessary cookies of the original url without redirection
+ *
+ * @param NSMutableURLRequest -> request
+ * @param NSString -> originalUrlServer
+ *
+ * @return request
+ *
+ */
++ (NSMutableURLRequest *) getRequestWithCookiesByRequest: (NSMutableURLRequest *) request andOriginalUrlServer:(NSString *) originalUrlServer {
+    //We add the cookies of that URL
+    NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
+    NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
+    
+    NSLog(@"cookieStorage: %@", cookieStorage);
+    
+    for (NSString *key in cookieHeaders) {
+        [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
+    }
+    
+    return request;
+}
+
+//-----------------------------------
+/// @name deleteAllCookies
+///-----------------------------------
+
+/**
+ * Method to clean the CookiesStorage
+ *
+ */
++ (void) deleteAllCookies {
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *each in cookieStorage.cookies) {
+        [cookieStorage deleteCookie:each];
+    }
+}
+
+//-----------------------------------
+/// @name isServerVersionHigherThanLimitVersion
+///-----------------------------------
+
+/**
+ * Method to detect if a server version is higher than a limit version.
+ * This methos is used for example to know if the server have share API or support Cookies
+ *
+ * @param NSArray -> serverVersion
+ * @param NSArray -> limitVersion
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isServerVersion:(NSArray *) serverVersion higherThanLimitVersion:(NSArray *) limitVersion {
+    
+    __block BOOL isSupported = NO;
+    
+    //Loop of compare
+    [limitVersion enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *firstVersionString = obj;
+        NSString *currentVersionString;
+        if ([serverVersion count] > idx) {
+            currentVersionString = [serverVersion objectAtIndex:idx];
+            
+            int firstVersionInt = [firstVersionString intValue];
+            int currentVersionInt = [currentVersionString intValue];
+            
+            //NSLog(@"firstVersion item %d item is: %d", idx, firstVersionInt);
+            //NSLog(@"currentVersion item %d item is: %d", idx, currentVersionInt);
+            
+            //Comparation secure
+            switch (idx) {
+                case 0:
+                    //if the first number is higher
+                    if (currentVersionInt > firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    }
+                    //if the first number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    
+                    break;
+                    
+                case 1:
+                    //if the seccond number is higger
+                    if (currentVersionInt > firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    }
+                    //if the second number is lower
+                    if (currentVersionInt < firstVersionInt) {
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                case 2:
+                    //if the third number is higger or equal
+                    if (currentVersionInt >= firstVersionInt) {
+                        isSupported = YES;
+                        *stop=YES;
+                    } else {
+                        //if the third number is lower
+                        isSupported = NO;
+                        *stop=YES;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        } else {
+            isSupported = NO;
+            *stop=YES;
+        }
+        
+    }];
+    
+    return isSupported;
+}
 
 @end

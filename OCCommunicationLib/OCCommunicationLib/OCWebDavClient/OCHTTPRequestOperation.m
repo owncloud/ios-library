@@ -29,11 +29,31 @@
 #import "OCFrameworkConstants.h"
 #import "UtilsFramework.h"
 
+#import "AFHTTPRequestOperation.h"
 
 #define k_redirected_code_1 301
 #define k_redirected_code_2 302
 #define k_redirected_code_3 307
 
+static dispatch_queue_t http_request_operation_processing_queue() {
+    static dispatch_queue_t af_http_request_operation_processing_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        af_http_request_operation_processing_queue = dispatch_queue_create("com.alamofire.networking.http-request.processing", DISPATCH_QUEUE_CONCURRENT);
+    });
+    
+    return af_http_request_operation_processing_queue;
+}
+
+static dispatch_group_t http_request_operation_completion_group() {
+    static dispatch_group_t af_http_request_operation_completion_group;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        af_http_request_operation_completion_group = dispatch_group_create();
+    });
+    
+    return af_http_request_operation_completion_group;
+}
 
 
 @interface OCHTTPRequestOperation ()
@@ -44,5 +64,55 @@
 @implementation OCHTTPRequestOperation
 
 @synthesize request;
+
+#pragma mark - AFHTTPRequestOperation
+
+- (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    // completionBlock is manually nilled out in AFURLConnectionOperation to break the retain cycle.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-retain-cycles"
+#pragma clang diagnostic ignored "-Wgnu"
+    self.completionBlock = ^{
+        if (self.completionGroup) {
+            dispatch_group_enter(self.completionGroup);
+        }
+        
+        dispatch_async(http_request_operation_processing_queue(), ^{
+            if (self.error) {
+                if (failure) {
+                    dispatch_group_async(self.completionGroup ?: http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                        failure(self, self.error);
+                    });
+                }
+            } else {
+                id responseObject = self.responseObject;
+                if (self.error) {
+                    
+                    if (failure) {
+                        dispatch_group_async(self.completionGroup ?: http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                            [UtilsFramework addCookiesToStorageFromResponse:self.response andPath:request.URL];
+                            failure(self, self.error);
+                        });
+                    }
+                } else {
+                    if (success) {
+                        dispatch_group_async(self.completionGroup ?: http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                            [UtilsFramework addCookiesToStorageFromResponse:self.response andPath:request.URL];
+                            success(self, responseObject);
+                        });
+                    }
+                }
+            }
+            
+            if (self.completionGroup) {
+                dispatch_group_leave(self.completionGroup);
+            }
+        });
+    };
+#pragma clang diagnostic pop
+}
+
 
 @end

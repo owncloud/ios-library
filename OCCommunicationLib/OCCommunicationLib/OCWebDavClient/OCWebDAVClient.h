@@ -55,6 +55,8 @@ extern NSString *OCWebDAVModificationDateKey;
 @property (nonatomic, strong) NSString *requestMethod;
 //We use this variable to return the url of a redirected server to detect if we receive any sesion expired on SSO server
 @property (nonatomic, strong) NSString *redirectedServer;
+//We use this variable to get the Cookies from the storage provider
+@property (nonatomic, strong) NSString *originalUrlServer;
 
 @property (nonatomic, strong) NSString *postStringForShare;
 
@@ -174,6 +176,21 @@ extern NSString *OCWebDAVModificationDateKey;
 - (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 
+
+/**
+ Creates an `NSURLSessionDownloadTask` with the specified request for a local file.
+ 
+ @param remoteSource is a string with the path of the file in the server 
+ @param localDestination is a string with the local device path for store the file
+ @param defaultPriority is a bool with a flag to indicate if the download must be download inmediately of not.
+ @param progress A progress object monitoring the current upload progress.
+ @param success A block callback, to be fired upon successful completion, with NSURLResponse and string of URL of the filePath
+ @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
+ *
+ @warning NSURLSession and NSRULSessionUploadTask only can be supported in iOS 7.
+ */
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure;
+
 /**
  Enqueues a request to creates a directory using a `MKCOL` request for the specified path.
  
@@ -186,19 +203,6 @@ extern NSString *OCWebDAVModificationDateKey;
        onCommunication:(OCCommunication *)sharedOCCommunication
                success:(void(^)(OCHTTPRequestOperation *, id))success
                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
-
-/**
- Enqueues an operation to upload the specified data to a remote path using a `PUT` request.
- 
- @param data The data to write to the server.
- @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
- 
- @see putURL:path:success:failure:
- */
-- (void)put:(NSData *)data path:(NSString *)remoteDestination success:(void(^)(OCHTTPRequestOperation *, id))success
-    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
 /**
  Enqueues an operation to upload the contents of a specified local

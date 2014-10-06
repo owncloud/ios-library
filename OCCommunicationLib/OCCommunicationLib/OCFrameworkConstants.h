@@ -37,8 +37,14 @@
 //Url to access to Shared API to create
 #define k_url_acces_shared_api @"ocs/v1.php/apps/files_sharing/api/v1/shares"
 
-//Version of the server
+//Version of the server that have share API
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]
+
+//Version of the server that support cookies
+#define k_version_support_cookies [NSArray arrayWithObjects:  @"7", @"0", @"0", nil]
 
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
+
+//Name of the download session using for upload files with NSURLSession
+#define k_download_session_name @"com.owncloud.download.session"

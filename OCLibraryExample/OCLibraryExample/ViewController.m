@@ -41,10 +41,14 @@ static NSString *user = @""; //@"username";
 static NSString *password = @""; //@"password";
 
 //To test the download you must be enter a path of specific file
-static NSString *pathOfDownloadFile = @"path of file to download"; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
+static NSString *pathOfDownloadFile = @""; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
 
 //Optional. Set the path of the file to upload
 static NSString *pathOfUploadFile = @"1_new_file.jpg";
+
+//Constants
+#define k_identify_download_progress @"Download_progress"
+#define k_identify_upload_progress @"Upload_progress"
 
 
 @interface ViewController ()
@@ -96,8 +100,15 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 //Download button tapped
 - (IBAction)downloadImage:(id)sender{
     
-    _downloadButton.enabled = NO;
-    [self downloadFile];
+    if (IS_IOS7) {
+        _downloadButton.enabled = NO;
+        [self downloadFileWithSesison];
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+
+    
 }
 
 //Delete downloaded file button tapped
@@ -119,7 +130,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 - (IBAction)uploadImage:(id)sender{
     _usedSessions = NO;
     _uploadButton.enabled = NO;
-    [self uploadFile];
+    [self uploadImageWithSession:sender];
     
 }
 
@@ -272,6 +283,53 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
 }
 
+- (void)downloadFileWithSesison{
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    
+    NSString *localPath = [documentsDirectory stringByAppendingString:@"/image.png"];
+    
+    //Path of server file file
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfDownloadFile];
+    
+    //Encoding
+    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURLSessionDownloadTask *downloadTask = nil;
+    
+    NSProgress *progress = nil;
+    
+    downloadTask = [[AppDelegate sharedOCCommunication] downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+        
+        //Success
+        NSLog(@"LocalFile : %@", localPath);
+        _pathOfDownloadFile = localPath;
+        UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
+        _downloadedImageView.image = image;
+        _progressLabel.text = @"Success";
+        _deleteLocalFile.enabled = YES;
+        
+    } failureRequest:^(NSURLResponse *response, NSError *error) {
+        
+        //Request failure
+        NSLog(@"error while download a file: %@", error);
+        _progressLabel.text = @"Error in download";
+        _downloadButton.enabled = YES;
+        
+    }];
+    
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    [progress setKind:k_identify_download_progress];
+
+    
+}
+
 ///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
@@ -418,6 +476,8 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
                   options:NSKeyValueObservingOptionNew
                   context:NULL];
     
+     [progress setKind:k_identify_upload_progress];
+    
     
 }
 
@@ -435,7 +495,13 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"Progress is %f", percent);
             
-            _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
+            if ([progress.kind isEqualToString:k_identify_upload_progress]) {
+                _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %d %%", (int)percent];
+            }
+            
+            if ([progress.kind isEqualToString:k_identify_download_progress]) {
+                _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", progress.completedUnitCount];
+            }
         });
         
     }
