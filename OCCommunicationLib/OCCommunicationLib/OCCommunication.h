@@ -304,6 +304,8 @@ typedef enum {
  * @param localPath -> NSString with the system path where the user want to store the file
  * Ex: /Users/userName/Library/Application Support/iPhone Simulator/7.0.3/Applications/35E6FC65-5492-427B-B6ED-EA9E25633508/Documents/Test Download/image.png
  *
+ * @param parameters -> NSDictionary containing URL parameters to encode in the request
+ *
  * @param isLIFO -> BOOL to indicate if the dowload must be to LIFO download queue or FIFO download queue
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -318,8 +320,7 @@ typedef enum {
  * @warning remember that you must to set the Credentials before call this method or any other.
  */
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath parameters:(NSDictionary*)parameters withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
 
 ///-----------------------------------
 /// @name Download File Session

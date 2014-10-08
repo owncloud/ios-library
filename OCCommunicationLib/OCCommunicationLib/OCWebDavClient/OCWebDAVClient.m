@@ -237,29 +237,33 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination parameters:(NSDictionary*)parameters withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSUInteger, long long, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     //NSLog(@"Local destination path: %@", localDestination);
     
     //Create GET request for download
     _requestMethod = @"GET";
-	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:remoteSource parameters:nil];
+	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:remoteSource parameters:parameters];
     //Create Operation
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     
     //Progress block
-    [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
-        
-        NSLog(@"bytes read are: %lld of total bytes are: %lld", totalBytesRead, totalBytesExpectedToRead);
-        
-        progress(bytesRead, totalBytesRead, totalBytesExpectedToRead);
-        
-    }];
+    if (progress) {
+        [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+            
+            NSLog(@"bytes read are: %lld of total bytes are: %lld", totalBytesRead, totalBytesExpectedToRead);
+            
+            progress(bytesRead, totalBytesRead, totalBytesExpectedToRead);
+            
+        }];
+    }
     
     //Execute task when backgroun expired
-    [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
+    if (handler) {
+        [operation setShouldExecuteAsBackgroundTaskWithExpirationHandler:^{
+            handler();
+        }];
+    }
     
 	operation.outputStream = [NSOutputStream outputStreamToFileAtPath:localDestination append:NO];
     
