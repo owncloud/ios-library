@@ -34,6 +34,8 @@
 @property (nonatomic,strong)IBOutlet UIButton *goButton;
 @property (nonatomic,strong)IBOutlet UILabel *progressLabel;
 @property (nonatomic,strong)IBOutlet UIButton *downloadButton;
+@property (nonatomic,strong)IBOutlet UIButton *downloadSessionButton;
+@property (nonatomic,strong)IBOutlet UIButton *downloadPreviewButton;
 @property (nonatomic,strong)IBOutlet UIButton *deleteLocalFile;
 @property (nonatomic,strong)IBOutlet UIImageView *downloadedImageView;
 @property (nonatomic,strong)IBOutlet UILabel *uploadProgressLabel;
@@ -59,6 +61,8 @@
 
 //Download actions
 - (IBAction)downloadImage:(id)sender;
+- (IBAction)downloadImageWithSession:(id)sender;
+- (IBAction)downloadImagePreview:(id)sender;
 - (IBAction)deleteDownloadedFile:(id)sender;
 
 //Upload actions

@@ -367,7 +367,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath parameters:(NSDictionary*)parameters withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -377,22 +377,21 @@
     NSLog(@"Remote File Path: %@", remotePath);
     NSLog(@"Local File Path: %@", localPath);
     
-    NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
-        progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
-    } success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        successRequest(operation.response, request.redirectedServer);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-        
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
+    NSOperation *operation = [request downloadPath:remotePath
+                                            toPath:localPath
+                                        parameters:parameters
+                                    withLIFOSystem:isLIFO
+                                   onCommunication:sharedOCCommunication
+                                          progress:progressDownload
+                                           success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                                               successRequest(operation.response, request.redirectedServer);
+                                               if (operation.typeOfOperation == DownloadLIFOQueue)
+                                                   [self resumeNextDownload];
+                                           } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                                               failureRequest(operation.response, error);
+                                               if (operation.typeOfOperation == DownloadLIFOQueue)
+                                                   [self resumeNextDownload];
+                                           } shouldExecuteAsBackgroundTaskWithExpirationHandler:handler];
     
     return operation;
 }

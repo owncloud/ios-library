@@ -34,6 +34,8 @@
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
 static NSString *baseUrl = @"";
+// preview url. ex: https://example.owncloud.com/owncloud/index.php/core/preview.png
+static NSString *previewUrl = @"";
 
 //user
 static NSString *user = @""; //@"username";
@@ -97,18 +99,46 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
 }
 
+- (void)enableDownloadButtons:(BOOL)enabled {
+    _downloadButton.enabled = enabled;
+    _downloadPreviewButton.enabled = enabled;
+    _downloadSessionButton.enabled = enabled;
+}
+
 //Download button tapped
 - (IBAction)downloadImage:(id)sender{
     
     if (IS_IOS7) {
-        _downloadButton.enabled = NO;
+        [self enableDownloadButtons:NO];
+        [self downloadFile]; // WithSesison];
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+//Download button tapped
+- (IBAction)downloadImageWithSession:(id)sender{
+    
+    if (IS_IOS7) {
+        [self enableDownloadButtons:NO];
         [self downloadFileWithSesison];
     }else{
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
+}
 
+//Download button tapped
+- (IBAction)downloadImagePreview:(id)sender{
     
+    if (IS_IOS7) {
+        [self enableDownloadButtons:NO];
+        [self downloadFilePreview];
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This feature in supported in iOS 7 and higher" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 //Delete downloaded file button tapped
@@ -121,7 +151,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     _progressLabel.text = @"Empty";
     _downloadedImageView.image = nil;
     
-    _downloadButton.enabled = YES;
+    [self enableDownloadButtons:YES];
     _deleteLocalFile.enabled = NO;
     
 }
@@ -189,6 +219,12 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Sett credencials
     [[AppDelegate sharedOCCommunication] setCredentialsWithUser:user andPassword:password];
     
+    // override SSL cert checks for the test library.
+    // THIS MAY NOT BE SECURE. DO NOT DO THIS IN REAL CODE WITHOUT UNDERSTANDING THE IMPLICATIONS
+    //AFSecurityPolicy * policy = [[AFSecurityPolicy alloc] init];
+    //policy.allowInvalidCertificates = YES;
+    //[AppDelegate sharedOCCommunication].securityPolicy = policy;
+
 }
 
 ///-----------------------------------
@@ -239,6 +275,60 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 /// @name Download file
 ///-----------------------------------
 
+- (NSString*)pathForPreview:(NSString*)path file:(NSString*)file {
+    NSString * previewPath = [path stringByReplacingOccurrencesOfString:@"/remote.php/webdav/" withString:@""];
+    if ([file length])
+        previewPath = [NSString stringWithFormat:@"%@/%@", previewPath, file];
+    previewPath = [previewPath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return previewPath;
+}
+
+/**
+ * Method that download a specific file to the system Document directory
+ */
+- (void)downloadFilePreview {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    
+    NSString *localPath = [documentsDirectory stringByAppendingString:@"/image.png"];
+    
+    // this code is completely unnecesary for sample purposes, but it illustrates a problem that must
+    // be solved in real code. Using the OCFileDto object, the path to file will always contain the
+    // web dav path. However, the preview script is not able to locate files with the web dav prefix,
+    // so it needs to be stripped off
+    NSString * sampleCompletePath = [NSString stringWithFormat:@"/remote.php/webdav/%@", pathOfDownloadFile];
+    NSString * dtoPath = [sampleCompletePath stringByDeletingLastPathComponent];
+    NSString * dtoFile = [sampleCompletePath lastPathComponent];
+    NSString * previewFilePath = [self pathForPreview:dtoPath file:dtoFile];
+
+    NSDictionary * parameters = @{@"file"   : previewFilePath,
+                                  @"x"      : @128,
+                                  @"y"      : @128
+                                  //@"a"      : @1, // uncomment this to preserve thumbnail aspect ratio,
+                                                    // x and y will be treated as maximum values
+                                  };
+
+    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:previewUrl toDestiny:localPath parameters:parameters withLIFOSystem:NO onCommunication:[AppDelegate sharedOCCommunication] progressDownload:nil successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        //Success
+        NSLog(@"LocalFile : %@", localPath);
+        _pathOfDownloadFile = localPath;
+        UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
+        _downloadedImageView.contentMode = UIViewContentModeCenter;
+        _downloadedImageView.image = image;
+        _progressLabel.text = @"Success";
+        _deleteLocalFile.enabled = YES;
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        //Request failure
+        NSLog(@"error while download a file: %@", error);
+        _progressLabel.text = @"Error in download";
+        [self enableDownloadButtons:YES];
+        
+    } shouldExecuteAsBackgroundTaskWithExpirationHandler:nil];
+    
+}
+
 /**
  * Method that download a specific file to the system Document directory
  */
@@ -257,7 +347,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     _downloadOperation = nil;
     
-    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
+    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath parameters:nil withLIFOSystem:YES onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
         //Progress
         _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", totalBytesRead];
         
@@ -266,6 +356,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         NSLog(@"LocalFile : %@", localPath);
         _pathOfDownloadFile = localPath;
         UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
+        _downloadedImageView.contentMode = UIViewContentModeScaleAspectFit;
         _downloadedImageView.image = image;
         _progressLabel.text = @"Success";
         _deleteLocalFile.enabled = YES;
@@ -274,7 +365,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Request failure
         NSLog(@"error while download a file: %@", error);
         _progressLabel.text = @"Error in download";
-        _downloadButton.enabled = YES;
+        [self enableDownloadButtons:YES];
         
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
         //Specifies that the operation should continue execution after the app has entered the background, and the expiration handler for that background task.
@@ -306,6 +397,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         NSLog(@"LocalFile : %@", localPath);
         _pathOfDownloadFile = localPath;
         UIImage *image = [[UIImage alloc]initWithContentsOfFile:localPath];
+        _downloadedImageView.contentMode = UIViewContentModeScaleAspectFit;
         _downloadedImageView.image = image;
         _progressLabel.text = @"Success";
         _deleteLocalFile.enabled = YES;
@@ -315,7 +407,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Request failure
         NSLog(@"error while download a file: %@", error);
         _progressLabel.text = @"Error in download";
-        _downloadButton.enabled = YES;
+        [self enableDownloadButtons:YES];
         
     }];
     
