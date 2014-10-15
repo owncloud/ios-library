@@ -12,22 +12,34 @@
 	<dict>
 		<key>3DF1482C-21FF-4514-8770-3CF4FE4C0B3C</key>
 		<string>ssh://github.com/owncloud/ios-library.git</string>
+		<key>4B419C9897F7942ABC1B74203B98787E82498DA2</key>
+		<string>github.com:owncloud/ios-library.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>OCLibraryExample/OCLibraryExample.xcodeproj/project.xcworkspace</string>
+	<string>OCLibraryExample/OCLibraryExample.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>3DF1482C-21FF-4514-8770-3CF4FE4C0B3C</key>
+		<string>../../../../OCCommunicationLib</string>
+		<key>4B419C9897F7942ABC1B74203B98787E82498DA2</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/owncloud/ios.git</string>
+	<string>github.com:owncloud/ios-library.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3DF1482C-21FF-4514-8770-3CF4FE4C0B3C</string>
+	<string>4B419C9897F7942ABC1B74203B98787E82498DA2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>4B419C9897F7942ABC1B74203B98787E82498DA2</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ios-library</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

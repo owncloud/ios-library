@@ -60,7 +60,7 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        _securityPolicy = [AFSecurityPolicy defaultPolicy];
+        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         _isCookiesAvailable = NO;
         
 #ifdef UNIT_TEST
@@ -118,7 +118,7 @@
         //Network Queue
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-        _securityPolicy = [AFSecurityPolicy defaultPolicy];
+        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         _uploadSessionManager = uploadSessionManager;
     }
     
@@ -144,8 +144,9 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        _uploadSessionManager = uploadSessionManager;
+        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         
+        _uploadSessionManager = uploadSessionManager;
         _downloadSessionManager = downloadSessionManager;
     }
     
