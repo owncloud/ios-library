@@ -35,7 +35,6 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
-#import "OCHTTPSessionManager.h"
 
 @implementation OCCommunication
 
