@@ -103,10 +103,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }
     
     OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
-    
-#ifdef UNIT_TEST
-    operation.securityPolicy.allowInvalidCertificates = YES;
-#endif
+    operation.securityPolicy = self.securityPolicy;
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success((OCHTTPRequestOperation*)operation,responseObject);
