@@ -62,10 +62,10 @@
         
         [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         _isCookiesAvailable = NO;
-        
+
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        _downloadSessionManager = [[OCHTTPSessionManager alloc] initWithSessionConfiguration:nil];
+        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
 
 #else
         //Network Upload queue for NSURLSession (iOS 7)
