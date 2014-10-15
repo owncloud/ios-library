@@ -139,6 +139,29 @@ typedef enum {
 #pragma mark - Network operations
 
 ///-----------------------------------
+/// @name Check Server
+///-----------------------------------
+
+/**
+ * Method to check if on the path exist a ownCloud server
+ *
+ * @param path -> NSString with the url of the server with
+ * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @warning this method do not need set the Credentials before because with this method we can know the kind of authentication needed.
+ *
+ * @warning the "path" must not be on URL Encoding.
+ * Ex:
+ * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/
+ *
+ */
+- (void) checkServer: (NSString *) path
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+///-----------------------------------
 /// @name createFolder
 ///-----------------------------------
 
