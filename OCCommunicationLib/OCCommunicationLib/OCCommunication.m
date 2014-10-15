@@ -73,9 +73,6 @@
         configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
         [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
-        [_uploadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
-            return NSURLSessionAuthChallengePerformDefaultHandling;
-        }];
         
         //Network Download queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
@@ -84,10 +81,6 @@
         downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
         _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
         [_downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
-        [_downloadSessionManager setSessionDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition (NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * __autoreleasing *credential) {
-            return NSURLSessionAuthChallengePerformDefaultHandling;
-        }];
-
  
 #endif
         

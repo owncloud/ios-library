@@ -33,12 +33,12 @@
 //For the example works you must be enter your server data
 
 //Your entire server url. ex:https://example.owncloud.com/owncloud/remote.php/webdav/
-static NSString *baseUrl = @"https://10.40.40.58/owncloud/remote.php/webdav/";
+static NSString *baseUrl = @"";
 
 //user
-static NSString *user = @"admin"; //@"username";
+static NSString *user = @""; //@"username";
 //password
-static NSString *password = @"admin"; //@"password";
+static NSString *password = @""; //@"password";
 
 //To test the download you must be enter a path of specific file
 static NSString *pathOfDownloadFile = @""; //@"LibExampleDownload/default.png"; //@"LibExampleDownload/default.JPG";
