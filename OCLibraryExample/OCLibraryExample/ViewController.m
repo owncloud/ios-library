@@ -158,11 +158,19 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 
 //Delete uploaded file button tapped
 - (IBAction)deleteUploadedFile:(id)sender{
-    _uploadProgressLabel.text = @"Deleting file...";
-    _deleteRemoteFile.enabled = NO;
-    [self deleteFile];
     
-
+    if (_pathOfRemoteUploadedFile) {
+        _uploadProgressLabel.text = @"Deleting file...";
+        _deleteRemoteFile.enabled = NO;
+        [self deleteFile];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"Upload a file first"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 //Delete local upload file
@@ -524,6 +532,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _deleteRemoteFile.enabled = NO;
         _uploadButton.enabled = YES;
         _uploadWithSessionButton.enabled = YES;
+        _pathOfRemoteUploadedFile = nil;
         
         //Refresh the file list
         [self readFolder:nil];
