@@ -10,4 +10,6 @@ env:
   - secure: Qp1YP8Dzbe2Vdm64Btm8vfxnOD2v0WW35J5AFLALR4Z9F+Oik799BUEF7h3kGDXZdqp5giGkoQ+6nHMEthB9xzRXgk+RYionuEuekeO71EQyF/83b8hS0auoumnengPSqR3ucJH6+ZD1kMFbHTRpKfj+Grc7zirkKoOxlCpFBd4=
 
 before_install:
-  - brew update
+- brew update
+- brew unlink xctool
+- brew install xctool
