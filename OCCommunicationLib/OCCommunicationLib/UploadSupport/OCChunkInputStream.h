@@ -45,7 +45,7 @@
 @property (nonatomic, retain) NSInputStream *parentStream;
 @property (nonatomic,weak) __weak id <NSStreamDelegate> delegate;
 @property BOOL isChunkComplete;
-@property int bytesReadInThisIteration;
+@property NSUInteger bytesReadInThisIteration;
 @property long long totalBytesRead;
 @property long long bytesToRead;
 
