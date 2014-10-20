@@ -24,6 +24,7 @@
 //
 
 #import "AppDelegate.h"
+#import "AFSecurityPolicy.h"
 
 @implementation AppDelegate
 
@@ -76,7 +77,7 @@
 
 -(void)presentNotification{
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-    localNotification.alertBody = @"Trasnfer Complete !!";
+    localNotification.alertBody = @"Transfer Complete !!";
     localNotification.alertAction = @"Background Transfer";
     
     
@@ -97,7 +98,12 @@
 	static OCCommunication* sharedOCCommunication = nil;
 	if (sharedOCCommunication == nil)
 	{
-		sharedOCCommunication = [[OCCommunication alloc] init];
+        sharedOCCommunication = [[OCCommunication alloc] init];
+        
+        AFSecurityPolicy *secPolicy = [AFSecurityPolicy defaultPolicy];
+        secPolicy.allowInvalidCertificates = YES;
+        
+        [sharedOCCommunication setSecurityPolicy:secPolicy];
 	}
 	return sharedOCCommunication;
 }

@@ -72,7 +72,10 @@
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
-    _sharedOCCommunication.uploadSessionManager.securityPolicy.allowInvalidCertificates = YES;
+    
+    AFSecurityPolicy *unitTestSecurityPolicy = [AFSecurityPolicy defaultPolicy];
+    unitTestSecurityPolicy.allowInvalidCertificates = YES;
+    [_sharedOCCommunication setSecurityPolicy:unitTestSecurityPolicy];
     
     //Create Tests folder
     [self createFolderWithName:_configTests.pathTestFolder];
