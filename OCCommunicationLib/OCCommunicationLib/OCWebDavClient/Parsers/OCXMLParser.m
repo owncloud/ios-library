@@ -111,7 +111,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
             }
         }
         
-        //If has lenght, there are an item
+        //If has length, there are an item
         if ([_xmlChars length]) {
             //Create FileDto
             _currentFile = [[OCFileDto alloc] init];
@@ -122,19 +122,19 @@ NSString *OCCWebDAVURIKey           = @"uri";
             //Check if the item is a folder or a file
             if([_xmlChars hasSuffix:@"/"]) {
                 //It's a folder
-                int fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-2]) length];
+                NSUInteger fileNameLength = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-2]) length];
                 
-                if ( fileNameLenght > 0) {
+                if ( fileNameLength > 0) {
                     //FileDto filepath
-                    _currentFile.filePath = [_xmlChars substringToIndex:[_xmlChars length] - (fileNameLenght+1)];
+                    _currentFile.filePath = [_xmlChars substringToIndex:[_xmlChars length] - (fileNameLength+1)];
                 } else {
                     _currentFile.filePath = @"/";
                 }
             } else {
                 //It's a file
-                int fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-1]) length];
-                if (fileNameLenght > 0) {
-                    _currentFile.filePath = [_xmlChars substringToIndex:[_xmlChars length] - fileNameLenght];
+                NSUInteger fileNameLength = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-1]) length];
+                if (fileNameLength > 0) {
+                    _currentFile.filePath = [_xmlChars substringToIndex:[_xmlChars length] - fileNameLength];
                 }else {
                     _currentFile.filePath = @"/";
                 }
@@ -176,7 +176,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
             if (d) {
                 //FildeDto Date
                 _currentFile.date = [d timeIntervalSince1970];
-                int colIdx = [elementName rangeOfString:@":"].location;
+                NSUInteger colIdx = [elementName rangeOfString:@":"].location;
                 [_xmlBucket setObject:d forKey:[elementName substringFromIndex:colIdx + 1]];
             }
             
