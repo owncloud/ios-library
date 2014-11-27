@@ -612,7 +612,7 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
+- (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
