@@ -50,7 +50,7 @@ typedef enum {
 } OCErrorEnum;
 
 //Private properties
-@property int kindOfCredential;
+@property NSInteger kindOfCredential;
 @property (nonatomic, strong) NSString *user;
 @property (nonatomic, strong) NSString *password;
 
@@ -595,7 +595,7 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (int) idRemoteShared
+- (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
