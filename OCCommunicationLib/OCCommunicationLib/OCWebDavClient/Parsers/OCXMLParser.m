@@ -122,7 +122,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
             //Check if the item is a folder or a file
             if([_xmlChars hasSuffix:@"/"]) {
                 //It's a folder
-                int fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-2]) length];
+                NSInteger fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-2]) length];
                 
                 if ( fileNameLenght > 0) {
                     //FileDto filepath
@@ -132,7 +132,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
                 }
             } else {
                 //It's a file
-                int fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-1]) length];
+                NSInteger fileNameLenght = [((NSString *)[splitedUrl objectAtIndex:[splitedUrl count]-1]) length];
                 if (fileNameLenght > 0) {
                     _currentFile.filePath = [_xmlChars substringToIndex:[_xmlChars length] - fileNameLenght];
                 }else {
@@ -176,7 +176,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
             if (d) {
                 //FildeDto Date
                 _currentFile.date = [d timeIntervalSince1970];
-                int colIdx = [elementName rangeOfString:@":"].location;
+                NSInteger colIdx = [elementName rangeOfString:@":"].location;
                 [_xmlBucket setObject:d forKey:[elementName substringFromIndex:colIdx + 1]];
             }
             
