@@ -921,7 +921,7 @@
     //4.- Get and Compare the etag of the same folder with the preview, if is different the TEST is OK
     
     //Block Store Attributes
-    __block long long etag = 0;
+    __block long long etag = @"";
     
     
     //Path of new folder
@@ -1030,7 +1030,7 @@
                 
                 if (itemDto.etag) {
                     
-                    if (etag == itemDto.etag) {
+                    if ([etag isEqual:itemDto.etag]) {
                         XCTFail(@"The same etag after the changes");
                     }else{
                         NSLog(@"Test OK");
