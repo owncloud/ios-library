@@ -193,7 +193,11 @@ NSString *OCCWebDAVURIKey           = @"uri";
     } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
         //ETAG
         NSLog(@"getetag: %@", _xmlChars);
-        _currentFile.etag = _xmlChars;
+        
+        NSString *stringClean = _xmlChars;
+        stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+        
+        _currentFile.etag = stringClean;
         
     } else if ([elementName hasSuffix:@":getcontenttype"] && [_xmlChars length]) {
         //CONTENT TYPE
