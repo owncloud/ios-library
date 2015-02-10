@@ -197,7 +197,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
         NSString *stringClean = _xmlChars;
         stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
         
-        _currentFile.etag = stringClean;
+        _currentFile.etag = [stringClean lowercaseString];
         
     } else if ([elementName hasSuffix:@":getcontenttype"] && [_xmlChars length]) {
         //CONTENT TYPE
