@@ -194,18 +194,11 @@ NSString *OCCWebDAVURIKey           = @"uri";
         //ETAG
         NSLog(@"getetag: %@", _xmlChars);
         
-        NSString *stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-        NSArray *listItems = [stringClean componentsSeparatedByString:@"."];
-        unsigned long long etag;
+        NSString *stringClean = _xmlChars;
+        stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
         
-        NSScanner* pScanner = [NSScanner scannerWithString: [listItems objectAtIndex:0]];
+        _currentFile.etag = [stringClean lowercaseString];
         
-        [pScanner scanHexLongLong: &etag];
-        //FileDto etag
-        
-        NSLog(@"the etag is: %lld", etag);
-        
-        _currentFile.etag = etag;
     } else if ([elementName hasSuffix:@":getcontenttype"] && [_xmlChars length]) {
         //CONTENT TYPE
         [_xmlBucket setObject:[_xmlChars copy] forKey:OCCWebDAVContentTypeKey];

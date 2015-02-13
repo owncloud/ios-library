@@ -921,7 +921,7 @@
     //4.- Get and Compare the etag of the same folder with the preview, if is different the TEST is OK
     
     //Block Store Attributes
-    __block long long etag = 0;
+    __block NSString etag = @"";
     
     
     //Path of new folder
@@ -942,7 +942,7 @@
         for (OCFileDto *itemDto in items) {
             //Check parser
             NSLog(@"Item file path: %@", itemDto.filePath);
-            NSLog(@"Item etag: %lld", itemDto.etag);
+            NSLog(@"Item etag: %@", itemDto.etag);
             
             if (itemDto.etag) {
                 etag = itemDto.etag;
@@ -965,7 +965,7 @@
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     
     //Check if etag exists
-    if (etag > 0) {
+    if (etag) {
         
         //Create Folder
         //We create a semaphore to wait until we recive the responses from Async calls
@@ -1026,11 +1026,11 @@
             for (OCFileDto *itemDto in items) {
                 //Check parser
                 NSLog(@"Item file path: %@", itemDto.filePath);
-                NSLog(@"Item etag: %lld", itemDto.etag);
+                NSLog(@"Item etag: %@", itemDto.etag);
                 
                 if (itemDto.etag) {
                     
-                    if (etag == itemDto.etag) {
+                    if ([etag isEqual:itemDto.etag]) {
                         XCTFail(@"The same etag after the changes");
                     }else{
                         NSLog(@"Test OK");
