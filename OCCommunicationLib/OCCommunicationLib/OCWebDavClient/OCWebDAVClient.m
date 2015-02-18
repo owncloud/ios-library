@@ -569,6 +569,27 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 }
 
+- (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath andPassword:(NSString *)password
+                        onCommunication:(OCCommunication *)sharedOCCommunication
+                                success:(void(^)(OCHTTPRequestOperation *, id))success
+                                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+    NSParameterAssert(success);
+    
+    _requestMethod = @"POST";
+    // NSDictionary *paramsShared = [[NSDictionary alloc] initWithObjectsAndKeys:@"1234", @"password", nil];
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    //TODO:get password from user
+    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3&password=%@",filePath,@"1234"];
+    [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
 - (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath
                   onCommunication:(OCCommunication *)sharedOCCommunication
                           success:(void(^)(OCHTTPRequestOperation *, id))success
@@ -578,7 +599,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _requestMethod = @"POST";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
-
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
