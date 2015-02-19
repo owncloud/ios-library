@@ -90,7 +90,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (void)setUserAgent:(NSString *)userAgent{
     
-    [[self requestSerializer] setValue:userAgent forKey:@"User-Agent"];
+    [[self requestSerializer] setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 }
 
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {

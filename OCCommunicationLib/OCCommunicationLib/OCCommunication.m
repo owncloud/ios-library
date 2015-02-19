@@ -170,7 +170,7 @@
 }
 
 - (void) setUserAgent:(NSString *)userAgent{
-    self.userAgent = userAgent;
+    _userAgent = userAgent;
 }
 
 ///-----------------------------------
@@ -258,6 +258,10 @@
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
 
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -640,6 +644,10 @@
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = _securityPolicy;
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
    
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
@@ -690,6 +698,10 @@
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
