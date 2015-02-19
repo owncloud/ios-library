@@ -576,11 +576,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSParameterAssert(success);
     
     _requestMethod = @"POST";
-    // NSDictionary *paramsShared = [[NSDictionary alloc] initWithObjectsAndKeys:@"1234", @"password", nil];
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
-    //TODO:get password from user
-    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3&password=%@",filePath,@"1234"];
+    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3&password=%@",filePath,password];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
