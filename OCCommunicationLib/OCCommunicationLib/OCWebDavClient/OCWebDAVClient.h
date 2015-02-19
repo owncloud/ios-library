@@ -83,6 +83,14 @@ extern NSString *OCWebDAVModificationDateKey;
  */
 - (void)setAuthorizationHeaderWithToken:(NSString *)token;
 
+
+/**
+ Sets the "User-Agent" HTTP header
+ 
+ @param userAgent -> String that indentifies the client app. Ex: "iOS-ownCloud"
+ */
+- (void)setUserAgent:(NSString *)userAgent;
+
 /**
  Enqueues an operation to copy the object at a path to another path using a `COPY` request.
  

@@ -153,7 +153,7 @@
 
 #pragma mark - Setting Credentials
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password {
+- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
     _kindOfCredential = credentialNormal;
     _user = user;
     _password = password;
@@ -167,6 +167,10 @@
 - (void) setCredentialsOauthWithToken:(NSString*) token {
     _kindOfCredential = credentialOauth;
     _password = token;
+}
+
+- (void) setUserAgent:(NSString *)userAgent{
+    self.userAgent = userAgent;
 }
 
 ///-----------------------------------
@@ -206,7 +210,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+            [myRequest addValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
+        }
+        
         return myRequest;
+        
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
@@ -227,7 +236,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+           [myRequest setUserAgent:self.userAgent];
+        }
+    
         return request;
+        
     } else {
         NSLog(@"We do not know witch kind of object is");
         return  request;
