@@ -67,7 +67,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
     //NSLog(@"_xmlChars: %@", _xmlChars);
     
     [_xmlChars setString:@""];
-    
+
     if ([elementName isEqualToString:@"d:response"]) {
         _xmlBucket = [NSMutableDictionary dictionary];
     }
@@ -99,7 +99,6 @@ NSString *OCCWebDAVURIKey           = @"uri";
     
     // NSLog(@"elementName: %@:%@", elementName,_xmlChars);
     
-    
     if ([elementName isEqualToString:@"d:href"]) {
         
         if ([_xmlChars hasPrefix:@"http"]) {
@@ -115,6 +114,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
         if ([_xmlChars length]) {
             //Create FileDto
             _currentFile = [[OCFileDto alloc] init];
+             _currentFile.isDirectory = NO;
             [_xmlBucket setObject:[_xmlChars copy] forKey:OCCWebDAVURIKey];
             
             NSArray *splitedUrl = [_xmlChars componentsSeparatedByString:@"/"];
@@ -157,17 +157,11 @@ NSString *OCCWebDAVURIKey           = @"uri";
         if (isNotFirstFileOfList == YES) {
             [_xmlBucket setObject:lastBit forKey:OCCWebDAVHREFKey];
             _currentFile.fileName = lastBit;
-            
-            if([_xmlChars hasSuffix:@"/"]) {
-                _currentFile.isDirectory = YES;
-            } else {
-                _currentFile.isDirectory = NO;
-            }
         }
         
         isNotFirstFileOfList = YES;
-        
-        //NSLog(@"1 _xmlBucked :- %@",_xmlBucket);
+
+//        //NSLog(@"1 _xmlBucked :- %@",_xmlBucket);
      }
     } else if ([elementName isEqualToString:@"d:getlastmodified"]) {
         //DATE
@@ -224,7 +218,10 @@ NSString *OCCWebDAVURIKey           = @"uri";
         _xmlBucket = nil;
     } else if ([elementName isEqualToString:@"oc:permissions"]) {
         _currentFile.permissions = _xmlChars;
+    } else if ([elementName isEqualToString:@"d:collection"]) {
+        _currentFile.isDirectory = YES;
     }
+   
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
