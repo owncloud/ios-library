@@ -139,8 +139,9 @@ NSString *OCCWebDAVURIKey           = @"uri";
                     _currentFile.filePath = @"/";
                 }
             }
-        }
-        
+       
+      
+    
         NSArray *foo = [_xmlChars componentsSeparatedByString: @"/"];
         NSString *lastBit;
         
@@ -167,6 +168,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
         isNotFirstFileOfList = YES;
         
         //NSLog(@"1 _xmlBucked :- %@",_xmlBucket);
+     }
     } else if ([elementName isEqualToString:@"d:getlastmodified"]) {
         //DATE
         
