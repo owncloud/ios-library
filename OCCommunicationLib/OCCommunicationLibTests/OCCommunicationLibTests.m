@@ -921,7 +921,7 @@
     //4.- Get and Compare the etag of the same folder with the preview, if is different the TEST is OK
     
     //Block Store Attributes
-    __block NSString etag = @"";
+    __block NSString *etag = @"";
     
     
     //Path of new folder
