@@ -83,6 +83,14 @@ extern NSString *OCWebDAVModificationDateKey;
  */
 - (void)setAuthorizationHeaderWithToken:(NSString *)token;
 
+
+/**
+ Sets the "User-Agent" HTTP header
+ 
+ @param userAgent -> String that indentifies the client app. Ex: "iOS-ownCloud"
+ */
+- (void)setUserAgent:(NSString *)userAgent;
+
 /**
  Enqueues an operation to copy the object at a path to another path using a `COPY` request.
  
@@ -328,6 +336,26 @@ extern NSString *OCWebDAVModificationDateKey;
            onCommunication:(OCCommunication *)sharedOCCommunication
                    success:(void(^)(OCHTTPRequestOperation *, id))success
                    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
+///-----------------------------------
+/// @name shareFileOrFolderByServer 
+///-----------------------------------
+
+/**
+ * Method to share a file or folder with password
+ *
+ * @param serverPath -> NSString: Server path where we want to share a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
+ * @param filePath -> NSString: Path of the server where is the file. Ex: /File.pdf
+ * @param password -> NSString: Password
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ *
+ */
+- (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath andPassword:(NSString *)password
+                        onCommunication:(OCCommunication *)sharedOCCommunication
+                                success:(void(^)(OCHTTPRequestOperation *, id))success
+                                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer

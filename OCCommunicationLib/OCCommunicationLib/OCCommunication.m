@@ -153,7 +153,7 @@
 
 #pragma mark - Setting Credentials
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password {
+- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
     _kindOfCredential = credentialNormal;
     _user = user;
     _password = password;
@@ -167,6 +167,10 @@
 - (void) setCredentialsOauthWithToken:(NSString*) token {
     _kindOfCredential = credentialOauth;
     _password = token;
+}
+
+- (void) setUserAgent:(NSString *)userAgent{
+    _userAgent = userAgent;
 }
 
 ///-----------------------------------
@@ -206,7 +210,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+            [myRequest addValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
+        }
+        
         return myRequest;
+        
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
@@ -227,7 +236,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+           [myRequest setUserAgent:self.userAgent];
+        }
+    
         return request;
+        
     } else {
         NSLog(@"We do not know witch kind of object is");
         return  request;
@@ -244,6 +258,10 @@
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
 
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -630,6 +648,10 @@
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = _securityPolicy;
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
    
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
@@ -680,6 +702,10 @@
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
@@ -780,6 +806,81 @@
         failureRequest(operation.response, error);
     }];
 }
+
+- (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
+    
+    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        if (successRequest) {
+            NSData *response = (NSData*) responseObject;
+            
+            OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+            
+            //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+            
+            [parser initParserWithData:response];
+            
+            
+            switch (parser.statusCode) {
+                case kOCErrorServerUnauthorized:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerForbidden:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                case kOCErrorServerPathNotFound:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    
+                    failureRequest(operation.response, error);
+                    break;
+                }
+                default:
+                {
+                    
+                    NSString *token = parser.token;
+                    
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
+                    if (token) {
+                        //Return success
+                        successRequest(operation.response, token, request.redirectedServer);
+                    } else {
+                        //Token is nill so it does not exist
+                        NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                        
+                        failureRequest(operation.response, error);
+                    }
+                    
+                    break;
+                }
+            }
+        }
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
