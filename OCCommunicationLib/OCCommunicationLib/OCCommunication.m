@@ -153,7 +153,7 @@
 
 #pragma mark - Setting Credentials
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password {
+- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
     _kindOfCredential = credentialNormal;
     _user = user;
     _password = password;
@@ -167,6 +167,10 @@
 - (void) setCredentialsOauthWithToken:(NSString*) token {
     _kindOfCredential = credentialOauth;
     _password = token;
+}
+
+- (void) setUserAgent:(NSString *)userAgent{
+    _userAgent = userAgent;
 }
 
 ///-----------------------------------
@@ -206,7 +210,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+            [myRequest addValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
+        }
+        
         return myRequest;
+        
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
@@ -227,7 +236,12 @@
                 break;
         }
         
+        if (self.userAgent) {
+           [myRequest setUserAgent:self.userAgent];
+        }
+    
         return request;
+        
     } else {
         NSLog(@"We do not know witch kind of object is");
         return  request;
@@ -244,6 +258,10 @@
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
 
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -626,6 +644,10 @@
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = _securityPolicy;
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
    
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
@@ -676,6 +698,10 @@
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
     
     [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         

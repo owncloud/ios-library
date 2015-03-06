@@ -88,6 +88,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [[self requestSerializer] setValue:value forHTTPHeaderField:header];
 }
 
+- (void)setUserAgent:(NSString *)userAgent{
+    
+    [[self requestSerializer] setValue:userAgent forHTTPHeaderField:@"User-Agent"];
+}
+
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
