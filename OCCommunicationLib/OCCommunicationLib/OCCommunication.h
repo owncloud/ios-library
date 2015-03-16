@@ -53,6 +53,7 @@ typedef enum {
 @property NSInteger kindOfCredential;
 @property (nonatomic, strong) NSString *user;
 @property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) NSString *userAgent;
 
 //Public properties
 @property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
@@ -128,6 +129,15 @@ typedef enum {
  * @param token -> NSString token
  */
 - (void) setCredentialsOauthWithToken:(NSString*) token;
+
+/**
+ * @optional
+ *
+ * Method to set the user agent, in order to identify the client app to the server.
+ *
+ * @param userAgent -> String with the user agent. Ex. "iOS-ownCloud"
+ */
+- (void) setUserAgent:(NSString *)userAgent;
 
 
 /*
