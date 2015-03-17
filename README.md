@@ -32,6 +32,8 @@ __Library Classes__
 * OCFileDto.h (File/Folder object) Import when you use readFolder and readFile methods
 * OCFileDto.m
 * OCFrameworkConstants.h (Customize constants)
+* OCSharedDto.h 
+* OCSharedDto.m
 
 __Step 2.__  Add the library file in your project.  Link the library file in your project target. "build phases" -> "Link binary with libraries" and tap in "+" and select the library file.
 
@@ -105,7 +107,7 @@ THE SOFTWARE.
 
 #### Third party libraries
 
-ownCloud iOS library uses AFNetworking version 2.4.1. AFNetworking is available under the MIT license. 
+ownCloud iOS library uses AFNetworking version 2.5.1. AFNetworking is available under the MIT license. 
 
 ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes under the MIT license.
 
