@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, AFSSLPinningMode) {
 @property (nonatomic, assign) BOOL allowInvalidCertificates;
 
 /**
- Whether or not to validate the domain name in the certificate's CN field. Defaults to `YES` for `AFSSLPinningModePublicKey` or `AFSSLPinningModeCertificate`, otherwise `NO`.
+ Whether or not to validate the domain name in the certificate's CN field. Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL validatesDomainName;
 
@@ -66,7 +66,7 @@ typedef NS_ENUM(NSUInteger, AFSSLPinningMode) {
 ///-----------------------------------------
 
 /**
- Returns the shared default security policy, which does not allow invalid certificates, does not validate domain name, and does not validate against pinned certificates or public keys.
+ Returns the shared default security policy, which does not allow invalid certificates, validates domain name, and does not validate against pinned certificates or public keys.
 
  @return The default security policy.
  */
