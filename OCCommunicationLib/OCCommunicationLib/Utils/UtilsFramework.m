@@ -49,10 +49,11 @@
         if ([fileName characterAtIndex:i]=='/'){
             thereAreForbidenCharacters=YES;
         }
+        
+        //TODO:check if version server support forbidden characters
         if ([fileName characterAtIndex:i]=='\\'){
             thereAreForbidenCharacters=YES;
         }
-        
         if ([fileName characterAtIndex:i]=='<'){
             thereAreForbidenCharacters=YES;
         }
