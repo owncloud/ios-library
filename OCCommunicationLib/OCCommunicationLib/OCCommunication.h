@@ -70,6 +70,9 @@ typedef enum {
  */
 @property BOOL isCookiesAvailable;
 
+/* This flag indicate if the server handling forbidden characters */
+@property BOOL isForbiddenCharactersAvailable;
+
 ///-----------------------------------
 /// @name Init with Upload Session Manager
 ///-----------------------------------
@@ -520,11 +523,11 @@ typedef enum {
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
-/// @name Has Server Share Support
+/// @name Has Server Cookies Support
 ///-----------------------------------
 
 /**
- * Method to get if the server has Share API support or not
+ * Method to get if the server has Cookies API support or not
  *
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -533,6 +536,23 @@ typedef enum {
  *
  */
 - (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
+
+///-----------------------------------
+/// @name Has Server Forbidden Characters Support
+///-----------------------------------
+
+/**
+ * Method to get if the server API has Forbidden Characters handling support or not
+ *
+ * @param path -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return BOOL in the success about the support
+ *
+ */
+- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                   successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 

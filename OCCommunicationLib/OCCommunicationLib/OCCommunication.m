@@ -61,6 +61,7 @@
         
         [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         _isCookiesAvailable = NO;
+        _isForbiddenCharactersAvailable = NO;
 
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
@@ -103,6 +104,7 @@
         _downloadOperationQueueArray = [NSMutableArray new];
         
         _isCookiesAvailable = NO;
+        _isForbiddenCharactersAvailable = NO;
         
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
@@ -747,6 +749,61 @@
         failure(operation.response, error);
     }];
 }
+
+///-----------------------------------
+/// @name Get if the server has forbidden characters handling support
+///-----------------------------------
+- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        BOOL hasForbiddenSharactersSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+        // NSLog(@"version string: %@", versionString);
+        
+        //Split the strings - Type 5.0.13
+        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
+        
+        
+        NSMutableArray *currentVersionArrray = [NSMutableArray new];
+        for (NSString *string in spliteVersion) {
+            [currentVersionArrray addObject:string];
+        }
+        
+        NSArray *firstVersionSupportCookies = k_version_support_forbidden_characters;
+        
+        hasForbiddenSharactersSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
+        
+        success(operation.response, hasForbiddenSharactersSupport, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+}
+
 
 - (void) readSharedByServer: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
