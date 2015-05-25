@@ -767,7 +767,7 @@
         
         NSData *data = (NSData*) responseObject;
         NSString *versionString = [NSString new];
-        NSError* error=nil;
+        NSError* error = nil;
         
         BOOL hasForbiddenSharactersSupport = NO;
         
