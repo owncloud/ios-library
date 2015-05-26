@@ -281,12 +281,13 @@
 /// @name Create a folder
 ///-----------------------------------
 - (void) createFolder: (NSString *) path
-      onCommunication:(OCCommunication *)sharedOCCommunication
+      onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest
    errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest {
     
-    if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path]]) {
+    
+    if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
         errorBeforeRequest(error);
     } else {
@@ -312,7 +313,7 @@
 ///-----------------------------------
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
-          onCommunication:(OCCommunication *)sharedOCCommunication
+          onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
            successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
            failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
        errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest {
@@ -325,7 +326,7 @@
         //We check we are not trying to move a folder inside himself
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideHimself];
         errorBeforeRequest(error);
-    } else if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath]]) {
+    } else if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
         //We check that we are making a move not a rename to prevent special characters problems
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingDestinyNameHaveForbiddenCharacters];
         errorBeforeRequest(error);
