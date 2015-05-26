@@ -226,6 +226,9 @@ typedef enum {
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
+ * @param isFCSupported -> From Owncloud 8.1 the forbidden characters are controller by the server except the '/'. With this flag
+ * we controller if the server support forbbiden characters. To know that you can use "hasServerForbiddenCharactersSupport ..." request in this class.
+ *
  * @warning the move will overwritte an existing file on the destiny.
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
@@ -245,7 +248,7 @@ typedef enum {
 
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
-          onCommunication:(OCCommunication *)sharedOCCommunication
+          onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
            successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
            failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
        errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest;
