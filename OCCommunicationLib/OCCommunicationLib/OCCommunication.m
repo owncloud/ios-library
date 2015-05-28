@@ -287,7 +287,7 @@
    errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest {
     
     
-    if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
+    if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
         errorBeforeRequest(error);
     } else {
@@ -326,7 +326,7 @@
         //We check we are not trying to move a folder inside himself
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideHimself];
         errorBeforeRequest(error);
-    } else if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
+    } else if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
         //We check that we are making a move not a rename to prevent special characters problems
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingDestinyNameHaveForbiddenCharacters];
         errorBeforeRequest(error);
@@ -358,7 +358,7 @@
              successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
               failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error))failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -382,7 +382,7 @@
      successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -455,7 +455,7 @@
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     
-    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
                                                                       success:^(NSURLResponse *response, NSURL *filePath) {
@@ -539,7 +539,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
     NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
         success:^(NSURLResponse *response, id responseObjec){
@@ -592,7 +592,7 @@
    successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -811,7 +811,7 @@
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -842,8 +842,10 @@
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+   serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+   serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+   path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -870,7 +872,7 @@
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -945,7 +947,7 @@
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -1019,7 +1021,7 @@
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
@@ -1043,7 +1045,7 @@
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     

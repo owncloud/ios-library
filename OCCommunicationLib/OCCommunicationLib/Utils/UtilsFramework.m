@@ -40,7 +40,7 @@
  *
  * @isFCSupported -> From ownCloud 8.1 the forbidden characters are controller by the server except the '/'
  */
-+ (BOOL) isForbidenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported{
++ (BOOL) isForbiddenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported{
     BOOL thereAreForbidenCharacters = NO;
     
     //Check the filename

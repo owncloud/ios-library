@@ -33,6 +33,7 @@
 #import "OCChunkInputStream.h"
 #import "UtilsFramework.h"
 #import "AFURLSessionManager.h"
+#import "NSString+Encode.h"
 
 #define k_api_user_url_xml @"index.php/ocs/cloud/user"
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
@@ -560,8 +561,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSParameterAssert(success);
 	
     NSString *postString = [NSString stringWithFormat: @"?path=%@&subfiles=true",path];
-    serverPath = [[serverPath stringByAppendingString:postString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
+    serverPath = [serverPath stringByAppendingString:postString];
     _requestMethod = @"GET";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
