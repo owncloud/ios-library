@@ -28,12 +28,10 @@
 #import "OCChunkInputStream.h"
 #import "OCFrameworkConstants.h"
 #import "UtilsFramework.h"
+#import "OCConstants.h"
 
 #import "AFHTTPRequestOperation.h"
 
-#define k_redirected_code_1 301
-#define k_redirected_code_2 302
-#define k_redirected_code_3 307
 
 static dispatch_queue_t http_request_operation_processing_queue() {
     static dispatch_queue_t af_http_request_operation_processing_queue;
