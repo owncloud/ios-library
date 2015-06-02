@@ -31,3 +31,7 @@
 #define kOCErrorProxyAuth 407
 #define kOCErrorServerTimeout 408
 #define kOCErrorServerInternalError 500
+
+typedef enum {
+    OCServerErrorForbiddenCharacters = 101,
+} OCServerErrorEnum;

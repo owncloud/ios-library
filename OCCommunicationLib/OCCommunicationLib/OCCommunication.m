@@ -28,6 +28,7 @@
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
 #import "OCXMLSharedParser.h"
+#import "OCXMLServerErrorsParser.h"
 #import "NSString+Encode.h"
 #import "OCFrameworkConstants.h"
 #import "OCUploadOperation.h"
@@ -303,7 +304,20 @@
                                 successRequest(operation.response, request.redirectedServer);
                             }
                         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-                            failureRequest(operation.response, error);
+                            
+                            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+                            
+                            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                                
+                                if (err) {
+                                    failureRequest(operation.response, err);
+                                }else{
+                                    failureRequest(operation.response, error);
+                                }
+                                
+                                
+                            }];
+                            
                         }];
     }
 }
@@ -344,7 +358,19 @@
                 successRequest(operation.response, request.redirectedServer);
             }
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-            failureRequest(operation.response, error);
+            
+            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+            
+            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                
+                if (err) {
+                    failureRequest(operation.response, err);
+                }else{
+                    failureRequest(operation.response, error);
+                }
+                
+            }];
+            
         }];
     }
 }
