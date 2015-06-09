@@ -34,6 +34,7 @@
 #import "UtilsFramework.h"
 #import "AFURLSessionManager.h"
 #import "NSString+Encode.h"
+#import "OCConstants.h"
 
 #define k_api_user_url_xml @"index.php/ocs/cloud/user"
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
@@ -664,8 +665,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
            // NSLog(@"responseURLString: %@", responseURLString);
            // NSLog(@"requestRedirect.HTTPMethod: %@", request.HTTPMethod);
             
-            if ([UtilsFramework isURLWithSamlFragment:responseURLString]) {
-                _redirectedServer = responseURLString;
+            if ([UtilsFramework isURLWithSamlFragment:responseURLString] || httpResponse.statusCode == k_redirected_code_1) {
+                //We set the redirectedServer in case SAML or is a permanent redirection
+                self.redirectedServer = responseURLString;
             }
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
