@@ -572,10 +572,24 @@
             [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");
-        } failure:^(NSURLResponse *response, NSError *error) {
+        } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
             [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
-            failureRequest(response, @"", error);
+
+            NSData *responseData = (NSData*) responseObject;
+            
+            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+            
+            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+                
+                if (err) {
+                    failureRequest(response, @"", err);
+                }else{
+                    failureRequest(response, @"", error);
+                }
+                
+            }];
+            
         } failureBeforeRequest:^(NSError *error) {
             failureBeforeRequest(error);
         }];
