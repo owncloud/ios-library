@@ -544,8 +544,21 @@
         progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         successRequest(response, redirectedServer);
-    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
-        failureRequest(response, redirectedServer, error);
+    } failureRequest:^(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer, NSError *error) {
+        
+        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+        
+        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+            
+            if (err) {
+                failureRequest(response, redirectedServer, err);
+            }else{
+                failureRequest(response, redirectedServer, error);
+            }
+            
+        }];
+        
+        
     } failureBeforeRequest:^(NSError *error) {
         failureBeforeRequest(error);
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
