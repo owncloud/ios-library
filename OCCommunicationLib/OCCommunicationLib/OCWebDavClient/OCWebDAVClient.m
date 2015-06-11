@@ -398,7 +398,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     
     NSLog(@"localSource: %@", localSource);
@@ -436,11 +436,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
+        sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        
         NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
                                                                                              completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                                                                                                  if (error) {
                                                                                                      NSLog(@"Error: %@", error);
-                                                                                                     failure(response, error);
+                                                                                                     failure(response, responseObject, error);
                                                                                                  } else {
                                                                                                      NSLog(@"Success: %@ %@", response, responseObject);
                                                                                                      success(response,responseObject);
