@@ -436,6 +436,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
+        sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        
         NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:progressValue
                                                                                              completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                                                                                                  if (error) {
