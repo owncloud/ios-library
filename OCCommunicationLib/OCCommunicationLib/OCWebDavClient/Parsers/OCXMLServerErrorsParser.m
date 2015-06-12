@@ -49,9 +49,15 @@ NSString *OCErrorMessage = @"oc_message";
         completeBlock(err);
     };
     
-    NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
-    [parser setDelegate:self];
-    [parser parse];
+    if (!data) {
+        NSError *error = nil;
+        
+        self.finishBlock(error);
+    }else{
+        NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
+        [parser setDelegate:self];
+        [parser parse];
+    }
     
     
 }
