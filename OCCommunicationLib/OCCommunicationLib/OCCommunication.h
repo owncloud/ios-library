@@ -70,6 +70,9 @@ typedef enum {
  */
 @property BOOL isCookiesAvailable;
 
+/* This flag indicate if the server handling forbidden characters */
+@property BOOL isForbiddenCharactersAvailable;
+
 ///-----------------------------------
 /// @name Init with Upload Session Manager
 ///-----------------------------------
@@ -182,6 +185,8 @@ typedef enum {
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
+ * @param isFCSupported -> From Owncloud 8.1 the forbidden characters are controller by the server except the '/'. With this flag
+ * we controller if the server support forbbiden characters. To know that you can use "hasServerForbiddenCharactersSupport ..." request in this class.
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  *
@@ -192,8 +197,9 @@ typedef enum {
  *
  * @warning the folder name must not contain the next forbidden characers: "\", "/","<",">",":",""","|","?","*"
  */
+
 - (void) createFolder: (NSString *) path
-      onCommunication:(OCCommunication *)sharedOCCommunication
+      onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest
    errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest;
@@ -220,6 +226,9 @@ typedef enum {
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
+ * @param isFCSupported -> From Owncloud 8.1 the forbidden characters are controller by the server except the '/'. With this flag
+ * we controller if the server support forbbiden characters. To know that you can use "hasServerForbiddenCharactersSupport ..." request in this class.
+ *
  * @warning the move will overwritte an existing file on the destiny.
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
@@ -239,7 +248,7 @@ typedef enum {
 
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
-          onCommunication:(OCCommunication *)sharedOCCommunication
+          onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
            successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
            failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
        errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest;
@@ -520,11 +529,11 @@ typedef enum {
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
-/// @name Has Server Share Support
+/// @name Has Server Cookies Support
 ///-----------------------------------
 
 /**
- * Method to get if the server has Share API support or not
+ * Method to get if the server has Cookies API support or not
  *
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -533,6 +542,23 @@ typedef enum {
  *
  */
 - (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
+
+///-----------------------------------
+/// @name Has Server Forbidden Characters Support
+///-----------------------------------
+
+/**
+ * Method to get if the server API has Forbidden Characters handling support or not
+ *
+ * @param path -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return BOOL in the success about the support
+ *
+ */
+- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                   successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 

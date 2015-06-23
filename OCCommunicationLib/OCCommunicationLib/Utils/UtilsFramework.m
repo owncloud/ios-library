@@ -34,51 +34,53 @@
 @implementation UtilsFramework
 
 /*
- * Method that check the file name or folder name to find forbiden characters
- * This is the forbiden characters in server: "\", "/","<",">",":",""","|","?","*"
+ * Method that check the file name or folder name to find forbidden characters
+ * This is the forbidden characters in server: "\", "/","<",">",":",""","|","?","*"
  * @fileName -> file name
+ *
+ * @isFCSupported -> From ownCloud 8.1 the forbidden characters are controller by the server except the '/'
  */
-+ (BOOL)isForbidenCharactersInFileName:(NSString*)fileName{
-    BOOL thereAreForbidenCharacters=NO;
-    
-    
++ (BOOL) isForbiddenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported{
+    BOOL thereAreForbidenCharacters = NO;
     
     //Check the filename
-    for(int i =0 ;i<[fileName length]; i++) {
+    for(NSInteger i = 0 ;i<[fileName length]; i++) {
         
         if ([fileName characterAtIndex:i]=='/'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]=='\\'){
-            thereAreForbidenCharacters=YES;
+            thereAreForbidenCharacters = YES;
         }
         
-        if ([fileName characterAtIndex:i]=='<'){
-            thereAreForbidenCharacters=YES;
+        if (!isFCSupported) {
+            
+            if ([fileName characterAtIndex:i] == '\\'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '<'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '>'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '"'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == ','){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == ':'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '|'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '?'){
+                thereAreForbidenCharacters = YES;
+            }
+            if ([fileName characterAtIndex:i] == '*'){
+                thereAreForbidenCharacters = YES;
+            }
         }
-        if ([fileName characterAtIndex:i]=='>'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]=='"'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]==','){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]==':'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]=='|'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]=='?'){
-            thereAreForbidenCharacters=YES;
-        }
-        if ([fileName characterAtIndex:i]=='*'){
-            thereAreForbidenCharacters=YES;
-        }
-        
-        
+ 
     }
     
     return thereAreForbidenCharacters;
@@ -153,6 +155,17 @@
             error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
+            
+        case OCServerErrorForbiddenCharacters:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Server said: File name contains at least one invalid character" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCServerErrorForbiddenCharacters userInfo:details];
+            break;
+        }
+            
+            
             
         default:
         {

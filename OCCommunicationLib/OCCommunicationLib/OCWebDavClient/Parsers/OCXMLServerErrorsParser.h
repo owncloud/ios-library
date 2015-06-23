@@ -1,9 +1,9 @@
 //
-//  OCXMLShareByLinkParser.h
-//  OCCommunicationLib
+//  OCXMLServerErrorsParser.h
+//  ownCloud iOS library
 //
-//  Created by Javier González on 1/13/14.
-
+//  Created by Gonzalo González on 1/6/15.
+//
 // Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,19 +27,22 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCXMLShareByLinkParser : NSObject <NSXMLParserDelegate>{
-    
-    NSMutableString *_xmlChars;
-    NSMutableDictionary *_xmlBucket;
-    NSString *token;
-    BOOL isNotFirstFileOfList;
-    
-    
-}
+typedef void(^OCServerErrorFinishBlock)(NSError *error);
 
-@property (nonatomic, strong) NSString *token;
-@property int statusCode;
 
-- (void)initParserWithData: (NSData*)data;
+@interface OCXMLServerErrorsParser : NSObject <NSXMLParserDelegate>
+
+@property (nonatomic, strong) NSString *xmlString;
+@property (nonatomic, strong) NSMutableDictionary *resultDict;
+
+@property (nonatomic, strong) NSString *exception;
+@property (nonatomic, strong) NSString *message;
+
+
+@property (nonatomic, copy) OCServerErrorFinishBlock finishBlock;
+
+
+- (void) startToParseWithData:(NSData *)data withCompleteBlock: (void(^)(NSError *error)) completeBlock;
+
 
 @end

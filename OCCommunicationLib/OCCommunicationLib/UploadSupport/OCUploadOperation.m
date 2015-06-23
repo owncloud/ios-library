@@ -46,7 +46,7 @@
  * @param OCCommunication -> sharedOCCommunication the OCCommunication singleton that control all the communications
  *
  */
-- (void) createOperationWith:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer, NSError *)) failureRequest failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+- (void) createOperationWith:(NSString *) localFilePath toDestiny:(NSString *) remoteFilePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger, long long, long long))progressUpload successRequest:(void(^)(NSHTTPURLResponse *, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [sharedOCCommunication getRequestWithCredentials:request];
@@ -86,11 +86,11 @@
             [_listOfOperationsToUploadAFile removeObjectIdenticalTo:operation];
             [self cancel];
             NSLog(@"Error: %@", operation.response);
-            failureRequest(operation.response, request.redirectedServer, error);
+            failureRequest(operation.response, operation.responseData, request.redirectedServer, error);
         } forceCredentialsFailure:^(NSHTTPURLResponse *response, NSError *error) {
             [self cancel];
             NSString *redServer = @"";
-            failureRequest(response, redServer, error);
+            failureRequest(response, nil, redServer, error);
         } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
             [self cancel];
             handler();

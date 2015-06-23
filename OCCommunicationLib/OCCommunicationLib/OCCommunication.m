@@ -28,6 +28,7 @@
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
 #import "OCXMLSharedParser.h"
+#import "OCXMLServerErrorsParser.h"
 #import "NSString+Encode.h"
 #import "OCFrameworkConstants.h"
 #import "OCUploadOperation.h"
@@ -61,6 +62,7 @@
         
         [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         _isCookiesAvailable = NO;
+        _isForbiddenCharactersAvailable = NO;
 
 #ifdef UNIT_TEST
         _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
@@ -103,6 +105,7 @@
         _downloadOperationQueueArray = [NSMutableArray new];
         
         _isCookiesAvailable = NO;
+        _isForbiddenCharactersAvailable = NO;
         
         //Credentials not set yet
         _kindOfCredential = credentialNotSet;
@@ -279,12 +282,13 @@
 /// @name Create a folder
 ///-----------------------------------
 - (void) createFolder: (NSString *) path
-      onCommunication:(OCCommunication *)sharedOCCommunication
+      onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest
    errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest {
     
-    if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path]]) {
+    
+    if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
         errorBeforeRequest(error);
     } else {
@@ -300,7 +304,20 @@
                                 successRequest(operation.response, request.redirectedServer);
                             }
                         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-                            failureRequest(operation.response, error);
+                            
+                            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+                            
+                            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                                
+                                if (err) {
+                                    failureRequest(operation.response, err);
+                                }else{
+                                    failureRequest(operation.response, error);
+                                }
+                                
+                                
+                            }];
+                            
                         }];
     }
 }
@@ -310,7 +327,7 @@
 ///-----------------------------------
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
-          onCommunication:(OCCommunication *)sharedOCCommunication
+          onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
            successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
            failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error))failureRequest
        errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest {
@@ -323,7 +340,7 @@
         //We check we are not trying to move a folder inside himself
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideHimself];
         errorBeforeRequest(error);
-    } else if ([UtilsFramework isForbidenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath]]) {
+    } else if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
         //We check that we are making a move not a rename to prevent special characters problems
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingDestinyNameHaveForbiddenCharacters];
         errorBeforeRequest(error);
@@ -341,7 +358,19 @@
                 successRequest(operation.response, request.redirectedServer);
             }
         } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-            failureRequest(operation.response, error);
+            
+            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+            
+            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                
+                if (err) {
+                    failureRequest(operation.response, err);
+                }else{
+                    failureRequest(operation.response, error);
+                }
+                
+            }];
+            
         }];
     }
 }
@@ -355,7 +384,7 @@
              successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
               failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error))failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -379,7 +408,7 @@
      successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -452,7 +481,7 @@
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     
-    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
                                                                       success:^(NSURLResponse *response, NSURL *filePath) {
@@ -515,8 +544,21 @@
         progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
     } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         successRequest(response, redirectedServer);
-    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
-        failureRequest(response, redirectedServer, error);
+    } failureRequest:^(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer, NSError *error) {
+        
+        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+        
+        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+            
+            if (err) {
+                failureRequest(response, redirectedServer, err);
+            }else{
+                failureRequest(response, redirectedServer, error);
+            }
+            
+        }];
+        
+        
     } failureBeforeRequest:^(NSError *error) {
         failureBeforeRequest(error);
     } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
@@ -536,17 +578,31 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    remotePath = [remotePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
     NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
         success:^(NSURLResponse *response, id responseObjec){
             [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");
-        } failure:^(NSURLResponse *response, NSError *error) {
+        } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
             [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
-            failureRequest(response, @"", error);
+
+            NSData *responseData = (NSData*) responseObject;
+            
+            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+            
+            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+                
+                if (err) {
+                    failureRequest(response, @"", err);
+                }else{
+                    failureRequest(response, @"", error);
+                }
+                
+            }];
+            
         } failureBeforeRequest:^(NSError *error) {
             failureBeforeRequest(error);
         }];
@@ -589,7 +645,7 @@
    successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -748,12 +804,67 @@
     }];
 }
 
+///-----------------------------------
+/// @name Get if the server has forbidden characters handling support
+///-----------------------------------
+- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error = nil;
+        
+        BOOL hasForbiddenSharactersSupport = NO;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        
+        // NSLog(@"version string: %@", versionString);
+        
+        //Split the strings - Type 5.0.13
+        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
+        
+        
+        NSMutableArray *currentVersionArrray = [NSMutableArray new];
+        for (NSString *string in spliteVersion) {
+            [currentVersionArrray addObject:string];
+        }
+        
+        NSArray *firstVersionSupportCookies = k_version_support_forbidden_characters;
+        
+        hasForbiddenSharactersSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
+        
+        success(operation.response, hasForbiddenSharactersSupport, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+}
+
+
 - (void) readSharedByServer: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -784,8 +895,10 @@
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+   serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+   serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+   path = [path encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -812,7 +925,7 @@
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -887,7 +1000,7 @@
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    serverPath = [serverPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
@@ -961,7 +1074,7 @@
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
@@ -985,7 +1098,7 @@
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
