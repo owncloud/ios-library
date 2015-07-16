@@ -265,6 +265,10 @@ typedef enum {
  * @param path -> NSString with the url of the path
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
+ * @param token -> User Session token. To get this token you should be use "getUserSessionToken" method of UtilsFramework class
+ *  We use this token to be sure that the callbacks of the request are for the correct user. We need that when we use multiaccount.
+ *  if not you can leave as nil.
+ *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @warning the "path" must not be on URL Encoding.
@@ -274,10 +278,10 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) readFolder: (NSString *) path
+- (void) readFolder: (NSString *) path withUserSessionToken:(NSString *)token
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
-     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token)) failureRequest;
 
 
 

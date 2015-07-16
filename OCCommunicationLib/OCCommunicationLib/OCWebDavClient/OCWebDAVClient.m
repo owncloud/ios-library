@@ -95,6 +95,33 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [[self requestSerializer] setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 }
 
+- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString*)token success:(void(^)(OCHTTPRequestOperation *operation, id response, NSString *token))success failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error, NSString *token))failure {
+    
+    //If is not nil is a redirection so we keep the original url server
+    if (!_originalUrlServer) {
+        _originalUrlServer = [request.URL absoluteString];
+    }
+    
+    if (sharedOCCommunication.isCookiesAvailable) {
+        //We add the cookies of that URL
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    } else {
+        [UtilsFramework deleteAllCookies];
+    }
+    
+    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
+    operation.securityPolicy = self.securityPolicy;
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        success((OCHTTPRequestOperation*)operation,responseObject, token);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure((OCHTTPRequestOperation*)operation, error, token);
+    }];
+    
+    return operation;
+    
+}
+
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
@@ -226,6 +253,35 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
+- (void)mr_listPath:(NSString *)path depth:(NSUInteger)depth withUserSessionToken:(NSString*)token onCommunication:
+(OCCommunication *)sharedOCCommunication
+            success:(void(^)(OCHTTPRequestOperation *operation, id response, NSString *token))success
+            failure:(void(^)(OCHTTPRequestOperation *, NSError *, NSString *token))failure {
+    NSParameterAssert(success);
+    
+    _requestMethod = @"PROPFIND";
+    NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
+    NSString *depthHeader = nil;
+    if (depth <= 0)
+        depthHeader = @"0";
+    else if (depth == 1)
+        depthHeader = @"1";
+    else
+        depthHeader = @"infinity";
+    [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
+    
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"utf-8\" ?><a:propfind xmlns:a=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><a:prop><a:getlastmodified/></a:prop><a:prop><a:getcontenttype/></a:prop><a:prop><a:getcontentlength/></a:prop><a:prop><a:getetag/></a:prop><a:prop><a:resourcetype/></a:prop><a:prop><oc:permissions/></a:prop></a:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
+    
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
+
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
 - (void)propertiesOfPath:(NSString *)path
          onCommunication: (OCCommunication *)sharedOCCommunication
                  success:(void(^)(OCHTTPRequestOperation *, id ))success
@@ -238,6 +294,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
          success:(void(^)(OCHTTPRequestOperation *, id))success
          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
 	[self mr_listPath:path depth:1 onCommunication:sharedOCCommunication success:success failure:failure];
+}
+
+- (void)listPath:(NSString *)path
+ onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString *)token
+         success:(void(^)(OCHTTPRequestOperation *, id, NSString *token))success
+         failure:(void(^)(OCHTTPRequestOperation *, NSError *, NSString *token))failure {
+    [self mr_listPath:path depth:1 withUserSessionToken:token onCommunication:sharedOCCommunication success:success failure:failure];
 }
 
 

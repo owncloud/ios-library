@@ -34,6 +34,17 @@
 @implementation UtilsFramework
 
 /*
+ * Method that return a unique Id.
+ * The global ID for the process includes the host name, process ID, and a time stamp,
+ * which ensures that the ID is unique for the network
+ * @return -> Unique Id (token)
+ */
++ (NSString *) getUserSessionToken{
+    
+    return [[NSProcessInfo processInfo] globallyUniqueString];
+}
+
+/*
  * Method that check the file name or folder name to find forbidden characters
  * This is the forbidden characters in server: "\", "/","<",">",":",""","|","?","*"
  * @fileName -> file name
