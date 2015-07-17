@@ -840,7 +840,7 @@
     
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    [_sharedOCCommunication readFolder:path onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer) {
+     [_sharedOCCommunication readFolder:path withUserSessionToken:nil onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token) {
         
         //Counters
         NSInteger foldersCount = 0;
@@ -885,7 +885,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token) {
         XCTFail(@"Error reading a folder - Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     }];
