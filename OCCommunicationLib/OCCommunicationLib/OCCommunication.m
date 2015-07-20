@@ -403,10 +403,14 @@
 ///-----------------------------------
 /// @name Read folder
 ///-----------------------------------
-- (void) readFolder: (NSString *) path
+- (void) readFolder: (NSString *) path withUserSessionToken:(NSString *)token
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
-     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token)) failureRequest{
+    
+    if (!token){
+        token = @"no token";
+    }
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -414,7 +418,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    [request listPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(OCHTTPRequestOperation *operation, id responseObject, NSString *token) {
         if (successRequest) {
             NSData *response = (NSData*) responseObject;
             
@@ -426,11 +430,11 @@
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, request.redirectedServer);
+            successRequest(operation.response, directoryList, request.redirectedServer, token);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error);
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error, NSString *token) {
+        failureRequest(operation.response, error, token);
     }];
 }
 
