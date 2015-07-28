@@ -1836,14 +1836,15 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication
-                                       successRequest:^(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer) {
-                                           NSLog(@"Folder shared");
-                                           dispatch_semaphore_signal(semaphore);
-                                       } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-                                           XCTFail(@"Error sharing folder");
-                                           dispatch_semaphore_signal(semaphore);
-                                       }];
+    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
+        NSLog(@"Folder shared");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        XCTFail(@"Error sharing folder");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
