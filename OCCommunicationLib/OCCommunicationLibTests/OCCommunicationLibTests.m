@@ -272,11 +272,12 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
             //Folder created
             NSLog(@"Folder created");
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             dispatch_semaphore_signal(semaphore);
+
         } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             // Signal that block has completed
