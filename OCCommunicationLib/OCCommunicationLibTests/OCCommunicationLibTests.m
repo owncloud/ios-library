@@ -110,12 +110,13 @@
     NSString *folder = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,path];
      folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Folder created
         NSLog(@"Folder %@ created", folder);
         dispatch_semaphore_signal(semaphore);
+
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-       NSLog(@"Error created:%@ folder", folder);
+        NSLog(@"Error created:%@ folder", folder);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
