@@ -110,12 +110,13 @@
     NSString *folder = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,path];
      folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Folder created
         NSLog(@"Folder %@ created", folder);
         dispatch_semaphore_signal(semaphore);
+
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-       NSLog(@"Error created:%@ folder", folder);
+        NSLog(@"Error created:%@ folder", folder);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -233,7 +234,7 @@
     
     NSString *folder = [NSString stringWithFormat:@"%@%@/%@",_configTests.webdavBaseUrl,_configTests.pathTestFolder,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
     
-    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Folder created
         NSLog(@"Folder created");
         dispatch_semaphore_signal(semaphore);
@@ -272,11 +273,12 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
             //Folder created
             NSLog(@"Folder created");
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             dispatch_semaphore_signal(semaphore);
+
         } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             // Signal that block has completed
@@ -319,7 +321,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         XCTFail(@"File Moved on the same folder");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -371,9 +373,10 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"File moved");
         dispatch_semaphore_signal(semaphore);
+
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
         XCTFail(@"Error moving file Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
@@ -420,7 +423,7 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"File Moved and renamed");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -435,6 +438,7 @@
             
             dispatch_semaphore_signal(semaphore);
         }];
+        
         
         // Run loop
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -462,7 +466,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         XCTFail(@"Folder Moved inside himself");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -477,6 +481,7 @@
         
         dispatch_semaphore_signal(semaphore);
     }];
+    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -507,7 +512,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"Folder Moved");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -517,6 +522,7 @@
         XCTFail(@"Error moving folder: %@", error);
         dispatch_semaphore_signal(semaphore);
     }];
+    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -553,7 +559,7 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"File renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -601,7 +607,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"File Renamed");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -641,7 +647,7 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"Folder renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -684,7 +690,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"Folder Renamed");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
@@ -971,8 +977,7 @@
         //We create a semaphore to wait until we recive the responses from Async calls
         semaphore = dispatch_semaphore_create(0);
         
-        
-        [_sharedOCCommunication createFolder:newFolder onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        [_sharedOCCommunication createFolder:newFolder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
             //Folder created
             NSLog(@"Folder created");
             dispatch_semaphore_signal(semaphore);
@@ -986,12 +991,10 @@
             dispatch_semaphore_signal(semaphore);
         }];
         
-        
         // Run loop
         while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                      beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-        
         
         
         //Delete Folder
@@ -1833,14 +1836,15 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication
-                                       successRequest:^(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer) {
-                                           NSLog(@"Folder shared");
-                                           dispatch_semaphore_signal(semaphore);
-                                       } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-                                           XCTFail(@"Error sharing folder");
-                                           dispatch_semaphore_signal(semaphore);
-                                       }];
+    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
+        NSLog(@"Folder shared");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        XCTFail(@"Error sharing folder");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
