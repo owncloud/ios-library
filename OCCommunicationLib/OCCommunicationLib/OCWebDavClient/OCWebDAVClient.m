@@ -678,6 +678,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
+
 - (void)unShareFileOrFolderByServer:(NSString *)serverPath
                         onCommunication:(OCCommunication *)sharedOCCommunication
                                 success:(void(^)(OCHTTPRequestOperation *, id))success
@@ -695,6 +696,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
+
 - (void)isShareFileOrFolderByServer:(NSString *)serverPath
                     onCommunication:(OCCommunication *)sharedOCCommunication
                             success:(void(^)(OCHTTPRequestOperation *, id))success
@@ -710,6 +712,35 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
         
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
+- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+         onCommunication:(OCCommunication *)sharedOCCommunication
+                 success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                 failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure{
+    
+    NSParameterAssert(success);
+    
+    _requestMethod = @"PUT";
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    // -> /shares/share_id
+    // Arguments:
+    // password - (string)
+    // expireDate - (string) (YYYY-MM-DD)
+    
+    _postStringForShare = [NSString stringWithFormat:@"password=%@&expireDate=%@",password,expirationTime];
+    
+    
+    [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
 }
 
 #pragma mark - Manage Redirections

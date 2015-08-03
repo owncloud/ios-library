@@ -913,6 +913,8 @@
             NSData *response = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
+            NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+            
             [parser initParserWithData:response];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
@@ -926,7 +928,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -1136,6 +1138,84 @@
         failureRequest(operation.response, error);
     }];
 }
+
+- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+                   onCommunication:(OCCommunication *)sharedOCCommunication
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
+    
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *response = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:response];
+        
+        
+        switch (parser.statusCode) {
+            case kOCErrorServerUnauthorized:
+            {
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                
+                failureRequest(operation.response, error);
+                break;
+            }
+            case kOCErrorServerForbidden:
+            {
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                
+                failureRequest(operation.response, error);
+                break;
+            }
+            case kOCErrorServerPathNotFound:
+            {
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                
+                failureRequest(operation.response, error);
+                break;
+            }
+            default:
+            {
+                
+                NSString *token = parser.token;
+                
+                //We remove the \n and the empty spaces " "
+                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                
+                if (token) {
+                    //Return success
+                    successRequest(operation.response, token, request.redirectedServer);
+                } else {
+                    //Token is nill so it does not exist
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    
+                    failureRequest(operation.response, error);
+                }
+                
+                break;
+            }
+        }
+
+        
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+         failureRequest(operation.response, error);
+    }];
+    
+}
+
 
 #pragma mark - Queue System
 
