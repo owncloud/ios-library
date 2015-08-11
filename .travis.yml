@@ -11,4 +11,4 @@ env:
   - secure: DkhKi7B4pVSByF5FOiPY/EHUm0cFoFpwg26FJReAuEPmawZ/IYfYbMZSjYUMskfwm+lOLsPB5EgdeTESDU/wUqej1tcfkXPhkXtU/wzsfAVIej/9xj6CHIGRID7wpoYV3pgIBMLPtTJasmSq5zN6o484Xsp6xoUDLhZL4Rd5vnU=
 
 before_install:
-- brew update
+- brew update; brew update
