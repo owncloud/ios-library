@@ -47,6 +47,19 @@
 + (BOOL) isForbiddenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported;
 
 
+/*
+ * Get error for the same errors in the share api
+ *
+ * Statuscodes:
+ * 100 - successful
+ * 400 - wrong or no update parameter given
+ * 403 - public upload disabled by the admin
+ * 404 - couldn’t update share
+ *
+ */
+
++ (NSError *) getShareAPIErrorByCode:(NSInteger)errorCode;
+
 ///-----------------------------------
 /// @name getErrorByCodeId
 ///-----------------------------------

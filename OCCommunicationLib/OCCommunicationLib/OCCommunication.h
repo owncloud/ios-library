@@ -699,7 +699,7 @@ typedef enum {
  */
 - (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
      onCommunication:(OCCommunication *)sharedOCCommunication
-      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 #pragma mark - Queue system

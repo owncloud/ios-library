@@ -32,6 +32,11 @@
 #define kOCErrorServerTimeout 408
 #define kOCErrorServerInternalError 500
 
+#define kOCErrorSharedAPIWrong 400
+#define kOCErrorSharedAPIUploadDisabled 403
+#define kOCErrorSharedAPINotUpdateShare 404
+#define kOCSharedAPISuccessful 100
+
 typedef enum {
     OCServerErrorForbiddenCharacters = 101,
 } OCServerErrorEnum;

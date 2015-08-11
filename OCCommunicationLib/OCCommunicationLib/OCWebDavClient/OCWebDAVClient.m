@@ -732,7 +732,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     _postStringForShare = [NSString stringWithFormat:@"password=%@&expireDate=%@",password,expirationTime];
     
-    
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];

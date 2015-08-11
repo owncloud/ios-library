@@ -97,6 +97,66 @@
     return thereAreForbidenCharacters;
 }
 
+/*
+ * Get error for the same errors in the share api
+ *
+ * Statuscodes:
+ * 100 - successful
+ * 400 - wrong or no update parameter given
+ * 403 - public upload disabled by the admin
+ * 404 - couldn’t update share
+ *
+ */
+
++ (NSError *) getShareAPIErrorByCode:(NSInteger)errorCode {
+    NSError *error = nil;
+    
+    switch (errorCode) {
+        case kOCErrorSharedAPIWrong:
+        
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Wrong or no update parameter given" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            break;
+        }
+            
+        case kOCErrorSharedAPIUploadDisabled:
+            
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Public upload disabled by the admin" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            break;
+        }
+            
+        case kOCErrorSharedAPINotUpdateShare:
+            
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Couldn't update share" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            break;
+        }
+            
+          
+        default:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Unknow error" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknow userInfo:details];
+            break;
+        }
+    }
+    
+    return error;
+    
+}
+
 ///-----------------------------------
 /// @name getErrorByCodeId
 ///-----------------------------------
@@ -175,7 +235,6 @@
             error = [NSError errorWithDomain:k_domain_error_code code:OCServerErrorForbiddenCharacters userInfo:details];
             break;
         }
-            
             
             
         default:

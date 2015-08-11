@@ -1022,33 +1022,31 @@
             //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:response];
-        
             
             switch (parser.statusCode) {
-                case kOCErrorServerUnauthorized:
+                case kOCErrorSharedAPIWrong:
                 {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                    NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIWrong];
                     
                     failureRequest(operation.response, error);
                     break;
                 }
-                case kOCErrorServerForbidden:
+                case kOCErrorSharedAPIUploadDisabled:
                 {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                    NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIUploadDisabled];
                     
                     failureRequest(operation.response, error);
                     break;
                 }
-                case kOCErrorServerPathNotFound:
+                case kOCErrorSharedAPINotUpdateShare:
                 {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorSharedAPINotUpdateShare];
                     
                     failureRequest(operation.response, error);
                     break;
                 }
-                default:
+                case kOCSharedAPISuccessful:
                 {
-                    
                     NSString *token = parser.token;
                     
                     //We remove the \n and the empty spaces " "
@@ -1066,6 +1064,11 @@
                     }
                     
                     break;
+                }
+                default:
+                {
+                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    failureRequest(operation.response, error);
                 }
             }
         }
@@ -1141,12 +1144,13 @@
 
 - (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
     
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)shareId]];
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -1158,58 +1162,45 @@
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
-        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+      //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
         [parser initParserWithData:response];
         
         
         switch (parser.statusCode) {
-            case kOCErrorServerUnauthorized:
+            case kOCErrorSharedAPIWrong:
             {
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+                NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIWrong];
                 
                 failureRequest(operation.response, error);
                 break;
             }
-            case kOCErrorServerForbidden:
+            case kOCErrorSharedAPIUploadDisabled:
             {
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
+                NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIUploadDisabled];
                 
                 failureRequest(operation.response, error);
                 break;
             }
-            case kOCErrorServerPathNotFound:
+            case kOCErrorSharedAPINotUpdateShare:
             {
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorSharedAPINotUpdateShare];
                 
                 failureRequest(operation.response, error);
+                break;
+            }
+            case kOCSharedAPISuccessful:
+            {
+                successRequest(operation.response, request.redirectedServer);
                 break;
             }
             default:
             {
-                
-                NSString *token = parser.token;
-                
-                //We remove the \n and the empty spaces " "
-                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                
-                if (token) {
-                    //Return success
-                    successRequest(operation.response, token, request.redirectedServer);
-                } else {
-                    //Token is nill so it does not exist
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
-                    
-                    failureRequest(operation.response, error);
-                }
-                
-                break;
+                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                failureRequest(operation.response, error);
             }
         }
 
-        
-        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
          failureRequest(operation.response, error);
     }];
