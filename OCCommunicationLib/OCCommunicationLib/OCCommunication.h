@@ -25,9 +25,11 @@
 
 #import <Foundation/Foundation.h>
 
+
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
+@class OCSharedDto;
 
 @interface OCCommunication : NSObject
 
@@ -677,7 +679,7 @@ typedef enum {
  */
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, OCSharedDto *shareDto)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
