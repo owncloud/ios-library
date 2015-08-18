@@ -725,12 +725,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    // -> /shares/share_id
-    // Arguments:
-    // password - (string)
-    // expireDate - (string) (YYYY-MM-DD)
+    if (password != nil) {
+        self.postStringForShare = [NSString stringWithFormat:@"password=%@",password];
+    }
     
-    _postStringForShare = [NSString stringWithFormat:@"password=%@&expireDate=%@",password,expirationTime];
+    if (expirationTime != nil) {
+        
+        self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
+    }
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     

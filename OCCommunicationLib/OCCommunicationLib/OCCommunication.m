@@ -1124,20 +1124,22 @@
             // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:response];
-            NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
-            BOOL isShared = NO;
+             BOOL isShared = NO;
             
-            OCSharedDto *shareDto = nil;
+             OCSharedDto *shareDto = nil;
             
-            if ([sharedList count] > 0) {
-                isShared = YES;
-                shareDto = [sharedList objectAtIndex:0];
+            if (parser.shareList) {
+                
+                NSMutableArray *sharedList = [parser.shareList mutableCopy];
+                
+                if ([sharedList count] > 0) {
+                    isShared = YES;
+                    shareDto = [sharedList objectAtIndex:0];
+                }
+                
             }
-            
-          
-            
-            
+     
             //Return success
             successRequest(operation.response, request.redirectedServer, isShared, shareDto);
         }
@@ -1167,7 +1169,7 @@
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
-      //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
         [parser initParserWithData:response];
         
