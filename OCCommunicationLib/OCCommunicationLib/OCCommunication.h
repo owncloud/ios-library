@@ -24,12 +24,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "OCSharedDto.h"
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
-@class OCSharedDto;
+
 
 @interface OCCommunication : NSObject
 
