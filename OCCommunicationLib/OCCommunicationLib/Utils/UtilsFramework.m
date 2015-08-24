@@ -103,7 +103,7 @@
  * Statuscodes:
  * 100 - successful
  * 400 - wrong or no update parameter given
- * 403 - public upload disabled by the admin
+ * 403 - public upload disabled by the admin (or is neccesary put a password)
  * 404 - couldn’t update share
  *
  */
@@ -118,7 +118,7 @@
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
             [details setValue:@"Wrong or no update parameter given" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPIWrong userInfo:details];
             break;
         }
             
@@ -128,7 +128,7 @@
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
             [details setValue:@"Public upload disabled by the admin" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPIUploadDisabled userInfo:details];
             break;
         }
             
@@ -138,7 +138,7 @@
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
             [details setValue:@"Couldn't update share" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingTheDestinyAndOriginAreTheSame userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPINotUpdateShare userInfo:details];
             break;
         }
             
