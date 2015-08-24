@@ -97,6 +97,17 @@
     return thereAreForbidenCharacters;
 }
 
++ (NSError *) getErrorWithCode:(NSInteger)errorCode andCustomMessageFromTheServer:(NSString *)message {
+    NSError *error = nil;
+    
+    NSMutableDictionary* details = [NSMutableDictionary dictionary];
+    [details setValue:message forKey:NSLocalizedDescriptionKey];
+    
+    error = [NSError errorWithDomain:k_domain_error_code code:errorCode userInfo:details];
+
+    return error;
+}
+
 /*
  * Get error for the same errors in the share api
  *

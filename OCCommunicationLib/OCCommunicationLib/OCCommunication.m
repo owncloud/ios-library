@@ -913,7 +913,7 @@
             NSData *response = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-            NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+           // NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
             
             [parser initParserWithData:response];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
@@ -939,59 +939,39 @@
     request.securityPolicy = _securityPolicy;
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        if (successRequest) {
-            NSData *response = (NSData*) responseObject;
-            
-            OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
-            
-           // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-            
-            [parser initParserWithData:response];
-            
-            
-            switch (parser.statusCode) {
-                case kOCErrorServerUnauthorized:
-                {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerUnauthorized];
+        
+        NSData *response = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+      //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:response];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                NSString *token = parser.token;
+                
+                //We remove the \n and the empty spaces " "
+                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                
+                if (token) {
+                    successRequest(operation.response, token, request.redirectedServer);
+                } else {
                     
+                    NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
-                    break;
                 }
-                case kOCErrorServerForbidden:
-                {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerForbidden];
-                    
-                    failureRequest(operation.response, error);
-                    break;
-                }
-                case kOCErrorServerPathNotFound:
-                {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
-                    
-                    failureRequest(operation.response, error);
-                    break;
-                }
-                default:
-                {
-                    
-                    NSString *token = parser.token;
-                    
-                    //We remove the \n and the empty spaces " "
-                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                    
-                    if (token) {
-                        //Return success
-                        successRequest(operation.response, token, request.redirectedServer);
-                    } else {
-                        //Token is nill so it does not exist
-                        NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
-                        
-                        failureRequest(operation.response, error);
-                    }
-                    
-                    break;
-                }
+                
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(operation.response, error);
             }
         }
         
@@ -1014,62 +994,39 @@
     request.securityPolicy = _securityPolicy;
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        if (successRequest) {
-            NSData *response = (NSData*) responseObject;
-            
-            OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
-           // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-            
-            [parser initParserWithData:response];
-            
-            switch (parser.statusCode) {
-                case kOCErrorSharedAPIWrong:
-                {
-                    NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIWrong];
+        NSData *response = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+      //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:response];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                NSString *token = parser.token;
+                
+                //We remove the \n and the empty spaces " "
+                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                
+                if (token) {
+                    successRequest(operation.response, token, request.redirectedServer);
+                } else {
                     
-                    failureRequest(operation.response, error);
-                    break;
-                }
-                case kOCErrorSharedAPIUploadDisabled:
-                {
-                    NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIUploadDisabled];
-                    
-                    failureRequest(operation.response, error);
-                    break;
-                }
-                case kOCErrorSharedAPINotUpdateShare:
-                {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorSharedAPINotUpdateShare];
-                    
-                    failureRequest(operation.response, error);
-                    break;
-                }
-                case kOCSharedAPISuccessful:
-                {
-                    NSString *token = parser.token;
-                    
-                    //We remove the \n and the empty spaces " "
-                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                    
-                    if (token) {
-                        //Return success
-                        successRequest(operation.response, token, request.redirectedServer);
-                    } else {
-                        //Token is nill so it does not exist
-                        NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
-                        
-                        failureRequest(operation.response, error);
-                    }
-                    
-                    break;
-                }
-                default:
-                {
-                    NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                    NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
                 }
+                
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(operation.response, error);
             }
         }
 
@@ -1169,41 +1126,21 @@
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
-       // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+     //   NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
         [parser initParserWithData:response];
         
         
         switch (parser.statusCode) {
-            case kOCErrorSharedAPIWrong:
-            {
-                NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIWrong];
-                
-                failureRequest(operation.response, error);
-                break;
-            }
-            case kOCErrorSharedAPIUploadDisabled:
-            {
-                NSError *error = [UtilsFramework getShareAPIErrorByCode:kOCErrorSharedAPIUploadDisabled];
-                
-                failureRequest(operation.response, error);
-                break;
-            }
-            case kOCErrorSharedAPINotUpdateShare:
-            {
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorSharedAPINotUpdateShare];
-                
-                failureRequest(operation.response, error);
-                break;
-            }
             case kOCSharedAPISuccessful:
             {
                 successRequest(operation.response, request.redirectedServer);
                 break;
             }
+            
             default:
             {
-                NSError *error = [UtilsFramework getErrorByCodeId:kOCErrorServerPathNotFound];
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                 failureRequest(operation.response, error);
             }
         }

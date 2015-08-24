@@ -46,6 +46,13 @@
  */
 + (BOOL) isForbiddenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported;
 
+/*
+ * Get error code with the errorCode and message of the server
+ *
+ */
+
++ (NSError *) getErrorWithCode:(NSInteger)errorCode andCustomMessageFromTheServer:(NSString *)message;
+
 
 /*
  * Get error for the same errors in the share api
