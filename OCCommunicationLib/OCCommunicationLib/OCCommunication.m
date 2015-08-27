@@ -951,15 +951,21 @@
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
+                NSString *url = parser.url;
                 NSString *token = parser.token;
                 
-                //We remove the \n and the empty spaces " "
-                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                
-                if (token) {
+                if (url != nil) {
+                    
+                    successRequest(operation.response, url, request.redirectedServer);
+                    
+                }else if (token != nil){
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
                     successRequest(operation.response, token, request.redirectedServer);
-                } else {
+                    
+                }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
@@ -983,7 +989,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -1006,20 +1012,26 @@
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
+                NSString *url = parser.url;
                 NSString *token = parser.token;
                 
-                //We remove the \n and the empty spaces " "
-                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                
-                if (token) {
+                if (url != nil) {
+                    
+                    successRequest(operation.response, url, request.redirectedServer);
+                    
+                }else if (token != nil){
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
                     successRequest(operation.response, token, request.redirectedServer);
-                } else {
+                    
+                }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
                 }
-                
+
                 break;
             }
                 

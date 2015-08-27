@@ -82,11 +82,15 @@
     }
 
     if ([elementName isEqualToString:@"token"]) {
-        self.token = [NSString stringWithFormat:@"%@", self.xmlChars];
+        self.token = [NSString stringWithString:self.xmlChars];
     }
     
     if ([elementName isEqualToString:@"message"]) {
-        self.message = [NSString stringWithFormat:@"%@", self.xmlChars];
+        self.message = [NSString stringWithString:self.xmlChars];
+    }
+    
+    if ([elementName isEqualToString:@"url"]) {
+        self.url = [NSString stringWithString:self.xmlChars];
     }
 }
 
