@@ -37,8 +37,13 @@
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
 
-@implementation OCCommunication
+@interface OCCommunication ()
 
+@property (nonatomic, strong) NSString *currentServerVersion;
+
+@end
+
+@implementation OCCommunication
 
 
 -(id) init {
@@ -251,7 +256,9 @@
     }
 }
 
-#pragma mark - Network Operations
+
+#pragma mark - WebDav network Operations
+
 ///-----------------------------------
 /// @name Check Server
 ///-----------------------------------
@@ -680,6 +687,47 @@
 
 #pragma mark - OC API Calls
 
+- (NSString *) getCurrentServerVersion {
+    return self.currentServerVersion;
+}
+
+- (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                   successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    request.securityPolicy = _securityPolicy;
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        success(operation.response, versionString, request.redirectedServer);
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+    
+}
+
 ///-----------------------------------
 /// @name Get UserName by cookie
 ///-----------------------------------
@@ -728,10 +776,13 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
+        
+        
         
         // NSLog(@"version string: %@", versionString);
         
@@ -782,6 +833,7 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");
@@ -836,6 +888,7 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");

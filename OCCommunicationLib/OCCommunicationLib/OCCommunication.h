@@ -65,6 +65,7 @@ typedef enum {
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 @property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
 
+
 /*This flag control the use of cookies on the requests.
  -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
  -On OC7 we can do several requests at the same time with the same session so we can set this flag to YES.
@@ -496,6 +497,37 @@ typedef enum {
 
 
 #pragma mark - OC API Calls
+///-----------------------------------
+/// @name getCurrentServerVersion
+///-----------------------------------
+
+/**
+ * Method to get the current version without request if this feature has been checked by other request as: getServerVersionWithPath,
+ * hasServerShareSupport, hasServerCookiesSupport and hasServerForbiddenCharactersSupport methods
+ *
+ * @return serverVersion as NSString.
+ */
+
+- (NSString *) getCurrentServerVersion;
+
+///-----------------------------------
+/// @name getServerVersionWithPath
+///-----------------------------------
+
+/**
+ * Method to get the current version of a server. This method update the currentServerVersion property of the class
+ *
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return serverVersion as NSString.
+ */
+
+- (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name requestForUserNameByCookie
