@@ -29,6 +29,7 @@
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
 
+
 @interface OCCommunication : NSObject
 
 //Type of credential
@@ -677,8 +678,30 @@ typedef enum {
  */
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+///-----------------------------------
+/// @name UpdteShared
+///-----------------------------------
+
+/**
+ * Method to update a shared file with password and expiration time
+ *
+ * @param shareID -> NSInteger share id, you can get this data of these calls (readSharedByServer...)
+ * @param serverPath -> NSString server path
+ * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
+ * @param password -> password
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ *
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
+- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 #pragma mark - Queue system
 /*
