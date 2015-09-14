@@ -29,9 +29,14 @@
 
 #import "OCXMLShareByLinkParser.h"
 
-@implementation OCXMLShareByLinkParser
+@interface OCXMLShareByLinkParser()
 
-@synthesize token=_token;
+@property (nonatomic, strong) NSMutableString *xmlChars;
+@property (nonatomic, strong) NSMutableDictionary *xmlBucket;
+
+@end
+
+@implementation OCXMLShareByLinkParser
 
 /*
  * Method that init the parse with the xml data from the server
@@ -55,39 +60,43 @@
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
     
-    if (!_xmlChars) {
-        _xmlChars = [NSMutableString string];
+    if (!self.xmlChars) {
+        self.xmlChars = [NSMutableString string];
     }
     
-    //NSLog(@"_xmlChars: %@", _xmlChars);
+    NSLog(@"self.xmlChars: %@", self.xmlChars);
     
-    [_xmlChars setString:@""];
+    [self.xmlChars setString:@""];
     
     if ([elementName isEqualToString:@"ocs"]) {
-        _xmlBucket = [NSMutableDictionary dictionary];
+        self.xmlBucket = [NSMutableDictionary dictionary];
     }
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
     
-    //NSLog(@"elementName: %@:%@", elementName,_xmlChars);
+    NSLog(@"elementName: %@:%@", elementName,_xmlChars);
     
     if ([elementName isEqualToString:@"statuscode"]) {
-        _statusCode = [_xmlChars intValue];
+        self.statusCode = [self.xmlChars intValue];
     }
 
     if ([elementName isEqualToString:@"token"]) {
-        _token = _xmlChars;
+        self.token = [NSString stringWithFormat:@"%@", self.xmlChars];
+    }
+    
+    if ([elementName isEqualToString:@"message"]) {
+        self.message = [NSString stringWithFormat:@"%@", self.xmlChars];
     }
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
-    [_xmlChars appendString:string];
+    [self.xmlChars appendString:string];
 }
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
-    //NSLog(@"Finish xml directory list parse");
+    NSLog(@"Finish xml directory list parse");
 }
 
 @end
