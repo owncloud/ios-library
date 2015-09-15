@@ -37,8 +37,13 @@
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
 
-@implementation OCCommunication
+@interface OCCommunication ()
 
+@property (nonatomic, strong) NSString *currentServerVersion;
+
+@end
+
+@implementation OCCommunication
 
 
 -(id) init {
@@ -251,7 +256,9 @@
     }
 }
 
-#pragma mark - Network Operations
+
+#pragma mark - WebDav network Operations
+
 ///-----------------------------------
 /// @name Check Server
 ///-----------------------------------
@@ -680,6 +687,47 @@
 
 #pragma mark - OC API Calls
 
+- (NSString *) getCurrentServerVersion {
+    return self.currentServerVersion;
+}
+
+- (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                   successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    request.securityPolicy = _securityPolicy;
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *data = (NSData*) responseObject;
+        NSString *versionString = [NSString new];
+        NSError* error=nil;
+        
+        if (data) {
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+            if(error) {
+                NSLog(@"Error parsing JSON: %@", error);
+            } else {
+                //Obtain the server version from the version field
+                versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
+            }
+        } else {
+            NSLog(@"Error parsing JSON: data is null");
+        }
+        success(operation.response, versionString, request.redirectedServer);
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.response, error);
+    }];
+    
+}
+
 ///-----------------------------------
 /// @name Get UserName by cookie
 ///-----------------------------------
@@ -728,10 +776,13 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
+        
+        
         
         // NSLog(@"version string: %@", versionString);
         
@@ -782,6 +833,7 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");
@@ -836,6 +888,7 @@
             } else {
                 //Obtain the server version from the version field
                 versionString = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = versionString;
             }
         } else {
             NSLog(@"Error parsing JSON: data is null");
@@ -951,15 +1004,21 @@
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
+                NSString *url = parser.url;
                 NSString *token = parser.token;
                 
-                //We remove the \n and the empty spaces " "
-                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                
-                if (token) {
+                if (url != nil) {
+                    
+                    successRequest(operation.response, url, request.redirectedServer);
+                    
+                }else if (token != nil){
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
                     successRequest(operation.response, token, request.redirectedServer);
-                } else {
+                    
+                }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
@@ -983,7 +1042,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -1006,20 +1065,26 @@
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
+                NSString *url = parser.url;
                 NSString *token = parser.token;
                 
-                //We remove the \n and the empty spaces " "
-                token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-                
-                if (token) {
+                if (url != nil) {
+                    
+                    successRequest(operation.response, url, request.redirectedServer);
+                    
+                }else if (token != nil){
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
                     successRequest(operation.response, token, request.redirectedServer);
-                } else {
+                    
+                }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
                     failureRequest(operation.response, error);
                 }
-                
+
                 break;
             }
                 
