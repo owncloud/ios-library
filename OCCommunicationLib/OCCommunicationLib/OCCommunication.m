@@ -142,7 +142,7 @@
         
         //Network Queue
         _networkOperationsQueue =[NSOperationQueue new];
-        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        [_networkOperationsQueue setMaxConcurrentOperationCount:1];
         
         [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
         
