@@ -29,6 +29,7 @@
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
 
+
 @interface OCCommunication : NSObject
 
 //Type of credential
@@ -63,6 +64,7 @@ typedef enum {
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 @property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
+
 
 /*This flag control the use of cookies on the requests.
  -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
@@ -265,6 +267,10 @@ typedef enum {
  * @param path -> NSString with the url of the path
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
+ * @param token -> User Session token. To get this token you should be use "getUserSessionToken" method of UtilsFramework class
+ *  We use this token to be sure that the callbacks of the request are for the correct user. We need that when we use multiaccount.
+ *  if not you can leave as nil.
+ *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @warning the "path" must not be on URL Encoding.
@@ -274,10 +280,10 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  */
-- (void) readFolder: (NSString *) path
+- (void) readFolder: (NSString *) path withUserSessionToken:(NSString *)token
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
-     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token)) failureRequest;
 
 
 
@@ -491,6 +497,37 @@ typedef enum {
 
 
 #pragma mark - OC API Calls
+///-----------------------------------
+/// @name getCurrentServerVersion
+///-----------------------------------
+
+/**
+ * Method to get the current version without request if this feature has been checked by other request as: getServerVersionWithPath,
+ * hasServerShareSupport, hasServerCookiesSupport and hasServerForbiddenCharactersSupport methods
+ *
+ * @return serverVersion as NSString.
+ */
+
+- (NSString *) getCurrentServerVersion;
+
+///-----------------------------------
+/// @name getServerVersionWithPath
+///-----------------------------------
+
+/**
+ * Method to get the current version of a server. This method update the currentServerVersion property of the class
+ *
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return serverVersion as NSString.
+ */
+
+- (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name requestForUserNameByCookie
@@ -611,13 +648,13 @@ typedef enum {
  * @param password -> password
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ * @return shareLink or token of the file that we shared. URL or Ex:572d48de3814c90117fbca6442f2f3b2
  *
  * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
@@ -633,13 +670,13 @@ typedef enum {
  * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ * @return shareLink or token of the file that we shared. URL or Ex:572d48de3814c90117fbca6442f2f3b2
  *
  * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
@@ -673,8 +710,30 @@ typedef enum {
  */
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared)) successRequest
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+///-----------------------------------
+/// @name UpdteShared
+///-----------------------------------
+
+/**
+ * Method to update a shared file with password and expiration time
+ *
+ * @param shareID -> NSInteger share id, you can get this data of these calls (readSharedByServer...)
+ * @param serverPath -> NSString server path
+ * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
+ * @param password -> password
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ *
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
+- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 #pragma mark - Queue system
 /*

@@ -34,6 +34,17 @@
 @implementation UtilsFramework
 
 /*
+ * Method that return a unique Id.
+ * The global ID for the process includes the host name, process ID, and a time stamp,
+ * which ensures that the ID is unique for the network
+ * @return -> Unique Id (token)
+ */
++ (NSString *) getUserSessionToken{
+    
+    return [[NSProcessInfo processInfo] globallyUniqueString];
+}
+
+/*
  * Method that check the file name or folder name to find forbidden characters
  * This is the forbidden characters in server: "\", "/","<",">",":",""","|","?","*"
  * @fileName -> file name
@@ -84,6 +95,77 @@
     }
     
     return thereAreForbidenCharacters;
+}
+
++ (NSError *) getErrorWithCode:(NSInteger)errorCode andCustomMessageFromTheServer:(NSString *)message {
+    NSError *error = nil;
+    
+    NSMutableDictionary* details = [NSMutableDictionary dictionary];
+    [details setValue:message forKey:NSLocalizedDescriptionKey];
+    
+    error = [NSError errorWithDomain:k_domain_error_code code:errorCode userInfo:details];
+
+    return error;
+}
+
+/*
+ * Get error for the same errors in the share api
+ *
+ * Statuscodes:
+ * 100 - successful
+ * 400 - wrong or no update parameter given
+ * 403 - public upload disabled by the admin (or is neccesary put a password)
+ * 404 - couldn’t update share
+ *
+ */
+
++ (NSError *) getShareAPIErrorByCode:(NSInteger)errorCode {
+    NSError *error = nil;
+    
+    switch (errorCode) {
+        case kOCErrorSharedAPIWrong:
+        
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Wrong or no update parameter given" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPIWrong userInfo:details];
+            break;
+        }
+            
+        case kOCErrorSharedAPIUploadDisabled:
+            
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Public upload disabled by the admin" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPIUploadDisabled userInfo:details];
+            break;
+        }
+            
+        case kOCErrorSharedAPINotUpdateShare:
+            
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Couldn't update share" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPINotUpdateShare userInfo:details];
+            break;
+        }
+            
+          
+        default:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Unknow error" forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknow userInfo:details];
+            break;
+        }
+    }
+    
+    return error;
+    
 }
 
 ///-----------------------------------
@@ -164,7 +246,6 @@
             error = [NSError errorWithDomain:k_domain_error_code code:OCServerErrorForbiddenCharacters userInfo:details];
             break;
         }
-            
             
             
         default:

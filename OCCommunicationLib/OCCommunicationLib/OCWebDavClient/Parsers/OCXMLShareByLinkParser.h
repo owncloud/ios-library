@@ -27,18 +27,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCXMLShareByLinkParser : NSObject <NSXMLParserDelegate>{
-    
-    NSMutableString *_xmlChars;
-    NSMutableDictionary *_xmlBucket;
-    NSString *token;
-    BOOL isNotFirstFileOfList;
-    
-    
-}
+@interface OCXMLShareByLinkParser : NSObject <NSXMLParserDelegate>
 
 @property (nonatomic, strong) NSString *token;
-@property int statusCode;
+@property (nonatomic, strong) NSString *message;
+@property (nonatomic, strong) NSString *url;
+@property (nonatomic) NSInteger statusCode;
 
 - (void)initParserWithData: (NSData*)data;
 

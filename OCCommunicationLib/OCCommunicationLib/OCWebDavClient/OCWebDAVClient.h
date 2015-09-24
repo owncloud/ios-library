@@ -170,6 +170,26 @@ extern NSString *OCWebDAVModificationDateKey;
 
 
 /**
+ Enqueues a request to list the contents of a single collection and
+ the properties of each object, including the properties of the
+ collection itself, using a `PROPFIND` request.
+ 
+ @param path The directory for which to list the contents.
+ @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ @param token User Session token
+ @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a dictionary with the properties of the directory and its contents.
+ @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
+ 
+ @see propertiesOfPath:success:failure:
+ @see recursiveListPath:success:failure:
+ */
+- (void)listPath:(NSString *)path
+ onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString *)token
+         success:(void(^)(OCHTTPRequestOperation *, id, NSString *token))success
+         failure:(void(^)(OCHTTPRequestOperation *, NSError *, NSString *token))failure;
+
+
+/**
  Enqueues an operation to download the contents of a file directly to disk using a `GET` request.
  
  @param remoteSource The path to be fetched, relative to the HTTP client's base URL.
@@ -409,4 +429,22 @@ extern NSString *OCWebDAVModificationDateKey;
                     onCommunication:(OCCommunication *)sharedOCCommunication
                             success:(void(^)(OCHTTPRequestOperation *, id))success
                             failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
+///-----------------------------------
+/// @name updateShareItem
+///-----------------------------------
+
+/**
+ * Method to update a share link
+ *
+ * @param shareId -> NSInterger: Share id (You can get the shares id in the calls listSharedByServer....)
+ * @param serverPath -> NSString: Server path with the id of the file or folder that we want know if is shared Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares/44
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ */
+- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+         onCommunication:(OCCommunication *)sharedOCCommunication
+                 success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                 failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 @end
