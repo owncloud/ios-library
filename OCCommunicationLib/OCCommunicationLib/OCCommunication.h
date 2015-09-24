@@ -735,6 +735,10 @@ typedef enum {
       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
+
+- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+
 #pragma mark - Queue system
 /*
  * Method that add an operation to the appropiate queue

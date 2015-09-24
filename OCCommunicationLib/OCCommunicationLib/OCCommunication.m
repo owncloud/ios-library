@@ -1216,6 +1216,34 @@
     
 }
 
+- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_access_sharee_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    [request searchUsersAndGroupsWith:searchString ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *response = (NSData*) responseObject;
+        NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        
+       // [parser initParserWithData:response];
+       // NSMutableArray *sharedList = [parser.shareList mutableCopy];
+        
+        NSArray *itemList = [NSArray new];
+        
+        //Return success
+        successRequest(operation.response, itemList, request.redirectedServer);
+        
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
+}
+
 
 #pragma mark - Queue System
 

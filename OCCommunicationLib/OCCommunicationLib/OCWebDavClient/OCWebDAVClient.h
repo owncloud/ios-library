@@ -447,4 +447,7 @@ extern NSString *OCWebDAVModificationDateKey;
          onCommunication:(OCCommunication *)sharedOCCommunication
                  success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                  failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
+- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *, id))success
+                         failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 @end

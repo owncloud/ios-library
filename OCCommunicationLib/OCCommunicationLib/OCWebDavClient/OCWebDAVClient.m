@@ -744,6 +744,27 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 }
 
+- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *, id))success
+    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+    
+    NSParameterAssert(success);
+    
+    _requestMethod = @"GET";
+    
+    NSString *searchQuery = [NSString stringWithFormat: @"?search=%@",searchString];
+    serverPath = [serverPath stringByAppendingString:searchQuery];
+
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCComunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCComunication];
+    
+    [sharedOCComunication addOperationToTheNetworkQueue:operation];
+    
+    
+}
+
 #pragma mark - Manage Redirections
 
 - (OCHTTPRequestOperation *) setRedirectionBlockOnOperation:(OCHTTPRequestOperation *) operation withOCCommunication: (OCCommunication *) sharedOCCommunication {
