@@ -1228,12 +1228,28 @@
     [request searchUsersAndGroupsWith:searchString ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
         NSData *response = (NSData*) responseObject;
-        NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSMutableArray *itemList = [NSMutableArray new];
         
-       // [parser initParserWithData:response];
-       // NSMutableArray *sharedList = [parser.shareList mutableCopy];
+        //Parse
+        NSError *error;
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
         
-        NSArray *itemList = [NSArray new];
+        if (error == nil) {
+            
+            NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
+            NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
+            NSArray *usersList = [dataDict valueForKey:@"users"];
+            // NSArray *groupsList = [dataDict valueForKey:@"groups"];
+            
+            for (NSDictionary *user in usersList) {
+                
+                NSDictionary *userValues = [user valueForKey:@"value"];
+                [itemList addObject:[userValues valueForKey:@"shareWith"]];
+                
+            }
+            
+        }
+        
         
         //Return success
         successRequest(operation.response, itemList, request.redirectedServer);
