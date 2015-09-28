@@ -36,6 +36,7 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
+#import "OCShareUser.h"
 
 @interface OCCommunication ()
 
@@ -1221,6 +1222,8 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_access_sharee_api];
     
+    searchString = [searchString encodeString:NSUTF8StringEncoding];
+    
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
@@ -1238,18 +1241,34 @@
             
             NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
             NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
-            NSArray *usersList = [dataDict valueForKey:@"users"];
-            // NSArray *groupsList = [dataDict valueForKey:@"groups"];
+            NSArray *usersFounded = [dataDict valueForKey:@"users"];
+            NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
             
-            for (NSDictionary *user in usersList) {
+            for (NSDictionary *userFound in usersFounded) {
                 
-                NSDictionary *userValues = [user valueForKey:@"value"];
-                [itemList addObject:[userValues valueForKey:@"shareWith"]];
+                OCShareUser *user = [OCShareUser new];
+                
+                NSDictionary *userValues = [userFound valueForKey:@"value"];
+                user.name = [userValues valueForKey:@"shareWith"];
+                user.isGroup = false;
+                
+                [itemList addObject:user];
+                
+            }
+            
+            for (NSDictionary *groupFound in groupsFounded) {
+                
+                OCShareUser *group = [OCShareUser new];
+                
+                NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                group.name = [groupValues valueForKey:@"shareWith"];
+                group.isGroup = true;
+                
+                [itemList addObject:group];
                 
             }
             
         }
-        
         
         //Return success
         successRequest(operation.response, itemList, request.redirectedServer);
