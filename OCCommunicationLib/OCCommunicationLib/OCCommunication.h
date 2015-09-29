@@ -679,6 +679,11 @@ typedef enum {
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
+
+- (void)shareWith:(NSString *)userOrGroup isUser:(BOOL)isUser inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+   successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error))failureRequest;
+
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
 ///-----------------------------------

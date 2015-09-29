@@ -396,6 +396,10 @@ extern NSString *OCWebDAVModificationDateKey;
                           success:(void(^)(OCHTTPRequestOperation *, id))success
                           failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
+- (void)shareWith:(NSString *)userOrGroup isUser:(BOOL)isUser inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+          success:(void(^)(OCHTTPRequestOperation *, id))success
+          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
 ///-----------------------------------
