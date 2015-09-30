@@ -694,7 +694,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         shareType = 1;
     }
     
-    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@",filePath, shareType, userOrGroup];
+    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@",filePath, (long)shareType, userOrGroup];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];

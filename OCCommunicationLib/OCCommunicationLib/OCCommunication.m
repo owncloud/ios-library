@@ -1114,8 +1114,9 @@
     
     [request shareWith:userOrGroup isUser:isUser inServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         NSData *response = (NSData*) responseObject;
+        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
         successRequest(operation.response, request.redirectedServer);
         
         
