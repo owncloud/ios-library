@@ -678,7 +678,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
-- (void)shareWith:(NSString *)userOrGroup isUser:(BOOL)isUser inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
                                 success:(void(^)(OCHTTPRequestOperation *, id))success
                                 failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     NSParameterAssert(success);
@@ -690,7 +690,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     //Parameters
     NSInteger shareType = 0;
     
-    if (isUser == false) {
+    if (isGroup == true) {
         shareType = 1;
     }
     
