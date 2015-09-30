@@ -1114,10 +1114,26 @@
     
     [request shareWith:userOrGroup isUser:isUser inServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         NSData *response = (NSData*) responseObject;
-        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
-        successRequest(operation.response, request.redirectedServer);
+        //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:response];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                successRequest(operation.response, request.redirectedServer);                
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(operation.response, error);
+            }
+        }
         
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
