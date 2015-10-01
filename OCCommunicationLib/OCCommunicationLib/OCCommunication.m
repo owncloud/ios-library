@@ -1285,10 +1285,25 @@
             
             NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
             NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
+            NSArray *exactDict = [dataDict valueForKey:@"exact"];
             NSArray *usersFounded = [dataDict valueForKey:@"users"];
             NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
+            NSArray *usersExact = [exactDict valueForKey:@"users"];
+            NSArray *groupsExact = [exactDict valueForKey:@"groups"];
             
             for (NSDictionary *userFound in usersFounded) {
+                
+                OCShareUser *user = [OCShareUser new];
+                
+                NSDictionary *userValues = [userFound valueForKey:@"value"];
+                user.name = [userValues valueForKey:@"shareWith"];
+                user.isGroup = false;
+                
+                [itemList addObject:user];
+                
+            }
+            
+            for (NSDictionary *userFound in usersExact) {
                 
                 OCShareUser *user = [OCShareUser new];
                 
@@ -1311,6 +1326,19 @@
                 [itemList addObject:group];
                 
             }
+            
+            for (NSDictionary *groupFound in groupsExact) {
+                
+                OCShareUser *group = [OCShareUser new];
+                
+                NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                group.name = [groupValues valueForKey:@"shareWith"];
+                group.isGroup = true;
+                
+                [itemList addObject:group];
+                
+            }
+            
             
         }
         
