@@ -770,8 +770,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 }
 
-- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *, id))success
-    failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+    failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure {
     
     NSParameterAssert(success);
     
@@ -780,9 +780,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSString *searchQuery = [NSString stringWithFormat: @"&search=%@",searchString];
     NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
     NSString *queryType = [NSString stringWithFormat:@"&itemType=search"];
+    NSString *pagination = [NSString stringWithFormat:@"&page=%ld&perPage=%ld", (long)page, (long)resultsPerPage];
     serverPath = [serverPath stringByAppendingString:jsonQuery];
     serverPath = [serverPath stringByAppendingString:queryType];
     serverPath = [serverPath stringByAppendingString:searchQuery];
+    serverPath = [serverPath stringByAppendingString:pagination];
 
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     

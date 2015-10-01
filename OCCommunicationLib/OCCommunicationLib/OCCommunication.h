@@ -767,6 +767,8 @@ typedef enum {
  * Method to get users and groups using a search string
  *
  * @param searchString -> NSString search string
+ * @param page -> NInsteger: Number of page (pagination support)
+ * @param resultsPerPage -> NSInteger: Number of results per page (pagination support)
  * @param serverPath -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
@@ -774,7 +776,9 @@ typedef enum {
  *
  * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
  */
-- (void) searchUsersAndGroupsWith:(NSString *)searchString ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
+                   successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 #pragma mark - Queue system
