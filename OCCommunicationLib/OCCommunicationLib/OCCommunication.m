@@ -1285,65 +1285,81 @@
         if (error == nil) {
             
             NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
-            NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
-            NSArray *exactDict = [dataDict valueForKey:@"exact"];
-            NSArray *usersFounded = [dataDict valueForKey:@"users"];
-            NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
-            NSArray *usersExact = [exactDict valueForKey:@"users"];
-            NSArray *groupsExact = [exactDict valueForKey:@"groups"];
             
-            for (NSDictionary *userFound in usersFounded) {
+            NSDictionary *metaDict = [ocsDict valueForKey:@"meta"];
+            NSInteger statusCode = [[metaDict valueForKey:@"statuscode"] integerValue];
+            
+            if (statusCode == kOCShareeAPISuccessful) {
                 
-                OCShareUser *user = [OCShareUser new];
+                NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
+                NSArray *exactDict = [dataDict valueForKey:@"exact"];
+                NSArray *usersFounded = [dataDict valueForKey:@"users"];
+                NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
+                NSArray *usersExact = [exactDict valueForKey:@"users"];
+                NSArray *groupsExact = [exactDict valueForKey:@"groups"];
                 
-                NSDictionary *userValues = [userFound valueForKey:@"value"];
-                user.name = [userValues valueForKey:@"shareWith"];
-                user.isGroup = false;
+                for (NSDictionary *userFound in usersFounded) {
+                    
+                    OCShareUser *user = [OCShareUser new];
+                    
+                    NSDictionary *userValues = [userFound valueForKey:@"value"];
+                    user.name = [userValues valueForKey:@"shareWith"];
+                    user.isGroup = false;
+                    
+                    [itemList addObject:user];
+                    
+                }
                 
-                [itemList addObject:user];
+                for (NSDictionary *userFound in usersExact) {
+                    
+                    OCShareUser *user = [OCShareUser new];
+                    
+                    NSDictionary *userValues = [userFound valueForKey:@"value"];
+                    user.name = [userValues valueForKey:@"shareWith"];
+                    user.isGroup = false;
+                    
+                    [itemList addObject:user];
+                    
+                }
+                
+                for (NSDictionary *groupFound in groupsFounded) {
+                    
+                    OCShareUser *group = [OCShareUser new];
+                    
+                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                    group.name = [groupValues valueForKey:@"shareWith"];
+                    group.isGroup = true;
+                    
+                    [itemList addObject:group];
+                    
+                }
+                
+                for (NSDictionary *groupFound in groupsExact) {
+                    
+                    OCShareUser *group = [OCShareUser new];
+                    
+                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                    group.name = [groupValues valueForKey:@"shareWith"];
+                    group.isGroup = true;
+                    
+                    [itemList addObject:group];
+                    
+                }
+                
+            
+            }else{
+                
+                NSString *message = [metaDict objectForKey:@"message"];
+                
+                NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
+                failureRequest(operation.response, error);
                 
             }
             
-            for (NSDictionary *userFound in usersExact) {
-                
-                OCShareUser *user = [OCShareUser new];
-                
-                NSDictionary *userValues = [userFound valueForKey:@"value"];
-                user.name = [userValues valueForKey:@"shareWith"];
-                user.isGroup = false;
-                
-                [itemList addObject:user];
-                
-            }
-            
-            for (NSDictionary *groupFound in groupsFounded) {
-                
-                OCShareUser *group = [OCShareUser new];
-                
-                NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                group.name = [groupValues valueForKey:@"shareWith"];
-                group.isGroup = true;
-                
-                [itemList addObject:group];
-                
-            }
-            
-            for (NSDictionary *groupFound in groupsExact) {
-                
-                OCShareUser *group = [OCShareUser new];
-                
-                NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                group.name = [groupValues valueForKey:@"shareWith"];
-                group.isGroup = true;
-                
-                [itemList addObject:group];
-                
-            }
+            //Return success
+            successRequest(operation.response, itemList, request.redirectedServer);
             
         }
-        
-        //Return success
-        successRequest(operation.response, itemList, request.redirectedServer);
         
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
