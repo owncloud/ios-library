@@ -65,7 +65,11 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        [securityPolicy setValidatesDomainName:NO];
+        [securityPolicy setAllowInvalidCertificates:YES];
+        [self setSecurityPolicy:securityPolicy];
+        
         _isCookiesAvailable = NO;
         _isForbiddenCharactersAvailable = NO;
 
@@ -118,7 +122,11 @@
         //Network Queue
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        [securityPolicy setValidatesDomainName:NO];
+        [securityPolicy setAllowInvalidCertificates:YES];
+        [self setSecurityPolicy:securityPolicy];
+        
         _uploadSessionManager = uploadSessionManager;
     }
     
@@ -144,7 +152,10 @@
         _networkOperationsQueue =[NSOperationQueue new];
         [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        [self setSecurityPolicy:[AFSecurityPolicy defaultPolicy]];
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        [securityPolicy setValidatesDomainName:NO];
+        [securityPolicy setAllowInvalidCertificates:YES];
+        [self setSecurityPolicy:securityPolicy];
         
         _uploadSessionManager = uploadSessionManager;
         _downloadSessionManager = downloadSessionManager;
