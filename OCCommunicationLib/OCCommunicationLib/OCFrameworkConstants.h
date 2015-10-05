@@ -43,6 +43,9 @@
 //Version of the server that have share API
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]
 
+//Version of the server that have sharee API
+#define k_version_support_sharee_api [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
+
 //Version of the server that support cookies
 #define k_version_support_cookies [NSArray arrayWithObjects:  @"7", @"0", @"0", nil]
 

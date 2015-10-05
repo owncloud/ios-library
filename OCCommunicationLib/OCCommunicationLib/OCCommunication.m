@@ -751,8 +751,8 @@
 ///-----------------------------------
 /// @name Get if the server support share
 ///-----------------------------------
-- (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
@@ -769,6 +769,7 @@
         NSError* error=nil;
         
         BOOL hasSharedSupport = NO;
+        BOOL hasShareeSupport = NO;
         
         if (data) {
             NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
@@ -800,7 +801,12 @@
         
         hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
         
-        success(operation.response, hasSharedSupport, request.redirectedServer);
+        NSArray *firstVersionSupportSharee = k_version_support_sharee_api;
+        
+        hasShareeSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportSharee];
+        
+        success(operation.response, hasSharedSupport, hasShareeSupport, request.redirectedServer);
+        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];

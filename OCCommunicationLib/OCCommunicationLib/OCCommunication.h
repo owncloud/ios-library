@@ -549,7 +549,7 @@ typedef enum {
                      failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure;
 
 ///-----------------------------------
-/// @name Has Server Share Support
+/// @name Has Server Share and Sharee Support
 ///-----------------------------------
 
 /**
@@ -558,12 +558,12 @@ typedef enum {
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return BOOL in the success about the support
+ * @return BOOL in the success about the support of Share and Sharee APIs
  *
  */
-- (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
+- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                         successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
+                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name Has Server Cookies Support
