@@ -1,4 +1,18 @@
-What's the new in 1.1.4 version
+What's the new in 1.5 version
+---------------
+
+- Added support to work with Sharee API (New server API from version 8.2 to manage users and groups)
+
+ + Update the method "- (void) hasServerShareSupport:..." in order to get also if the server support "sharee api". Now the method is called "- (void) hasServerShareAndShareeSupport:..." and return in the block "BOOL hasShareSupport, BOOL hasShareeSupport" boolean properties. 
+ + Search users and groups. New method that return a list of "OCShareUser" objects using a search string: "- (void) searchUsersAndGroupsWith...". Used to get lists of users and group in order to share files or folders with them using the new "shareWith" method. 
+ + New object class called "OCShareUser" that it used to store users or groups.
+ + New method share with users: "- (void)shareWith:...". Using the name property of the OCShare object you can share file or folders with users or groups.
+  
+
+Previous changes:
+---------------
+
+-  1.1.4 version
 ---------------
 
 Added token support in read folder method for multiaccount. In order to differenciate the user account in the response from the server side we have added token support, for the moment only in the readFolder method.
@@ -14,10 +28,6 @@ We can use that to send as a parameter on readFolder method. Also if only we hav
      successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token)) failureRequest;
 
-
-
-Previous changes:
----------------
 
 -  1.1.3 version
 ---------------
