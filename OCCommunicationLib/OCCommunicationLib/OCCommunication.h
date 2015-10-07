@@ -96,6 +96,10 @@ typedef enum {
  */
 -(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
 
+
+- (AFSecurityPolicy *) createSecurityPolicy;
+
+
 #pragma mark - Credentials
 
 ///-----------------------------------

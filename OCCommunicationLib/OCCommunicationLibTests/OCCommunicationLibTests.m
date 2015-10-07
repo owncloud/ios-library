@@ -73,9 +73,9 @@
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
     
-    AFSecurityPolicy *unitTestSecurityPolicy = [AFSecurityPolicy defaultPolicy];
-    unitTestSecurityPolicy.allowInvalidCertificates = YES;
-    [_sharedOCCommunication setSecurityPolicy:unitTestSecurityPolicy];
+//    AFSecurityPolicy *unitTestSecurityPolicy = [AFSecurityPolicy defaultPolicy];
+//    unitTestSecurityPolicy.allowInvalidCertificates = YES;
+    [_sharedOCCommunication setSecurityPolicy:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
     [self createFolderWithName:_configTests.pathTestFolder];
@@ -239,11 +239,11 @@
         NSLog(@"Folder created");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-        XCTFail(@"Error testCreateFolder: %@", error);
+        XCTFail(@"Error testCreateFolder failureRequest: %@", error);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error testCreateFolder: %@", error);
+        XCTFail(@"Error testCreateFolder beforeRequest: %@", error);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
