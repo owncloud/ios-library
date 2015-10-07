@@ -73,8 +73,6 @@
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
     
-//    AFSecurityPolicy *unitTestSecurityPolicy = [AFSecurityPolicy defaultPolicy];
-//    unitTestSecurityPolicy.allowInvalidCertificates = YES;
     [_sharedOCCommunication setSecurityPolicy:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
