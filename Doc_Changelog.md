@@ -10,7 +10,7 @@ What's the new in 1.5 version
 
 - Updated AFNetworking library v2.6.0
 
-- Modified security policy to fix some issues with requests that were canceled after a while using self signed servers.
+- Modified security policy properties to fix some issues with requests that were canceled after a while using self signed servers.
   
 
 Previous changes:
