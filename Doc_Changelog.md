@@ -7,6 +7,10 @@ What's the new in 1.5 version
  + Search users and groups. New method that return a list of "OCShareUser" objects using a search string: "- (void) searchUsersAndGroupsWith...". Used to get lists of users and group in order to share files or folders with them using the new "shareWith" method. 
  + New object class called "OCShareUser" that it used to store users or groups.
  + New method share with users: "- (void)shareWith:...". Using the name property of the OCShare object you can share file or folders with users or groups.
+
+- Updated AFNetworking library v2.6.0
+
+- Modified security policy to fix some issues with requests that were canceled after a while using self signed servers.
   
 
 Previous changes:
