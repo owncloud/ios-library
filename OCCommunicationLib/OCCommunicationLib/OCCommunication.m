@@ -1321,7 +1321,15 @@
                     OCShareUser *user = [OCShareUser new];
                     
                     NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    user.name = [userValues valueForKey:@"shareWith"];
+                    
+                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userValues valueForKey:@"shareWith"];
+                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.name = [userValues valueForKey:@"shareWith"];
+                    }
+                    
+                    
                     user.isGroup = false;
                     
                     [itemList addObject:user];
@@ -1333,7 +1341,12 @@
                     OCShareUser *user = [OCShareUser new];
                     
                     NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    user.name = [userValues valueForKey:@"shareWith"];
+                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userValues valueForKey:@"shareWith"];
+                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.name = [userValues valueForKey:@"shareWith"];
+                    }
                     user.isGroup = false;
                     
                     [itemList addObject:user];
@@ -1345,7 +1358,12 @@
                     OCShareUser *group = [OCShareUser new];
                     
                     NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    group.name = [groupValues valueForKey:@"shareWith"];
+                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
+                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        group.name = [groupValues valueForKey:@"shareWith"];
+                    }
                     group.isGroup = true;
                     
                     [itemList addObject:group];
@@ -1357,7 +1375,12 @@
                     OCShareUser *group = [OCShareUser new];
                     
                     NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    group.name = [groupValues valueForKey:@"shareWith"];
+                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
+                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        group.name = [groupValues valueForKey:@"shareWith"];
+                    }
                     group.isGroup = true;
                     
                     [itemList addObject:group];
@@ -1367,7 +1390,7 @@
             
             }else{
                 
-                NSString *message = [metaDict objectForKey:@"message"];
+                NSString *message = (NSString*)[metaDict objectForKey:@"message"];
                 
                 NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
                 failureRequest(operation.response, error);
