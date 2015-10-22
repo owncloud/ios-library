@@ -40,6 +40,7 @@
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
+#define k_group_sharee_type 1
 
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
@@ -691,7 +692,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSInteger shareType = 0;
     
     if (isGroup == true) {
-        shareType = 1;
+        shareType = k_group_sharee_type;
     }
     
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@",filePath, (long)shareType, userOrGroup];

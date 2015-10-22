@@ -562,7 +562,7 @@ typedef enum {
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return BOOL in the success about the support of Share and Sharee APIs
+ * @return BOOL in the success about the support of Share (hasShareSupport) and Sharee (hasShareeSupport) APIs
  *
  */
 - (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
