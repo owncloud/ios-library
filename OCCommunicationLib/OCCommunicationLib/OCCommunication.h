@@ -2,7 +2,7 @@
 //  OCCommunication.h
 //  Owncloud iOs Client
 //
-// Copyright (C) 2014 ownCloud Inc. (http://www.owncloud.org/)
+// Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -553,7 +553,7 @@ typedef enum {
                      failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure;
 
 ///-----------------------------------
-/// @name Has Server Share Support
+/// @name Has Server Share and Sharee Support
 ///-----------------------------------
 
 /**
@@ -562,12 +562,12 @@ typedef enum {
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return BOOL in the success about the support
+ * @return BOOL in the success about the support of Share (hasShareSupport) and Sharee (hasShareeSupport) APIs
  *
  */
-- (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
+- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                         successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
+                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name Has Server Cookies Support
@@ -683,6 +683,29 @@ typedef enum {
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
+
+
+///-----------------------------------
+/// @name shareWith
+///-----------------------------------
+
+/**
+ * Method to share a file or folder with user or group
+ *
+ * @param userOrGroup -> NSString user or group name
+ * @param isGroup -> BOOL To difference between user or groups
+ * @param serverPath -> NSString server path
+ * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return request response, error if exists and redirected server if exist.
+ *
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+   successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error))failureRequest;
+
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
 ///-----------------------------------
@@ -738,6 +761,29 @@ typedef enum {
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+
+///-----------------------------------
+/// @name Search Users And Groups
+///-----------------------------------
+
+/**
+ * Method to get users and groups using a search string
+ *
+ * @param searchString -> NSString search string
+ * @param page -> NInsteger: Number of page (pagination support)
+ * @param resultsPerPage -> NSInteger: Number of results per page (pagination support)
+ * @param serverPath -> NSString server path
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return itemList -> list of OCShareUser objects and default -> request response, error if exists and redirected server if exist
+ *
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
+                   successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
 
 #pragma mark - Queue system
 /*

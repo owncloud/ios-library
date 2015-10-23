@@ -1,8 +1,10 @@
 //
-//  OCErrorMsg.h
-//  Owncloud iOs Client
+//  OCShareUser.h
+//  ownCloud iOS library
 //
-// Copyright (C) 2014 ownCloud Inc. (http://www.owncloud.org/)
+//  Created by Gonzalo Gonzalez on 28/9/15.
+//
+// Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+//
 
+#import <Foundation/Foundation.h>
 
-#define kOCErrorServerUnauthorized 401
-#define kOCErrorServerForbidden 403
-#define kOCErrorServerPathNotFound 404
-#define kOCErrorServerMethodNotPermitted 405
-#define kOCErrorProxyAuth 407
-#define kOCErrorServerTimeout 408
-#define kOCErrorServerInternalError 500
+@interface OCShareUser : NSObject
 
-#define kOCErrorSharedAPIWrong 400
-//In the server we received a 403 also when the server is enforce to set a password. 
-#define kOCErrorSharedAPIUploadDisabled 403
-#define kOCErrorSharedAPINotUpdateShare 404
-#define kOCSharedAPISuccessful 100
-#define kOCShareeAPISuccessful 200
+@property (nonatomic, strong) NSString *name;
+@property BOOL isGroup;
 
-typedef enum {
-    OCServerErrorForbiddenCharacters = 101,
-} OCServerErrorEnum;
+@end

@@ -40,6 +40,7 @@
 #define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
+#define k_group_sharee_type 1
 
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
@@ -678,6 +679,32 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+                                success:(void(^)(OCHTTPRequestOperation *, id))success
+                                failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
+    NSParameterAssert(success);
+    
+    _requestMethod = @"POST";
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    //Parameters
+    NSInteger shareType = 0;
+    
+    if (isGroup == true) {
+        shareType = k_group_sharee_type;
+    }
+    
+    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@",filePath, (long)shareType, userOrGroup];
+    [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
+    
+    [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+}
+
 
 - (void)unShareFileOrFolderByServer:(NSString *)serverPath
                         onCommunication:(OCCommunication *)sharedOCCommunication
@@ -741,6 +768,33 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCCommunication];
     
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
+    
+}
+
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+    failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure {
+    
+    NSParameterAssert(success);
+    
+    _requestMethod = @"GET";
+    
+    NSString *searchQuery = [NSString stringWithFormat: @"&search=%@",searchString];
+    NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
+    NSString *queryType = [NSString stringWithFormat:@"&itemType=search"];
+    NSString *pagination = [NSString stringWithFormat:@"&page=%ld&perPage=%ld", (long)page, (long)resultsPerPage];
+    serverPath = [serverPath stringByAppendingString:jsonQuery];
+    serverPath = [serverPath stringByAppendingString:queryType];
+    serverPath = [serverPath stringByAppendingString:searchQuery];
+    serverPath = [serverPath stringByAppendingString:pagination];
+
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCComunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCComunication];
+    
+    [sharedOCComunication addOperationToTheNetworkQueue:operation];
+    
     
 }
 

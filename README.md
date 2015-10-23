@@ -1,4 +1,4 @@
-# ownCloud iOS Library v 1.1.4
+# ownCloud iOS Library v 1.1.5
 
 ### Introduction
 Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
@@ -34,6 +34,8 @@ __Library Classes__
 * OCFrameworkConstants.h (Customize constants)
 * OCSharedDto.h 
 * OCSharedDto.m
+* OCShareUser.h
+* OCShareUser.m
 
 __Step 2.__  Add the library file in your project.  Link the library file in your project target. "build phases" -> "Link binary with libraries" and tap in "+" and select the library file.
 
@@ -90,7 +92,7 @@ Source: http://nvie.com/posts/a-successful-git-branching-model
 
 ownCloud iOS library is available under the MIT License. 
  
-Copyright (c) 2014 ownCloud (http://www.owncloud.org/)
+Copyright (c) 2015 ownCloud (http://www.owncloud.org/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -114,10 +116,6 @@ ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/D
 
 ### Compatibility
 
-ownCloud iOS library supports both iOS 7 and iOS 8 and works in Xcode 6.
+ownCloud iOS library supports iOS 7, iOS 8 and iOS 9 and works in Xcode 7.
 
 ownCloud iOS library supports ownCloud server from version 4.5.
-
-
-
-

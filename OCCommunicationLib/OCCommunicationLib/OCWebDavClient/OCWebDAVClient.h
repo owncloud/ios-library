@@ -4,7 +4,7 @@
 //
 // This class is based in https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes.
 //
-// Copyright (C) 2014 ownCloud Inc. (http://www.owncloud.org/)
+// Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -396,6 +396,27 @@ extern NSString *OCWebDAVModificationDateKey;
                           success:(void(^)(OCHTTPRequestOperation *, id))success
                           failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
+
+///-----------------------------------
+/// @name shareWith
+///-----------------------------------
+
+/**
+ * Method to share a file or folder with user and group
+ *
+ * @param userOrGroup -> NSString: user or group (You can get the shares id in the calls searchUsersAndGroupsWith....)
+ * @param isGroup -> BOOL: to difference between users and groups
+ * @param serverPath -> NSString: Server path where we want to share a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v2.php/apps/files_sharing/api/v1/sharees?format=json
+ * @param filePath -> NSString: Path of the server where is the file. Ex: /File.pdf
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ *
+ */
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+          success:(void(^)(OCHTTPRequestOperation *, id))success
+          failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
 ///-----------------------------------
@@ -447,4 +468,23 @@ extern NSString *OCWebDAVModificationDateKey;
          onCommunication:(OCCommunication *)sharedOCCommunication
                  success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                  failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
+///-----------------------------------
+/// @name searchUsersAndGroupsWith
+///-----------------------------------
+
+/**
+ * Method to search users or groups
+ *
+ * @param searchString -> NSString: Search string
+ * @param serverPath -> NSString: Server path with the id of the file or folder that we want know if is shared Ex: http://10.40.40.20/owncloud/ocs/v2.php/apps/files_sharing/api/v1/sharees?format=json
+ * @param page -> NSInteger: Number of page of the results (pagination support)
+ * @param resultsPerPage -> NSInteger: Number of results per page (pagination support)
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ */
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
+                          success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                          failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 @end
