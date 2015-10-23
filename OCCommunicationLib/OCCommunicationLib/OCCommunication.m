@@ -2,7 +2,7 @@
 //  OCCommunication.m
 //  Owncloud iOs Client
 //
-// Copyright (C) 2014 ownCloud Inc. (http://www.owncloud.org/)
+// Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
+#import "OCShareUser.h"
 
 @interface OCCommunication ()
 
@@ -762,8 +763,8 @@
 ///-----------------------------------
 /// @name Get if the server support share
 ///-----------------------------------
-- (void) hasServerShareSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
+- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
                 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
@@ -780,6 +781,7 @@
         NSError* error=nil;
         
         BOOL hasSharedSupport = NO;
+        BOOL hasShareeSupport = NO;
         
         if (data) {
             NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
@@ -811,7 +813,12 @@
         
         hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
         
-        success(operation.response, hasSharedSupport, request.redirectedServer);
+        NSArray *firstVersionSupportSharee = k_version_support_sharee_api;
+        
+        hasShareeSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportSharee];
+        
+        success(operation.response, hasSharedSupport, hasShareeSupport, request.redirectedServer);
+        
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
@@ -1112,6 +1119,50 @@
     }];
 }
 
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+          successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+          failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error))failureRequest{
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        NSData *response = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+        //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:response];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                successRequest(operation.response, request.redirectedServer);                
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(operation.response, error);
+            }
+        }
+        
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        
+        failureRequest(operation.response, error);
+        
+        
+    }];
+    
+}
+
 - (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
@@ -1226,6 +1277,135 @@
          failureRequest(operation.response, error);
     }];
     
+}
+
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_access_sharee_api];
+    
+    searchString = [searchString encodeString:NSUTF8StringEncoding];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    
+    [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *response = (NSData*) responseObject;
+        NSMutableArray *itemList = [NSMutableArray new];
+        
+        //Parse
+        NSError *error;
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        
+        if (error == nil) {
+            
+            NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
+            
+            NSDictionary *metaDict = [ocsDict valueForKey:@"meta"];
+            NSInteger statusCode = [[metaDict valueForKey:@"statuscode"] integerValue];
+            
+            if (statusCode == kOCShareeAPISuccessful) {
+                
+                NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
+                NSArray *exactDict = [dataDict valueForKey:@"exact"];
+                NSArray *usersFounded = [dataDict valueForKey:@"users"];
+                NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
+                NSArray *usersExact = [exactDict valueForKey:@"users"];
+                NSArray *groupsExact = [exactDict valueForKey:@"groups"];
+                
+                for (NSDictionary *userFound in usersFounded) {
+                    
+                    OCShareUser *user = [OCShareUser new];
+                    
+                    NSDictionary *userValues = [userFound valueForKey:@"value"];
+                    
+                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userValues valueForKey:@"shareWith"];
+                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.name = [userValues valueForKey:@"shareWith"];
+                    }
+                    
+                    
+                    user.isGroup = false;
+                    
+                    [itemList addObject:user];
+                    
+                }
+                
+                for (NSDictionary *userFound in usersExact) {
+                    
+                    OCShareUser *user = [OCShareUser new];
+                    
+                    NSDictionary *userValues = [userFound valueForKey:@"value"];
+                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userValues valueForKey:@"shareWith"];
+                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.name = [userValues valueForKey:@"shareWith"];
+                    }
+                    user.isGroup = false;
+                    
+                    [itemList addObject:user];
+                    
+                }
+                
+                for (NSDictionary *groupFound in groupsFounded) {
+                    
+                    OCShareUser *group = [OCShareUser new];
+                    
+                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
+                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        group.name = [groupValues valueForKey:@"shareWith"];
+                    }
+                    group.isGroup = true;
+                    
+                    [itemList addObject:group];
+                    
+                }
+                
+                for (NSDictionary *groupFound in groupsExact) {
+                    
+                    OCShareUser *group = [OCShareUser new];
+                    
+                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
+                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        group.name = [groupValues valueForKey:@"shareWith"];
+                    }
+                    group.isGroup = true;
+                    
+                    [itemList addObject:group];
+                    
+                }
+                
+            
+            }else{
+                
+                NSString *message = (NSString*)[metaDict objectForKey:@"message"];
+                
+                NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
+                failureRequest(operation.response, error);
+                
+            }
+            
+            //Return success
+            successRequest(operation.response, itemList, request.redirectedServer);
+            
+        }
+        
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        failureRequest(operation.response, error);
+    }];
 }
 
 
