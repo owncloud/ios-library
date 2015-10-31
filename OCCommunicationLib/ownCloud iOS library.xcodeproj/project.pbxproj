@@ -21,6 +21,32 @@
 		59A5B722191907F100724BE3 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B717191907F100724BE3 /* AFURLRequestSerialization.m */; };
 		59A5B723191907F100724BE3 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */; };
 		59A5B724191907F100724BE3 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B71B191907F100724BE3 /* AFURLSessionManager.m */; };
+		95562E241BE57D2D006222C3 /* OCFileDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAA31183E688900909831 /* OCFileDto.m */; };
+		95562E261BE57D37006222C3 /* OCCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC933183E150000B6A4B4 /* OCCommunication.m */; };
+		95562E271BE57D3E006222C3 /* OCSharedDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA8635187C211900A10927 /* OCSharedDto.m */; };
+		95562E281BE57D57006222C3 /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
+		95562E291BE57D5B006222C3 /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
+		95562E2A1BE57D5F006222C3 /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
+		95562E2B1BE57D69006222C3 /* OCXMLSharedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 131C67B8187C3E360009030E /* OCXMLSharedParser.m */; };
+		95562E2C1BE57D6D006222C3 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA863F187C3B9700A10927 /* OCXMLParser.m */; };
+		95562E2D1BE57D71006222C3 /* OCXMLShareByLinkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1345E45F1884213400153F14 /* OCXMLShareByLinkParser.m */; };
+		95562E2E1BE57D75006222C3 /* OCXMLServerErrorsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA73DC821B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m */; };
+		95562E2F1BE57D79006222C3 /* NSDate+ISO8601.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC91E183E14A100B6A4B4 /* NSDate+ISO8601.m */; };
+		95562E301BE57D7E006222C3 /* NSDate+RFC1123.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC920183E14A100B6A4B4 /* NSDate+RFC1123.m */; };
+		95562E311BE57D82006222C3 /* OCHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC923183E14A100B6A4B4 /* OCHTTPRequestOperation.m */; };
+		95562E321BE57D86006222C3 /* OCWebDAVClient.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC925183E14A100B6A4B4 /* OCWebDAVClient.m */; };
+		95562E331BE57D8C006222C3 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
+		95562E341BE57D90006222C3 /* UtilsFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC911183E146000B6A4B4 /* UtilsFramework.m */; };
+		95562E351BE57E31006222C3 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B70A191907F100724BE3 /* AFHTTPRequestOperation.m */; };
+		95562E361BE57E34006222C3 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B70C191907F100724BE3 /* AFHTTPRequestOperationManager.m */; };
+		95562E371BE57E37006222C3 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B70E191907F100724BE3 /* AFHTTPSessionManager.m */; };
+		95562E381BE57E3B006222C3 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B711191907F100724BE3 /* AFNetworkReachabilityManager.m */; };
+		95562E391BE57E3F006222C3 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B713191907F100724BE3 /* AFSecurityPolicy.m */; };
+		95562E3A1BE57E42006222C3 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B715191907F100724BE3 /* AFURLConnectionOperation.m */; };
+		95562E3B1BE57E46006222C3 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B717191907F100724BE3 /* AFURLRequestSerialization.m */; };
+		95562E3C1BE57E4A006222C3 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */; };
+		95562E3D1BE57E4E006222C3 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B71B191907F100724BE3 /* AFURLSessionManager.m */; };
+		95562E3E1BE57F16006222C3 /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		EA73DC831B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA73DC821B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
 		EA7CC8A9183E11E600B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC8A8183E11E600B6A4B4 /* XCTest.framework */; };
@@ -67,6 +93,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		95562E191BE57D06006222C3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC895183E11E600B6A4B4 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -109,6 +144,7 @@
 		59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLResponseSerialization.m; path = ExternalLibs/AFNetworking/AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		59A5B71A191907F100724BE3 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFURLSessionManager.h; path = ExternalLibs/AFNetworking/AFURLSessionManager.h; sourceTree = "<group>"; };
 		59A5B71B191907F100724BE3 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLSessionManager.m; path = ExternalLibs/AFNetworking/AFURLSessionManager.m; sourceTree = "<group>"; };
+		95562E1B1BE57D06006222C3 /* libownCloud tvOS library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libownCloud tvOS library.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA73DC811B1C48EA00C3AC21 /* OCXMLServerErrorsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLServerErrorsParser.h; path = OCWebDavClient/Parsers/OCXMLServerErrorsParser.h; sourceTree = "<group>"; };
 		EA73DC821B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCXMLServerErrorsParser.m; path = OCWebDavClient/Parsers/OCXMLServerErrorsParser.m; sourceTree = "<group>"; };
 		EA7CC897183E11E600B6A4B4 /* libownCloudiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libownCloudiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +187,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		95562E181BE57D06006222C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC894183E11E600B6A4B4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -204,6 +247,7 @@
 			children = (
 				EA7CC897183E11E600B6A4B4 /* libownCloudiOS.a */,
 				EA7CC8A7183E11E600B6A4B4 /* ownCloud iOS libraryTests.xctest */,
+				95562E1B1BE57D06006222C3 /* libownCloud tvOS library.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -356,6 +400,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		95562E1A1BE57D06006222C3 /* ownCloud tvOS library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 95562E231BE57D06006222C3 /* Build configuration list for PBXNativeTarget "ownCloud tvOS library" */;
+			buildPhases = (
+				95562E171BE57D06006222C3 /* Sources */,
+				95562E181BE57D06006222C3 /* Frameworks */,
+				95562E191BE57D06006222C3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ownCloud tvOS library";
+			productName = "ownCloud tvOS library";
+			productReference = 95562E1B1BE57D06006222C3 /* libownCloud tvOS library.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EA7CC8BA183E11E600B6A4B4 /* Build configuration list for PBXNativeTarget "ownCloud iOS library" */;
@@ -399,6 +460,11 @@
 			attributes = {
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = ownCloud;
+				TargetAttributes = {
+					95562E1A1BE57D06006222C3 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+				};
 			};
 			buildConfigurationList = EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -413,6 +479,7 @@
 			projectRoot = "";
 			targets = (
 				EA7CC896183E11E600B6A4B4 /* ownCloud iOS library */,
+				95562E1A1BE57D06006222C3 /* ownCloud tvOS library */,
 				EA7CC8A6183E11E600B6A4B4 /* ownCloud iOS libraryTests */,
 			);
 		};
@@ -432,6 +499,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		95562E171BE57D06006222C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95562E3D1BE57E4E006222C3 /* AFURLSessionManager.m in Sources */,
+				95562E3A1BE57E42006222C3 /* AFURLConnectionOperation.m in Sources */,
+				95562E271BE57D3E006222C3 /* OCSharedDto.m in Sources */,
+				95562E371BE57E37006222C3 /* AFHTTPSessionManager.m in Sources */,
+				95562E381BE57E3B006222C3 /* AFNetworkReachabilityManager.m in Sources */,
+				95562E301BE57D7E006222C3 /* NSDate+RFC1123.m in Sources */,
+				95562E2E1BE57D75006222C3 /* OCXMLServerErrorsParser.m in Sources */,
+				95562E2C1BE57D6D006222C3 /* OCXMLParser.m in Sources */,
+				95562E281BE57D57006222C3 /* OCChunkDto.m in Sources */,
+				95562E391BE57E3F006222C3 /* AFSecurityPolicy.m in Sources */,
+				95562E261BE57D37006222C3 /* OCCommunication.m in Sources */,
+				95562E321BE57D86006222C3 /* OCWebDAVClient.m in Sources */,
+				95562E341BE57D90006222C3 /* UtilsFramework.m in Sources */,
+				95562E361BE57E34006222C3 /* AFHTTPRequestOperationManager.m in Sources */,
+				95562E291BE57D5B006222C3 /* OCChunkInputStream.m in Sources */,
+				95562E2F1BE57D79006222C3 /* NSDate+ISO8601.m in Sources */,
+				95562E311BE57D82006222C3 /* OCHTTPRequestOperation.m in Sources */,
+				95562E2B1BE57D69006222C3 /* OCXMLSharedParser.m in Sources */,
+				95562E2D1BE57D71006222C3 /* OCXMLShareByLinkParser.m in Sources */,
+				95562E3E1BE57F16006222C3 /* ConfigTests.m in Sources */,
+				95562E331BE57D8C006222C3 /* NSString+Encode.m in Sources */,
+				95562E2A1BE57D5F006222C3 /* OCUploadOperation.m in Sources */,
+				95562E3B1BE57E46006222C3 /* AFURLRequestSerialization.m in Sources */,
+				95562E351BE57E31006222C3 /* AFHTTPRequestOperation.m in Sources */,
+				95562E3C1BE57E4A006222C3 /* AFURLResponseSerialization.m in Sources */,
+				95562E241BE57D2D006222C3 /* OCFileDto.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EA7CC893183E11E600B6A4B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -506,6 +606,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		95562E211BE57D06006222C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		95562E221BE57D06006222C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 		EA7CC8B8183E11E600B6A4B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -647,6 +783,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		95562E231BE57D06006222C3 /* Build configuration list for PBXNativeTarget "ownCloud tvOS library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95562E211BE57D06006222C3 /* Debug */,
+				95562E221BE57D06006222C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
