@@ -10,4 +10,22 @@
 
 @implementation OCCapabilities
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.idUser = 0;
+        self.versionMajor = 0;
+        self.versionMinor = 0;
+        self.versionMicro = 0;
+        self.versionString = @"";
+        self.versionEdition = @"";
+        self.corePollInterval = 0;
+        self.filesSharingExpireDateDaysNumber = 0;
+        
+    }
+    return self;
+}
+
+
+
 @end
