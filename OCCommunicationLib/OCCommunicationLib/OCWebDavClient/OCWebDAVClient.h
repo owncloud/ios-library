@@ -487,4 +487,7 @@ extern NSString *OCWebDAVModificationDateKey;
 - (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
                           success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                           failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                         failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 @end

@@ -28,6 +28,7 @@
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
+@class OCCapabilities;
 
 
 @interface OCCommunication : NSObject
@@ -783,6 +784,8 @@ typedef enum {
 - (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
                    successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 #pragma mark - Queue system

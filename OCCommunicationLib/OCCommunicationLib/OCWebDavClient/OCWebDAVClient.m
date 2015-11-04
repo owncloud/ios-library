@@ -798,6 +798,25 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
 }
 
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                         failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure{
+    _requestMethod = @"GET";
+    
+    NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
+    serverPath = [serverPath stringByAppendingString:jsonQuery];
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCComunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCComunication];
+    
+    [sharedOCComunication addOperationToTheNetworkQueue:operation];
+
+    
+}
+
+
 #pragma mark - Manage Redirections
 
 - (OCHTTPRequestOperation *) setRedirectionBlockOnOperation:(OCHTTPRequestOperation *) operation withOCCommunication: (OCCommunication *) sharedOCCommunication {
