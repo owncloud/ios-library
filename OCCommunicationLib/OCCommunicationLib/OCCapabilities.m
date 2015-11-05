@@ -13,7 +13,6 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.idUser = 0;
         self.versionMajor = 0;
         self.versionMinor = 0;
         self.versionMicro = 0;

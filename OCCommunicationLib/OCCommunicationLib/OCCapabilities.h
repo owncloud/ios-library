@@ -10,9 +10,6 @@
 
 @interface OCCapabilities : NSObject
 
-//The relation between the user and the capabilities. For use in the App
-@property (nonatomic) NSInteger idUser;
-
 /*VERSION*/
 @property (nonatomic) NSInteger versionMajor;
 @property (nonatomic) NSInteger versionMinor;
@@ -29,14 +26,18 @@
 
 @property (nonatomic) BOOL isFilesSharingAPIEnabled;
 
-//Share Link features
+//SHARE LINK FEATURES
 @property (nonatomic) BOOL isFilesSharingShareLinkEnabled;
+
+//Share Link with password
 @property (nonatomic) BOOL isFilesSharingPasswordEnforcedEnabled;
 
+//Share Link with expiration date
 @property (nonatomic) BOOL isFilesSharingExpireDateByDefaultEnabled;
 @property (nonatomic) BOOL isFilesSharingExpireDateEnforceEnabled;
 @property (nonatomic) NSInteger filesSharingExpireDateDaysNumber;
 
+//Other share link features
 @property (nonatomic) BOOL isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled;
 @property (nonatomic) BOOL isFilesSharingAllowPublicUploadsEnabled;
 
