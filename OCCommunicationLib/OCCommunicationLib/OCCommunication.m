@@ -761,12 +761,9 @@
     }];
 }
 
-///-----------------------------------
-/// @name Get if the server support share
-///-----------------------------------
-- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
+- (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer)) success
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = _securityPolicy;
@@ -789,7 +786,13 @@
                 
                 self.currentServerVersion = [jsonArray valueForKey:@"version"];
                 
-                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared], [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api], request.redirectedServer);
+                BOOL hasShareSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared];
+                BOOL hasShareeSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api];
+                BOOL hasCookiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_cookies];
+                BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters];
+                BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_capabilities];
+                
+                success(operation.response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
             }
             
         } else {
@@ -802,91 +805,10 @@
         failure(operation.response, error);
     }];
 
-   
+    
+    
+    
 }
-
-///-----------------------------------
-/// @name Get if the server support cookies
-///-----------------------------------
-- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    
-    if (self.userAgent) {
-        [request setUserAgent:self.userAgent];
-    }
-    
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        
-        if (responseObject) {
-            
-            NSError* error = nil;
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
-            
-            if(error) {
-                // NSLog(@"Error parsing JSON: %@", error);
-                failure(operation.response, operation.error);
-            }else{
-                
-                self.currentServerVersion = [jsonArray valueForKey:@"version"];
-                
-                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_cookies], request.redirectedServer);
-            }
-            
-        } else {
-            // NSLog(@"Error parsing JSON: data is null");
-            failure(operation.response, operation.error);
-        }
-        
-        
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error);
-    }];
-}
-
-///-----------------------------------
-/// @name Get if the server has forbidden characters handling support
-///-----------------------------------
-- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    
-    if (self.userAgent) {
-        [request setUserAgent:self.userAgent];
-    }
-    
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        
-        if (responseObject) {
-            
-            NSError* error = nil;
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
-            
-            if(error) {
-               // NSLog(@"Error parsing JSON: %@", error);
-                failure(operation.response, operation.error);
-            }else{
-            
-                self.currentServerVersion = [jsonArray valueForKey:@"version"];
-                
-                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters], request.redirectedServer);
-            }
-            
-        } else {
-           // NSLog(@"Error parsing JSON: data is null");
-            failure(operation.response, operation.error);
-        }
-
-        
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error);
-    }];
-}
-
 
 
 - (void) readSharedByServer: (NSString *) path
