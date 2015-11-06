@@ -305,7 +305,7 @@ extern NSString *OCWebDAVModificationDateKey;
 
 
 ///-----------------------------------
-/// @name Get the status of the server
+/// @name Get status of the server
 ///-----------------------------------
 
 /**
@@ -317,9 +317,9 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void) getTheStatusOfTheServer:(NSString *)serverPath onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
-                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
+- (void) getStatusOfTheServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
+                      failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 
 ///-----------------------------------
 /// @name Get All the shared files and folders of a server

@@ -716,7 +716,7 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
         NSData *data = (NSData*) responseObject;
         NSString *versionString = [NSString new];
@@ -774,55 +774,35 @@
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
     }
-   
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error=nil;
-        
-        BOOL hasSharedSupport = NO;
-        BOOL hasShareeSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+        if (responseObject) {
+            
+            NSError* error = nil;
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
+            
             if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
+                // NSLog(@"Error parsing JSON: %@", error);
+                failure(operation.response, operation.error);
+            }else{
+                
+                self.currentServerVersion = [jsonArray valueForKey:@"version"];
+                
+                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared], [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api], request.redirectedServer);
             }
+            
         } else {
-            NSLog(@"Error parsing JSON: data is null");
+            // NSLog(@"Error parsing JSON: data is null");
+            failure(operation.response, operation.error);
         }
         
-        
-        
-        // NSLog(@"version string: %@", versionString);
-        
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportShared = k_version_support_shared;
-        
-        hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
-        
-        NSArray *firstVersionSupportSharee = k_version_support_sharee_api;
-        
-        hasShareeSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportSharee];
-        
-        success(operation.response, hasSharedSupport, hasShareeSupport, request.redirectedServer);
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
+
+   
 }
 
 ///-----------------------------------
@@ -838,43 +818,29 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error=nil;
-        
-        BOOL hasCookiesSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+        if (responseObject) {
+            
+            NSError* error = nil;
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
+            
             if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
+                // NSLog(@"Error parsing JSON: %@", error);
+                failure(operation.response, operation.error);
+            }else{
+                
+                self.currentServerVersion = [jsonArray valueForKey:@"version"];
+                
+                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_cookies], request.redirectedServer);
             }
+            
         } else {
-            NSLog(@"Error parsing JSON: data is null");
+            // NSLog(@"Error parsing JSON: data is null");
+            failure(operation.response, operation.error);
         }
         
-        // NSLog(@"version string: %@", versionString);
         
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportCookies = k_version_support_cookies;
-        
-        hasCookiesSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
-        
-        success(operation.response, hasCookiesSupport, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
@@ -893,47 +859,34 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error = nil;
-        
-        BOOL hasForbiddenSharactersSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+        if (responseObject) {
+            
+            NSError* error = nil;
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
+            
             if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
+               // NSLog(@"Error parsing JSON: %@", error);
+                failure(operation.response, operation.error);
+            }else{
+            
+                self.currentServerVersion = [jsonArray valueForKey:@"version"];
+                
+                success(operation.response, [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters], request.redirectedServer);
             }
+            
         } else {
-            NSLog(@"Error parsing JSON: data is null");
+           // NSLog(@"Error parsing JSON: data is null");
+            failure(operation.response, operation.error);
         }
+
         
-        // NSLog(@"version string: %@", versionString);
-        
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportCookies = k_version_support_forbidden_characters;
-        
-        hasForbiddenSharactersSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
-        
-        success(operation.response, hasForbiddenSharactersSupport, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
 }
+
 
 
 - (void) readSharedByServer: (NSString *) path

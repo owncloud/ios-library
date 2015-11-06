@@ -584,9 +584,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
-- (void) getTheStatusOfTheServer:(NSString *)serverPath onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
-                            failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure  {
+- (void) getStatusOfTheServer:(NSString *)serverPath onCommunication:
+(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
+                            failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure  {
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", serverPath, k_server_information_json];
     
