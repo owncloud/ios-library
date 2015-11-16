@@ -1307,7 +1307,7 @@
             NSDictionary *metaDict = [ocsDict valueForKey:@"meta"];
             NSInteger statusCode = [[metaDict valueForKey:@"statuscode"] integerValue];
             
-            if (statusCode == kOCShareeAPISuccessful) {
+            if (statusCode == kOCShareeAPISuccessful || statusCode == kOCSharedAPISuccessful) {
                 
                 NSDictionary *dataDict = [ocsDict valueForKey:@"data"];
                 NSArray *exactDict = [dataDict valueForKey:@"exact"];
@@ -1391,6 +1391,10 @@
             }else{
                 
                 NSString *message = (NSString*)[metaDict objectForKey:@"message"];
+                
+                if ([message isKindOfClass:[NSNull class]]) {
+                    message = @"";
+                }
                 
                 NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
                 failureRequest(operation.response, error);
