@@ -187,12 +187,12 @@
  * Method to detect if a server version is higher than a limit version.
  * This methos is used for example to know if the server have share API or support Cookies
  *
- * @param NSArray -> serverVersion
+ * @param NSString -> serverVersion
  * @param NSArray -> limitVersion
  *
  * @return BOOL
  *
  */
-+ (BOOL) isServerVersion:(NSArray *) serverVersion higherThanLimitVersion:(NSArray *) limitVersion;
++ (BOOL) isServerVersion:(NSString *) serverVersionString higherThanLimitVersion:(NSArray *) limitVersion;
     
 @end

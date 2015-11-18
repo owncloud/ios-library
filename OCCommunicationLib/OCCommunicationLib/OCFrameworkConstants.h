@@ -40,6 +40,9 @@
 //Url to access to Sharee API
 #define k_url_access_sharee_api @"ocs/v2.php/apps/files_sharing/api/v1/sharees"
 
+//Url to access to Capabilities API
+#define k_url_capabilities @"ocs/v1.php/cloud/capabilities"
+
 //Version of the server that have share API
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]
 
@@ -51,6 +54,9 @@
 
 //Version of the server that support forbidden characters
 #define k_version_support_forbidden_characters [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
+
+//vErsion of the server that support Capabilities
+#define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
 
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
