@@ -28,6 +28,7 @@
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
+@class OCCapabilities;
 
 
 @interface OCCommunication : NSObject
@@ -553,55 +554,32 @@ typedef enum {
                      failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure;
 
 ///-----------------------------------
-/// @name Has Server Share and Sharee Support
+/// @name Get Features Supported By Server
 ///-----------------------------------
 
 /**
- * Method to get if the server has Share API support or not
+ * Method get the features supported by the path server using the version string.
+ *
+ * Right now support:
+ * - Share API
+ * - Sharee API
+ * - Cookies
+ * - Forbidden character manage by the server side
+ * - Capabilities
  *
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return BOOL in the success about the support of Share (hasShareSupport) and Sharee (hasShareeSupport) APIs
+ * @return BOOL in the success about the support of Share (hasShareSupport) ,Sharee (hasShareeSupport) APIs,
+ * Cookies (hasCookiesSupport), Forbidden character (hasForbiddenCharactersSupport) and Capabilities (hasCapabilitiesSupport)
  *
  */
-- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                         successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
-                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
-///-----------------------------------
-/// @name Has Server Cookies Support
-///-----------------------------------
+- (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                       successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer)) success
+                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
-/**
- * Method to get if the server has Cookies API support or not
- *
- * @param path -> NSString server path
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return BOOL in the success about the support
- *
- */
-- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
-///-----------------------------------
-/// @name Has Server Forbidden Characters Support
-///-----------------------------------
-
-/**
- * Method to get if the server API has Forbidden Characters handling support or not
- *
- * @param path -> NSString server path
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return BOOL in the success about the support
- *
- */
-- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure;
 
 ///-----------------------------------
 /// @name readSharedByServer
@@ -783,6 +761,8 @@ typedef enum {
 - (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
                    successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
+
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest;
 
 
 #pragma mark - Queue system

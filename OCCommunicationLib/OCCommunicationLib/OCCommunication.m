@@ -37,6 +37,7 @@
 #import "OCErrorMsg.h"
 #import "AFURLSessionManager.h"
 #import "OCShareUser.h"
+#import "OCCapabilities.h"
 
 @interface OCCommunication ()
 
@@ -715,7 +716,7 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
         NSData *data = (NSData*) responseObject;
         NSString *versionString = [NSString new];
@@ -760,12 +761,9 @@
     }];
 }
 
-///-----------------------------------
-/// @name Get if the server support share
-///-----------------------------------
-- (void) hasServerShareAndShareeSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
+- (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer)) success
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = _securityPolicy;
@@ -773,165 +771,43 @@
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
     }
-   
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error=nil;
-        
-        BOOL hasSharedSupport = NO;
-        BOOL hasShareeSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
+        if (responseObject) {
+            
+            NSError* error = nil;
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
+            
             if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
+                // NSLog(@"Error parsing JSON: %@", error);
+                failure(operation.response, operation.error);
+            }else{
+                
+                self.currentServerVersion = [jsonArray valueForKey:@"version"];
+                
+                BOOL hasShareSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared];
+                BOOL hasShareeSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api];
+                BOOL hasCookiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_cookies];
+                BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters];
+                BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_capabilities];
+                
+                success(operation.response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
             }
+            
         } else {
-            NSLog(@"Error parsing JSON: data is null");
+            // NSLog(@"Error parsing JSON: data is null");
+            failure(operation.response, operation.error);
         }
         
-        
-        
-        // NSLog(@"version string: %@", versionString);
-        
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportShared = k_version_support_shared;
-        
-        hasSharedSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportShared];
-        
-        NSArray *firstVersionSupportSharee = k_version_support_sharee_api;
-        
-        hasShareeSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportSharee];
-        
-        success(operation.response, hasSharedSupport, hasShareeSupport, request.redirectedServer);
         
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failure(operation.response, error);
     }];
-}
 
-///-----------------------------------
-/// @name Get if the server support cookies
-///-----------------------------------
-- (void) hasServerCookiesSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     
-    if (self.userAgent) {
-        [request setUserAgent:self.userAgent];
-    }
     
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error=nil;
-        
-        BOOL hasCookiesSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
-            if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
-            }
-        } else {
-            NSLog(@"Error parsing JSON: data is null");
-        }
-        
-        // NSLog(@"version string: %@", versionString);
-        
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportCookies = k_version_support_cookies;
-        
-        hasCookiesSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
-        
-        success(operation.response, hasCookiesSupport, request.redirectedServer);
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error);
-    }];
-}
-
-///-----------------------------------
-/// @name Get if the server has forbidden characters handling support
-///-----------------------------------
-- (void) hasServerForbiddenCharactersSupport:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                  successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasSupport, NSString *redirectedServer)) success
-                  failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failure {
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    
-    if (self.userAgent) {
-        [request setUserAgent:self.userAgent];
-    }
-    
-    [request getTheStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        
-        NSData *data = (NSData*) responseObject;
-        NSString *versionString = [NSString new];
-        NSError* error = nil;
-        
-        BOOL hasForbiddenSharactersSupport = NO;
-        
-        if (data) {
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &error];
-            if(error) {
-                NSLog(@"Error parsing JSON: %@", error);
-            } else {
-                //Obtain the server version from the version field
-                versionString = [jsonArray valueForKey:@"version"];
-                self.currentServerVersion = versionString;
-            }
-        } else {
-            NSLog(@"Error parsing JSON: data is null");
-        }
-        
-        // NSLog(@"version string: %@", versionString);
-        
-        //Split the strings - Type 5.0.13
-        NSArray *spliteVersion = [versionString componentsSeparatedByString:@"."];
-        
-        
-        NSMutableArray *currentVersionArrray = [NSMutableArray new];
-        for (NSString *string in spliteVersion) {
-            [currentVersionArrray addObject:string];
-        }
-        
-        NSArray *firstVersionSupportCookies = k_version_support_forbidden_characters;
-        
-        hasForbiddenSharactersSupport = [UtilsFramework isServerVersion:currentVersionArrray higherThanLimitVersion:firstVersionSupportCookies];
-        
-        success(operation.response, hasForbiddenSharactersSupport, request.redirectedServer);
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error);
-    }];
 }
 
 
@@ -1410,6 +1286,133 @@
     } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
         failureRequest(operation.response, error);
     }];
+}
+
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error)) failureRequest{
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_capabilities];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        NSData *response = (NSData*) responseObject;
+        
+        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        //Parse
+        NSError *error;
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSLog(@"dic: %@",jsongParsed);
+        
+        OCCapabilities *capabilities = [OCCapabilities new];
+        
+        if (jsongParsed.allKeys > 0 ) {
+            
+            NSDictionary *ocs = [jsongParsed valueForKey:@"ocs"];
+            NSDictionary *data = [ocs valueForKey:@"data"];
+            NSDictionary *version = [data valueForKey:@"version"];
+            
+            //VERSION
+            
+            NSNumber *versionMajorNumber = (NSNumber*) [version valueForKey:@"major"];
+            NSNumber *versionMinorNumber = (NSNumber*) [version valueForKey:@"minor"];
+            NSNumber *versionMicroNumber = (NSNumber*) [version valueForKey:@"micro"];
+            
+            capabilities.versionMajor = versionMajorNumber.integerValue;
+            capabilities.versionMinor = versionMinorNumber.integerValue;
+            capabilities.versionMicro = versionMicroNumber.integerValue;
+            
+            capabilities.versionString = (NSString*)[version valueForKey:@"string"];
+            capabilities.versionEdition = (NSString*)[version valueForKey:@"edition"];
+            
+            NSDictionary *capabilitiesDict = [data valueForKey:@"capabilities"];
+            NSDictionary *core = [capabilitiesDict valueForKey:@"core"];
+            
+            //CORE
+            
+            NSNumber *corePollIntervalNumber = (NSNumber*)[core valueForKey:@"pollinterval"];
+            capabilities.corePollInterval = corePollIntervalNumber.integerValue;
+            
+            NSDictionary *fileSharing = [capabilitiesDict valueForKey:@"files_sharing"];
+            
+            //FILE SHARING
+            
+            NSNumber *fileSharingAPIEnabledNumber = (NSNumber*)[fileSharing valueForKey:@"api_enabled"];
+            NSNumber *filesSharingReSharingEnabledNumber = (NSNumber*)[fileSharing valueForKey:@"resharing"];
+      
+            
+            capabilities.isFilesSharingAPIEnabled = fileSharingAPIEnabledNumber.boolValue;
+            capabilities.isFilesSharingReSharingEnabled = filesSharingReSharingEnabledNumber.boolValue;
+            
+            NSDictionary *fileSharingPublic = [fileSharing valueForKey:@"public"];
+            
+            NSNumber *filesSharingShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"enabled"];
+            NSNumber *filesSharingAllowPublicUploadsEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"upload"];
+            NSNumber *filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"send_mail"];
+            
+            capabilities.isFilesSharingShareLinkEnabled = filesSharingShareLinkEnabledNumber.boolValue;
+            capabilities.isFilesSharingAllowPublicUploadsEnabled = filesSharingAllowPublicUploadsEnabledNumber.boolValue;
+            capabilities.isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled = filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber.boolValue;
+            
+            NSDictionary *fileSharingPublicExpireDate = [fileSharingPublic valueForKey:@"expire_date"];
+            
+            NSNumber *filesSharingExpireDateByDefaultEnabledNumber = (NSNumber*)[fileSharingPublicExpireDate valueForKey:@"enabled"];
+            NSNumber *filesSharingExpireDateEnforceEnabledNumber = (NSNumber*)[fileSharingPublicExpireDate valueForKey:@"enforced"];
+            NSNumber *filesSharingExpireDateDaysNumber = (NSNumber*)[fileSharingPublicExpireDate valueForKey:@"days"];
+            
+    
+            capabilities.isFilesSharingExpireDateByDefaultEnabled = filesSharingExpireDateByDefaultEnabledNumber.boolValue;
+            capabilities.isFilesSharingExpireDateEnforceEnabled = filesSharingExpireDateEnforceEnabledNumber.boolValue;
+            capabilities.filesSharingExpireDateDaysNumber = filesSharingExpireDateDaysNumber.integerValue;
+            
+            NSDictionary *fileSharingPublicPassword = [fileSharingPublic valueForKey:@"password"];
+            
+            NSNumber *filesSharingPasswordEnforcedEnabledNumber = (NSNumber*)[fileSharingPublicPassword valueForKey:@"enforced"];
+            
+            capabilities.isFilesSharingPasswordEnforcedEnabled = filesSharingPasswordEnforcedEnabledNumber.boolValue;;
+            
+            NSDictionary *fileSharingUser = [fileSharing valueForKey:@"user"];
+            
+            NSNumber *filesSharingAllowUserSendMailNotificationAboutOtherUsersEnabledNumber = (NSNumber*)[fileSharingUser valueForKey:@"send_mail"];
+            
+            capabilities.isFilesSharingAllowUserSendMailNotificationAboutOtherUsersEnabled = filesSharingAllowUserSendMailNotificationAboutOtherUsersEnabledNumber.boolValue;
+            
+            //FEDERATION
+            
+            NSDictionary *fileSharingFederation = [fileSharing valueForKey:@"federation"];
+            
+            NSNumber *filesSharingAllowUserSendSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"incoming"];
+            NSNumber *filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"outgoing"];
+            
+            capabilities.isFilesSharingAllowUserSendSharesToOtherServersEnabled = filesSharingAllowUserSendSharesToOtherServersEnabledNumber.boolValue;
+            capabilities.isFilesSharingAllowUserReceiveSharesToOtherServersEnabled = filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber.boolValue;
+            
+            //FILES
+            
+            NSDictionary *files = [capabilitiesDict valueForKey:@"files"];
+            
+            NSNumber *fileBigFileChunkingEnabledNumber = (NSNumber*)[files valueForKey:@"bigfilechunking"];
+            NSNumber *fileUndeleteEnabledNumber = (NSNumber*)[files valueForKey:@"undelete"];
+            NSNumber *fileVersioningEnabledNumber = (NSNumber*)[files valueForKey:@"versioning"];
+            
+            capabilities.isFileBigFileChunkingEnabled = fileBigFileChunkingEnabledNumber.boolValue;
+            capabilities.isFileUndeleteEnabled = fileUndeleteEnabledNumber.boolValue;
+            capabilities.isFileVersioningEnabled = fileVersioningEnabledNumber.boolValue;
+            
+        }
+        
+        successRequest(operation.response, capabilities, request.redirectedServer);
+        
+    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        
+        failureRequest(operation.response, error);
+        
+    }];
+    
 }
 
 
