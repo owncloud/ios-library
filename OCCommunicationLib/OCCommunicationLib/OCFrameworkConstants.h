@@ -61,8 +61,11 @@
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
 
-//Name of the download session using for upload files with NSURLSession
+//Name of the download session using for download files with NSURLSession
 #define k_download_session_name @"com.owncloud.download.session"
+
+//Name of the download session using for download files with NSURLSession
+#define k_download_folder_session_name @"com.owncloud.download.folder.session"
 
 
 
