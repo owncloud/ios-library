@@ -56,7 +56,7 @@
 #define k_version_support_forbidden_characters [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
 
 //vErsion of the server that support Capabilities
-#define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
+#define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
 
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
