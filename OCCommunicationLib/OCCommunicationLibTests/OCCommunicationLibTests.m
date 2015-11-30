@@ -1957,4 +1957,15 @@
 }
 
 
+///-----------------------------------
+/// @name Test read capabilities
+///-----------------------------------
+
+/**
+ * This test check capabilities
+ */
+- (void) testGetCapabilitiesOfServer {
+
+}
+
 @end
