@@ -24,6 +24,14 @@
 #if !TARGET_OS_WATCH
 #import <SystemConfiguration/SystemConfiguration.h>
 
+#ifndef NS_DESIGNATED_INITIALIZER
+#if __has_attribute(objc_designated_initializer)
+#define NS_DESIGNATED_INITIALIZER __attribute__((objc_designated_initializer))
+#else
+#define NS_DESIGNATED_INITIALIZER
+#endif
+#endif
+
 typedef NS_ENUM(NSInteger, AFNetworkReachabilityStatus) {
     AFNetworkReachabilityStatusUnknown          = -1,
     AFNetworkReachabilityStatusNotReachable     = 0,
@@ -74,13 +82,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedManager;
 
 /**
- Creates and returns a network reachability manager with the default socket address.
- 
- @return An initialized network reachability manager, actively monitoring the default socket address.
- */
-+ (instancetype)manager;
-
-/**
  Creates and returns a network reachability manager for the specified domain.
 
  @param domain The domain used to evaluate network reachability.
@@ -92,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Creates and returns a network reachability manager for the socket address.
 
- @param address The socket address (`sockaddr_in6`) used to evaluate network reachability.
+ @param address The socket address (`sockaddr_in`) used to evaluate network reachability.
 
  @return An initialized network reachability manager, actively monitoring the specified socket address.
  */
@@ -190,8 +191,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  @warning In order for network reachability to be monitored, include the `SystemConfiguration` framework in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
-FOUNDATION_EXPORT NSString * const AFNetworkingReachabilityDidChangeNotification;
-FOUNDATION_EXPORT NSString * const AFNetworkingReachabilityNotificationStatusItem;
+extern NSString * const AFNetworkingReachabilityDidChangeNotification;
+extern NSString * const AFNetworkingReachabilityNotificationStatusItem;
 
 ///--------------------
 /// @name Functions
@@ -200,7 +201,7 @@ FOUNDATION_EXPORT NSString * const AFNetworkingReachabilityNotificationStatusIte
 /**
  Returns a localized string representation of an `AFNetworkReachabilityStatus` value.
  */
-FOUNDATION_EXPORT NSString * AFStringFromNetworkReachabilityStatus(AFNetworkReachabilityStatus status);
+extern NSString * AFStringFromNetworkReachabilityStatus(AFNetworkReachabilityStatus status);
 
 NS_ASSUME_NONNULL_END
 #endif
