@@ -76,6 +76,9 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Set credentials once
     [self setCredencialsInOCCommunication];
     
+    //Set security policy once
+    [self setSecurityPolicyInOCommunication];
+    
    
 }
 
@@ -198,6 +201,14 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Sett credencials
     [[AppDelegate sharedOCCommunication] setCredentialsWithUser:user andPassword:password];
     
+}
+
+/*
+ * Set security policiy in the OCComuniation singleton
+ */
+- (void) setSecurityPolicyInOCommunication {
+    
+    [[AppDelegate sharedOCCommunication] setSecurityPolicy:[[AppDelegate sharedOCCommunication] createSecurityPolicy]];
 }
 
 ///-----------------------------------
