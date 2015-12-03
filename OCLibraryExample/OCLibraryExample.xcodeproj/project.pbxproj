@@ -27,6 +27,7 @@
 		EA8A8E101C10480800894587 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8A8E0F1C10480800894587 /* ViewController.swift */; };
 		EA8A8E131C10480800894587 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E111C10480800894587 /* Main.storyboard */; };
 		EA8A8E151C10480800894587 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E141C10480800894587 /* Assets.xcassets */; };
+		EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8A8E1E1C1053FA00894587 /* MovieCell.swift */; };
 		EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 		EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 /* End PBXBuildFile section */
@@ -90,6 +91,7 @@
 		EA8A8E121C10480800894587 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EA8A8E141C10480800894587 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA8A8E161C10480800894587 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EA8A8E1E1C1053FA00894587 /* MovieCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieCell.swift; path = Cells/MovieCell.swift; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -215,6 +217,7 @@
 		EA8A8E0C1C10480800894587 /* OCAppleTVExample */ = {
 			isa = PBXGroup;
 			children = (
+				EA8A8E1B1C10535C00894587 /* Cells */,
 				EA8A8E0D1C10480800894587 /* AppDelegate.swift */,
 				EA8A8E0F1C10480800894587 /* ViewController.swift */,
 				EA8A8E111C10480800894587 /* Main.storyboard */,
@@ -222,6 +225,14 @@
 				EA8A8E161C10480800894587 /* Info.plist */,
 			);
 			path = OCAppleTVExample;
+			sourceTree = "<group>";
+		};
+		EA8A8E1B1C10535C00894587 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				EA8A8E1E1C1053FA00894587 /* MovieCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		EAABAB301858D83800909831 /* Resources */ = {
@@ -407,6 +418,7 @@
 			files = (
 				EA8A8E101C10480800894587 /* ViewController.swift in Sources */,
 				EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */,
+				EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
