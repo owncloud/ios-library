@@ -23,6 +23,10 @@
 		EA7CC971183E199C00B6A4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC96F183E199C00B6A4B4 /* InfoPlist.strings */; };
 		EA7CC973183E199C00B6A4B4 /* OCLibraryExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC972183E199C00B6A4B4 /* OCLibraryExampleTests.m */; };
 		EA8667FD18AA529000D3550D /* libownCloudiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA8667F518AA524700D3550D /* libownCloudiOS.a */; };
+		EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8A8E0D1C10480800894587 /* AppDelegate.swift */; };
+		EA8A8E101C10480800894587 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8A8E0F1C10480800894587 /* ViewController.swift */; };
+		EA8A8E131C10480800894587 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E111C10480800894587 /* Main.storyboard */; };
+		EA8A8E151C10480800894587 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E141C10480800894587 /* Assets.xcassets */; };
 		EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 		EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 /* End PBXBuildFile section */
@@ -80,6 +84,12 @@
 		EA7CC970183E199C00B6A4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EA7CC972183E199C00B6A4B4 /* OCLibraryExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCLibraryExampleTests.m; sourceTree = "<group>"; };
 		EA8667EF18AA524700D3550D /* ownCloud iOS library.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "ownCloud iOS library.xcodeproj"; path = "../OCCommunicationLib/ownCloud iOS library.xcodeproj"; sourceTree = "<group>"; };
+		EA8A8E0B1C10480800894587 /* OCAppleTVExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OCAppleTVExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA8A8E0D1C10480800894587 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		EA8A8E0F1C10480800894587 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		EA8A8E121C10480800894587 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EA8A8E141C10480800894587 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EA8A8E161C10480800894587 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +115,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EA8A8E081C10480800894587 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -114,6 +131,7 @@
 				EA8667EF18AA524700D3550D /* ownCloud iOS library.xcodeproj */,
 				EA7CC94A183E199B00B6A4B4 /* OCLibraryExample */,
 				EA7CC96C183E199C00B6A4B4 /* OCLibraryExampleTests */,
+				EA8A8E0C1C10480800894587 /* OCAppleTVExample */,
 				EA7CC943183E199B00B6A4B4 /* Frameworks */,
 				EA7CC942183E199B00B6A4B4 /* Products */,
 			);
@@ -124,6 +142,7 @@
 			children = (
 				EA7CC941183E199B00B6A4B4 /* OCLibraryExample.app */,
 				EA7CC965183E199C00B6A4B4 /* OCLibraryExampleTests.xctest */,
+				EA8A8E0B1C10480800894587 /* OCAppleTVExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,6 +212,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EA8A8E0C1C10480800894587 /* OCAppleTVExample */ = {
+			isa = PBXGroup;
+			children = (
+				EA8A8E0D1C10480800894587 /* AppDelegate.swift */,
+				EA8A8E0F1C10480800894587 /* ViewController.swift */,
+				EA8A8E111C10480800894587 /* Main.storyboard */,
+				EA8A8E141C10480800894587 /* Assets.xcassets */,
+				EA8A8E161C10480800894587 /* Info.plist */,
+			);
+			path = OCAppleTVExample;
+			sourceTree = "<group>";
+		};
 		EAABAB301858D83800909831 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -240,17 +271,38 @@
 			productReference = EA7CC965183E199C00B6A4B4 /* OCLibraryExampleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		EA8A8E0A1C10480800894587 /* OCAppleTVExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA8A8E1A1C10480800894587 /* Build configuration list for PBXNativeTarget "OCAppleTVExample" */;
+			buildPhases = (
+				EA8A8E071C10480800894587 /* Sources */,
+				EA8A8E081C10480800894587 /* Frameworks */,
+				EA8A8E091C10480800894587 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OCAppleTVExample;
+			productName = OCAppleTVExample;
+			productReference = EA8A8E0B1C10480800894587 /* OCAppleTVExample.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		EA7CC939183E199B00B6A4B4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = ownCloud;
 				TargetAttributes = {
 					EA7CC964183E199C00B6A4B4 = {
 						TestTargetID = EA7CC940183E199B00B6A4B4;
+					};
+					EA8A8E0A1C10480800894587 = {
+						CreatedOnToolsVersion = 7.1;
 					};
 				};
 			};
@@ -275,6 +327,7 @@
 			targets = (
 				EA7CC940183E199B00B6A4B4 /* OCLibraryExample */,
 				EA7CC964183E199C00B6A4B4 /* OCLibraryExampleTests */,
+				EA8A8E0A1C10480800894587 /* OCAppleTVExample */,
 			);
 		};
 /* End PBXProject section */
@@ -318,6 +371,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EA8A8E091C10480800894587 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA8A8E151C10480800894587 /* Assets.xcassets in Resources */,
+				EA8A8E131C10480800894587 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -336,6 +398,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA7CC973183E199C00B6A4B4 /* OCLibraryExampleTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA8A8E071C10480800894587 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA8A8E101C10480800894587 /* ViewController.swift in Sources */,
+				EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +456,14 @@
 				EA7CC970183E199C00B6A4B4 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		EA8A8E111C10480800894587 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EA8A8E121C10480800894587 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -557,6 +636,51 @@
 			};
 			name = Release;
 		};
+		EA8A8E171C10480800894587 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = es.solidgear.OCAppleTVExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		EA8A8E181C10480800894587 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = es.solidgear.OCAppleTVExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -586,6 +710,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		EA8A8E1A1C10480800894587 /* Build configuration list for PBXNativeTarget "OCAppleTVExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA8A8E171C10480800894587 /* Debug */,
+				EA8A8E181C10480800894587 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

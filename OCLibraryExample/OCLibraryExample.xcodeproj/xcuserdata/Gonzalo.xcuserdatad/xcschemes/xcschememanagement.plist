@@ -4,10 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>OCAppleTVExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>OCLibraryExample.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>OCVideoStreaming.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -18,6 +28,11 @@
 			<true/>
 		</dict>
 		<key>EA7CC964183E199C00B6A4B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>EA8A8E0A1C10480800894587</key>
 		<dict>
 			<key>primary</key>
 			<true/>
