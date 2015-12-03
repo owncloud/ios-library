@@ -26,7 +26,6 @@
 //
 
 
-#import "AFHTTPRequestOperationManager.h"
 #import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;

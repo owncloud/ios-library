@@ -730,6 +730,7 @@
 				EA8A8E181C10480800894587 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
