@@ -478,6 +478,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib",
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/ExternalLibs/AFNetworking",
+					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/Utils",
 				);
 				INFOPLIST_FILE = "OCLibraryExample/OCLibraryExample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
@@ -503,6 +504,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib",
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/ExternalLibs/AFNetworking",
+					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/Utils",
 				);
 				INFOPLIST_FILE = "OCLibraryExample/OCLibraryExample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
