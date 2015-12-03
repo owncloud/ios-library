@@ -25,6 +25,7 @@
 
 
 #import "OCXMLParser.h"
+#import "NSString+Encode.h"
 
 NSString *OCCWebDAVContentTypeKey   = @"contenttype";
 NSString *OCCWebDAVETagKey          = @"etag";
@@ -158,7 +159,13 @@ NSString *OCCWebDAVURIKey           = @"uri";
             [_xmlBucket setObject:lastBit forKey:OCCWebDAVHREFKey];
             _currentFile.fileName = lastBit;
         }
-        
+            
+        NSString *decodedFileName = [self decodeFromPercentEscapeString:self.currentFile.fileName];
+        NSString *decodedFilePath = [self decodeFromPercentEscapeString:self.currentFile.filePath];
+            
+        self.currentFile.fileName = [decodedFileName encodeString:NSUTF8StringEncoding];
+        self.currentFile.filePath = [decodedFilePath encodeString:NSUTF8StringEncoding];
+            
         isNotFirstFileOfList = YES;
 
 //        //NSLog(@"1 _xmlBucked :- %@",_xmlBucket);
@@ -233,7 +240,13 @@ NSString *OCCWebDAVURIKey           = @"uri";
     NSLog(@"Finish xml directory list parse");
 }
 
-
+// Decode a percent escape encoded string.
+- (NSString*) decodeFromPercentEscapeString:(NSString *) string {
+    return (__bridge NSString *) CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
+                                                                                         (__bridge CFStringRef) string,
+                                                                                         CFSTR(""),
+                                                                                         kCFStringEncodingUTF8);
+}
 
 
 
