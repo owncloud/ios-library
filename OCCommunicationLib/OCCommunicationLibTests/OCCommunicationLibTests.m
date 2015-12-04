@@ -1962,11 +1962,28 @@
 ///-----------------------------------
 
 /**
- * This test check capabilities
+ * This test try to check if a shared folder is shared and obtain his information
  */
 - (void) testGetCapabilitiesOfServer {
-
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication getCapabilitiesOfServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer) {
+        NSLog(@"Get capabilities ok");
+        XCTAssertNotNil(capabilities,  @"Error get capabilites of server");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        XCTFail(@"Error get capabilites of server");
+        dispatch_semaphore_signal(semaphore);
+    }
+     
+     // Run loop
+     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                              beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
+
 
 ///-----------------------------------
 /// @name Test read capabilities
