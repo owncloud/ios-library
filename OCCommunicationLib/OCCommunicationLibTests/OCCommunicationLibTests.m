@@ -1968,4 +1968,31 @@
 
 }
 
+///-----------------------------------
+/// @name Test read capabilities
+///-----------------------------------
+
+/**
+ * This test check capabilities
+ */
+- (void) testShareLinkWithPassword {
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPassword:@"testing" onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer) {
+        NSLog(@"Folder shared by link with password");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        XCTFail(@"Error sharing folder by link with password");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
 @end
