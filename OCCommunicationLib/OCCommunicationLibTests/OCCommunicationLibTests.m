@@ -1990,7 +1990,7 @@
 ///-----------------------------------
 
 /**
- * This test check capabilities
+ * This test check get capabilities
  */
 - (void) testShareLinkWithPassword {
     
@@ -2082,11 +2082,11 @@
 
 
 ///-----------------------------------
-/// @name Test read capabilities
+/// @name Test search users and groups
 ///-----------------------------------
 
 /**
- * This test try to check if a shared folder is shared and obtain his information
+ * This test search for first 30 users or groups on server that match the pattern "aa"
  */
 - (void) testSearchUsersAndGroups {
     
