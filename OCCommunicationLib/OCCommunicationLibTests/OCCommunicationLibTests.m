@@ -1976,7 +1976,7 @@
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
         XCTFail(@"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
-    }
+    }];
      
      // Run loop
      while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
