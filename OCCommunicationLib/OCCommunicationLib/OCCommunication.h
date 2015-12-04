@@ -729,6 +729,7 @@ typedef enum {
  * @param serverPath -> NSString server path
  * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
  * @param password -> password
+ * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
