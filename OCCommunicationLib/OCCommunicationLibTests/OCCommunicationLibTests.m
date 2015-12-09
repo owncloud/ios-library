@@ -2133,31 +2133,31 @@
 }
 
 
+
 ///-----------------------------------
-/// @name Test share with user
+/// @name Test share with user with special character
 ///-----------------------------------
 
 /**
- * This test share with user @"user@b" file @""
+ * This test share with user @"user@b" the folder pathTestFolder
  */
 - (void) testShareWithUser {
-    //TODO: review path and add constant to config file
     
-//    //We create a semaphore to wait until we recive the responses from Async calls
-//    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-//    
-//    [_sharedOCCommunication shareWith:@"user@b" isGroup:NO inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-//        NSLog(@"Share with user");
-//        dispatch_semaphore_signal(semaphore);
-//    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-//        XCTFail(@"Error share with user");
-//        dispatch_semaphore_signal(semaphore);
-//    }];
-//    
-//    // Run loop
-//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication shareWith:@"user@b" isGroup:NO inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+        NSLog(@"Share with user");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        XCTFail(@"Error share with user");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
 
 ///-----------------------------------
