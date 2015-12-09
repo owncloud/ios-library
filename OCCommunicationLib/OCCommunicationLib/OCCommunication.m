@@ -1170,6 +1170,7 @@
     [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
         NSData *response = (NSData*) responseObject;
+        
         NSMutableArray *itemList = [NSMutableArray new];
         
         //Parse
@@ -1195,6 +1196,13 @@
                 for (NSDictionary *userFound in usersFounded) {
                     
                     OCShareUser *user = [OCShareUser new];
+                    
+                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userFound valueForKey:@"label"];
+                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.displayName = [userFound valueForKey:@"label"];
+                    }
                     
                     NSDictionary *userValues = [userFound valueForKey:@"value"];
                     
