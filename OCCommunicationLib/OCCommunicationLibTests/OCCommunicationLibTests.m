@@ -2161,13 +2161,13 @@
 }
 
 ///-----------------------------------
-/// @name Test read capabilities
+/// @name Test is share by server
 ///-----------------------------------
 
 /**
- * This test check get capabilities
+ * This test check if a shared file is shared
  */
-- (void) testIsShareLinkByServer {
+- (void) testIsShareByServer {
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -2188,15 +2188,77 @@
                 //3. Check if the share folder is shared by the id
                 [_sharedOCCommunication isShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto) {
                     
-                    NSLog(@"Updated shared by link with expiration date and password");
+                    NSLog(@"File is shared");
                     dispatch_semaphore_signal(semaphore);
                     
                 } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
                     
-                    XCTFail(@"Error updating shared by link with expiration date and password");
+                    XCTFail(@"Error checking if a share is shared by id share");
                     dispatch_semaphore_signal(semaphore);
                     
                 }];
+            }
+        }
+        
+        if (!isFolderShared) {
+            XCTFail(@"Folder not shared before check");
+            dispatch_semaphore_signal(semaphore);
+        }
+        
+        
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        
+        XCTFail(@"Error reading shares");
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+///-----------------------------------
+/// @name Test unshare file or folder
+///-----------------------------------
+
+/**
+ * This test check if we can unshare a file or folder
+ */
+- (void) testUnShareByServer {
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //1. Share a folder
+    [self testShareAFolder];
+    
+    //2. Read the shared
+    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+        
+        BOOL isFolderShared = NO;
+        
+        for (OCSharedDto *current in listOfShared) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+                isFolderShared = YES;
+                
+                //3. Unshare the share folder by the id
+                [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+                    
+                    NSLog(@"Share unshared correctly");
+                    dispatch_semaphore_signal(semaphore);
+                    
+                } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                    
+                    XCTFail(@"Error unsharing file by id share");
+                    dispatch_semaphore_signal(semaphore);
+                    
+                }];
+                
             }
         }
         
