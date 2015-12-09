@@ -2284,5 +2284,42 @@
     
 }
 
+///-----------------------------------
+/// @name testGetFeaturesSupportedByServer
+///-----------------------------------
+
+/**
+ * This test check if we can get all the features supported by the server
+ */
+- (void) testGetFeaturesSupportedByServer {
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication getFeaturesSupportedByServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer) {
+        
+        NSLog(@"Server features correctly read");
+        NSLog(@"hasShareSupport: %d", hasShareSupport);
+        NSLog(@"hasShareeSupport: %d", hasShareeSupport);
+        NSLog(@"hasCookiesSupport: %d", hasCookiesSupport);
+        NSLog(@"hasForbiddenCharactersSupport: %d", hasForbiddenCharactersSupport);
+        NSLog(@"hasCapabilitiesSupport: %d", hasCapabilitiesSupport);
+        
+        dispatch_semaphore_signal(semaphore);
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        
+        XCTFail(@"Error reading server features");
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
 
 @end
