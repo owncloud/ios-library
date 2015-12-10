@@ -2188,6 +2188,65 @@
 }
 
 ///-----------------------------------
+/// @name Test unshare with user with special character
+///-----------------------------------
+
+/**
+ * This test unShare with group @"user@b" the folder pathTestFolder
+ */
+- (void) testUnShareWithUser {
+    
+    //1. create the folder and share it with user
+    [self testShareWithUser];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    //2. read the folder to obtain the info of OCSharedDto
+    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl
+                               onCommunication: _sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+                                   
+        OCSharedDto *shared;
+        
+        for (OCSharedDto *current in listOfShared) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+                shared = current;
+            }
+        }
+        
+        if (shared) {
+            
+            //3. Unshare the folder
+            [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+                NSLog(@"File unshared");
+                dispatch_semaphore_signal(semaphore);
+                
+            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                XCTFail(@"Error unsharing folder");
+                dispatch_semaphore_signal(semaphore);
+            }];
+            
+            
+            
+        } else {
+            XCTFail(@"Folder not shared on testUnShareAFolder");
+            dispatch_semaphore_signal(semaphore);
+        }
+        
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        
+        XCTFail(@"Error reading shares on testUnShareAFolder");
+        dispatch_semaphore_signal(semaphore);
+        
+    }];
+    
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];}
+
+///-----------------------------------
 /// @name Test is share by server
 ///-----------------------------------
 
