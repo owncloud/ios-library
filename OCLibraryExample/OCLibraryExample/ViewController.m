@@ -28,6 +28,7 @@
 #import "OCCommunication.h"
 #import "OCFileDto.h"
 #import "AppDelegate.h"
+#import "UtilsFramework.h"
 
 
 //For the example works you must be enter your server data
@@ -74,6 +75,9 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     //Set credentials once
     [self setCredencialsInOCCommunication];
+    
+    //Set security policy once
+    [self setSecurityPolicyInOCommunication];
     
    
 }
@@ -199,6 +203,14 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
 }
 
+/*
+ * Set security policiy in the OCComuniation singleton
+ */
+- (void) setSecurityPolicyInOCommunication {
+    
+    [[AppDelegate sharedOCCommunication] setSecurityPolicy:[[AppDelegate sharedOCCommunication] createSecurityPolicy]];
+}
+
 ///-----------------------------------
 /// @name Show Root Folder
 ///-----------------------------------
@@ -216,7 +228,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    [[AppDelegate sharedOCCommunication] readFolder:path onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirected) {
+    [[AppDelegate sharedOCCommunication] readFolder:path withUserSessionToken:[UtilsFramework getUserSessionToken] onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token) {
         //Success
         NSLog(@"succes");
         for (OCFileDto *itemDto in items) {
@@ -229,15 +241,16 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _itemsOfPath = [NSArray arrayWithArray:items];
         
         [_itemsTableView reloadData];
-         _goButton.enabled = YES;
-         _goInfoLabel.text = @"Success";
+        _goButton.enabled = YES;
+        _goInfoLabel.text = @"Success";
 
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token) {
         //Request failure
         NSLog(@"Error: %@", error);
-         _goButton.enabled = YES;
-         _goInfoLabel.text = @"Fail";
+        _goButton.enabled = YES;
+        _goInfoLabel.text = @"Fail";
     }];
+    
     
 }
 

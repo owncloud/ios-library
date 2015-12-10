@@ -34,6 +34,8 @@
     NSString *passwordOwn = @""; //Server password
     //Folder for the unit test on the server. This folder has the current date since a reference for avoid problems with duplicates building
     NSString *pathTestFolderOwn = [NSString stringWithFormat:@"UnitTest%f",[[NSDate new] timeIntervalSince1970]];
+    NSString *userToShareOwn = @""; //name user to share with
+    NSString *groupToShareOwn = @""; //name group to share with
     
     
     //We set the baseUrl
@@ -66,6 +68,20 @@
     
     //We set the pathTestFolder
     _pathTestFolder = pathTestFolderOwn;
+    
+    //We set the user to share
+    if ([[[NSProcessInfo processInfo] environment] objectForKey:@"userToShareTravis"]) {
+        _userToShare = [[[NSProcessInfo processInfo] environment] objectForKey:@"userToShareTravis"];
+    } else {
+        _userToShare = userToShareOwn;
+    }
+    
+    //We set the group to share
+    if ([[[NSProcessInfo processInfo] environment] objectForKey:@"groupToShareTravis"]) {
+        _groupToShare = [[[NSProcessInfo processInfo] environment] objectForKey:@"groupToShareTravis"];
+    } else {
+        _groupToShare = groupToShareOwn;
+    }
     
     return self;
 }
