@@ -2192,7 +2192,7 @@
 ///-----------------------------------
 
 /**
- * This test unShare with group @"user@b" the folder pathTestFolder
+ * This test unShare with user the folder pathTestFolder
  */
 - (void) testUnShareWithUser {
     
@@ -2209,7 +2209,8 @@
         OCSharedDto *shared;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]
+                 && [current.shareWith isEqualToString:_configTests.userToShare]) {
                 shared = current;
             }
         }
@@ -2218,24 +2219,24 @@
             
             //3. Unshare the folder
             [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-                NSLog(@"File unshared");
+                NSLog(@"File unshared with user");
                 dispatch_semaphore_signal(semaphore);
                 
             } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
-                XCTFail(@"Error unsharing folder");
+                XCTFail(@"Error unsharing folder with user");
                 dispatch_semaphore_signal(semaphore);
             }];
             
             
             
         } else {
-            XCTFail(@"Folder not shared on testUnShareAFolder");
+            XCTFail(@"Folder not shared on testUnShareWithUser");
             dispatch_semaphore_signal(semaphore);
         }
         
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
         
-        XCTFail(@"Error reading shares on testUnShareAFolder");
+        XCTFail(@"Error reading shares on testUnShareWithUser");
         dispatch_semaphore_signal(semaphore);
         
     }];
