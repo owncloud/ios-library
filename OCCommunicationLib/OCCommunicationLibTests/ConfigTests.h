@@ -32,5 +32,9 @@
 @property (nonatomic, strong) NSString *password;
 //Optional. You can change the folder of tests.
 @property (nonatomic, strong) NSString *pathTestFolder;
+//User to share
+@property (nonatomic, strong) NSString *userToShare;
+//Group to share
+@property (nonatomic, strong) NSString *groupToShare;
 
 @end
