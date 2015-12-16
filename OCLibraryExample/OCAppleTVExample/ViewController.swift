@@ -115,7 +115,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(collectionView: UICollectionView, didUpdateFocusInContext context: UICollectionViewFocusUpdateContext, withAnimationCoordinator coordinator: UIFocusAnimationCoordinator) {
         
-        print(context.nextFocusedIndexPath?.row)
+        print(context.nextFocusedIndexPath?.row.description)
         
         if (context.nextFocusedIndexPath != nil) {
             
@@ -126,7 +126,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             self.plotLabel?.text = currentMovie.plot
             self.actorsLabel?.text = currentMovie.actors
             self.directorLabel?.text = currentMovie.director
-            self.yearLabel?.text = String(currentMovie.year)
+            self.yearLabel?.text = (currentMovie.year)?.description
             self.runtimeLabel?.text = currentMovie.runtime
             self.posterImage?.image = currentMovie.posterLocal
             
