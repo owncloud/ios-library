@@ -12,6 +12,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     let kMovieCellIdentifier: String = "MovieCellIdentifier"
     
+    @IBOutlet weak var descriptionLabel: UILabel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +35,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     return cell
     }
     
-  /*  func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
         cell.setSelectedStyle()
     }
@@ -46,7 +47,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool{
         return true
-    }*/
+    }
     
   /*  func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
@@ -81,10 +82,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
   /*  func collectionView(collectionView: UICollectionView, shouldUpdateFocusInContext context: UICollectionViewFocusUpdateContext) -> Bool {
         return true
     }
+
+*/
     
     func collectionView(collectionView: UICollectionView, didUpdateFocusInContext context: UICollectionViewFocusUpdateContext, withAnimationCoordinator coordinator: UIFocusAnimationCoordinator) {
+        
+        print(context.nextFocusedIndexPath?.row)
        
-    }*/
+        self.descriptionLabel?.text = String(context.nextFocusedIndexPath?.row)
+       
+    }
     
 
     
