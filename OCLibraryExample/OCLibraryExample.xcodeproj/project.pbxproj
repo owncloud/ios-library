@@ -11,6 +11,10 @@
 		59E2B7321C21628200F93290 /* movie1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7311C21628200F93290 /* movie1.jpg */; };
 		59E2B7351C216A1900F93290 /* movie2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7331C216A1900F93290 /* movie2.jpg */; };
 		59E2B7361C216A1900F93290 /* movie3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7341C216A1900F93290 /* movie3.jpg */; };
+		59E2B73A1C21872F00F93290 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */; };
+		59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
+		59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
+		59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */; };
 		EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
@@ -67,11 +71,27 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		59E2B73F1C21888F00F93290 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		59E299871C21508100838C32 /* FilmsDto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FilmsDto.swift; path = Dtos/FilmsDto.swift; sourceTree = "<group>"; };
 		59E2B7311C21628200F93290 /* movie1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie1.jpg; sourceTree = "<group>"; };
 		59E2B7331C216A1900F93290 /* movie2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie2.jpg; sourceTree = "<group>"; };
 		59E2B7341C216A1900F93290 /* movie3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie3.jpg; sourceTree = "<group>"; };
+		59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
+		59E2B73B1C21888300F93290 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		EA7CC941183E199B00B6A4B4 /* OCLibraryExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OCLibraryExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC944183E199B00B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -108,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */,
 				EA8667FD18AA529000D3550D /* libownCloudiOS.a in Frameworks */,
 				EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */,
 				EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */,
@@ -129,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +200,7 @@
 		EA7CC943183E199B00B6A4B4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59E2B73B1C21888300F93290 /* AVFoundation.framework */,
 				EA7CC944183E199B00B6A4B4 /* Foundation.framework */,
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
 				EA7CC948183E199B00B6A4B4 /* UIKit.framework */,
@@ -247,6 +270,7 @@
 				EA8A8E1B1C10535C00894587 /* Cells */,
 				EA8A8E0D1C10480800894587 /* AppDelegate.swift */,
 				EA8A8E0F1C10480800894587 /* ViewController.swift */,
+				59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */,
 				EA8A8E111C10480800894587 /* Main.storyboard */,
 				EA8A8E141C10480800894587 /* Assets.xcassets */,
 				EA8A8E161C10480800894587 /* Info.plist */,
@@ -317,6 +341,7 @@
 				EA8A8E071C10480800894587 /* Sources */,
 				EA8A8E081C10480800894587 /* Frameworks */,
 				EA8A8E091C10480800894587 /* Resources */,
+				59E2B73F1C21888F00F93290 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -449,6 +474,7 @@
 			files = (
 				EA8A8E101C10480800894587 /* ViewController.swift in Sources */,
 				EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */,
+				59E2B73A1C21872F00F93290 /* VideoPlayerViewController.swift in Sources */,
 				EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */,
 				59E299881C21508100838C32 /* FilmsDto.swift in Sources */,
 			);

@@ -32,5 +32,6 @@ class FilmsDto {
     var imdbId:String?
     var type:String?
     var response:Bool?
+    var filmUrl:String?
 
 }

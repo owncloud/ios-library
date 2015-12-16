@@ -47,7 +47,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: MovieCell = collectionView.dequeueReusableCellWithReuseIdentifier(kMovieCellIdentifier, forIndexPath: indexPath) as! MovieCell
 
-        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex(indexPath.row))! as! FilmsDto //indexPath?.row
+        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex(indexPath.row))! as! FilmsDto
         let currentPosterView = UIImageView(image: currentMovie.posterLocal)
         currentPosterView.contentMode = UIViewContentMode.ScaleAspectFit
         cell.backgroundView = currentPosterView
@@ -70,11 +70,18 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return true
     }
     
-  /*  func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
-        cell.setSelectedStyle()
+        cell.setUnselectedStyle()
+        
+        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex(indexPath.row))! as! FilmsDto
+        
+        let vc = VideoPlayerViewController()
+        vc.urlString = currentMovie.filmUrl
+        self.presentViewController(vc, animated: true, completion: nil)
     }
 
+    /*
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
         cell.setUnselectedStyle()
@@ -110,27 +117,32 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         print(context.nextFocusedIndexPath?.row)
         
-        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex((context.nextFocusedIndexPath?.row)!))! as! FilmsDto
+        if (context.nextFocusedIndexPath != nil) {
+            
+            let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex((context.nextFocusedIndexPath?.row)!))! as! FilmsDto
+            
+            //Movie info
+            self.titleLabel?.text = currentMovie.title
+            self.plotLabel?.text = currentMovie.plot
+            self.actorsLabel?.text = currentMovie.actors
+            self.directorLabel?.text = currentMovie.director
+            self.yearLabel?.text = String(currentMovie.year)
+            self.runtimeLabel?.text = currentMovie.runtime
+            self.posterImage?.image = currentMovie.posterLocal
+            
+            //Image background
+            
+            self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
+            self.backgroundMovieInfoCointainer!.contentMode = UIViewContentMode.ScaleAspectFill
+            self.backgroundMovieInfoCointainer?.alpha = 0.3
+            
+            /*let darkBlur = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+            let blurView = UIVisualEffectView(effect: darkBlur)
+            blurView.frame = self.backgroundMovieInfoCointainer!.bounds
+            self.backgroundMovieInfoCointainer!.addSubview(blurView)*/
+        }
         
-        //Movie info
-        self.titleLabel?.text = currentMovie.title
-        self.plotLabel?.text = currentMovie.plot
-        self.actorsLabel?.text = currentMovie.actors
-        self.directorLabel?.text = currentMovie.director
-        self.yearLabel?.text = String(currentMovie.year)
-        self.runtimeLabel?.text = currentMovie.runtime
-        self.posterImage?.image = currentMovie.posterLocal
-       
-        //Image background
         
-        self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
-        self.backgroundMovieInfoCointainer!.contentMode = UIViewContentMode.ScaleAspectFill
-        self.backgroundMovieInfoCointainer?.alpha = 0.3
-        
-        /*let darkBlur = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-        let blurView = UIVisualEffectView(effect: darkBlur)
-        blurView.frame = self.backgroundMovieInfoCointainer!.bounds
-        self.backgroundMovieInfoCointainer!.addSubview(blurView)*/
         
         
         
@@ -151,6 +163,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         movie1.runtime = "115 min"
         movie1.year = 1981
         movie1.posterLocal = UIImage(named: "movie1.jpg")
+        movie1.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie1.mp4"
         
         self.moviesList?.addObject(movie1)
         
@@ -162,6 +175,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         movie2.runtime = "118 min"
         movie2.year = 1984
         movie2.posterLocal = UIImage(named: "movie2.jpg")
+        movie2.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie2.mp4"
         
         self.moviesList?.addObject(movie2)
         
@@ -173,6 +187,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         movie3.runtime = "127 min"
         movie3.year = 1989
         movie3.posterLocal = UIImage(named: "movie3.jpg")
+        movie3.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie3.mp4"
         
         self.moviesList?.addObject(movie3)
         
