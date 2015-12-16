@@ -6,6 +6,7 @@
 //  Copyright © 2015 ownCloud. All rights reserved.
 //
 
+import Alamofire
 import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {

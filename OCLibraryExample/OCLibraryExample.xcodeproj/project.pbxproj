@@ -25,7 +25,6 @@
 		EA7CC95B183E199B00B6A4B4 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC959183E199B00B6A4B4 /* Main_iPad.storyboard */; };
 		EA7CC95E183E199B00B6A4B4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CC95D183E199B00B6A4B4 /* ViewController.m */; };
 		EA7CC960183E199B00B6A4B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC95F183E199B00B6A4B4 /* Images.xcassets */; };
-		EA7CC967183E199C00B6A4B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC966183E199C00B6A4B4 /* XCTest.framework */; };
 		EA7CC968183E199C00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC969183E199C00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
 		EA7CC971183E199C00B6A4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA7CC96F183E199C00B6A4B4 /* InfoPlist.strings */; };
@@ -92,6 +91,7 @@
 		59E2B7341C216A1900F93290 /* movie3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie3.jpg; sourceTree = "<group>"; };
 		59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		59E2B73B1C21888300F93290 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.release.xcconfig"; sourceTree = "<group>"; };
 		EA7CC941183E199B00B6A4B4 /* OCLibraryExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OCLibraryExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC944183E199B00B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -108,7 +108,6 @@
 		EA7CC95D183E199B00B6A4B4 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		EA7CC95F183E199B00B6A4B4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		EA7CC965183E199C00B6A4B4 /* OCLibraryExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OCLibraryExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EA7CC966183E199C00B6A4B4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EA7CC96E183E199C00B6A4B4 /* OCLibraryExampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OCLibraryExampleTests-Info.plist"; sourceTree = "<group>"; };
 		EA7CC970183E199C00B6A4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EA7CC972183E199C00B6A4B4 /* OCLibraryExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCLibraryExampleTests.m; sourceTree = "<group>"; };
@@ -120,6 +119,7 @@
 		EA8A8E141C10480800894587 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA8A8E161C10480800894587 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA8A8E1E1C1053FA00894587 /* MovieCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieCell.swift; path = Cells/MovieCell.swift; sourceTree = "<group>"; };
+		EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,7 +140,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA7CC967183E199C00B6A4B4 /* XCTest.framework in Frameworks */,
 				EA7CC969183E199C00B6A4B4 /* UIKit.framework in Frameworks */,
 				EA7CC968183E199C00B6A4B4 /* Foundation.framework in Frameworks */,
 			);
@@ -175,6 +174,15 @@
 			path = Posters;
 			sourceTree = "<group>";
 		};
+		E1953C1EEFDD0F70B4855310 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */,
+				6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		EA7CC938183E199B00B6A4B4 = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +192,7 @@
 				EA8A8E0C1C10480800894587 /* OCAppleTVExample */,
 				EA7CC943183E199B00B6A4B4 /* Frameworks */,
 				EA7CC942183E199B00B6A4B4 /* Products */,
+				E1953C1EEFDD0F70B4855310 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,7 +213,6 @@
 				EA7CC944183E199B00B6A4B4 /* Foundation.framework */,
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
 				EA7CC948183E199B00B6A4B4 /* UIKit.framework */,
-				EA7CC966183E199C00B6A4B4 /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -302,9 +310,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EA7CC976183E199C00B6A4B4 /* Build configuration list for PBXNativeTarget "OCLibraryExample" */;
 			buildPhases = (
+				ED3786C271B7EF1AF808AAD4 /* Check Pods Manifest.lock */,
 				EA7CC93D183E199B00B6A4B4 /* Sources */,
 				EA7CC93E183E199B00B6A4B4 /* Frameworks */,
 				EA7CC93F183E199B00B6A4B4 /* Resources */,
+				6C797216DD3EB63F91BF4EFD /* Embed Pods Frameworks */,
+				3E5E0939542616C89D8D225F /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -338,10 +349,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EA8A8E1A1C10480800894587 /* Build configuration list for PBXNativeTarget "OCAppleTVExample" */;
 			buildPhases = (
+				FF907520D936FFDCCCCA38FF /* Check Pods Manifest.lock */,
 				EA8A8E071C10480800894587 /* Sources */,
 				EA8A8E081C10480800894587 /* Frameworks */,
 				EA8A8E091C10480800894587 /* Resources */,
 				59E2B73F1C21888F00F93290 /* Embed Frameworks */,
+				AA6EF63C5D593EC0334403F3 /* Embed Pods Frameworks */,
+				5D41751845B0ADD4D445E5CE /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -448,6 +462,99 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3E5E0939542616C89D8D225F /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5D41751845B0ADD4D445E5CE /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6C797216DD3EB63F91BF4EFD /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AA6EF63C5D593EC0334403F3 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ED3786C271B7EF1AF808AAD4 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FF907520D936FFDCCCCA38FF /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EA7CC93D183E199B00B6A4B4 /* Sources */ = {
@@ -708,6 +815,7 @@
 		};
 		EA8A8E171C10480800894587 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -715,6 +823,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
@@ -731,6 +843,7 @@
 		};
 		EA8A8E181C10480800894587 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -738,6 +851,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
