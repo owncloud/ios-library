@@ -13,12 +13,12 @@ class MovieCell: UICollectionViewCell {
     
     func setSelectedStyle () {
         
-        self.backgroundColor = UIColor.blueColor()
+        self.backgroundColor = UIColor.blackColor()
     }
     
     func setUnselectedStyle () {
         
-        self.backgroundColor = UIColor.blackColor()
+        self.backgroundColor = UIColor.clearColor()
     }
     
    

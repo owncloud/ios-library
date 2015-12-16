@@ -15,6 +15,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     //Movies
     var moviesList:NSMutableArray?
     
+    @IBOutlet weak var viewMovieInfoCointainer: UIView?
+    @IBOutlet weak var backgroundMovieInfoCointainer: UIImageView?
+    
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var plotLabel: UILabel?
     @IBOutlet weak var actorsLabel: UILabel?
@@ -90,7 +93,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             context.previouslyFocusedView?.transform = CGAffineTransformIdentity
             context.previouslyFocusedView?.layer.shadowColor = UIColor.clearColor().CGColor
             context.nextFocusedView?.transform = CGAffineTransformMakeScale(1.2, 1.2)
-            context.nextFocusedView?.layer.shadowColor = UIColor.blueColor().CGColor
+            context.nextFocusedView?.layer.shadowColor = UIColor.blackColor().CGColor
             context.nextFocusedView?.layer.shadowRadius = 8.0
             context.nextFocusedView?.layer.shadowOffset = CGSizeMake(2,2)
             context.nextFocusedView?.layer.shadowOpacity = 1.0
@@ -109,6 +112,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex((context.nextFocusedIndexPath?.row)!))! as! FilmsDto
         
+        //Movie info
         self.titleLabel?.text = currentMovie.title
         self.plotLabel?.text = currentMovie.plot
         self.actorsLabel?.text = currentMovie.actors
@@ -117,6 +121,24 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         self.runtimeLabel?.text = currentMovie.runtime
         self.posterImage?.image = currentMovie.posterLocal
        
+        //Image background
+        
+        self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
+        self.backgroundMovieInfoCointainer!.contentMode = UIViewContentMode.ScaleAspectFill
+        self.backgroundMovieInfoCointainer?.alpha = 0.3
+        
+        /*let darkBlur = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+        let blurView = UIVisualEffectView(effect: darkBlur)
+        blurView.frame = self.backgroundMovieInfoCointainer!.bounds
+        self.backgroundMovieInfoCointainer!.addSubview(blurView)*/
+        
+        
+        
+        
+        
+
+        
+        
     }
     
     func createTheMoviesList() {
