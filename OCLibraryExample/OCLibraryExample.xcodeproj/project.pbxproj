@@ -15,6 +15,7 @@
 		59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */; };
 		EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */; };
 		EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
@@ -85,6 +86,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCAppleTVExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E299871C21508100838C32 /* FilmsDto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FilmsDto.swift; path = Dtos/FilmsDto.swift; sourceTree = "<group>"; };
 		59E2B7311C21628200F93290 /* movie1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie1.jpg; sourceTree = "<group>"; };
 		59E2B7331C216A1900F93290 /* movie2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie2.jpg; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */,
+				B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +216,7 @@
 				EA7CC944183E199B00B6A4B4 /* Foundation.framework */,
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
 				EA7CC948183E199B00B6A4B4 /* UIKit.framework */,
+				26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -832,7 +836,7 @@
 				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = es.solidgear.OCAppleTVExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.owncloud.OCAppleTVExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -860,7 +864,7 @@
 				INFOPLIST_FILE = OCAppleTVExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = es.solidgear.OCAppleTVExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.owncloud.OCAppleTVExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
