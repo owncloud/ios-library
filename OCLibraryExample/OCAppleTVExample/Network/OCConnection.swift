@@ -63,7 +63,7 @@ class OCConnection {
                         if element["d:propstat"]["d:prop"]["d:getcontenttype"].element?.text == "video/mp4"{
                             let film: FilmsDto = FilmsDto()
                             film.filmUrl = "http://docker.oc.solidgear.es:53417" + (element["d:href"].element?.text)!
-                            film.posterLocal = UIImage(named: "movie3.jpg")
+                            film.posterLocal = UIImage(named: "default.png")
                             
                             print(film.filmUrl)
                             

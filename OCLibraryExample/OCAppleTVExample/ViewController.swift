@@ -45,12 +45,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func loadFilmList (){
         
         OCConnection.sharedInstance.getVideoFilesOfRootFolder { (success, films) -> Void in
-            self.moviesList = films!
             
-            dispatch_async(dispatch_get_main_queue(),{
-                self.filmsCollectionView?.reloadData()
-            })
-            
+            if success{
+                
+                self.moviesList = films!
+                
+                dispatch_async(dispatch_get_main_queue(),{
+                    self.filmsCollectionView?.reloadData()
+                })
+                
+            }
             
         }
         

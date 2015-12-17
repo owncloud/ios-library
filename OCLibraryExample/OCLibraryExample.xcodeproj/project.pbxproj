@@ -39,6 +39,7 @@
 		EA9C37141C22AA1F00F161F1 /* OCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9C37131C22AA1F00F161F1 /* OCConnection.swift */; };
 		EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 		EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
+		EAEA44CA1C2314650084B7CC /* default.png in Resources */ = {isa = PBXBuildFile; fileRef = EAEA44C91C2314650084B7CC /* default.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +126,7 @@
 		EA9C37131C22AA1F00F161F1 /* OCConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OCConnection.swift; path = Network/OCConnection.swift; sourceTree = "<group>"; };
 		EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
+		EAEA44C91C2314650084B7CC /* default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = default.png; path = Images/default.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +282,7 @@
 		EA8A8E0C1C10480800894587 /* OCAppleTVExample */ = {
 			isa = PBXGroup;
 			children = (
+				EAEA44C71C2314560084B7CC /* Images */,
 				EA9C37111C22A9E900F161F1 /* Network */,
 				59E299851C21504200838C32 /* Dtos */,
 				EA8A8E1B1C10535C00894587 /* Cells */,
@@ -316,6 +319,14 @@
 				EAABAB311858D84600909831 /* image_to_upload.jpg */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		EAEA44C71C2314560084B7CC /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				EAEA44C91C2314650084B7CC /* default.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -473,6 +484,7 @@
 				59E2B7321C21628200F93290 /* movie1.jpg in Resources */,
 				EA8A8E131C10480800894587 /* Main.storyboard in Resources */,
 				59E2B7351C216A1900F93290 /* movie2.jpg in Resources */,
+				EAEA44CA1C2314650084B7CC /* default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
