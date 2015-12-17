@@ -23,7 +23,7 @@ class OCConnection {
         print("init");
     }
     
-    func getVideoFilesOfRootFolder (completionHandler:(success:Bool, fimls:[FilmsDto]?) -> Void) {
+    func getVideoFilesOfRootFolder (completionHandler:(success:Bool, films:[FilmsDto]?) -> Void) {
         
         let request = NSMutableURLRequest(URL: NSURL(string: "http://docker.oc.solidgear.es:53417/remote.php/webdav/")!)
         request.HTTPMethod = "PROPFIND"
@@ -42,7 +42,7 @@ class OCConnection {
             
             if let _ = error {
                 print(error)
-                completionHandler(success: false, fimls: nil)
+                completionHandler(success: false, films: nil)
 
                 }
             else {
@@ -71,7 +71,7 @@ class OCConnection {
                         }
                     }
                     
-                    completionHandler(success: true, fimls: films)
+                    completionHandler(success: true, films: : films)
                 }
 
             }
