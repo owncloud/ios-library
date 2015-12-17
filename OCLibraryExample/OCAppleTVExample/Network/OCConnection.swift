@@ -71,7 +71,7 @@ class OCConnection {
                         }
                     }
                     
-                    completionHandler(success: true, films: : films)
+                    completionHandler(success: true, films: films)
                 }
 
             }

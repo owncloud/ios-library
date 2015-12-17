@@ -32,8 +32,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        //self.createTheMoviesList()
         self.loadFilmList()
+        
+        let omdbApi:OMDbApiRequests = OMDbApiRequests()
+        
+        for current:FilmsDto in self.moviesList {
+            omdbApi.readJSONByFileName(current.filmUrl!)
+        }
         
     }
 
@@ -94,7 +99,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
         cell.setUnselectedStyle()
         
-        let currentMovie:FilmsDto = self.moviesList[indexPath.row]
+        let currentMovie:FilmsDto = (self.moviesList[indexPath.row])
         
         let vc = VideoPlayerViewController()
         vc.urlString = currentMovie.filmUrl
@@ -164,50 +169,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
      
     }
-    
-  /*  func createTheMoviesList() {
-        
-        let movie1:FilmsDto = FilmsDto()
-        movie1.title = "Raiders of the Lost Ark"
-        movie1.plot = "Archaeologist and adventurer Indiana Jones is hired by the US government to find the Ark of the Covenant before the Nazis."
-        movie1.actors = "Harrison Ford, Karen Allen, Paul Freeman, Ronald Lacey"
-        movie1.director = "Steven Spielberg"
-        movie1.runtime = "115 min"
-        movie1.year = 1981
-        movie1.posterLocal = UIImage(named: "movie1.jpg")
-        movie1.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie1.mp4"
-        
-        self.moviesList?.addObject(movie1)
-        
-        let movie2:FilmsDto = FilmsDto()
-        movie2.title = "Indiana Jones and the Temple of Doom"
-        movie2.plot = "After arriving in India, Indiana Jones is asked by a desperate village to find a mystical stone. He agrees, and stumbles upon a secret cult plotting a terrible plan in the catacombs of an ancient palace."
-        movie2.actors = "Harrison Ford, Kate Capshaw, Jonathan Ke Quan, Amrish Puri"
-        movie2.director = "Steven Spielberg"
-        movie2.runtime = "118 min"
-        movie2.year = 1984
-        movie2.posterLocal = UIImage(named: "movie2.jpg")
-        movie2.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie2.mp4"
-        
-        self.moviesList?.addObject(movie2)
-        
-        let movie3:FilmsDto = FilmsDto()
-        movie3.title = "Indiana Jones and the Last Crusade"
-        movie3.plot = "When Dr. Henry Jones Sr. suddenly goes missing while pursuing the Holy Grail, eminent archaeologist Indiana Jones must follow in his father's footsteps and stop the Nazis."
-        movie3.actors = "Harrison Ford, Sean Connery, Denholm Elliott, Alison Doody"
-        movie3.director = "Steven Spielberg"
-        movie3.runtime = "127 min"
-        movie3.year = 1989
-        movie3.posterLocal = UIImage(named: "movie3.jpg")
-        movie3.filmUrl = "http://docker.oc.solidgear.es:53417/remote.php/webdav/movie3.mp4"
-        
-        self.moviesList?.addObject(movie3)
-        
-        
-        
-    }*/
-
-    
 
 }
 
