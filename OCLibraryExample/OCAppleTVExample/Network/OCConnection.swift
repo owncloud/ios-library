@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SWXMLHash
 
 
 class OCConnection {
@@ -22,7 +23,7 @@ class OCConnection {
         print("init");
     }
     
-    func getVideoFilesOfRootFolder() {
+    func getVideoFilesOfRootFolder (completionHandler:(success:Bool, fimls:[FilmsDto]?) -> Void) {
         
         let request = NSMutableURLRequest(URL: NSURL(string: "http://docker.oc.solidgear.es:53417/remote.php/webdav/")!)
         request.HTTPMethod = "PROPFIND"
@@ -39,15 +40,37 @@ class OCConnection {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) -> Void in
             
             
-            if let unwrappedError = error {
+            if let _ = error {
                 print(error)
+                completionHandler(success: false, fimls: nil)
+
                 }
             else {
                 if let responseString = NSString(data: data!, encoding: NSUTF8StringEncoding) {
+                   
                     print(responseString)
                     
+                    let xml = SWXMLHash.lazy(data!)
                     
+                   print (xml["d:multistatus"]["d:response"].all.count)
                     
+                    var films: [FilmsDto] = []
+                    
+                    for element in xml["d:multistatus"]["d:response"] {
+                        
+                        print(element["d:propstat"]["d:prop"]["d:getcontenttype"].element?.text)
+                        
+                        if element["d:propstat"]["d:prop"]["d:getcontenttype"].element?.text == "video/mp4"{
+                            let film: FilmsDto = FilmsDto()
+                            film.filmUrl = "http://docker.oc.solidgear.es:53417" + (element["d:href"].element?.text)!
+                            
+                            print(film.filmUrl)
+                            
+                            films.append(film)
+                        }
+                    }
+                    
+                    completionHandler(success: true, fimls: films)
                 }
 
             }
