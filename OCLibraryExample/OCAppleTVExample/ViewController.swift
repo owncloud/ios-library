@@ -33,6 +33,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.moviesList = NSMutableArray()
         self.createTheMoviesList()
+        
+        OCConnection.sharedInstance.getVideoFilesOfRootFolder()
     }
 
     override func didReceiveMemoryWarning() {
