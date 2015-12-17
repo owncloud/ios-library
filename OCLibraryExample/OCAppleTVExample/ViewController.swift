@@ -13,10 +13,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     let kMovieCellIdentifier:String = "MovieCellIdentifier"
     
     //Movies
-    var moviesList:NSMutableArray?
+    var moviesList: [FilmsDto] = []
     
     @IBOutlet weak var viewMovieInfoCointainer: UIView?
     @IBOutlet weak var backgroundMovieInfoCointainer: UIImageView?
+    @IBOutlet weak var filmsCollectionView: UICollectionView?
     
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var plotLabel: UILabel?
@@ -31,10 +32,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        self.moviesList = NSMutableArray()
-        self.createTheMoviesList()
+        //self.createTheMoviesList()
+        self.loadFilmList()
         
-        OCConnection.sharedInstance.getVideoFilesOfRootFolder()
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,14 +42,28 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         // Dispose of any resources that can be recreated.
     }
     
+    func loadFilmList (){
+        
+        OCConnection.sharedInstance.getVideoFilesOfRootFolder { (success, films) -> Void in
+            self.moviesList = films!
+            
+            dispatch_async(dispatch_get_main_queue(),{
+                self.filmsCollectionView?.reloadData()
+            })
+            
+            
+        }
+        
+    }
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (self.moviesList?.count)!
+        return self.moviesList.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: MovieCell = collectionView.dequeueReusableCellWithReuseIdentifier(kMovieCellIdentifier, forIndexPath: indexPath) as! MovieCell
 
-        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex(indexPath.row))! as! FilmsDto
+        let currentMovie:FilmsDto = self.moviesList[indexPath.row]
         let currentPosterView = UIImageView(image: currentMovie.posterLocal)
         currentPosterView.contentMode = UIViewContentMode.ScaleAspectFit
         cell.backgroundView = currentPosterView
@@ -76,7 +90,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let cell: MovieCell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCell
         cell.setUnselectedStyle()
         
-        let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex(indexPath.row))! as! FilmsDto
+        let currentMovie:FilmsDto = self.moviesList[indexPath.row]
         
         let vc = VideoPlayerViewController()
         vc.urlString = currentMovie.filmUrl
@@ -121,7 +135,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         if (context.nextFocusedIndexPath != nil) {
             
-            let currentMovie:FilmsDto = (self.moviesList?.objectAtIndex((context.nextFocusedIndexPath?.row)!))! as! FilmsDto
+            let currentMovie:FilmsDto = self.moviesList[(context.nextFocusedIndexPath?.row)!]
             
             //Movie info
             self.titleLabel?.text = currentMovie.title
@@ -147,7 +161,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
      
     }
     
-    func createTheMoviesList() {
+  /*  func createTheMoviesList() {
         
         let movie1:FilmsDto = FilmsDto()
         movie1.title = "Raiders of the Lost Ark"
@@ -187,7 +201,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         
         
-    }
+    }*/
 
     
 
