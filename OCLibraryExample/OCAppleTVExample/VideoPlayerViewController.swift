@@ -26,7 +26,7 @@ class VideoPlayerViewController: UIViewController {
         
         let headers:NSMutableDictionary = NSMutableDictionary();
         headers.setObject("Mozilla/5.0 (iOS) ownCloud-iOS/3.4.6", forKey: "User-Agent")
-        headers.setObject("Basic XXXXX", forKey: "Authorization")
+        headers.setObject("Basic b2N0djpvY3R2", forKey: "Authorization")
         
         let asset:AVURLAsset = AVURLAsset(URL: url!, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
         

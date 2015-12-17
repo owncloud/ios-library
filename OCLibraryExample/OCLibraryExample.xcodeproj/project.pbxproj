@@ -15,6 +15,7 @@
 		59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9A10AC8BEBA85AF8B535106D /* Pods_OCAppleTVExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E59F464D98C1B30AA2570CB5 /* Pods_OCAppleTVExample.framework */; };
 		EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */; };
 		EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
@@ -35,6 +36,7 @@
 		EA8A8E131C10480800894587 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E111C10480800894587 /* Main.storyboard */; };
 		EA8A8E151C10480800894587 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8A8E141C10480800894587 /* Assets.xcassets */; };
 		EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8A8E1E1C1053FA00894587 /* MovieCell.swift */; };
+		EA9C37141C22AA1F00F161F1 /* OCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9C37131C22AA1F00F161F1 /* OCConnection.swift */; };
 		EAABAB321858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 		EAABAB331858D84600909831 /* image_to_upload.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB311858D84600909831 /* image_to_upload.jpg */; };
 /* End PBXBuildFile section */
@@ -92,6 +94,7 @@
 		59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		59E2B73B1C21888300F93290 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.release.xcconfig"; sourceTree = "<group>"; };
+		E59F464D98C1B30AA2570CB5 /* Pods_OCAppleTVExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCAppleTVExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC941183E199B00B6A4B4 /* OCLibraryExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OCLibraryExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC944183E199B00B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -119,6 +122,7 @@
 		EA8A8E141C10480800894587 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA8A8E161C10480800894587 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA8A8E1E1C1053FA00894587 /* MovieCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieCell.swift; path = Cells/MovieCell.swift; sourceTree = "<group>"; };
+		EA9C37131C22AA1F00F161F1 /* OCConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OCConnection.swift; path = Network/OCConnection.swift; sourceTree = "<group>"; };
 		EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -150,6 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */,
+				9A10AC8BEBA85AF8B535106D /* Pods_OCAppleTVExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +218,7 @@
 				EA7CC944183E199B00B6A4B4 /* Foundation.framework */,
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
 				EA7CC948183E199B00B6A4B4 /* UIKit.framework */,
+				E59F464D98C1B30AA2570CB5 /* Pods_OCAppleTVExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -274,6 +280,7 @@
 		EA8A8E0C1C10480800894587 /* OCAppleTVExample */ = {
 			isa = PBXGroup;
 			children = (
+				EA9C37111C22A9E900F161F1 /* Network */,
 				59E299851C21504200838C32 /* Dtos */,
 				EA8A8E1B1C10535C00894587 /* Cells */,
 				EA8A8E0D1C10480800894587 /* AppDelegate.swift */,
@@ -293,6 +300,14 @@
 				EA8A8E1E1C1053FA00894587 /* MovieCell.swift */,
 			);
 			name = Cells;
+			sourceTree = "<group>";
+		};
+		EA9C37111C22A9E900F161F1 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				EA9C37131C22AA1F00F161F1 /* OCConnection.swift */,
+			);
+			name = Network;
 			sourceTree = "<group>";
 		};
 		EAABAB301858D83800909831 /* Resources */ = {
@@ -580,6 +595,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA8A8E101C10480800894587 /* ViewController.swift in Sources */,
+				EA9C37141C22AA1F00F161F1 /* OCConnection.swift in Sources */,
 				EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */,
 				59E2B73A1C21872F00F93290 /* VideoPlayerViewController.swift in Sources */,
 				EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */,
