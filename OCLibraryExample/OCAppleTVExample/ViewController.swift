@@ -131,6 +131,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             self.runtimeLabel?.text = currentMovie.runtime
             self.posterImage?.image = currentMovie.posterLocal
             
+//            
+//            let gradient: CAGradientLayer = CAGradientLayer()
+//            gradient.frame = view.bounds
+//            gradient.colors = [UIColor.whiteColor().CGColor, UIColor.blackColor().CGColor]
+//            self.posterImage!.layer.insertSublayer(gradient, atIndex: 0)
+//            
             //Image background
             
             self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
