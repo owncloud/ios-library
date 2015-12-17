@@ -135,7 +135,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
             self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
             self.backgroundMovieInfoCointainer!.contentMode = UIViewContentMode.ScaleAspectFill
-            self.backgroundMovieInfoCointainer?.alpha = 0.3
+           // self.backgroundMovieInfoCointainer?.alpha = 0.3
             
             /*let darkBlur = UIBlurEffect(style: UIBlurEffectStyle.Dark)
             let blurView = UIVisualEffectView(effect: darkBlur)
