@@ -192,6 +192,25 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.moviesList?.addObject(movie3)
         
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        self.moviesList?.addObject(movie3)
+        
         
         
     }
