@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="9059" systemVersion="14F27" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="9531" systemVersion="14F27" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -19,20 +19,34 @@
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dOA-fQ-RMT">
                                 <rect key="frame" x="20" y="890" width="1880" height="173"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="40" minimumInteritemSpacing="40" id="IfI-RU-7fd">
-                                    <size key="itemSize" width="270" height="140"/>
+                                    <size key="itemSize" width="120" height="147"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MovieCellIdentifier" id="frD-Du-3gj" customClass="MovieCell" customModule="OCAppleTVExample" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="17" width="270" height="140"/>
+                                        <rect key="frame" x="0.0" y="13" width="120" height="147"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="270" height="140"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="120" height="147"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wLl-rt-nAB">
+                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="147"/>
+                                                </imageView>
+                                            </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="wLl-rt-nAB" secondAttribute="bottom" id="MY2-yO-huC"/>
+                                            <constraint firstItem="wLl-rt-nAB" firstAttribute="top" secondItem="frD-Du-3gj" secondAttribute="top" id="bYf-E6-4pF"/>
+                                            <constraint firstItem="wLl-rt-nAB" firstAttribute="leading" secondItem="frD-Du-3gj" secondAttribute="leading" id="otO-UB-Huc"/>
+                                            <constraint firstAttribute="trailing" secondItem="wLl-rt-nAB" secondAttribute="trailing" id="zEt-Nn-3Yo"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="posterImageView" destination="wLl-rt-nAB" id="nbK-yl-UdP"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>

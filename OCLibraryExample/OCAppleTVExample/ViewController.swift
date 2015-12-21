@@ -75,10 +75,18 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let cell: MovieCell = collectionView.dequeueReusableCellWithReuseIdentifier(kMovieCellIdentifier, forIndexPath: indexPath) as! MovieCell
 
         let currentMovie:FilmsDto = self.moviesList[indexPath.row]
-        let currentPosterView = UIImageView(image: currentMovie.posterLocal)
-        currentPosterView.contentMode = UIViewContentMode.ScaleAspectFit
-        cell.backgroundView = currentPosterView
         
+        if currentMovie.posterUrl != nil {
+            
+            cell.posterImageView.downloadedFrom(link: currentMovie.posterUrl!, contentMode: .ScaleAspectFill)
+            
+        }else{
+
+           cell.posterImageView.image = currentMovie.posterLocal
+           
+        }
+        
+
     return cell
     }
     
@@ -148,6 +156,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
             let currentMovie:FilmsDto = self.moviesList[(context.nextFocusedIndexPath?.row)!]
             
+            
             //Movie info
             self.titleLabel?.text = currentMovie.title
             self.plotLabel?.text = currentMovie.plot
@@ -155,11 +164,22 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             self.directorLabel?.text = currentMovie.director
             self.yearLabel?.text = currentMovie.year //(currentMovie.year)?.description
             self.runtimeLabel?.text = currentMovie.runtime
-            self.posterImage?.image = currentMovie.posterLocal
+            
+            
+            if currentMovie.posterUrl != nil{
+                self.posterImage?.downloadedFrom(link: currentMovie.posterUrl!, contentMode: .ScaleToFill)
+            }else{
+                self.posterImage?.image = currentMovie.posterLocal
+            }
             
             //Image background
             
-            self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
+            if currentMovie.posterUrl != nil{
+                self.backgroundMovieInfoCointainer?.downloadedFrom(link: currentMovie.posterUrl!, contentMode: .ScaleToFill)
+            }else{
+                self.backgroundMovieInfoCointainer?.image = currentMovie.posterLocal
+            }
+            
             self.backgroundMovieInfoCointainer!.contentMode = UIViewContentMode.ScaleAspectFill
             self.backgroundMovieInfoCointainer?.alpha = 0.3
             
@@ -173,4 +193,23 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
 
 }
+
+extension UIImageView {
+    func downloadedFrom(link link:String, contentMode mode: UIViewContentMode) {
+        guard
+            let url = NSURL(string: link)
+            else {return}
+        contentMode = mode
+        NSURLSession.sharedSession().dataTaskWithURL(url, completionHandler: { (data, _, error) -> Void in
+            guard
+                let data = data where error == nil,
+                let image = UIImage(data: data)
+                else { return }
+            dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                self.image = image
+            }
+        }).resume()
+    }
+}
+
 
