@@ -34,12 +34,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.loadFilmList()
         
-        let omdbApi:OMDbApiRequests = OMDbApiRequests()
-        
-        for current:FilmsDto in self.moviesList {
-            omdbApi.readJSONByFileName(current.filmUrl!)
-        }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,9 +49,17 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 
                 self.moviesList = films!
                 
-                dispatch_async(dispatch_get_main_queue(),{
-                    self.filmsCollectionView?.reloadData()
-                })
+                for current:FilmsDto in self.moviesList {
+                    
+                    OMDbApiRequests.sharedInstance.getDataOfFilm(current, completionHandler: { (success, film) -> Void in
+                        
+                        dispatch_async(dispatch_get_main_queue(),{
+                            self.filmsCollectionView?.reloadData()
+                        })
+                        
+                    })
+               
+                }
                 
             }
             
@@ -151,7 +153,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             self.plotLabel?.text = currentMovie.plot
             self.actorsLabel?.text = currentMovie.actors
             self.directorLabel?.text = currentMovie.director
-            self.yearLabel?.text = (currentMovie.year)?.description
+            self.yearLabel?.text = currentMovie.year //(currentMovie.year)?.description
             self.runtimeLabel?.text = currentMovie.runtime
             self.posterImage?.image = currentMovie.posterLocal
             

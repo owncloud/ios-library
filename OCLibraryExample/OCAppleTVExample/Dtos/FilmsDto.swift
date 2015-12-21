@@ -12,9 +12,9 @@ import UIKit
 class FilmsDto {
     
     var title:String?
-    var year:Int?
+    var year:String?
     var rated:String?
-    var released:NSDate?
+    var released:String?
     var runtime:String?
     var genre:String?
     var director:String?
@@ -26,9 +26,9 @@ class FilmsDto {
     var awards:String?
     var posterUrl:String?
     var posterLocal:UIImage?
-    var metascore:Int?
-    var imdbRating:Float?
-    var imdbVotes:Int?
+    var metascore:String?
+    var imdbRating:String?
+    var imdbVotes:String?
     var imdbId:String?
     var type:String?
     var response:Bool?

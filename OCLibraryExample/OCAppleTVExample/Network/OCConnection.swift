@@ -9,7 +9,6 @@
 import UIKit
 import SWXMLHash
 
-
 class OCConnection {
     
     class var sharedInstance: OCConnection {
