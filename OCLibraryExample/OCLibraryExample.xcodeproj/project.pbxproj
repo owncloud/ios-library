@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08B2B49EAA198CC48DC629B9 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E65FE75DF557F8A4C3A98B8 /* Pods.framework */; };
+		08B2B49EAA198CC48DC629B9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		591B59DC1C28026000DBE2CB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591B59DB1C28026000DBE2CB /* LoginViewController.swift */; };
 		59E299881C21508100838C32 /* FilmsDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E299871C21508100838C32 /* FilmsDto.swift */; };
 		59E2B7321C21628200F93290 /* movie1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7311C21628200F93290 /* movie1.jpg */; };
 		59E2B7351C216A1900F93290 /* movie2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7331C216A1900F93290 /* movie2.jpg */; };
@@ -16,8 +17,8 @@
 		59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
 		59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */; };
 		59E65EDD1C22AEE7006B068D /* OMDbApiRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E65EDC1C22AEE7006B068D /* OMDbApiRequests.swift */; };
+		B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */; };
 		EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */; };
 		EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
@@ -92,6 +93,7 @@
 /* Begin PBXFileReference section */
 		26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCAppleTVExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F8BA3DA8693CF2A62787D1C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		591B59DB1C28026000DBE2CB /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		59E299871C21508100838C32 /* FilmsDto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FilmsDto.swift; path = Dtos/FilmsDto.swift; sourceTree = "<group>"; };
 		59E2B7311C21628200F93290 /* movie1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie1.jpg; sourceTree = "<group>"; };
 		59E2B7331C216A1900F93290 /* movie2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = movie2.jpg; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 		EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EAABAB311858D84600909831 /* image_to_upload.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = image_to_upload.jpg; path = Resources/image_to_upload.jpg; sourceTree = "<group>"; };
 		EAEA44C91C2314650084B7CC /* default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = default.png; path = Images/default.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EA7CC93E183E199B00B6A4B4 /* Frameworks */ = {
@@ -143,7 +146,7 @@
 				EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */,
 				EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */,
 				EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */,
-				08B2B49EAA198CC48DC629B9 /* Pods.framework in Frameworks */,
+				08B2B49EAA198CC48DC629B9 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,7 +194,6 @@
 			children = (
 				EAA3EA916EBA6036A0BEC82F /* Pods-OCAppleTVExample.debug.xcconfig */,
 				6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */,
-				FA201D470145B2C9E90D2D4F /* Pods.debug.xcconfig */,
 				3F8BA3DA8693CF2A62787D1C /* Pods.release.xcconfig */,
 			);
 			name = Pods;
@@ -228,7 +230,6 @@
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
 				EA7CC948183E199B00B6A4B4 /* UIKit.framework */,
 				E59F464D98C1B30AA2570CB5 /* Pods_OCAppleTVExample.framework */,
-				1E65FE75DF557F8A4C3A98B8 /* Pods.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -295,6 +296,7 @@
 				59E299851C21504200838C32 /* Dtos */,
 				EA8A8E1B1C10535C00894587 /* Cells */,
 				EA8A8E0D1C10480800894587 /* AppDelegate.swift */,
+				591B59DB1C28026000DBE2CB /* LoginViewController.swift */,
 				EA8A8E0F1C10480800894587 /* ViewController.swift */,
 				59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */,
 				EA8A8E111C10480800894587 /* Main.storyboard */,
@@ -619,6 +621,7 @@
 				59E65EDD1C22AEE7006B068D /* OMDbApiRequests.swift in Sources */,
 				EA9C37141C22AA1F00F161F1 /* OCConnection.swift in Sources */,
 				EA8A8E0E1C10480800894587 /* AppDelegate.swift in Sources */,
+				591B59DC1C28026000DBE2CB /* LoginViewController.swift in Sources */,
 				59E2B73A1C21872F00F93290 /* VideoPlayerViewController.swift in Sources */,
 				EA8A8E1F1C1053FA00894587 /* MovieCell.swift in Sources */,
 				59E299881C21508100838C32 /* FilmsDto.swift in Sources */,
@@ -760,7 +763,6 @@
 		};
 		EA7CC977183E199C00B6A4B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA201D470145B2C9E90D2D4F /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
