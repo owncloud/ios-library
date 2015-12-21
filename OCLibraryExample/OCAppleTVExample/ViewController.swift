@@ -27,6 +27,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var yearLabel: UILabel?
     @IBOutlet weak var posterImage: UIImageView?
     
+    var urlString: String?
+    var userName: String?
+    var password: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +46,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func loadFilmList (){
         
-        OCConnection.sharedInstance.getVideoFilesOfRootFolder { (success, films) -> Void in
+        OCConnection.sharedInstance.getVideoFilesOfRootFolder (self.urlString!, userName: self.userName!, password: self.password!) { (success, films) -> Void in
             
             if success{
                 

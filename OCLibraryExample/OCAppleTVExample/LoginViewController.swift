@@ -18,6 +18,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
         // Do any additional setup after loading the view.
     }
 
@@ -30,6 +31,10 @@ class LoginViewController: UIViewController {
         
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc : ViewController = storyboard.instantiateViewControllerWithIdentifier("ViewController") as! ViewController
+        
+        vc.urlString = self.urlTextField?.text
+        vc.userName = self.userNameTextField?.text
+        vc.password = self.passwordTextField?.text
         
         self.presentViewController(vc, animated: true, completion: nil)
         

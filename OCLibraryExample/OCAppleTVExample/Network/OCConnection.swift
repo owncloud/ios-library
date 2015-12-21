@@ -22,9 +22,10 @@ class OCConnection {
         print("init");
     }
     
-    func getVideoFilesOfRootFolder (completionHandler:(success:Bool, films:[FilmsDto]?) -> Void) {
+    func getVideoFilesOfRootFolder (urlString:String, userName:String, password:String, completionHandler:(success:Bool, films:[FilmsDto]?) -> Void) {
         
-        let request = NSMutableURLRequest(URL: NSURL(string: "http://docker.oc.solidgear.es:53417/remote.php/webdav/")!)
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: urlString + "/remote.php/webdav/")!)
         request.HTTPMethod = "PROPFIND"
         
         //HEADERS
@@ -33,8 +34,14 @@ class OCConnection {
         let bodyString: String = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a:propfind xmlns:a=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><a:prop><a:getlastmodified/></a:prop><a:prop><a:getcontenttype/></a:prop><a:prop><a:getcontentlength/></a:prop><a:prop><a:getetag/></a:prop><a:prop><a:resourcetype/></a:prop><a:prop><oc:permissions/></a:prop></a:propfind>"
         request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding)
         
-        let credentials: String = "Basic b2N0djpvY3R2"
-        request.addValue(credentials, forHTTPHeaderField: "Authorization")
+        //Login
+        let PasswordString = "\(userName):\(password)"
+        let PasswordData = PasswordString.dataUsingEncoding(NSUTF8StringEncoding)
+        let base64EncodedCredential = PasswordData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+        
+        
+        //let credentials: String = "Basic b2N0djpvY3R2"
+        request.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
         
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) -> Void in
             
@@ -61,7 +68,7 @@ class OCConnection {
                         
                         if element["d:propstat"]["d:prop"]["d:getcontenttype"].element?.text == "video/mp4"{
                             let film: FilmsDto = FilmsDto()
-                            film.filmUrl = "http://docker.oc.solidgear.es:53417" + (element["d:href"].element?.text)!
+                            film.filmUrl = urlString + (element["d:href"].element?.text)!
                             film.posterLocal = UIImage(named: "default.png")
                             
                             print(film.filmUrl)
