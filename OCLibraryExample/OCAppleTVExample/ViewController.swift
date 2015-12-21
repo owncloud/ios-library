@@ -115,8 +115,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let currentMovie:FilmsDto = (self.moviesList[indexPath.row])
         
         let vc = VideoPlayerViewController()
-        vc.urlString = currentMovie.filmUrl
         self.presentViewController(vc, animated: true, completion: nil)
+        vc.playVideo(currentMovie.filmUrl!, userName: self.userName!, password: self.password!)
     }
 
     /*

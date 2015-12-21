@@ -18,6 +18,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.urlTextField?.text = "http://docker.oc.solidgear.es:53417"
         
         // Do any additional setup after loading the view.
     }

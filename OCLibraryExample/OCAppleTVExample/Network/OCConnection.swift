@@ -86,13 +86,6 @@ class OCConnection {
         
         task.resume()
         
- 
-
-
-        
-        
-        
-    
     }
 
 }

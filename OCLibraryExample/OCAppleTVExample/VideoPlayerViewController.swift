@@ -13,20 +13,33 @@ import AVKit
 
 class VideoPlayerViewController: UIViewController {
     
-    var urlString:String?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func playVideo(urlString:String, userName:String, password:String) {
         // Do any additional setup after loading the view
         
-        let url = NSURL(string: urlString!)
+        let url = NSURL(string: urlString)
         //let url = NSURL(string: "http://www.ebookfrenzy.com/ios_book/movie/movie.mov")
         //let url = NSURL(fileURLWithPath: "/Users/Javi/Downloads/movie3.mp4")
         
         let headers:NSMutableDictionary = NSMutableDictionary();
         headers.setObject("Mozilla/5.0 (iOS) ownCloud-iOS/3.4.6", forKey: "User-Agent")
-        headers.setObject("Basic b2N0djpvY3R2", forKey: "Authorization")
+        
+        //Login
+        let PasswordString = "\(userName):\(password)"
+        let PasswordData = PasswordString.dataUsingEncoding(NSUTF8StringEncoding)
+        let base64EncodedCredential = PasswordData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+    
+        headers.setObject("Basic \(base64EncodedCredential)", forKey: "Authorization")
         
         let asset:AVURLAsset = AVURLAsset(URL: url!, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
         
@@ -41,11 +54,6 @@ class VideoPlayerViewController: UIViewController {
         playerController.view.frame = self.view.frame
         
         player.play()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 
