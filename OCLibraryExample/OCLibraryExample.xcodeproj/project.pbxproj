@@ -15,10 +15,9 @@
 		59E2B7361C216A1900F93290 /* movie3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59E2B7341C216A1900F93290 /* movie3.jpg */; };
 		59E2B73A1C21872F00F93290 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E2B7391C21872F00F93290 /* VideoPlayerViewController.swift */; };
 		59E2B73C1C21888300F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
-		59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; };
-		59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B73B1C21888300F93290 /* AVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59E65EDD1C22AEE7006B068D /* OMDbApiRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E65EDC1C22AEE7006B068D /* OMDbApiRequests.swift */; };
 		B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */; };
+		EA4211611C293B5200203180 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA4211601C293B5200203180 /* AVFoundation.framework */; };
 		EA7CC945183E199B00B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC944183E199B00B6A4B4 /* Foundation.framework */; };
 		EA7CC947183E199B00B6A4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */; };
 		EA7CC949183E199B00B6A4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC948183E199B00B6A4B4 /* UIKit.framework */; };
@@ -76,20 +75,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		59E2B73F1C21888F00F93290 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				59E2B73E1C21888F00F93290 /* AVFoundation.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		26C6693BB8870B0C235EC7AF /* Pods_OCAppleTVExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCAppleTVExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F8BA3DA8693CF2A62787D1C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -103,6 +88,7 @@
 		59E65EDC1C22AEE7006B068D /* OMDbApiRequests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OMDbApiRequests.swift; path = Network/OMDbApiRequests.swift; sourceTree = "<group>"; };
 		6A6766825393A386A8ADA7A8 /* Pods-OCAppleTVExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCAppleTVExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-OCAppleTVExample/Pods-OCAppleTVExample.release.xcconfig"; sourceTree = "<group>"; };
 		E59F464D98C1B30AA2570CB5 /* Pods_OCAppleTVExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCAppleTVExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA4211601C293B5200203180 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		EA7CC941183E199B00B6A4B4 /* OCLibraryExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OCLibraryExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7CC944183E199B00B6A4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -163,7 +149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59E2B73D1C21888F00F93290 /* AVFoundation.framework in Frameworks */,
+				EA4211611C293B5200203180 /* AVFoundation.framework in Frameworks */,
 				B6E53ABBC8101121C38C5CA5 /* Pods_OCAppleTVExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,6 +211,7 @@
 		EA7CC943183E199B00B6A4B4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EA4211601C293B5200203180 /* AVFoundation.framework */,
 				59E2B73B1C21888300F93290 /* AVFoundation.framework */,
 				EA7CC944183E199B00B6A4B4 /* Foundation.framework */,
 				EA7CC946183E199B00B6A4B4 /* CoreGraphics.framework */,
@@ -390,7 +377,6 @@
 				EA8A8E071C10480800894587 /* Sources */,
 				EA8A8E081C10480800894587 /* Frameworks */,
 				EA8A8E091C10480800894587 /* Resources */,
-				59E2B73F1C21888F00F93290 /* Embed Frameworks */,
 				AA6EF63C5D593EC0334403F3 /* Embed Pods Frameworks */,
 				5D41751845B0ADD4D445E5CE /* Copy Pods Resources */,
 			);
