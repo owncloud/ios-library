@@ -88,4 +88,44 @@ class OCConnection {
         
     }
 
+    
+    func isLoginCorrect (urlString:String, userName:String, password:String, completionHandler:(success:Bool) -> Void) {
+        
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: urlString + "/remote.php/webdav/")!)
+        request.HTTPMethod = "HEAD"
+        
+        //HEADERS
+        /*request.addValue("application/xml", forHTTPHeaderField: "Content-Type")
+        request.addValue("1", forHTTPHeaderField: "Depth")
+        let bodyString: String = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a:propfind xmlns:a=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><a:prop><a:getlastmodified/></a:prop><a:prop><a:getcontenttype/></a:prop><a:prop><a:getcontentlength/></a:prop><a:prop><a:getetag/></a:prop><a:prop><a:resourcetype/></a:prop><a:prop><oc:permissions/></a:prop></a:propfind>"
+        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding)*/
+        
+        //Login
+        let PasswordString = "\(userName):\(password)"
+        let PasswordData = PasswordString.dataUsingEncoding(NSUTF8StringEncoding)
+        let base64EncodedCredential = PasswordData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+        
+        
+        //let credentials: String = "Basic b2N0djpvY3R2"
+        request.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) -> Void in
+            
+            let httpResponse:NSHTTPURLResponse = response as! NSHTTPURLResponse;
+            
+            if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                print(httpResponse)
+                completionHandler(success: true)
+                
+            } else {
+                print(error)
+                completionHandler(success: false)
+            }
+            
+        }
+        
+        task.resume()
+        
+    }
 }

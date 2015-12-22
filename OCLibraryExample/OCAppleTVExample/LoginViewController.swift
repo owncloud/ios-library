@@ -30,14 +30,40 @@ class LoginViewController: UIViewController {
     
     @IBAction func acceptButtonAction(sender: UIButton) {
         
-        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc : ViewController = storyboard.instantiateViewControllerWithIdentifier("ViewController") as! ViewController
+
+        OCConnection.sharedInstance.isLoginCorrect ((self.urlTextField?.text)!, userName: (self.userNameTextField?.text!)!, password: (self.passwordTextField?.text!)!) { (success) -> Void in
+            
+            if success {
+                
+                let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc : ViewController = storyboard.instantiateViewControllerWithIdentifier("ViewController") as! ViewController
+                
+                vc.urlString = self.urlTextField?.text
+                vc.userName = self.userNameTextField?.text
+                vc.password = self.passwordTextField?.text
+                
+                self.presentViewController(vc, animated: true, completion: nil)
+                
+            } else {
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    let alert = UIAlertController(title: "Error", message:"Wrong Credentials", preferredStyle: .Alert)
+                    let cancelAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+                    alert.addAction(cancelAction)
+                    
+                    self.presentViewController(alert, animated: true){
+                    }
+                })
+            }
+            
+        }
         
-        vc.urlString = self.urlTextField?.text
-        vc.userName = self.userNameTextField?.text
-        vc.password = self.passwordTextField?.text
         
-        self.presentViewController(vc, animated: true, completion: nil)
+        
+        
+        
+        
+        
         
     }
     
