@@ -2,6 +2,7 @@
   "images" : [
     {
       "idiom" : "tv",
+      "filename" : "launch400.png",
       "scale" : "1x"
     }
   ],
