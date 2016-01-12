@@ -185,7 +185,7 @@
 
 /**
  * Method to detect if a server version is higher than a limit version.
- * This methos is used for example to know if the server have share API or support Cookies
+ * This method is used for example to know if the server have share API or support Cookies
  *
  * @param NSString -> serverVersion
  * @param NSArray -> limitVersion
@@ -195,6 +195,21 @@
  */
 + (BOOL) isServerVersion:(NSString *) serverVersionString higherThanLimitVersion:(NSArray *) limitVersion;
 
+//-----------------------------------
+/// @name getPermissionsValueByCanCreate
+///-----------------------------------
+
+/**
+ * Method know the value of the permissions of a share file or folder.
+ * This method is used to calculate the value of a permission parameter to share a file or document
+ *
+ * @param BOOL -> isCreate
+ * @param BOOL -> isChange
+ * @param BOOL -> isDelete
+ *
+ * @return NSInteger
+ *
+ */
 + (NSInteger) getPermissionsValueByCanCreate:(BOOL)isCreate andCanChange:(BOOL)isChange andCanDelete:(BOOL)isDelete;
     
 @end
