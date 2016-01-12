@@ -26,3 +26,10 @@
 #define k_redirected_code_1 301
 #define k_redirected_code_2 302
 #define k_redirected_code_3 307
+
+#define k_defaul_share_permission 0
+#define k_read_share_permission 1
+#define k_update_share_permission 2
+#define k_create_share_permission 4
+#define k_delete_share_permission 8
+#define k_share_share_permission 16

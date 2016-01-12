@@ -194,5 +194,7 @@
  *
  */
 + (BOOL) isServerVersion:(NSString *) serverVersionString higherThanLimitVersion:(NSArray *) limitVersion;
+
++ (NSInteger) getPermissionsValueByCanCreate:(BOOL)isCreate andCanChange:(BOOL)isChange andCanDelete:(BOOL)isDelete;
     
 @end

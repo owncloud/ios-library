@@ -28,6 +28,7 @@
 #import "OCCommunication.h"
 #import "OCFrameworkConstants.h"
 #import "OCErrorMsg.h"
+#import "OCConstants.h"
 
 #define kSAMLFragmentArray [NSArray arrayWithObjects: @"wayf", @"saml", nil]
 
@@ -568,6 +569,24 @@
     }];
     
     return isSupported;
+}
+
++ (NSInteger) getPermissionsValueByCanCreate:(BOOL)isCreate andCanChange:(BOOL)isChange andCanDelete:(BOOL)isDelete {
+    
+    NSInteger permissionsValue = k_read_share_permission;
+    
+    if (isCreate) {
+        permissionsValue = permissionsValue + k_create_share_permission;
+    }
+    if (isChange) {
+        permissionsValue = permissionsValue + k_update_share_permission;
+    }
+    if (isDelete) {
+        permissionsValue = permissionsValue + k_delete_share_permission;
+    }
+    
+    
+    return permissionsValue;
 }
 
 @end
