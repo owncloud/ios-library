@@ -27,6 +27,8 @@
 #define k_redirected_code_2 302
 #define k_redirected_code_3 307
 
+//The result of the sum of those values means the permissions that have a share file
+//permissions - (int) 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
 #define k_defaul_share_permission 0
 #define k_read_share_permission 1
 #define k_update_share_permission 2

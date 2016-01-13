@@ -585,7 +585,6 @@
         permissionsValue = permissionsValue + k_delete_share_permission;
     }
     
-    
     return permissionsValue;
 }
 
