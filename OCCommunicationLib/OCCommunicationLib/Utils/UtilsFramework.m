@@ -571,18 +571,24 @@
     return isSupported;
 }
 
-+ (NSInteger) getPermissionsValueByCanCreate:(BOOL)isCreate andCanChange:(BOOL)isChange andCanDelete:(BOOL)isDelete {
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare {
     
-    NSInteger permissionsValue = k_read_share_permission;
+    NSInteger permissionsValue = k_defaul_share_permission;
     
-    if (isCreate) {
+    if (canEdit) {
+        permissionsValue = permissionsValue + k_read_share_permission;
+    }
+    if (canCreate) {
         permissionsValue = permissionsValue + k_create_share_permission;
     }
-    if (isChange) {
+    if (canChange) {
         permissionsValue = permissionsValue + k_update_share_permission;
     }
-    if (isDelete) {
+    if (canDelete) {
         permissionsValue = permissionsValue + k_delete_share_permission;
+    }
+    if (canShare) {
+        permissionsValue = permissionsValue + k_share_share_permission;
     }
     
     return permissionsValue;

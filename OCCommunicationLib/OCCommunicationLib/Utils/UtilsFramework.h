@@ -203,13 +203,15 @@
  * Method know the value of the permissions of a share file or folder.
  * This method is used to calculate the value of a permission parameter to share a file or document
  *
- * @param BOOL -> isCreate
- * @param BOOL -> isChange
- * @param BOOL -> isDelete
+ * @param BOOL -> canEdit
+ * @param BOOL -> canCreate
+ * @param BOOL -> canChange
+ * @param BOOL -> canDelete
+ * @param BOOL -> canShare
  *
  * @return NSInteger
  *
  */
-+ (NSInteger) getPermissionsValueByCanCreate:(BOOL)isCreate andCanChange:(BOOL)isChange andCanDelete:(BOOL)isDelete;
-    
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare;
+
 @end
