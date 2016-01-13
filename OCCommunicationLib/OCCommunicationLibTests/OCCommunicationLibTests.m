@@ -979,7 +979,7 @@
             //Folder created
             NSLog(@"Folder created");
             dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error testCreateFolder: %@", error);
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
@@ -2064,7 +2064,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
