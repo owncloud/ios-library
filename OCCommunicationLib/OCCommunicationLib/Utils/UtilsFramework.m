@@ -571,6 +571,8 @@
     return isSupported;
 }
 
+#pragma mark - Share Permissions
+
 + (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare {
     
     NSInteger permissionsValue = k_defaul_share_permission;
@@ -592,6 +594,39 @@
     }
     
     return permissionsValue;
+}
+
++ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue {
+    
+    BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
+    BOOL canChange = [self isPermissionToCanChange:permissionValue];
+    BOOL canDelete = [self isPermissionToCanDelete:permissionValue];
+
+    
+    BOOL canEdit = (canCreate || canChange || canDelete);
+    
+    return canEdit;
+    
+}
+
++ (BOOL) isPermissionToCanCreate:(NSInteger) permissionValue {
+    BOOL canCreate = ((permissionValue & k_create_share_permission) > 0);
+    return canCreate;
+}
+
++ (BOOL) isPermissionToCanChange:(NSInteger) permissionValue {
+    BOOL canChange = ((permissionValue & k_update_share_permission) > 0);
+    return canChange;
+}
+
++ (BOOL) isPermissionToCanDelete:(NSInteger) permissionValue {
+    BOOL canDelete = ((permissionValue & k_delete_share_permission) > 0);
+    return canDelete;
+}
+
++ (BOOL) isPermissionToCanShare:(NSInteger) permissionValue {
+    BOOL canShare = ((permissionValue & k_share_share_permission) > 0);
+    return canShare;
 }
 
 @end

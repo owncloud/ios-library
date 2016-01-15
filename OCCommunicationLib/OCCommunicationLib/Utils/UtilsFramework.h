@@ -214,4 +214,74 @@
  */
 + (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare;
 
+//-----------------------------------
+/// @name isPermissionToCanEdit
+///-----------------------------------
+
+/**
+ * Method know if we have permission to edit by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanCreate
+///-----------------------------------
+
+/**
+ * Method know if we have permission to create by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanCreate:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanChange
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Change by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanChange:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanDelete
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Delete by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanDelete:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanShare
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Share by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanShare:(NSInteger) permissionValue;
+
 @end
