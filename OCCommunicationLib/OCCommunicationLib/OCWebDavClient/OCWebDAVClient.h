@@ -413,7 +413,7 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
           success:(void(^)(OCHTTPRequestOperation *, id))success
           failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 

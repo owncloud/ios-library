@@ -679,7 +679,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sharedOCCommunication addOperationToTheNetworkQueue:operation];
 }
 
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
                                 success:(void(^)(OCHTTPRequestOperation *, id))success
                                 failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure {
     NSParameterAssert(success);
@@ -695,7 +695,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         shareType = k_group_sharee_type;
     }
     
-    _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@",filePath, (long)shareType, userOrGroup];
+    self.postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@&permissions=%ld",filePath, (long)shareType, userOrGroup, (long)permissions];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];

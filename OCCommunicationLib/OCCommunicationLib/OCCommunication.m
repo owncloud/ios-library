@@ -995,7 +995,7 @@
     }];
 }
 
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error))failureRequest{
     
@@ -1006,7 +1006,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         NSData *response = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];

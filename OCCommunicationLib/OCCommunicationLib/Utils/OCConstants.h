@@ -35,3 +35,9 @@
 #define k_create_share_permission 4
 #define k_delete_share_permission 8
 #define k_share_share_permission 16
+
+#define k_min_file_share_permission 1
+#define k_max_file_share_permission 19
+#define k_min_folder_share_permission 1
+#define k_max_folder_share_permission 31
+
