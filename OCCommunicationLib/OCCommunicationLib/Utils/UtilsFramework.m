@@ -575,16 +575,13 @@
 
 + (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare {
     
-    NSInteger permissionsValue = k_defaul_share_permission;
+    NSInteger permissionsValue = k_read_share_permission;
     
-    if (canEdit) {
-        permissionsValue = permissionsValue + k_read_share_permission;
+    if (canEdit || canChange) {
+        permissionsValue = permissionsValue + k_update_share_permission;
     }
     if (canCreate) {
         permissionsValue = permissionsValue + k_create_share_permission;
-    }
-    if (canChange) {
-        permissionsValue = permissionsValue + k_update_share_permission;
     }
     if (canDelete) {
         permissionsValue = permissionsValue + k_delete_share_permission;
