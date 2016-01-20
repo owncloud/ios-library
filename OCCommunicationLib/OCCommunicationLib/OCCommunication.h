@@ -730,6 +730,7 @@ typedef enum {
  * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
  * @param password -> password
  * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
+ * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
