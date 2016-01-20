@@ -244,7 +244,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _goButton.enabled = YES;
         _goInfoLabel.text = @"Success";
 
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer) {
         //Request failure
         NSLog(@"Error: %@", error);
         _goButton.enabled = YES;
@@ -291,7 +291,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _progressLabel.text = @"Success";
         _deleteLocalFile.enabled = YES;
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         //Request failure
         NSLog(@"error while download a file: %@", error);
         _progressLabel.text = @"Error in download";
@@ -550,7 +550,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Refresh the file list
         [self readFolder:nil];
         
-    } failureRquest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRquest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         //Failure
         NSLog(@"error while delete a file: %@", error);
         _uploadProgressLabel.text = @"Error in delete file";

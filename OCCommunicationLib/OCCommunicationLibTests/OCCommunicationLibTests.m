@@ -113,7 +113,7 @@
         NSLog(@"Folder %@ created", folder);
         dispatch_semaphore_signal(semaphore);
 
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         NSLog(@"Error created:%@ folder", folder);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
@@ -152,7 +152,7 @@
         //Folder deleted
         NSLog(@"Folder %@ deleted", path);
         dispatch_semaphore_signal(semaphore);
-    } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+    } failureRquest:^(NSHTTPURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
         NSLog(@"Error deleted %@ folder", path);
         // Signal that block has completed
@@ -236,7 +236,7 @@
         //Folder created
         NSLog(@"Folder created");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error testCreateFolder failureRequest: %@", error);
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
@@ -277,7 +277,7 @@
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             dispatch_semaphore_signal(semaphore);
 
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
@@ -322,7 +322,7 @@
     [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         XCTFail(@"File Moved on the same folder");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error moving file on the same folder Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -375,7 +375,7 @@
         NSLog(@"File moved");
         dispatch_semaphore_signal(semaphore);
 
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error moving file Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -424,7 +424,7 @@
         [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"File Moved and renamed");
             dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error moving file and renamed Response: %@ and Error: %@", response, error);
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
@@ -467,7 +467,7 @@
     [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         XCTFail(@"Folder Moved inside himself");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error moving folder inside himself Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -513,7 +513,7 @@
     [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"Folder Moved");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error moving folder Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -560,7 +560,7 @@
         [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"File renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error renaming file with forbidden characters Response: %@ and Error: %@", response, error);
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
@@ -608,7 +608,7 @@
     [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"File Renamed");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error renaming file Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -648,7 +648,7 @@
         [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
             XCTFail(@"Folder renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error renaming folder with forbidden characters Response: %@ and Error: %@", response, error);
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
@@ -691,7 +691,7 @@
     [_sharedOCCommunication moveFileOrFolder:origin toDestiny:destiny onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSHTTPURLResponse *response, NSString *redirectServer) {
         NSLog(@"Folder Renamed");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error renaming folder Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
@@ -729,7 +729,7 @@
         //Folder deleted
         NSLog(@"Folder deleted");
         dispatch_semaphore_signal(semaphore);
-    } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+    } failureRquest:^(NSHTTPURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
         XCTFail(@"Error testDeleteFolder: %@", error);
         // Signal that block has completed
@@ -774,7 +774,7 @@
         //File deleted
         NSLog(@"File deleted");
         dispatch_semaphore_signal(semaphore);
-    } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+    } failureRquest:^(NSHTTPURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
         XCTFail(@"Error test delete file: %@", error);
         // Signal that block has completed
@@ -889,7 +889,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer) {
         XCTFail(@"Error reading a folder - Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
     }];
@@ -957,7 +957,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error reading the folder properties - Response: %@ and Error: %@", response, error);
         dispatch_semaphore_signal(semaphore);
         
@@ -979,7 +979,7 @@
             //Folder created
             NSLog(@"Folder created");
             dispatch_semaphore_signal(semaphore);
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error testCreateFolder: %@", error);
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
@@ -1004,7 +1004,7 @@
             //Folder deleted
             NSLog(@"Folder deleted");
             dispatch_semaphore_signal(semaphore);
-        } failureRquest:^(NSHTTPURLResponse * response, NSError * error) {
+        } failureRquest:^(NSHTTPURLResponse * response, NSError * error, NSString *redirectedServer) {
             //Error
             XCTFail(@"Error testDeleteFolder: %@", error);
             // Signal that block has completed
@@ -1045,7 +1045,7 @@
             
             dispatch_semaphore_signal(semaphore);
             
-        } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+        } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
             XCTFail(@"Error reading the folder properties - Response: %@ and Error: %@", response, error);
             dispatch_semaphore_signal(semaphore);
             
@@ -1125,7 +1125,7 @@
         dispatch_semaphore_signal(semaphore);
         
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error download a file - Response: %@ - Error: %@", response, error);
         
@@ -1208,7 +1208,7 @@
         dispatch_semaphore_signal(semaphore);
         
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         NSLog(@"Error download a file - Response: %@ - Error: %@", response, error);
         
@@ -1837,7 +1837,7 @@
     [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
         NSLog(@"Folder shared");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error sharing folder");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -1883,7 +1883,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
@@ -1930,7 +1930,7 @@
                 NSLog(@"File unshared");
                 dispatch_semaphore_signal(semaphore);
                 
-            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+            } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
                 XCTFail(@"Error unsharing folder");
                 dispatch_semaphore_signal(semaphore);
             }];
@@ -1942,7 +1942,7 @@
             dispatch_semaphore_signal(semaphore);
         }
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares on testUnShareAFolder");
         dispatch_semaphore_signal(semaphore);
@@ -1973,7 +1973,7 @@
         NSLog(@"Get capabilities ok");
         XCTAssertNotNil(capabilities,  @"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2000,7 +2000,7 @@
     [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPassword:@"testing" onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer) {
         NSLog(@"Folder shared by link with password");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error sharing folder by link with password");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2047,7 +2047,7 @@
                     NSLog(@"Updated shared by link with expiration date and password");
                     dispatch_semaphore_signal(semaphore);
                     
-                } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
                     
                     XCTFail(@"Error updating shared by link with expiration date and password");
                     dispatch_semaphore_signal(semaphore);
@@ -2064,7 +2064,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
@@ -2098,7 +2098,7 @@
         NSLog(@"Search users and groups");
         XCTAssertNotNil(itemList,  @"Error search users and groups");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2121,7 +2121,7 @@
         NSLog(@"Search users and groups");
         XCTAssertNotNil(itemList,  @"Error search users and groups");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2149,7 +2149,7 @@
     [_sharedOCCommunication shareWith:_configTests.userToShare isGroup:NO inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with user");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error share with user");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2176,7 +2176,7 @@
     [_sharedOCCommunication shareWith:_configTests.groupToShare isGroup:YES inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with group");
         dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         XCTFail(@"Error share with group");
         dispatch_semaphore_signal(semaphore);
     }];
@@ -2222,7 +2222,7 @@
                 NSLog(@"File unshared with user");
                 dispatch_semaphore_signal(semaphore);
                 
-            } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+            } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
                 XCTFail(@"Error unsharing folder with user");
                 dispatch_semaphore_signal(semaphore);
             }];
@@ -2234,7 +2234,7 @@
             dispatch_semaphore_signal(semaphore);
         }
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares on testUnShareWithUser");
         dispatch_semaphore_signal(semaphore);
@@ -2278,7 +2278,7 @@
                     NSLog(@"File is shared");
                     dispatch_semaphore_signal(semaphore);
                     
-                } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
                     
                     XCTFail(@"Error checking if a share is shared by id share");
                     dispatch_semaphore_signal(semaphore);
@@ -2295,7 +2295,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
@@ -2339,7 +2339,7 @@
                     NSLog(@"Share unshared correctly");
                     dispatch_semaphore_signal(semaphore);
                     
-                } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+                } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
                     
                     XCTFail(@"Error unsharing file by id share");
                     dispatch_semaphore_signal(semaphore);
@@ -2357,7 +2357,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading shares");
         dispatch_semaphore_signal(semaphore);
@@ -2394,7 +2394,7 @@
         
         dispatch_semaphore_signal(semaphore);
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         
         XCTFail(@"Error reading server features");
         dispatch_semaphore_signal(semaphore);
