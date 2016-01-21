@@ -1224,6 +1224,13 @@
                     
                     OCShareUser *user = [OCShareUser new];
                     
+                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = [userFound valueForKey:@"label"];
+                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
+                    }else{
+                        user.displayName = [userFound valueForKey:@"label"];
+                    }
+  
                     NSDictionary *userValues = [userFound valueForKey:@"value"];
                     if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
                         NSNumber *number = [userValues valueForKey:@"shareWith"];
