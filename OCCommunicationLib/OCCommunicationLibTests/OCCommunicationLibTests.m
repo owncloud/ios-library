@@ -32,6 +32,7 @@
 #import "OCSharedDto.h"
 #import "ConfigTests.h"
 #import "AFURLSessionManager.h"
+#import "OCConstants.h"
 
 #import <UIKit/UIKit.h>
 
@@ -2146,7 +2147,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareWith:_configTests.userToShare isGroup:NO inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication shareWith:_configTests.userToShare isGroup:NO inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPermissions:k_defaul_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with user");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSHTTPURLResponse *response, NSError *error) {
