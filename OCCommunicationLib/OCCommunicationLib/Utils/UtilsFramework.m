@@ -573,15 +573,18 @@
 
 #pragma mark - Share Permissions
 
-+ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare {
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare andIsFolder:(BOOL) isFolder {
     
     NSInteger permissionsValue = k_read_share_permission;
     
-    if (canEdit || canChange) {
+    if (canEdit && !isFolder) {
         permissionsValue = permissionsValue + k_update_share_permission;
     }
     if (canCreate) {
         permissionsValue = permissionsValue + k_create_share_permission;
+    }
+    if (canChange) {
+        permissionsValue = permissionsValue + k_update_share_permission;
     }
     if (canDelete) {
         permissionsValue = permissionsValue + k_delete_share_permission;

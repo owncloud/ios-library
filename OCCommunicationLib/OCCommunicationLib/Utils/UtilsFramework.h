@@ -208,11 +208,12 @@
  * @param BOOL -> canChange
  * @param BOOL -> canDelete
  * @param BOOL -> canShare
+ * @param BOOL -> isFolder
  *
  * @return NSInteger
  *
  */
-+ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare;
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare andIsFolder:(BOOL) isFolder;
 
 //-----------------------------------
 /// @name isPermissionToCanEdit
