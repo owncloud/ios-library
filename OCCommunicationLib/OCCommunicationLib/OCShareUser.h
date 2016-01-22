@@ -33,5 +33,6 @@
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *displayName;
 @property BOOL isGroup;
+@property BOOL isDisplayNameDuplicated;
 
 @end
