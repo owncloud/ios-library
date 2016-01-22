@@ -757,7 +757,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     } else if (expirationTime) {
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
     }else if (permissions > 0) {
-        self.postStringForShare = [NSString stringWithFormat:@"permissions=%ld",permissions];
+        self.postStringForShare = [NSString stringWithFormat:@"permissions=%ld",(long)permissions];
     }
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
