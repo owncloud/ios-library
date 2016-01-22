@@ -2043,7 +2043,7 @@
                 NSString *foarmatedDate = [dateFormatter stringFromDate:tomorrow];
                 
                 //3. Update the share with password and expiration date
-                [_sharedOCCommunication updateShare:current.idRemoteShared ofServerPath:_configTests.baseUrl withPasswordProtect:@"testing" andExpirationTime:foarmatedDate onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+                [_sharedOCCommunication updateShare:current.idRemoteShared ofServerPath:_configTests.baseUrl withPasswordProtect:@"testing" andExpirationTime:foarmatedDate andPermissions:k_defaul_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
                     
                     NSLog(@"Updated shared by link with expiration date and password");
                     dispatch_semaphore_signal(semaphore);
