@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OCSharedDto.h"
 
 @interface OCShareUser : NSObject
 
@@ -34,5 +35,6 @@
 @property (nonatomic, strong) NSString *displayName;
 @property BOOL isGroup;
 @property BOOL isDisplayNameDuplicated;
+@property (nonatomic, strong) OCSharedDto * sharedDto;
 
 @end

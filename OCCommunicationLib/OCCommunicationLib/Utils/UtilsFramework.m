@@ -28,6 +28,7 @@
 #import "OCCommunication.h"
 #import "OCFrameworkConstants.h"
 #import "OCErrorMsg.h"
+#import "OCConstants.h"
 
 #define kSAMLFragmentArray [NSArray arrayWithObjects: @"wayf", @"saml", nil]
 
@@ -568,6 +569,64 @@
     }];
     
     return isSupported;
+}
+
+#pragma mark - Share Permissions
+
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare andIsFolder:(BOOL) isFolder {
+    
+    NSInteger permissionsValue = k_read_share_permission;
+    
+    if (canEdit && !isFolder) {
+        permissionsValue = permissionsValue + k_update_share_permission;
+    }
+    if (canCreate) {
+        permissionsValue = permissionsValue + k_create_share_permission;
+    }
+    if (canChange && isFolder) {
+        permissionsValue = permissionsValue + k_update_share_permission;
+    }
+    if (canDelete) {
+        permissionsValue = permissionsValue + k_delete_share_permission;
+    }
+    if (canShare) {
+        permissionsValue = permissionsValue + k_share_share_permission;
+    }
+    
+    return permissionsValue;
+}
+
++ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue {
+    
+    BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
+    BOOL canChange = [self isPermissionToCanChange:permissionValue];
+    BOOL canDelete = [self isPermissionToCanDelete:permissionValue];
+
+    
+    BOOL canEdit = (canCreate || canChange || canDelete);
+    
+    return canEdit;
+    
+}
+
++ (BOOL) isPermissionToCanCreate:(NSInteger) permissionValue {
+    BOOL canCreate = ((permissionValue & k_create_share_permission) > 0);
+    return canCreate;
+}
+
++ (BOOL) isPermissionToCanChange:(NSInteger) permissionValue {
+    BOOL canChange = ((permissionValue & k_update_share_permission) > 0);
+    return canChange;
+}
+
++ (BOOL) isPermissionToCanDelete:(NSInteger) permissionValue {
+    BOOL canDelete = ((permissionValue & k_delete_share_permission) > 0);
+    return canDelete;
+}
+
++ (BOOL) isPermissionToCanShare:(NSInteger) permissionValue {
+    BOOL canShare = ((permissionValue & k_share_share_permission) > 0);
+    return canShare;
 }
 
 @end
