@@ -35,6 +35,8 @@
 @property (nonatomic, strong) NSString *displayName;
 @property BOOL isGroup;
 @property BOOL isDisplayNameDuplicated;
+@property BOOL isFederatedUser;
+
 @property (nonatomic, strong) OCSharedDto * sharedDto;
 
 @end
