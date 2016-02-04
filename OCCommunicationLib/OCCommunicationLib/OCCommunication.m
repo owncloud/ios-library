@@ -1212,9 +1212,7 @@
                     }else{
                         user.name = [userValues valueForKey:@"shareWith"];
                     }
-                    
-                    
-                    user.isGroup = false;
+                    user.shareeType = shareTypeUser;
                     
                     [itemList addObject:user];
                     
@@ -1238,7 +1236,7 @@
                     }else{
                         user.name = [userValues valueForKey:@"shareWith"];
                     }
-                    user.isGroup = false;
+                    user.shareeType = shareTypeUser;
                     
                     [itemList addObject:user];
                     
@@ -1255,7 +1253,7 @@
                     }else{
                         group.name = [groupValues valueForKey:@"shareWith"];
                     }
-                    group.isGroup = true;
+                    group.shareeType = shareTypeGroup;
                     
                     [itemList addObject:group];
                     
@@ -1272,7 +1270,7 @@
                     }else{
                         group.name = [groupValues valueForKey:@"shareWith"];
                     }
-                    group.isGroup = true;
+                    group.shareeType = shareTypeGroup;
                     
                     [itemList addObject:group];
                     
