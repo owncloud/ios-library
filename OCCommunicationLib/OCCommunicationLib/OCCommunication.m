@@ -1398,8 +1398,8 @@
             
             NSDictionary *fileSharingFederation = [fileSharing valueForKey:@"federation"];
             
-            NSNumber *filesSharingAllowUserSendSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"incoming"];
-            NSNumber *filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"outgoing"];
+            NSNumber *filesSharingAllowUserSendSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"outgoing"];
+            NSNumber *filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"incoming"];
             
             capabilities.isFilesSharingAllowUserSendSharesToOtherServersEnabled = filesSharingAllowUserSendSharesToOtherServersEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserReceiveSharesToOtherServersEnabled = filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber.boolValue;
