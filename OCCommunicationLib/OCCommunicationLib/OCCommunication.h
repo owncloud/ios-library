@@ -671,7 +671,7 @@ typedef enum {
  * Method to share a file or folder with user or group
  *
  * @param userOrGroup -> NSString user or group name
- * @param isGroup -> BOOL To difference between user or groups
+ * @param shareeType -> NSInteger: to set the type of sharee (user/group/federated)
  * @param serverPath -> NSString server path
  * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -680,7 +680,7 @@ typedef enum {
  *
  * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
  */
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest;
 
