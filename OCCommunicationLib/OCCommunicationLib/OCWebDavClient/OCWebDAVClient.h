@@ -413,7 +413,7 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
           success:(void(^)(OCHTTPRequestOperation *, id))success
           failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure;
 
@@ -464,7 +464,7 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
-- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
          onCommunication:(OCCommunication *)sharedOCCommunication
                  success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                  failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
