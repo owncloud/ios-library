@@ -591,7 +591,7 @@
     }
     if (canShare) {
         permissionsValue = permissionsValue + k_share_share_permission;
-    } 
+    }
     
     return permissionsValue;
 }
