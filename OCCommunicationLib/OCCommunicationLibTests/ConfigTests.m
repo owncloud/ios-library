@@ -36,7 +36,7 @@
     NSString *pathTestFolderOwn = [NSString stringWithFormat:@"UnitTest%f",[[NSDate new] timeIntervalSince1970]];
     NSString *userToShareOwn = @""; //name user to share with
     NSString *groupToShareOwn = @""; //name group to share with
-    
+
     
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
