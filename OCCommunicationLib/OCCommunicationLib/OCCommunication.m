@@ -995,7 +995,7 @@
     }];
 }
 
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest{
     
@@ -1006,7 +1006,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         NSData *response = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
@@ -1110,7 +1110,7 @@
     }];
 }
 
-- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime
+- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
@@ -1124,7 +1124,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
         NSData *response = (NSData*) responseObject;
         
