@@ -580,13 +580,13 @@
     if (canEdit && !isFolder) {
         permissionsValue = permissionsValue + k_update_share_permission;
     }
-    if (canCreate) {
+    if (canCreate & isFolder) {
         permissionsValue = permissionsValue + k_create_share_permission;
     }
     if (canChange && isFolder) {
         permissionsValue = permissionsValue + k_update_share_permission;
     }
-    if (canDelete) {
+    if (canDelete & isFolder) {
         permissionsValue = permissionsValue + k_delete_share_permission;
     }
     if (canShare) {
