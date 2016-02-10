@@ -185,7 +185,7 @@
 
 /**
  * Method to detect if a server version is higher than a limit version.
- * This methos is used for example to know if the server have share API or support Cookies
+ * This method is used for example to know if the server have share API or support Cookies
  *
  * @param NSString -> serverVersion
  * @param NSArray -> limitVersion
@@ -194,5 +194,95 @@
  *
  */
 + (BOOL) isServerVersion:(NSString *) serverVersionString higherThanLimitVersion:(NSArray *) limitVersion;
-    
+
+//-----------------------------------
+/// @name getPermissionsValueByCanCreate
+///-----------------------------------
+
+/**
+ * Method know the value of the permissions of a share file or folder.
+ * This method is used to calculate the value of a permission parameter to share a file or document
+ *
+ * @param BOOL -> canEdit
+ * @param BOOL -> canCreate
+ * @param BOOL -> canChange
+ * @param BOOL -> canDelete
+ * @param BOOL -> canShare
+ * @param BOOL -> isFolder
+ *
+ * @return NSInteger
+ *
+ */
++ (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare andIsFolder:(BOOL) isFolder;
+
+//-----------------------------------
+/// @name isPermissionToCanEdit
+///-----------------------------------
+
+/**
+ * Method know if we have permission to edit by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanCreate
+///-----------------------------------
+
+/**
+ * Method know if we have permission to create by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanCreate:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanChange
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Change by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanChange:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanDelete
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Delete by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanDelete:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToCanShare
+///-----------------------------------
+
+/**
+ * Method know if we have permission to Share by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToCanShare:(NSInteger) permissionValue;
+
 @end
