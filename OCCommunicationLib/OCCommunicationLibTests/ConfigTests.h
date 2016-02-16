@@ -36,5 +36,7 @@
 @property (nonatomic, strong) NSString *userToShare;
 //Group to share
 @property (nonatomic, strong) NSString *groupToShare;
+//Group to share
+@property (nonatomic, strong) NSString *remoteUserToShare;
 
 @end
