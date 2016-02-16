@@ -243,7 +243,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 		depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"utf-8\" ?><a:propfind xmlns:a=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><a:prop><a:getlastmodified/></a:prop><a:prop><a:getcontenttype/></a:prop><a:prop><a:getcontentlength/></a:prop><a:prop><a:getetag/></a:prop><a:prop><a:resourcetype/></a:prop><a:prop><oc:permissions/></a:prop></a:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
@@ -271,7 +271,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"utf-8\" ?><a:propfind xmlns:a=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><a:prop><a:getlastmodified/></a:prop><a:prop><a:getcontenttype/></a:prop><a:prop><a:getcontentlength/></a:prop><a:prop><a:getetag/></a:prop><a:prop><a:resourcetype/></a:prop><a:prop><oc:permissions/></a:prop></a:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
