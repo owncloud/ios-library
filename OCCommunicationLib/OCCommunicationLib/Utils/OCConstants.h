@@ -39,4 +39,4 @@
 #define k_max_file_share_permission 19
 #define k_min_folder_share_permission 1
 #define k_max_folder_share_permission 31
-
+#define k_defaul_remote_share_permission 7
