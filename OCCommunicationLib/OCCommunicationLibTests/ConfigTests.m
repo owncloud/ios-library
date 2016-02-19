@@ -37,7 +37,6 @@
     NSString *userToShareOwn = @""; //name user to share with
     NSString *groupToShareOwn = @""; //name group to share with
     NSString *remoteUserToShareOwn = @""; //remote user another server
-
     
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
