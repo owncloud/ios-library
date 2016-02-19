@@ -110,6 +110,9 @@
             _currentShared.isDirectory = NO;
         } else {
             _currentShared.isDirectory = YES;
+            if (_currentShared.path) {
+                _currentShared.path = [_currentShared.path stringByAppendingString:@"/"];
+            }
         }
     }  else if ([elementName isEqualToString:@"item_source"]) {
         
@@ -138,7 +141,6 @@
         } else {
             _currentShared.path = _xmlChars;
         }
-        
     
     } else if ([elementName isEqualToString:@"permissions"]) {
         
@@ -200,7 +202,9 @@
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
     //NSLog(@"Finish xml directory list parse");
+    
     if (_currentShared) {
+        
         [_shareList addObject:_currentShared];
     }
 }
