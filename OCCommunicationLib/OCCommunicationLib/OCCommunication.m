@@ -995,7 +995,7 @@
     }];
 }
 
-- (void)shareWith:(NSString *)userOrGroup isGroup:(BOOL)isGroup inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
+- (void)shareWith:(NSString *)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
           successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
           failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest{
     
@@ -1006,7 +1006,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
     
-    [request shareWith:userOrGroup isGroup:isGroup inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         NSData *response = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
@@ -1212,9 +1212,7 @@
                     }else{
                         user.name = [userValues valueForKey:@"shareWith"];
                     }
-                    
-                    
-                    user.isGroup = false;
+                    user.shareeType = shareTypeUser;
                     
                     [itemList addObject:user];
                     
@@ -1238,7 +1236,7 @@
                     }else{
                         user.name = [userValues valueForKey:@"shareWith"];
                     }
-                    user.isGroup = false;
+                    user.shareeType = shareTypeUser;
                     
                     [itemList addObject:user];
                     
@@ -1255,7 +1253,7 @@
                     }else{
                         group.name = [groupValues valueForKey:@"shareWith"];
                     }
-                    group.isGroup = true;
+                    group.shareeType = shareTypeGroup;
                     
                     [itemList addObject:group];
                     
@@ -1272,7 +1270,7 @@
                     }else{
                         group.name = [groupValues valueForKey:@"shareWith"];
                     }
-                    group.isGroup = true;
+                    group.shareeType = shareTypeGroup;
                     
                     [itemList addObject:group];
                     
@@ -1400,8 +1398,8 @@
             
             NSDictionary *fileSharingFederation = [fileSharing valueForKey:@"federation"];
             
-            NSNumber *filesSharingAllowUserSendSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"incoming"];
-            NSNumber *filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"outgoing"];
+            NSNumber *filesSharingAllowUserSendSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"outgoing"];
+            NSNumber *filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber = (NSNumber*)[fileSharingFederation valueForKey:@"incoming"];
             
             capabilities.isFilesSharingAllowUserSendSharesToOtherServersEnabled = filesSharingAllowUserSendSharesToOtherServersEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserReceiveSharesToOtherServersEnabled = filesSharingAllowUserReceiveSharesToOtherServersEnabledNumber.boolValue;

@@ -36,7 +36,7 @@
     NSString *pathTestFolderOwn = [NSString stringWithFormat:@"UnitTest%f",[[NSDate new] timeIntervalSince1970]];
     NSString *userToShareOwn = @""; //name user to share with
     NSString *groupToShareOwn = @""; //name group to share with
-
+    NSString *remoteUserToShareOwn = @""; //remote user another server
     
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
@@ -81,6 +81,13 @@
         _groupToShare = [[[NSProcessInfo processInfo] environment] objectForKey:@"groupToShareTravis"];
     } else {
         _groupToShare = groupToShareOwn;
+    }
+    
+    //We set the group to share
+    if ([[[NSProcessInfo processInfo] environment] objectForKey:@"remoteUserToShareTravis"]) {
+        _remoteUserToShare = [[[NSProcessInfo processInfo] environment] objectForKey:@"remoteUserToShareTravis"];
+    } else {
+        _remoteUserToShare = remoteUserToShareOwn;
     }
     
     return self;
