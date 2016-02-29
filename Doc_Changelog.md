@@ -1,4 +1,17 @@
-What's the new in 1.5 version
+What's the new in 1.2.0 version
+---------------
+
+- Added the possibility to detect a redirected server on all the requests
+- Added support for ownCloud 9
+- Improved the search users and groups for share documents
+- Added the way to control the permissions of files and folders
+- Added new tests for share and capabilities
+  
+
+Previous changes:
+---------------
+
+-  1.1.5 version
 ---------------
 
 - Added support to work with Sharee API (New server API from version 8.2 to manage users and groups)
