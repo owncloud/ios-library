@@ -1,8 +1,9 @@
 What's the new in 1.2.0 version
 ---------------
 
-- Added the possibility to detect a redirected server on all the requests
 - Added support for ownCloud 9
+- Added the possibility to detect a redirected server on all the requests
+- Added support to share with all types of shares 
 - Improved the search users and groups for share documents
 - Added the way to control the permissions of files and folders
 - Added new tests for share and capabilities
