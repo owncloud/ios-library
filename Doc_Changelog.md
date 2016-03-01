@@ -1,19 +1,14 @@
-What's the new in 1.2.0 version
----------------
+## What's new in 1.2.0 version
 
-- Added support for ownCloud 9
+- Improved the search of users and groups for the internal share
+- Added support to share with all types of sharees (user, group, public share,federated sharing ); taking advantage of the  shareType
+- Support to manage internal share privileges
 - Added the possibility to detect a redirected server on all the requests
-- Added support to share with all types of shares 
-- Improved the search users and groups for share documents
-- Added the way to control the permissions of files and folders
-- Added new tests for share and capabilities
-  
+- Added support for ownCloud 9
+- Added new tests for share and capabilities 
 
-Previous changes:
----------------
 
--  1.1.5 version
----------------
+## 1.1.5 version
 
 - Added support to work with Sharee API (New server API from version 8.2 to manage users and groups)
 
@@ -27,11 +22,7 @@ Previous changes:
 - Modified security policy properties to fix some issues with requests that were canceled after a while using self signed servers.
   
 
-Previous changes:
----------------
-
--  1.1.4 version
----------------
+## 1.1.4 version
 
 Added token support in read folder method for multiaccount. In order to differenciate the user account in the response from the server side we have added token support, for the moment only in the readFolder method.
 
@@ -47,8 +38,7 @@ We can use that to send as a parameter on readFolder method. Also if only we hav
      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token)) failureRequest;
 
 
--  1.1.3 version
----------------
+##  1.1.3 version
 
 From OC 8.1, the server manage the forbbiden characters except the '/'. 
 
@@ -59,12 +49,10 @@ We have prepared the current createFolder and moveFileOrFolder methods for do su
 
 You can see more specific in OCCommunication class.
 
--  old versions
----------------
+## Previous versions
 
 
-Download queue
----------------
+# Download queue
 When we download a file we use a queue in order to download the files one by one. 
 By default the queue es FIFO. We will download the files in the order that the developer add them.
 But if we want to use the queue as LIFO (download first the last file that we add to download) we need to call "setDownloadQueueToLIFO" method
@@ -73,3 +61,4 @@ Code example
 .. code-block:: objective-c
 //Set the downloads with LIFO system
 [[AppDelegate sharedOCCommunication] setDownloadQueueToLIFO:YES];
+ç
