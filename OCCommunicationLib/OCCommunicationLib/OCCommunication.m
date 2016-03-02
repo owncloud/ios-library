@@ -1439,7 +1439,6 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
     
-    
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = _securityPolicy;
@@ -1449,8 +1448,7 @@
                 NSData *response = (NSData*) responseObject;
                                     
                 //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-                                    
-                                    
+
                 successRequest(operation.response, response, request.redirectedServer);
                                     
             }

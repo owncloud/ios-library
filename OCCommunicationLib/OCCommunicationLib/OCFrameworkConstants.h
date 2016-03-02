@@ -48,7 +48,7 @@
 
 //Url to access to Remote Thumbnails
 //api/v1/thumbnail/{x}/{y}/{file}
-#define k_url_thumbnails @"api/v1/thumbnail"
+#define k_url_thumbnails @"index.php/apps/files/api/v1/thumbnail"
 
 //Version of the server that have share API
 #define k_version_support_shared [NSArray arrayWithObjects:  @"5", @"0", @"27", nil]

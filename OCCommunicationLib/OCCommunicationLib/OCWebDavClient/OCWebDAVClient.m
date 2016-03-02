@@ -816,10 +816,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                             failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure{
     _requestMethod = @"GET";
     
-//    NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
-//    serverPath = [serverPath stringByAppendingString:jsonQuery];
-    //TOODO encode filepath
-    
     NSString *query = [NSString stringWithFormat:@"/%i/%i/%@", (int)fileWidth, (int)fileHeight, filePath];
     serverPath = [serverPath stringByAppendingString:query];
     
@@ -830,7 +826,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCComunication];
     
     [sharedOCComunication addOperationToTheNetworkQueue:operation];
-    
     
 }
 
