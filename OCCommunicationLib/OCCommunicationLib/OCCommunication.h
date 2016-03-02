@@ -779,6 +779,28 @@ typedef enum {
 - (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
 
+#pragma mark - Remote thumbnails
+
+///-----------------------------------
+/// @name Get the thumbnail for a file
+///-----------------------------------
+
+/**
+ * Method to get the remote thumbnail for a file
+ *
+ * @param serverPath   -> NSString server
+ * @param filePath     -> NSString file path
+ * @param fileWidth    -> NSInteger with the width size
+ * @param fileHeight   -> NSInteger with the height size
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return nsData -> thumbnail of the file with the size requested
+ *
+ */
+- (void) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+
 #pragma mark - Queue system
 /*
  * Method that add an operation to the appropiate queue

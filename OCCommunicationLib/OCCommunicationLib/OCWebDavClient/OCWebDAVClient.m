@@ -809,6 +809,32 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
+#pragma mark - Remote thumbnails
+
+- (void) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                            success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                            failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure{
+    _requestMethod = @"GET";
+    
+//    NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
+//    serverPath = [serverPath stringByAppendingString:jsonQuery];
+    //TOODO encode filepath
+    
+    NSString *query = [NSString stringWithFormat:@"/%i/%i/%@", (int)fileWidth, (int)fileHeight, filePath];
+    serverPath = [serverPath stringByAppendingString:query];
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCComunication success:success failure:failure];
+    [operation setTypeOfOperation:NavigationQueue];
+    operation = [self setRedirectionBlockOnOperation:operation withOCCommunication:sharedOCComunication];
+    
+    [sharedOCComunication addOperationToTheNetworkQueue:operation];
+    
+    
+}
+
+
 #pragma mark - Manage Redirections
 
 - (OCHTTPRequestOperation *) setRedirectionBlockOnOperation:(OCHTTPRequestOperation *) operation withOCCommunication: (OCCommunication *) sharedOCCommunication {
