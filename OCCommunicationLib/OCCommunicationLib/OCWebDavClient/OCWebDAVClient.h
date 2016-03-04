@@ -523,7 +523,7 @@ extern NSString *OCWebDAVModificationDateKey;
  * @return nsData -> thumbnail of the file with the size requested
  *
  */
-- (void) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                             success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                             failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 

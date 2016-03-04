@@ -811,7 +811,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 #pragma mark - Remote thumbnails
 
-- (void) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                             success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                             failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure{
     _requestMethod = @"GET";
@@ -827,6 +827,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [sharedOCComunication addOperationToTheNetworkQueue:operation];
     
+    return operation;
 }
 
 
