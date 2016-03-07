@@ -172,6 +172,9 @@ NSString *OCCWebDAVURIKey           = @"uri";
      }
     } else if ([elementName isEqualToString:@"d:getlastmodified"]) {
         //DATE
+        // 'Thu, 30 Oct 2008 02:52:47 GMT'
+        // Monday, 12-Jan-98 09:25:56 GMT
+        // Value: HTTP-date  ; defined in section 3.3.1 of RFC2068
         
         if ([_xmlChars length]) {
             NSDate *d = [[self class] parseDateString:_xmlChars];
@@ -187,11 +190,9 @@ NSString *OCCWebDAVURIKey           = @"uri";
                 NSLog(@"Could not parse date string '%@' for '%@'", _xmlChars, elementName);
             }
         }
-    } else if ([elementName hasSuffix:@":getlastmodified"]) {
-        // 'Thu, 30 Oct 2008 02:52:47 GMT'
-        // Monday, 12-Jan-98 09:25:56 GMT
-        // Value: HTTP-date  ; defined in section 3.3.1 of RFC2068
         
+    } else if ([elementName isEqualToString:@"oc:id"]) {
+        _currentFile.ocId = _xmlChars;
         
     } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
         //ETAG
@@ -211,6 +212,12 @@ NSString *OCCWebDAVURIKey           = @"uri";
         //FileDto current size
         _currentFile.size = (long)[_xmlChars longLongValue];
         
+    } else if ([elementName isEqualToString:@"oc:permissions"]) {
+        _currentFile.permissions = _xmlChars;
+        
+    } else if ([elementName isEqualToString:@"d:collection"]) {
+        _currentFile.isDirectory = YES;
+        
     } else if ([elementName isEqualToString:@"d:response"]) {
         //NSLog(@"2 _xmlBucked :- %@",_xmlBucket);
         
@@ -223,10 +230,6 @@ NSString *OCCWebDAVURIKey           = @"uri";
             //[_directoryBucket addObject:_xmlBucket];
         }
         _xmlBucket = nil;
-    } else if ([elementName isEqualToString:@"oc:permissions"]) {
-        _currentFile.permissions = _xmlChars;
-    } else if ([elementName isEqualToString:@"d:collection"]) {
-        _currentFile.isDirectory = YES;
     }
    
 }
