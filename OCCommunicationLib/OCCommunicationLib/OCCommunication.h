@@ -788,8 +788,10 @@ typedef enum {
 /**
  * Method to get the remote thumbnail for a file
  *
- * @param serverPath   -> NSString server
- * @param filePath     -> NSString file path
+ * JPG,PNG,JPEG,GIF,BMP,MP3,MP4,MOV,FLV,AVI,3GP,WEBM,OGV,WMV
+ *
+ * @param serverPath   -> NSString server, without encoding
+ * @param filePath     -> NSString file path, without encoding
  * @param fileWidth    -> NSInteger with the width size
  * @param fileHeight   -> NSInteger with the height size
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
