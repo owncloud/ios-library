@@ -1191,92 +1191,15 @@
                 NSArray *exactDict = [dataDict valueForKey:@"exact"];
                 NSArray *usersFounded = [dataDict valueForKey:@"users"];
                 NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
+                NSArray *usersRemote = [dataDict valueForKey:@"remotes"];
                 NSArray *usersExact = [exactDict valueForKey:@"users"];
                 NSArray *groupsExact = [exactDict valueForKey:@"groups"];
                 
-                for (NSDictionary *userFound in usersFounded) {
-                    
-                    OCShareUser *user = [OCShareUser new];
-                    
-                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userFound valueForKey:@"label"];
-                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.displayName = [userFound valueForKey:@"label"];
-                    }
-                    
-                    NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    
-                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userValues valueForKey:@"shareWith"];
-                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.name = [userValues valueForKey:@"shareWith"];
-                    }
-                    user.shareeType = shareTypeUser;
-                    
-                    [itemList addObject:user];
-                    
-                }
-                
-                for (NSDictionary *userFound in usersExact) {
-                    
-                    OCShareUser *user = [OCShareUser new];
-                    
-                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userFound valueForKey:@"label"];
-                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.displayName = [userFound valueForKey:@"label"];
-                    }
-  
-                    NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userValues valueForKey:@"shareWith"];
-                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.name = [userValues valueForKey:@"shareWith"];
-                    }
-                    user.shareeType = shareTypeUser;
-                    
-                    [itemList addObject:user];
-                    
-                }
-                
-                for (NSDictionary *groupFound in groupsFounded) {
-                    
-                    OCShareUser *group = [OCShareUser new];
-                    
-                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
-                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        group.name = [groupValues valueForKey:@"shareWith"];
-                    }
-                    group.shareeType = shareTypeGroup;
-                    
-                    [itemList addObject:group];
-                    
-                }
-                
-                for (NSDictionary *groupFound in groupsExact) {
-                    
-                    OCShareUser *group = [OCShareUser new];
-                    
-                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
-                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        group.name = [groupValues valueForKey:@"shareWith"];
-                    }
-                    group.shareeType = shareTypeGroup;
-                    
-                    [itemList addObject:group];
-                    
-                }
-                
+                [self addUserItemOfType:shareTypeUser fromArray:usersFounded ToList:itemList];
+                [self addUserItemOfType:shareTypeUser fromArray:usersExact ToList:itemList];
+                [self addUserItemOfType:shareTypeRemote fromArray:usersRemote ToList:itemList];
+                [self addGroupItemFromArray:groupsFounded ToList:itemList];
+                [self addGroupItemFromArray:groupsExact ToList:itemList];                
             
             }else{
                 
@@ -1562,6 +1485,56 @@
 {
     [[NSURLCache sharedURLCache] setMemoryCapacity:0];
     [[NSURLCache sharedURLCache] setDiskCapacity:0];
+}
+
+
+#pragma mark - Utils
+
+- (void) addUserItemOfType:(NSInteger) shareeType fromArray:(NSArray*) usersArray ToList: (NSMutableArray *) itemList
+{
+
+    for (NSDictionary *userFound in usersArray) {
+        OCShareUser *user = [OCShareUser new];
+        
+        if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [userFound valueForKey:@"label"];
+            user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            user.displayName = [userFound valueForKey:@"label"];
+        }
+        
+        NSDictionary *userValues = [userFound valueForKey:@"value"];
+        
+        if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [userValues valueForKey:@"shareWith"];
+            user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            user.name = [userValues valueForKey:@"shareWith"];
+        }
+        user.shareeType = shareeType;
+        
+        [itemList addObject:user];
+    }
+}
+
+- (void) addGroupItemFromArray:(NSArray*) groupsArray ToList: (NSMutableArray *) itemList
+{
+    for (NSDictionary *groupFound in groupsArray) {
+        
+        OCShareUser *group = [OCShareUser new];
+        
+        NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+        if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [groupValues valueForKey:@"shareWith"];
+            group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            group.name = [groupValues valueForKey:@"shareWith"];
+        }
+        group.shareeType = shareTypeGroup;
+        
+        [itemList addObject:group];
+        
+    }
 }
 
 @end
