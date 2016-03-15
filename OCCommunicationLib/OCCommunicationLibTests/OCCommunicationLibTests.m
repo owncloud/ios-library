@@ -73,8 +73,12 @@
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
-    
-    [_sharedOCCommunication setSecurityPolicy:[_sharedOCCommunication  createSecurityPolicy]];
+
+    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [securityPolicy setValidatesDomainName:NO];
+    [securityPolicy setAllowInvalidCertificates:YES];
+
+    [_sharedOCCommunication setSecurityPolicy:securityPolicy];
     
     //Create Tests folder
     [self createFolderWithName:_configTests.pathTestFolder];
