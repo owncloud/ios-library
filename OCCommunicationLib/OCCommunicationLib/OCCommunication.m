@@ -1194,12 +1194,14 @@
                 NSArray *usersRemote = [dataDict valueForKey:@"remotes"];
                 NSArray *usersExact = [exactDict valueForKey:@"users"];
                 NSArray *groupsExact = [exactDict valueForKey:@"groups"];
+                NSArray *remotesExact = [exactDict valueForKey:@"remotes"];
                 
                 [self addUserItemOfType:shareTypeUser fromArray:usersFounded ToList:itemList];
                 [self addUserItemOfType:shareTypeUser fromArray:usersExact ToList:itemList];
                 [self addUserItemOfType:shareTypeRemote fromArray:usersRemote ToList:itemList];
+                [self addUserItemOfType:shareTypeRemote fromArray:remotesExact ToList:itemList];
                 [self addGroupItemFromArray:groupsFounded ToList:itemList];
-                [self addGroupItemFromArray:groupsExact ToList:itemList];                
+                [self addGroupItemFromArray:groupsExact ToList:itemList];
             
             }else{
                 
@@ -1512,6 +1514,7 @@
             user.name = [userValues valueForKey:@"shareWith"];
         }
         user.shareeType = shareeType;
+        user.server = [userValues valueForKey:@"server"];
         
         [itemList addObject:user];
     }

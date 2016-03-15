@@ -33,6 +33,7 @@
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *displayName;
+@property (nonatomic, strong) NSString *server;
 @property BOOL isDisplayNameDuplicated;
 @property NSInteger shareeType;
 
