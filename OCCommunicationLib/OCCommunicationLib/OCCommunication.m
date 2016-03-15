@@ -164,7 +164,7 @@
     [securityPolicy setValidatesDomainName:NO];
     [securityPolicy setAllowInvalidCertificates:YES];
     
-    return securityPolicy;
+    return [AFSecurityPolicy defaultPolicy];
 }
 
 - (void)setSecurityPolicy:(AFSecurityPolicy *)securityPolicy {
