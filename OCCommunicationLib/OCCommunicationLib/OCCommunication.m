@@ -160,10 +160,6 @@
 
 
 - (AFSecurityPolicy *) createSecurityPolicy {
-    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-    [securityPolicy setValidatesDomainName:NO];
-    [securityPolicy setAllowInvalidCertificates:YES];
-    
     return [AFSecurityPolicy defaultPolicy];
 }
 
