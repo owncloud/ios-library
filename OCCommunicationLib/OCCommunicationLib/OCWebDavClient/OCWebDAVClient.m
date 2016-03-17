@@ -772,7 +772,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSString *searchQuery = [NSString stringWithFormat: @"&search=%@",searchString];
     NSString *jsonQuery = [NSString stringWithFormat:@"?format=json"];
-    NSString *queryType = [NSString stringWithFormat:@"&itemType=search"];
+    NSString *queryType = [NSString stringWithFormat:@"&itemType=file"];
     NSString *pagination = [NSString stringWithFormat:@"&page=%ld&perPage=%ld", (long)page, (long)resultsPerPage];
     serverPath = [serverPath stringByAppendingString:jsonQuery];
     serverPath = [serverPath stringByAppendingString:queryType];
