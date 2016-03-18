@@ -788,7 +788,12 @@ typedef enum {
 /**
  * Method to get the remote thumbnail for a file
  *
- * JPG,PNG,JPEG,GIF,BMP,MP3,MP4,MOV,FLV,AVI,3GP,WEBM,OGV,WMV
+ * In order to support thumbnails for videos it is necessary to install video package on the server 
+ * and add the following lines in the config.php files
+ *the following types on the config.php file
+ *   'enabledPreviewProviders' => array(
+ *      'OC\Preview\Movie'
+ *      )
  *
  * @param serverPath   -> NSString server, without encoding
  * @param filePath     -> NSString file path, without encoding
