@@ -224,11 +224,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
         //Add to directoryList
         [_directoryList addObject:_currentFile];
         _currentFile = [[OCFileDto alloc] init];
-        
-        if ([_xmlBucket objectForKey:@"href"]) {
-            //Directory bucket
-            //[_directoryBucket addObject:_xmlBucket];
-        }
+
         _xmlBucket = nil;
     }
    
