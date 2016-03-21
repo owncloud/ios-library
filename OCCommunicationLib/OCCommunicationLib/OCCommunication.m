@@ -1355,11 +1355,39 @@
 }
 
 
+#pragma mark - Remote thumbnails
+
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
+    filePath = [filePath encodeString:NSUTF8StringEncoding];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    NSOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+            success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                NSData *response = (NSData*) responseObject;
+                                    
+                //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+
+                successRequest(operation.response, response, request.redirectedServer);
+                                    
+            }
+            failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                failureRequest(operation.response, error, request.redirectedServer);
+            }];
+
+    return operation;
+}
+
+
 #pragma mark - Queue System
 
-/*
- * Method to add a new operation to the queue
- */
 - (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
     
     [self eraseURLCache];
