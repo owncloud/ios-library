@@ -768,7 +768,7 @@ typedef enum {
 ///-----------------------------------
 
 /**
- * Method to get users and groups using a search string
+ * Method read the capabilities of the server
  *
  * @param serverPath  -> NSString server
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
