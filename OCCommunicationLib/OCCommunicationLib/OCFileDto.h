@@ -35,5 +35,6 @@
 @property long date;
 @property (nonatomic, copy) NSString *etag;
 @property (nonatomic, copy) NSString *permissions;
+@property (nonatomic, copy) NSString *ocId;
 
 @end

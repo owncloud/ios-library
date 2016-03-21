@@ -488,6 +488,43 @@ extern NSString *OCWebDAVModificationDateKey;
                           success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                           failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
 
+///-----------------------------------
+/// @name Get the server capabilities
+///-----------------------------------
+
+/**
+ * Method read the capabilities of the server
+ *
+ * @param serverPath  -> NSString server
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return capabilities -> OCCapabilities
+ *
+ */
 - (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
                          failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
+
+#pragma mark - Remote thumbnails
+
+///-----------------------------------
+/// @name Get the thumbnail for a file
+///-----------------------------------
+
+/**
+ * Method to get the remote thumbnail for a file
+ *
+ * @param serverPath   -> NSString server
+ * @param filePath     -> NSString file path
+ * @param fileWidth    -> NSInteger with the width size
+ * @param fileHeight   -> NSInteger with the height size
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return nsData -> thumbnail of the file with the size requested
+ *
+ */
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                            success:(void(^)(OCHTTPRequestOperation *operation, id response))success
+                            failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+
 @end

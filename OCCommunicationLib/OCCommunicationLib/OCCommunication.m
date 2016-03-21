@@ -1187,92 +1187,17 @@
                 NSArray *exactDict = [dataDict valueForKey:@"exact"];
                 NSArray *usersFounded = [dataDict valueForKey:@"users"];
                 NSArray *groupsFounded = [dataDict valueForKey:@"groups"];
+                NSArray *usersRemote = [dataDict valueForKey:@"remotes"];
                 NSArray *usersExact = [exactDict valueForKey:@"users"];
                 NSArray *groupsExact = [exactDict valueForKey:@"groups"];
+                NSArray *remotesExact = [exactDict valueForKey:@"remotes"];
                 
-                for (NSDictionary *userFound in usersFounded) {
-                    
-                    OCShareUser *user = [OCShareUser new];
-                    
-                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userFound valueForKey:@"label"];
-                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.displayName = [userFound valueForKey:@"label"];
-                    }
-                    
-                    NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    
-                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userValues valueForKey:@"shareWith"];
-                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.name = [userValues valueForKey:@"shareWith"];
-                    }
-                    user.shareeType = shareTypeUser;
-                    
-                    [itemList addObject:user];
-                    
-                }
-                
-                for (NSDictionary *userFound in usersExact) {
-                    
-                    OCShareUser *user = [OCShareUser new];
-                    
-                    if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userFound valueForKey:@"label"];
-                        user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.displayName = [userFound valueForKey:@"label"];
-                    }
-  
-                    NSDictionary *userValues = [userFound valueForKey:@"value"];
-                    if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [userValues valueForKey:@"shareWith"];
-                        user.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        user.name = [userValues valueForKey:@"shareWith"];
-                    }
-                    user.shareeType = shareTypeUser;
-                    
-                    [itemList addObject:user];
-                    
-                }
-                
-                for (NSDictionary *groupFound in groupsFounded) {
-                    
-                    OCShareUser *group = [OCShareUser new];
-                    
-                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
-                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        group.name = [groupValues valueForKey:@"shareWith"];
-                    }
-                    group.shareeType = shareTypeGroup;
-                    
-                    [itemList addObject:group];
-                    
-                }
-                
-                for (NSDictionary *groupFound in groupsExact) {
-                    
-                    OCShareUser *group = [OCShareUser new];
-                    
-                    NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-                    if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = [groupValues valueForKey:@"shareWith"];
-                        group.name = [NSString stringWithFormat:@"%ld", number.longValue];
-                    }else{
-                        group.name = [groupValues valueForKey:@"shareWith"];
-                    }
-                    group.shareeType = shareTypeGroup;
-                    
-                    [itemList addObject:group];
-                    
-                }
-                
+                [self addUserItemOfType:shareTypeUser fromArray:usersFounded ToList:itemList];
+                [self addUserItemOfType:shareTypeUser fromArray:usersExact ToList:itemList];
+                [self addUserItemOfType:shareTypeRemote fromArray:usersRemote ToList:itemList];
+                [self addUserItemOfType:shareTypeRemote fromArray:remotesExact ToList:itemList];
+                [self addGroupItemFromArray:groupsFounded ToList:itemList];
+                [self addGroupItemFromArray:groupsExact ToList:itemList];
             
             }else{
                 
@@ -1426,11 +1351,39 @@
 }
 
 
+#pragma mark - Remote thumbnails
+
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
+    filePath = [filePath encodeString:NSUTF8StringEncoding];
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = _securityPolicy;
+    
+    NSOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+            success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                NSData *response = (NSData*) responseObject;
+                                    
+                //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+
+                successRequest(operation.response, response, request.redirectedServer);
+                                    
+            }
+            failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                failureRequest(operation.response, error, request.redirectedServer);
+            }];
+
+    return operation;
+}
+
+
 #pragma mark - Queue System
 
-/*
- * Method to add a new operation to the queue
- */
 - (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
     
     [self eraseURLCache];
@@ -1558,6 +1511,57 @@
 {
     [[NSURLCache sharedURLCache] setMemoryCapacity:0];
     [[NSURLCache sharedURLCache] setDiskCapacity:0];
+}
+
+
+#pragma mark - Utils
+
+- (void) addUserItemOfType:(NSInteger) shareeType fromArray:(NSArray*) usersArray ToList: (NSMutableArray *) itemList
+{
+
+    for (NSDictionary *userFound in usersArray) {
+        OCShareUser *user = [OCShareUser new];
+        
+        if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [userFound valueForKey:@"label"];
+            user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            user.displayName = [userFound valueForKey:@"label"];
+        }
+        
+        NSDictionary *userValues = [userFound valueForKey:@"value"];
+        
+        if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [userValues valueForKey:@"shareWith"];
+            user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            user.name = [userValues valueForKey:@"shareWith"];
+        }
+        user.shareeType = shareeType;
+        user.server = [userValues valueForKey:@"server"];
+        
+        [itemList addObject:user];
+    }
+}
+
+- (void) addGroupItemFromArray:(NSArray*) groupsArray ToList: (NSMutableArray *) itemList
+{
+    for (NSDictionary *groupFound in groupsArray) {
+        
+        OCShareUser *group = [OCShareUser new];
+        
+        NSDictionary *groupValues = [groupFound valueForKey:@"value"];
+        if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [groupValues valueForKey:@"shareWith"];
+            group.name = [NSString stringWithFormat:@"%ld", number.longValue];
+        }else{
+            group.name = [groupValues valueForKey:@"shareWith"];
+        }
+        group.shareeType = shareTypeGroup;
+        
+        [itemList addObject:group];
+        
+    }
 }
 
 @end

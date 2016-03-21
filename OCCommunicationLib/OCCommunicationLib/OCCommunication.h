@@ -763,8 +763,51 @@ typedef enum {
  */
 - (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+///-----------------------------------
+/// @name Get the server capabilities
+///-----------------------------------
+
+/**
+ * Method read the capabilities of the server
+ *
+ * @param serverPath  -> NSString server
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return capabilities -> OCCapabilities
+ *
+ */
 - (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+
+#pragma mark - Remote thumbnails
+
+///-----------------------------------
+/// @name Get the thumbnail for a file
+///-----------------------------------
+
+/**
+ * Method to get the remote thumbnail for a file
+ *
+ * In order to support thumbnails for videos it is necessary to install video package on the server 
+ * and add the following lines in the config.php files
+ *the following types on the config.php file
+ *   'enabledPreviewProviders' => array(
+ *      'OC\Preview\Movie'
+ *      )
+ *
+ * @param serverPath   -> NSString server, without encoding
+ * @param filePath     -> NSString file path, without encoding
+ * @param fileWidth    -> NSInteger with the width size
+ * @param fileHeight   -> NSInteger with the height size
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return nsData -> thumbnail of the file with the size requested
+ * @return NSOperation -> You can cancel the download using this object
+ *
+ */
+- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+                     successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
 #pragma mark - Queue system
 /*

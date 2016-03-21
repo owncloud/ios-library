@@ -2439,5 +2439,46 @@
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
 
+///-----------------------------------
+/// @name Test to get a remote thumbnail
+///-----------------------------------
+
+/**
+ * This test try get a thumbnail of an image using the Thumbnail API
+ *
+ */
+- (void) testGetRemoteThumbnail {
+    
+    
+    //Create Folder A for the Test
+    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    [self createFolderWithName:testPath];
+    
+    //Upload file /Tests/Folder A/test.jpeg
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
+    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", _configTests.pathTestFolder];
+    [self uploadFilePath:bundlePath inRemotePath:remotePath];
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication getRemoteThumbnailByServer:_configTests.baseUrl ofFilePath:remotePath withWidth:64 andHeight:64 onCommunication:_sharedOCCommunication successRequest:^(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer) {
+        if ([UIImage imageWithData:thumbnail]) {
+            NSLog(@"Thumbnail getted");
+        } else {
+            XCTFail(@"Thumbnail getted but it is not an image");
+        }
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+        XCTFail(@"Error getting thumbnail");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
 
 @end
