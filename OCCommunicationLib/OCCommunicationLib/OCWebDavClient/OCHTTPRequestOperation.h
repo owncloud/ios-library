@@ -33,7 +33,7 @@ typedef enum {
 } typeOfOperationQueue;
 
 
-@interface OCHTTPRequestOperation : NSURLSessionTask
+@interface OCHTTPRequestOperation : NSURLSessionDataTask
 
 @property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
 @property (nonatomic, strong) NSString *localSource;

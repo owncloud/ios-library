@@ -137,14 +137,16 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
-    OCHTTPRequestOperation *operation = [[OCHTTPRequestOperation alloc]initWithRequest:request];
-    operation.securityPolicy = self.securityPolicy;
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        success((OCHTTPRequestOperation*)operation,responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure((OCHTTPRequestOperation*)operation, error);
+    OCHTTPRequestOperation *operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+         if (!error) {
+            success((OCHTTPRequestOperation*)operation,responseObject);
+        } else {
+            failure((OCHTTPRequestOperation*)operation, error);
+        }
     }];
+    
+    [operation resume];
     
     return operation;
     
