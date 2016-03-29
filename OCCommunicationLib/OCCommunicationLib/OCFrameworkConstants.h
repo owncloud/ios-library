@@ -74,5 +74,8 @@
 //Name of the download session using for download files with NSURLSession
 #define k_download_folder_session_name @"com.owncloud.download.folder.session"
 
+//Name of the download session using for download files with NSURLSession
+#define k_network_operation_session_name @"com.owncloud.network.operation.session"
+
 
 

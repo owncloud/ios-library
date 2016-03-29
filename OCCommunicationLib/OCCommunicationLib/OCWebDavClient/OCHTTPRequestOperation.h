@@ -23,9 +23,6 @@
 // THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
-
-
 @class OCChunkInputStream;
 
 typedef enum {
@@ -36,7 +33,7 @@ typedef enum {
 } typeOfOperationQueue;
 
 
-@interface OCHTTPRequestOperation : AFHTTPRequestOperation
+@interface OCHTTPRequestOperation : NSURLSessionTask
 
 @property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
 @property (nonatomic, strong) NSString *localSource;

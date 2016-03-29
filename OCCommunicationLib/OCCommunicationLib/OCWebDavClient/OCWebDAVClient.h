@@ -26,7 +26,7 @@
 //
 
 
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;
@@ -48,7 +48,7 @@ extern NSString *OCWebDAVCreationDateKey;
 /** The key for last modification date of an entity. */
 extern NSString *OCWebDAVModificationDateKey;
 
-@interface OCWebDAVClient : AFHTTPRequestOperationManager
+@interface OCWebDAVClient : AFHTTPSessionManager
 
 @property (readwrite, nonatomic, strong) NSMutableDictionary *defaultHeaders;
 //On redirections AFNetworking lose the request method on iOS6 and set a GET, we use this as workarround
