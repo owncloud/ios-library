@@ -62,7 +62,7 @@ static dispatch_group_t http_request_operation_completion_group() {
 @synthesize request;
 
 #pragma mark - AFHTTPRequestOperation
-
+/*
 - (void)setCompletionBlockWithSuccess:(void (^)(NSURLSessionTask *operation, id responseObject))success
                               failure:(void (^)(NSURLSessionTask *operation, NSError *error))failure
 {
@@ -109,6 +109,6 @@ static dispatch_group_t http_request_operation_completion_group() {
     };
 #pragma clang diagnostic pop
 }
-
+*/
 
 @end

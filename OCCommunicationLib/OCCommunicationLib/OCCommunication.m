@@ -31,7 +31,6 @@
 #import "OCXMLServerErrorsParser.h"
 #import "NSString+Encode.h"
 #import "OCFrameworkConstants.h"
-#import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
@@ -73,20 +72,23 @@
         self.isForbiddenCharactersAvailable = NO;
 
 #ifdef UNIT_TEST
+        
+        //TODO: use [NSURLSessionConfiguration defaultSessionConfiguration] instead nil. Check it after everything compile and the tests pass
         self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.networkOperationsSession = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
 
 #else
         //Network Upload queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
-        configuration.HTTPMaximumConnectionsPerHost = 1;
-        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+        NSURLSessionConfiguration *uploadConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:k_session_name];
+        uploadConfiguration.HTTPShouldUsePipelining = YES;
+        uploadConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        uploadConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:uploadConfiguration];
         [self.uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         
         //Network Download queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
+        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:k_download_session_name];
         downConfiguration.HTTPShouldUsePipelining = YES;
         downConfiguration.HTTPMaximumConnectionsPerHost = 1;
         downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
@@ -94,11 +96,11 @@
         [self.downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         
         //Network Download queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_network_operation_session_name];
+        NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
         networkConfiguration.HTTPShouldUsePipelining = YES;
         networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
         networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
         [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
  
 #endif
@@ -303,7 +305,7 @@
                         if (successRequest) {
                             successRequest(operation.response, request.redirectedServer);
                         }
-                    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
                         failureRequest(operation.response, error, request.redirectedServer);
                     }];
 }
@@ -333,11 +335,11 @@
                             if (successRequest) {
                                 successRequest(operation.response, request.redirectedServer);
                             }
-                        } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                        } failure:^(OCHTTPRequestOperation *operation, NSData *response, NSError *error) {
                             
                             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
                             
-                            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                            [serverErrorParser startToParseWithData:response withCompleteBlock:^(NSError *err) {
                                 
                                 if (err) {
                                     failureRequest(operation.response, err, request.redirectedServer);
@@ -387,11 +389,11 @@
             if (successRequest) {
                 successRequest(operation.response, request.redirectedServer);
             }
-        } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
             
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
-            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
                 
                 if (err) {
                     failureRequest(operation.response, err, request.redirectedServer);
@@ -424,7 +426,7 @@
         if (successRequest) {
             successRequest(operation.response, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
@@ -463,7 +465,7 @@
             successRequest(operation.response, directoryList, request.redirectedServer, token);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error, NSString *token) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error, NSString *token) {
         failureRequest(operation.response, error, token, request.redirectedServer);
     }];
 }
@@ -471,7 +473,7 @@
 ///-----------------------------------
 /// @name Download File
 ///-----------------------------------
-
+/*
 - (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
@@ -502,7 +504,7 @@
     
     return operation;
 }
-
+*/
 
 ///-----------------------------------
 /// @name Download File Session
@@ -567,7 +569,7 @@
 ///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
-
+/*
 - (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler{
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
@@ -601,7 +603,7 @@
     
     return operation;
 }
-
+*/
 ///-----------------------------------
 /// @name Upload File Session
 ///-----------------------------------
@@ -701,7 +703,7 @@
             successRequest(operation.response, directoryList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failureRequest(operation.response, error, request.redirectedServer);
         
     }];
@@ -745,7 +747,7 @@
         }
         success(operation.response, versionString, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failure(operation.response, error, request.redirectedServer);
     }];
     
@@ -765,7 +767,7 @@
     
     [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         success(operation.response, operation.responseData, request.redirectedServer);
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failure(operation.response, error, request.redirectedServer);
     }];
 }
@@ -810,7 +812,7 @@
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failure(operation.response, error, request.redirectedServer);
     }];
 
@@ -846,7 +848,7 @@
             successRequest(operation.response, sharedList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
@@ -878,8 +880,8 @@
             //Return success
             successRequest(operation.response, sharedList, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -938,8 +940,8 @@
             }
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -999,8 +1001,8 @@
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -1040,9 +1042,9 @@
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         
-        failureRequest(operation.response, error, request.redirectedServer);
+        failureRequest(responseData, error, request.redirectedServer);
         
         
     }];
@@ -1068,8 +1070,8 @@
             successRequest(operation.response, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -1115,8 +1117,8 @@
             successRequest(operation.response, request.redirectedServer, isShared, shareDto);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -1159,8 +1161,8 @@
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-         failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+         failureRequest(responseData, error, request.redirectedServer);
     }];
     
 }
@@ -1231,8 +1233,8 @@
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        failureRequest(responseData, error, request.redirectedServer);
     }];
 }
 
@@ -1355,9 +1357,9 @@
         
         successRequest(operation.response, capabilities, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         
-        failureRequest(operation.response, error, request.redirectedServer);
+        failureRequest(responseData, error, request.redirectedServer);
         
     }];
     

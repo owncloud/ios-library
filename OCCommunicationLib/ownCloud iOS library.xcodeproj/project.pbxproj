@@ -46,8 +46,6 @@
 		EAABAB1F1858594A00909831 /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
 		EAABAB201858594A00909831 /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
 		EAABAB211858594A00909831 /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
-		EAABAB221858594A00909831 /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
-		EAABAB231858594A00909831 /* OCUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1D1858594A00909831 /* OCUploadOperation.m */; };
 		EAABAB2618585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
 		EAABAB2718585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
 		EAABAB39185B353100909831 /* test.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB38185B353100909831 /* test.jpeg */; };
@@ -138,8 +136,6 @@
 		EAABAB191858594A00909831 /* OCChunkDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCChunkDto.m; path = UploadSupport/OCChunkDto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EAABAB1A1858594A00909831 /* OCChunkInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = OCChunkInputStream.h; path = UploadSupport/OCChunkInputStream.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EAABAB1B1858594A00909831 /* OCChunkInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCChunkInputStream.m; path = UploadSupport/OCChunkInputStream.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		EAABAB1C1858594A00909831 /* OCUploadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = OCUploadOperation.h; path = UploadSupport/OCUploadOperation.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		EAABAB1D1858594A00909831 /* OCUploadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCUploadOperation.m; path = UploadSupport/OCUploadOperation.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EAABAB2418585C5200909831 /* NSString+Encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = "NSString+Encode.h"; path = "Utils/NSString+Encode.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EAABAB2518585C5200909831 /* NSString+Encode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = "NSString+Encode.m"; path = "Utils/NSString+Encode.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EAABAB38185B353100909831 /* test.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = test.jpeg; path = Resources/test.jpeg; sourceTree = "<group>"; };
@@ -333,8 +329,6 @@
 				EAABAB191858594A00909831 /* OCChunkDto.m */,
 				EAABAB1A1858594A00909831 /* OCChunkInputStream.h */,
 				EAABAB1B1858594A00909831 /* OCChunkInputStream.m */,
-				EAABAB1C1858594A00909831 /* OCUploadOperation.h */,
-				EAABAB1D1858594A00909831 /* OCUploadOperation.m */,
 			);
 			name = UploadSupport;
 			sourceTree = "<group>";
@@ -446,7 +440,6 @@
 				EA7CC934183E150000B6A4B4 /* OCCommunication.m in Sources */,
 				131C67B9187C3E360009030E /* OCXMLSharedParser.m in Sources */,
 				13AA8640187C3B9700A10927 /* OCXMLParser.m in Sources */,
-				EAABAB221858594A00909831 /* OCUploadOperation.m in Sources */,
 				EA7CC912183E146000B6A4B4 /* UtilsFramework.m in Sources */,
 				EA7CC92A183E14A100B6A4B4 /* NSDate+RFC1123.m in Sources */,
 				13AA8636187C211900A10927 /* OCSharedDto.m in Sources */,
@@ -467,7 +460,6 @@
 				EAABAB211858594A00909831 /* OCChunkInputStream.m in Sources */,
 				EA7CC92F183E14A100B6A4B4 /* OCWebDAVClient.m in Sources */,
 				EA7CC935183E150000B6A4B4 /* OCCommunication.m in Sources */,
-				EAABAB231858594A00909831 /* OCUploadOperation.m in Sources */,
 				EA7CC913183E146000B6A4B4 /* UtilsFramework.m in Sources */,
 				EA7CC92B183E14A100B6A4B4 /* NSDate+RFC1123.m in Sources */,
 				EAABAA33183E688900909831 /* OCFileDto.m in Sources */,
