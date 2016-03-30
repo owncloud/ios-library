@@ -766,7 +766,7 @@
     request.securityPolicy = self.securityPolicy;
     
     [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        success(operation.response, operation.responseData, request.redirectedServer);
+        success(operation.response, responseObject, request.redirectedServer);
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         failure(operation.response, error, request.redirectedServer);
     }];
@@ -1400,6 +1400,10 @@
 #pragma mark - Queue System
 
 - (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
+}
+
+/*
+- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
     
     [self eraseURLCache];
     
@@ -1488,7 +1492,7 @@
     [self.networkOperationsQueue setSuspended:NO];
     
 }
-
+*/
 ///-----------------------------------
 /// @name Resume Next Download
 ///-----------------------------------
@@ -1499,6 +1503,7 @@
  *
  * @warning Only we use this method when we are using LIFO queue system
  */
+/*
 - (void) resumeNextDownload{
     
     //Check if there are donwloads in array
@@ -1518,7 +1523,7 @@
         }
     }
 }
-
+*/
 
 #pragma mark - Clear Cache
 
