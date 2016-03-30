@@ -74,7 +74,7 @@
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
     
-    [_sharedOCCommunication setSecurityPolicy:[_sharedOCCommunication  createSecurityPolicy]];
+    [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
     [self createFolderWithName:_configTests.pathTestFolder];

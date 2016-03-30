@@ -66,7 +66,7 @@
         self.networkOperationsQueue =[NSOperationQueue new];
         [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        [self setSecurityPolicy:[self createSecurityPolicy]];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.isCookiesAvailable = NO;
         self.isForbiddenCharactersAvailable = NO;
@@ -76,7 +76,7 @@
         //TODO: use [NSURLSessionConfiguration defaultSessionConfiguration] instead nil. Check it after everything compile and the tests pass
         self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        self.networkOperationsSession = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
 
 #else
         //Network Upload queue for NSURLSession (iOS 7)
@@ -133,7 +133,7 @@
         self.networkOperationsQueue =[NSOperationQueue new];
         [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
        
-        [self setSecurityPolicy:[self createSecurityPolicy]];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
     }
@@ -160,7 +160,7 @@
         self.networkOperationsQueue =[NSOperationQueue new];
         [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
-        [self setSecurityPolicy:[self createSecurityPolicy]];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
         self.downloadSessionManager = downloadSessionManager;
@@ -178,7 +178,7 @@
     return securityPolicy;
 }
 
-- (void)setSecurityPolicy:(AFSecurityPolicy *)securityPolicy {
+- (void)setSecurityPolicyManagers:(AFSecurityPolicy *)securityPolicy {
     self.securityPolicy = securityPolicy;
     self.uploadSessionManager.securityPolicy = securityPolicy;
     self.downloadSessionManager.securityPolicy = securityPolicy;
@@ -788,14 +788,14 @@
         if (responseObject) {
             
             NSError* error = nil;
-            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
+            NSDictionary *responseDict = (NSDictionary *) responseObject;
             
             if(error) {
                 // NSLog(@"Error parsing JSON: %@", error);
                 failure(operation.response, operation.error, request.redirectedServer);
             }else{
                 
-                self.currentServerVersion = [jsonArray valueForKey:@"version"];
+                self.currentServerVersion = [responseDict valueForKey:@"version"];
                 
                 BOOL hasShareSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared];
                 BOOL hasShareeSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api];
@@ -1187,11 +1187,11 @@
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSDictionary *responseDict = (NSDictionary *) responseObject;
         
         if (error == nil) {
             
-            NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
+            NSDictionary *ocsDict = [responseDict valueForKey:@"ocs"];
             
             NSDictionary *metaDict = [ocsDict valueForKey:@"meta"];
             NSInteger statusCode = [[metaDict valueForKey:@"statuscode"] integerValue];
@@ -1249,20 +1249,17 @@
     
     [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
-        
-        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        NSDictionary *responseDict = (NSDictionary*) responseObject;
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
-        NSLog(@"dic: %@",jsongParsed);
+        NSLog(@"dic: %@",responseDict);
         
         OCCapabilities *capabilities = [OCCapabilities new];
         
-        if (jsongParsed.allKeys > 0 ) {
+        if (responseDict.allKeys > 0) {
             
-            NSDictionary *ocs = [jsongParsed valueForKey:@"ocs"];
+            NSDictionary *ocs = [responseDict valueForKey:@"ocs"];
             NSDictionary *data = [ocs valueForKey:@"data"];
             NSDictionary *version = [data valueForKey:@"version"];
             

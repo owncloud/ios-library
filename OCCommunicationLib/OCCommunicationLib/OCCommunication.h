@@ -99,6 +99,7 @@ typedef enum {
 
 
 - (AFSecurityPolicy *) createSecurityPolicy;
+- (void)setSecurityPolicyManagers:(AFSecurityPolicy *)securityPolicy;
 
 
 #pragma mark - Credentials
