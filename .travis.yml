@@ -7,3 +7,6 @@ xcode_sdk: iphonesimulator
 before_install:
 - brew reinstall --HEAD xctool
 - brew update; brew update
+
+env:
+- baseUrlTravis=testing_env_var
