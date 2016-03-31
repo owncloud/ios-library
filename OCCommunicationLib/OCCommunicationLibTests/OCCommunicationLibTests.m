@@ -67,6 +67,8 @@
 {
     [super setUp];
     
+    NSLog(@"Setup webdavBaseUrlOwn: %@", [[[NSProcessInfo processInfo] environment] objectForKey:@"webdavBaseUrlOwn"]);
+    
     //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
     _configTests = [[ConfigTests alloc] initWithVariables];
