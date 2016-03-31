@@ -77,6 +77,7 @@
         self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 
 #else
         //Network Upload queue for NSURLSession (iOS 7)
@@ -102,7 +103,7 @@
         networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
         self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
         [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
- 
+        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 #endif
         
         
@@ -788,14 +789,14 @@
         if (responseObject) {
             
             NSError* error = nil;
-            NSDictionary *responseDict = (NSDictionary *) responseObject;
+            NSMutableDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData: (NSData*) responseObject options: NSJSONReadingMutableContainers error: &error];
             
             if(error) {
                 // NSLog(@"Error parsing JSON: %@", error);
                 failure(operation.response, operation.error, request.redirectedServer);
             }else{
                 
-                self.currentServerVersion = [responseDict valueForKey:@"version"];
+                self.currentServerVersion = [jsonArray valueForKey:@"version"];
                 
                 BOOL hasShareSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_shared];
                 BOOL hasShareeSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_sharee_api];
@@ -1187,11 +1188,11 @@
         
         //Parse
         NSError *error;
-        NSDictionary *responseDict = (NSDictionary *) responseObject;
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
         
         if (error == nil) {
             
-            NSDictionary *ocsDict = [responseDict valueForKey:@"ocs"];
+            NSDictionary *ocsDict = [jsongParsed valueForKey:@"ocs"];
             
             NSDictionary *metaDict = [ocsDict valueForKey:@"meta"];
             NSInteger statusCode = [[metaDict valueForKey:@"statuscode"] integerValue];
@@ -1249,17 +1250,20 @@
     
     [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
         
-        NSDictionary *responseDict = (NSDictionary*) responseObject;
+        NSData *response = (NSData*) responseObject;
+        
+        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
         //Parse
         NSError *error;
-        NSLog(@"dic: %@",responseDict);
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSLog(@"dic: %@",jsongParsed);
         
         OCCapabilities *capabilities = [OCCapabilities new];
         
-        if (responseDict.allKeys > 0) {
+        if (jsongParsed.allKeys > 0) {
             
-            NSDictionary *ocs = [responseDict valueForKey:@"ocs"];
+            NSDictionary *ocs = [jsongParsed valueForKey:@"ocs"];
             NSDictionary *data = [ocs valueForKey:@"data"];
             NSDictionary *version = [data valueForKey:@"version"];
             
