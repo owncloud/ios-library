@@ -6,3 +6,4 @@ xcode_sdk: iphonesimulator9.3
 
 before_install:
 - brew update; brew update
+- brew reinstall --HEAD xctool
