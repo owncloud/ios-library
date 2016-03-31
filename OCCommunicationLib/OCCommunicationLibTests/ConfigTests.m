@@ -41,7 +41,7 @@
     //We set the baseUrl
     if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
         _baseUrl = [[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"];
-        NSLog([@"Environment variable exist: " stringByAppendingString:_baseUrl]);
+        NSLog(@"Environment variable exist: %@", _baseUrl);
     } else {
         NSLog(@"Environment variable not exist");
         _baseUrl = baseUrlOwn;
