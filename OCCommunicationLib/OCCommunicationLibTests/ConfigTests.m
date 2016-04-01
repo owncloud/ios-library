@@ -38,6 +38,10 @@
     NSString *groupToShareOwn = @""; //name group to share with
     NSString *remoteUserToShareOwn = @""; //remote user another server
     
+    
+    NSString *envVarString = @(getenv("baseUrlTravis"));
+    NSLog(@"envVarString: %@", envVarString);
+    
     //We set the baseUrl
     if ([NSProcessInfo processInfo].environment[@"baseUrlTravis"]) {
         _baseUrl = [NSProcessInfo processInfo].environment[@"baseUrlTravis"];
