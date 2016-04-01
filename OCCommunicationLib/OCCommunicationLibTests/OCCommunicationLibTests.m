@@ -67,21 +67,13 @@
 {
     [super setUp];
     
-    NSDictionary* environment = [[NSProcessInfo processInfo] environment];
-    
-    NSLog(@"environment: %@", environment.allKeys);
-    
-    //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
-    
-    _configTests = [[ConfigTests alloc] initWithVariables];
-    
 	_sharedOCCommunication = [[OCCommunication alloc] init];
-    [_sharedOCCommunication setCredentialsWithUser:_configTests.user andPassword:_configTests.password];
+    [_sharedOCCommunication setCredentialsWithUser:k_user andPassword:k_password];
     
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
-    [self createFolderWithName:_configTests.pathTestFolder];
+    [self createFolderWithName:k_path_test_folder];
 	
 }
 
@@ -89,7 +81,7 @@
 {
     
     //Delete Test folder
-    [self deleteFolderWithName:_configTests.pathTestFolder];
+    [self deleteFolderWithName:k_path_test_folder];
     
     [super tearDown];
     
@@ -110,7 +102,7 @@
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    NSString *folder = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,path];
+    NSString *folder = [NSString stringWithFormat:@"%@%@",k_webdav_base_url,path];
      folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
@@ -147,7 +139,7 @@
 
 - (void) deleteFolderWithName:(NSString *)path{
     
-    NSString *folder = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,path];
+    NSString *folder = [NSString stringWithFormat:@"%@%@",k_webdav_base_url,path];
     folder = [folder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -189,7 +181,7 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Create the complete url
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@",_configTests.webdavBaseUrl,remotePath];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@",k_webdav_base_url,remotePath];
     
     //Path of server file file
     remotePath = [remotePath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -242,7 +234,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    NSString *folder = [NSString stringWithFormat:@"%@%@/%@",_configTests.webdavBaseUrl,_configTests.pathTestFolder,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
+    NSString *folder = [NSString stringWithFormat:@"%@%@/%@",k_webdav_base_url,k_path_test_folder,[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
     
     [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         //Folder created
@@ -278,7 +270,7 @@
     NSArray* arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacer in arrayForbiddenCharacters) {
-        NSString *folder = [NSString stringWithFormat:@"%@%@/%@",_configTests.webdavBaseUrl,_configTests.pathTestFolder,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacer]];
+        NSString *folder = [NSString stringWithFormat:@"%@%@/%@",k_webdav_base_url,k_path_test_folder,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacer]];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -316,17 +308,17 @@
 - (void)testMoveFileOnSameFolder {
     
     //Create Folder A for the Test
-    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPath];
     
     //Upload file /Tests/Folder A/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", _configTests.pathTestFolder];
+    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:remotePath];
 
     
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -363,22 +355,22 @@
 - (void)testMoveFile {
     
     //Create Folder A for the Test
-    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPathA];
     
     //Create Folder B for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
     //Upload file /Tests/Folder A/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
 
     
     
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -411,24 +403,24 @@
 - (void)testMoveFileForbiddenCharacters {
     
     //Create Folder A for the Test
-    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPathA];
     
     //Create Folder C for the Test
-    NSString *testPathC = [NSString stringWithFormat:@"%@/Folder C", _configTests.pathTestFolder];
+    NSString *testPathC = [NSString stringWithFormat:@"%@/Folder C", k_path_test_folder];
     [self createFolderWithName:testPathC];
     
     //Upload file /Tests/Folder A/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder A/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
     
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
-        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder C/Test%@.jpeg", _configTests.webdavBaseUrl,_configTests.pathTestFolder, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/Test.jpeg", k_webdav_base_url, k_path_test_folder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder C/Test%@.jpeg", k_webdav_base_url,k_path_test_folder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -467,11 +459,11 @@
 - (void)testMoveFolderInsideHimself {
     
     //Create Folder A for the Test
-    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPathA];
 
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Folder A/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder A/Folder A/", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -509,15 +501,15 @@
 - (void)testMoveFolder {
     
     //Create Folder A for the Test
-    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPathA = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPathA];
     
     //Create Folder C for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Folder A/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder A/", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Folder A/", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -551,20 +543,20 @@
 - (void)testRenameFileWithForbiddenCharacters {
     
     //Create Folder B for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
     //Upload file /Tests/Folder B/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
 
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
         
-        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test-%@.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", k_webdav_base_url, k_path_test_folder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test-%@.jpeg", k_webdav_base_url, k_path_test_folder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -603,16 +595,16 @@
 - (void)testRenameFile {
     
     //Create Folder B for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
     //Upload file /Tests/Folder B/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Folder B/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
 
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test Renamed.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/Test.jpeg", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B/Test Renamed.jpeg", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -645,14 +637,14 @@
 - (void)testRenameFolderWithForbiddenCharacters {
     
     //Create Folder A for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
     NSArray *arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
     for (NSString *currentCharacter in arrayForbiddenCharacters) {
-        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B-%@/", _configTests.webdavBaseUrl, _configTests.pathTestFolder, currentCharacter];
+        NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", k_webdav_base_url, k_path_test_folder];
+        NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B-%@/", k_webdav_base_url, k_path_test_folder, currentCharacter];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -691,11 +683,11 @@
 - (void)testRenameFolder {
     
     //Create Folder A for the Test
-    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", _configTests.pathTestFolder];
+    NSString *testPathB = [NSString stringWithFormat:@"%@/Folder B", k_path_test_folder];
     [self createFolderWithName:testPathB];
     
-    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
-    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B Renamed/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *origin = [NSString stringWithFormat:@"%@%@/Folder B/", k_webdav_base_url, k_path_test_folder];
+    NSString *destiny = [NSString stringWithFormat:@"%@%@/Folder B Renamed/", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -728,10 +720,10 @@
 - (void)testDeleteAFolder
 {
     //Create Tests/DeleteFolder
-    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", _configTests.pathTestFolder];
+    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", k_path_test_folder];
     [self createFolderWithName:testPathDelete];
     
-    NSString *folder = [NSString stringWithFormat:@"%@%@/DeleteFolder", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *folder = [NSString stringWithFormat:@"%@%@/DeleteFolder", k_webdav_base_url, k_path_test_folder];
 
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -766,17 +758,17 @@
 - (void)testDeleteFile
 {
     //Create Tests/DeleteFolder
-    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", _configTests.pathTestFolder];
+    NSString *testPathDelete = [NSString stringWithFormat:@"%@/DeleteFolder", k_path_test_folder];
     [self createFolderWithName:testPathDelete];
     
     //Upload a file
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Upload file Tests/Test Read Folder/File1
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/DeleteFolder/File1.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/DeleteFolder/File1.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
     
-    NSString *filePath = [NSString stringWithFormat:@"%@%@/DeleteFolder/File1.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *filePath = [NSString stringWithFormat:@"%@%@/DeleteFolder/File1.jpeg", k_webdav_base_url, k_path_test_folder];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -814,34 +806,34 @@
 - (void)testReadFolder{
     
     //Create Tests/Test Read Folder
-    NSString *testPathReadFolder = [NSString stringWithFormat:@"%@/Test Read Folder", _configTests.pathTestFolder];
+    NSString *testPathReadFolder = [NSString stringWithFormat:@"%@/Test Read Folder", k_path_test_folder];
     [self createFolderWithName:testPathReadFolder];
     
     //Create Tests/Test Read Folder/Folder1
-    NSString *testPathReadFolder1 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder1", _configTests.pathTestFolder];
+    NSString *testPathReadFolder1 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder1", k_path_test_folder];
     [self createFolderWithName:testPathReadFolder1];
     
     //Create Tests/Test Read Folder/Folder2
-    NSString *testPathReadFolder2 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder2", _configTests.pathTestFolder];
+    NSString *testPathReadFolder2 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder2", k_path_test_folder];
     [self createFolderWithName:testPathReadFolder2];
     
     //Create Tests/Test Read Folder/Folder3
-    NSString *testPathReadFolder3 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder3", _configTests.pathTestFolder];
+    NSString *testPathReadFolder3 = [NSString stringWithFormat:@"%@/Test Read Folder/Folder3", k_path_test_folder];
     [self createFolderWithName:testPathReadFolder3];
     
     
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Upload file Tests/Test Read Folder/File1
-    NSString *uploadPath1 = [NSString stringWithFormat:@"%@/Test Read Folder/File1.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath1 = [NSString stringWithFormat:@"%@/Test Read Folder/File1.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath1];
     
     //Upload file Tests/Test Read Folder/File2
-    NSString *uploadPath2 = [NSString stringWithFormat:@"%@/Test Read Folder/File2.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath2 = [NSString stringWithFormat:@"%@/Test Read Folder/File2.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath2];
     
     //Upload file Tests/Test Read Folder/File3
-    NSString *uploadPath3 = [NSString stringWithFormat:@"%@/Test Read Folder/File3.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath3 = [NSString stringWithFormat:@"%@/Test Read Folder/File3.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath3];
     
     
@@ -850,7 +842,7 @@
 
 
     //Path with 7 elements: {3 files, 3 folders and the parent folder}
-    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read Folder/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read Folder/", k_webdav_base_url, k_path_test_folder];
     NSLog(@"Path: %@", path);
     
     
@@ -924,7 +916,7 @@
 -(void)testReadFile{
     
     //Create Tests/Test Read File
-    NSString *testReadFilePath = [NSString stringWithFormat:@"%@/Test Read File", _configTests.pathTestFolder];
+    NSString *testReadFilePath = [NSString stringWithFormat:@"%@/Test Read File", k_path_test_folder];
     [self createFolderWithName:testReadFilePath];
     
     
@@ -941,14 +933,14 @@
     
     
     //Path of new folder
-    NSString *newFolder = [NSString stringWithFormat:@"%@%@/Test Read File/DeletedFolder/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *newFolder = [NSString stringWithFormat:@"%@%@/Test Read File/DeletedFolder/", k_webdav_base_url, k_path_test_folder];
     newFolder = [newFolder stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Path to the test
-    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read File/", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *path = [NSString stringWithFormat:@"%@%@/Test Read File/", k_webdav_base_url, k_path_test_folder];
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"Path: %@", path);
     
@@ -1086,14 +1078,14 @@
 - (void) testDownloadFile {
     
     //Create Tests/Test Upload
-    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", _configTests.pathTestFolder];
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", k_path_test_folder];
     [self createFolderWithName:downloadPath];
     
     //Upload test file
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Upload file /Tests/Test Download/test.jpeg
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
     
     
@@ -1116,7 +1108,7 @@
     localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1177,7 +1169,7 @@
 - (void) testDownloadNotExistingFile {
     
     //Create Tests/Test Download
-    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", _configTests.pathTestFolder];
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", k_path_test_folder];
     [self createFolderWithName:downloadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1199,7 +1191,7 @@
     localPath = [localPath stringByAppendingString:@"/image.png"];
     
     //Path of server file that not exist
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/test image not exist.PNG", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/test image not exist.PNG", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Local Paht: %@", localPath);
@@ -1250,14 +1242,14 @@
 - (void) testDownloadFileWithSession {
 
     //Create Tests/Test Download Folder
-    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", _configTests.pathTestFolder];
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", k_path_test_folder];
     [self createFolderWithName:downloadPath];
     
     //Upload test file
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Upload file /Tests/Test Download/test.jpeg
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1278,7 +1270,7 @@
     localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1324,7 +1316,7 @@
 - (void) testDownloadWithSessionAFileThatDoesNotExist {
     
     //Create Tests/Test Download Folder
-    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", _configTests.pathTestFolder];
+    NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", k_path_test_folder];
     [self createFolderWithName:downloadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1345,7 +1337,7 @@
     localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1390,7 +1382,7 @@
 - (void) testUploadAFileNoChunks {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1400,7 +1392,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1454,7 +1446,7 @@
 - (void) testUploadAFileWithChunks {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1464,7 +1456,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1517,7 +1509,7 @@
 - (void) testUploadAFileThatDoesNotExist {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1527,7 +1519,7 @@
     NSString *localPath = [NSString stringWithFormat:@"%@/Name of the file that does not exist.png", [[NSBundle mainBundle] resourcePath]];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/Name of the file that does not exist.png", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/Name of the file that does not exist.png", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1574,7 +1566,7 @@
 - (void) testUploadAFileWithSpecialCharacters {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1584,7 +1576,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
     
     //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1627,7 +1619,7 @@
 - (void) testUploadFileWithSession {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1637,7 +1629,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1687,7 +1679,7 @@
 - (void) testUploadFileWithSessionAndSpecialCharacters {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1697,7 +1689,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
     
     //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1747,7 +1739,7 @@
 - (void) testUploadWithSessionAFileThatDoesNotExist {
     
     //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", _configTests.pathTestFolder];
+    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
     [self createFolderWithName:uploadPath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
@@ -1757,7 +1749,7 @@
     NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"videoA" ofType:@"MOV"];
     
     //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", _configTests.webdavBaseUrl, _configTests.pathTestFolder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSLog(@"Server URL: %@", serverUrl);
@@ -1829,7 +1821,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
         NSLog(@"Folder shared");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -1860,12 +1852,12 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //2. Check if the folder is shared
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
                 isFolderShared = YES;
             }
         }
@@ -1908,12 +1900,12 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //2. read the folder to obtain the info of OCSharedDto
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         OCSharedDto *shared;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
                 shared = current;
             }
         }
@@ -1921,7 +1913,7 @@
         if (shared) {
             
             //3. Unshare the folder
-            [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+            [_sharedOCCommunication unShareFileOrFolderByServer:k_base_url andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
                 NSLog(@"File unshared");
                 dispatch_semaphore_signal(semaphore);
                 
@@ -1964,7 +1956,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication getCapabilitiesOfServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer) {
+    [_sharedOCCommunication getCapabilitiesOfServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer) {
         NSLog(@"Get capabilities ok");
         XCTAssertNotNil(capabilities,  @"Error get capabilites of server");
         dispatch_semaphore_signal(semaphore);
@@ -1992,7 +1984,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareFileOrFolderByServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPassword:@"testing" onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *shareLink, NSString *redirectedServer) {
+    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] andPassword:@"testing" onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *shareLink, NSString *redirectedServer) {
         NSLog(@"Folder shared by link with password");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -2023,12 +2015,12 @@
     [self testShareAFolder];
     
     //2. Read the shared
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
                 isFolderShared = YES;
                 
                 NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -2037,7 +2029,7 @@
                 NSString *foarmatedDate = [dateFormatter stringFromDate:tomorrow];
                 
                 //3. Update the share with password and expiration date
-                [_sharedOCCommunication updateShare:current.idRemoteShared ofServerPath:_configTests.baseUrl withPasswordProtect:@"testing" andExpirationTime:foarmatedDate andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+                [_sharedOCCommunication updateShare:current.idRemoteShared ofServerPath:k_base_url withPasswordProtect:@"testing" andExpirationTime:foarmatedDate andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
                     
                     NSLog(@"Updated shared by link with expiration date and password");
                     dispatch_semaphore_signal(semaphore);
@@ -2089,7 +2081,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication searchUsersAndGroupsWith:@"aa" forPage:1 with:30 ofServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *itemList, NSString *redirectedServer) {
+    [_sharedOCCommunication searchUsersAndGroupsWith:@"aa" forPage:1 with:30 ofServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *itemList, NSString *redirectedServer) {
         NSLog(@"Search users and groups");
         XCTAssertNotNil(itemList,  @"Error search users and groups");
         dispatch_semaphore_signal(semaphore);
@@ -2112,7 +2104,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication searchUsersAndGroupsWith:@"user@" forPage:1 with:30 ofServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *itemList, NSString *redirectedServer) {
+    [_sharedOCCommunication searchUsersAndGroupsWith:@"user@" forPage:1 with:30 ofServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *itemList, NSString *redirectedServer) {
         NSLog(@"Search users and groups");
         XCTAssertNotNil(itemList,  @"Error search users and groups");
         dispatch_semaphore_signal(semaphore);
@@ -2141,7 +2133,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareWith:_configTests.userToShare shareeType:shareTypeUser inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication shareWith:k_user_to_share shareeType:shareTypeUser inServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with user");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -2168,7 +2160,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareWith:_configTests.groupToShare shareeType:shareTypeGroup inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication shareWith:k_group_to_share shareeType:shareTypeGroup inServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] andPermissions:k_read_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with group");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -2198,14 +2190,14 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //2. read the folder to obtain the info of OCSharedDto
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl
+    [_sharedOCCommunication readSharedByServer:k_base_url
                                onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
                                    
         OCSharedDto *shared;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]
-                 && [current.shareWith isEqualToString:_configTests.userToShare]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]
+                 && [current.shareWith isEqualToString:k_user_to_share]) {
                 shared = current;
             }
         }
@@ -2213,7 +2205,7 @@
         if (shared) {
             
             //3. Unshare the folder
-            [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+            [_sharedOCCommunication unShareFileOrFolderByServer:k_base_url andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
                 NSLog(@"File unshared with user");
                 dispatch_semaphore_signal(semaphore);
                 
@@ -2258,17 +2250,17 @@
     [self testShareAFolder];
     
     //2. Read the shared
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
                 isFolderShared = YES;
                
                 
                 //3. Check if the share folder is shared by the id
-                [_sharedOCCommunication isShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto) {
+                [_sharedOCCommunication isShareFileOrFolderByServer:k_base_url andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto) {
                     
                     NSLog(@"File is shared");
                     dispatch_semaphore_signal(semaphore);
@@ -2320,16 +2312,16 @@
     [self testShareAFolder];
     
     //2. Read the shared
-    [_sharedOCCommunication readSharedByServer:_configTests.baseUrl onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
         
         BOOL isFolderShared = NO;
         
         for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", _configTests.pathTestFolder]]) {
+            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
                 isFolderShared = YES;
                 
                 //3. Unshare the share folder by the id
-                [_sharedOCCommunication unShareFileOrFolderByServer:_configTests.baseUrl andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+                [_sharedOCCommunication unShareFileOrFolderByServer:k_base_url andIdRemoteShared:current.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
                     
                     NSLog(@"Share unshared correctly");
                     dispatch_semaphore_signal(semaphore);
@@ -2378,7 +2370,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication getFeaturesSupportedByServer:_configTests.baseUrl onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer) {
+    [_sharedOCCommunication getFeaturesSupportedByServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer) {
         
         NSLog(@"Server features correctly read");
         NSLog(@"hasShareSupport: %d", hasShareSupport);
@@ -2415,7 +2407,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareWith:_configTests.remoteUserToShare shareeType:shareTypeRemote inServer:_configTests.baseUrl andFileOrFolderPath:[NSString stringWithFormat:@"/%@", _configTests.pathTestFolder] andPermissions:k_max_folder_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    [_sharedOCCommunication shareWith:k_remote_user_to_share shareeType:shareTypeRemote inServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] andPermissions:k_max_folder_share_permission onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"Share with remote user");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -2441,18 +2433,18 @@
     
     
     //Create Folder A for the Test
-    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", _configTests.pathTestFolder];
+    NSString *testPath = [NSString stringWithFormat:@"%@/Folder A", k_path_test_folder];
     [self createFolderWithName:testPath];
     
     //Upload file /Tests/Folder A/test.jpeg
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", _configTests.pathTestFolder];
+    NSString *remotePath = [NSString stringWithFormat:@"%@/Folder A/Test.jpg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:remotePath];
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication getRemoteThumbnailByServer:_configTests.baseUrl ofFilePath:remotePath withWidth:64 andHeight:64 onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer) {
+    [_sharedOCCommunication getRemoteThumbnailByServer:k_base_url ofFilePath:remotePath withWidth:64 andHeight:64 onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer) {
         if ([UIImage imageWithData:thumbnail]) {
             NSLog(@"Thumbnail getted");
         } else {
