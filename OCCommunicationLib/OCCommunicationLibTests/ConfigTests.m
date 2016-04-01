@@ -39,8 +39,8 @@
     NSString *remoteUserToShareOwn = @""; //remote user another server
     
     //We set the baseUrl
-    if ([[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"]) {
-        _baseUrl = [[[NSProcessInfo processInfo] environment] objectForKey:@"baseUrlTravis"];
+    if ([NSProcessInfo processInfo].environment[@"baseUrlTravis"]) {
+        _baseUrl = [NSProcessInfo processInfo].environment[@"baseUrlTravis"];
         NSLog(@"Environment variable exist: %@", _baseUrl);
     } else {
         NSLog(@"Environment variable not exist");
