@@ -11,6 +11,7 @@ script:
 before_install:
 - brew update
 - brew reinstall --HEAD xctool
+- brew install gnu-sed
 - sed -i '' "s/#define k_base_url @\"\"/#define k_base_url @\"$baseUrlTravis\"/" "OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h"
 - sed -i '' "s/#define k_webdav_base_url @\"\"/#define k_webdav_base_url @\"$webdavBaseUrlTravis\"/" "OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h"
 - sed -i '' "s/#define k_user @\"\"/#define k_user @\"$userTravis\"/" "OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h"
