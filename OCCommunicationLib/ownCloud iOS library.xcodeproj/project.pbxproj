@@ -11,7 +11,6 @@
 		1345E4601884213400153F14 /* OCXMLShareByLinkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1345E45F1884213400153F14 /* OCXMLShareByLinkParser.m */; };
 		13AA8636187C211900A10927 /* OCSharedDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA8635187C211900A10927 /* OCSharedDto.m */; };
 		13AA8640187C3B9700A10927 /* OCXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AA863F187C3B9700A10927 /* OCXMLParser.m */; };
-		59A3EBC918FBD4E700D31D1B /* ConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A3EBC818FBD4E700D31D1B /* ConfigTests.m */; };
 		59A5B71E191907F100724BE3 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B70E191907F100724BE3 /* AFHTTPSessionManager.m */; };
 		59A5B71F191907F100724BE3 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B711191907F100724BE3 /* AFNetworkReachabilityManager.m */; };
 		59A5B720191907F100724BE3 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B713191907F100724BE3 /* AFSecurityPolicy.m */; };
@@ -86,7 +85,6 @@
 		13AA863F187C3B9700A10927 /* OCXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCXMLParser.m; path = OCWebDavClient/Parsers/OCXMLParser.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		591BFBF31B1C809000AB8D3A /* OCConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OCConstants.h; path = Utils/OCConstants.h; sourceTree = "<group>"; };
 		59A3EBC718FBD4E700D31D1B /* ConfigTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigTests.h; sourceTree = "<group>"; };
-		59A3EBC818FBD4E700D31D1B /* ConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigTests.m; sourceTree = "<group>"; };
 		59A5B70D191907F100724BE3 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFHTTPSessionManager.h; path = ExternalLibs/AFNetworking/AFHTTPSessionManager.h; sourceTree = "<group>"; };
 		59A5B70E191907F100724BE3 /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFHTTPSessionManager.m; path = ExternalLibs/AFNetworking/AFHTTPSessionManager.m; sourceTree = "<group>"; };
 		59A5B70F191907F100724BE3 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFNetworking.h; path = ExternalLibs/AFNetworking/AFNetworking.h; sourceTree = "<group>"; };
@@ -249,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				59A3EBC718FBD4E700D31D1B /* ConfigTests.h */,
-				59A3EBC818FBD4E700D31D1B /* ConfigTests.m */,
 				EA7CC936183E15C000B6A4B4 /* OCCommunicationLibTests.h */,
 				EA7CC8B6183E11E600B6A4B4 /* OCCommunicationLibTests.m */,
 				EA7CC8B1183E11E600B6A4B4 /* Supporting Files */,
@@ -426,7 +423,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59A5B724191907F100724BE3 /* AFURLSessionManager.m in Sources */,
-				59A3EBC918FBD4E700D31D1B /* ConfigTests.m in Sources */,
 				EA913A721BE9FB0700D015B8 /* OCCapabilities.m in Sources */,
 				59A5B71E191907F100724BE3 /* AFHTTPSessionManager.m in Sources */,
 				59A5B71F191907F100724BE3 /* AFNetworkReachabilityManager.m in Sources */,
