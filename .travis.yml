@@ -5,7 +5,7 @@ xcode_scheme: ownCloud iOS library
 xcode_sdk: iphonesimulator
 script:
 - xcodebuild -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=NO
-- xctool test -workspace 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=NO
+- xctool test -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=NO
 
 
 before_install:
