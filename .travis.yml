@@ -7,4 +7,4 @@ xcode_sdk: iphonesimulator
 before_install:
 - brew update
 - brew reinstall --HEAD xctool
-- defaults write com.apple.dt.Xcode UseSanitizedBuildSystemEnvironment -bool NO
+- defaults write com.apple.dt.Xcode UseSanitizedBuildSystemEnvironment -bool YES
