@@ -67,7 +67,9 @@
 {
     [super setUp];
     
-    NSLog(@"Setup testing: %@", [[[NSProcessInfo processInfo] environment] objectForKey:@"testing"]);
+    NSDictionary* environment = [[NSProcessInfo processInfo] environment];
+    
+    NSLog(@"environment: %@", environment.allKeys);
     
     //webdavBaseUrl = [NSString stringWithFormat:@"%@remote.php/webdav/", baseUrl];
     
