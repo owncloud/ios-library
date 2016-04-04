@@ -11,11 +11,11 @@ script:
 before_install:
 - brew update
 - brew reinstall --HEAD xctool
-- sed -i 's/#define k_base_url @\"\"/#define k_base_url @\"$baseUrlTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_webdav_base_url/@\"\"/#define k_webdav_base_url @\"$webdavBaseUrlTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_user @\"\"/#define k_user @\"$userTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_password @\"\"/#define k_password @\"$passwordTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_path_test_folder @\"\"/#define k_path_test_folder @\"$(date +%s)\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_user_to_share @\"\"/#define k_user_to_share @\"$userToShareTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_group_to_share @\"\"/#define k_group_to_share @\"$groupToShareTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
-- sed -i 's/#define k_remote_user_to_share @\"\"/#define k_remote_user_to_share @\"$remoteUserToShareTravis\"' OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_base_url @\"$baseUrlTravis\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_webdav_base_url @\"$webdavBaseUrlTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_user @\"$userTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_password @\"$passwordTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_path_test_folder @\"$(date +%s)\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_user_to_share @\"$userToShareTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_group_to_share @\"$groupToShareTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
+- echo "#define k_remote_user_to_share @\"$remoteUserToShareTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
