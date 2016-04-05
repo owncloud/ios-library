@@ -25,6 +25,7 @@
 
 
 #define kOCErrorServerUnauthorized 401
+//In the server we received a 403 also when the server is enforce to set a password.
 #define kOCErrorServerForbidden 403
 #define kOCErrorServerPathNotFound 404
 #define kOCErrorServerMethodNotPermitted 405
@@ -33,9 +34,6 @@
 #define kOCErrorServerInternalError 500
 
 #define kOCErrorSharedAPIWrong 400
-//In the server we received a 403 also when the server is enforce to set a password. 
-#define kOCErrorSharedAPIUploadDisabled 403
-#define kOCErrorSharedAPINotUpdateShare 404
 #define kOCSharedAPISuccessful 100
 #define kOCShareeAPISuccessful 200
 
