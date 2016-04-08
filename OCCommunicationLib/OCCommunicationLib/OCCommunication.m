@@ -53,24 +53,17 @@
     
     if (self) {
         
-        //Init the Queue Array
-        self.uploadOperationQueueArray = [NSMutableArray new];
-        
         //Init the Donwload queue array
-        self.downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
         //Credentials not set yet
         self.kindOfCredential = credentialNotSet;
-        
-        //Network Queue
-        self.networkOperationsQueue =[NSOperationQueue new];
-        [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.isCookiesAvailable = NO;
         self.isForbiddenCharactersAvailable = NO;
-
+        
 #ifdef UNIT_TEST
         
         //TODO: use [NSURLSessionConfiguration defaultSessionConfiguration] instead nil. Check it after everything compile and the tests pass
@@ -78,7 +71,6 @@
         self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
         self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
-
 #else
         //Network Upload queue for NSURLSession (iOS 7)
         NSURLSessionConfiguration *uploadConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:k_session_name];
@@ -106,6 +98,7 @@
         self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 #endif
         
+        [self initUploadAndDownloadNoBackgroundManagers];
         
     }
     
@@ -118,11 +111,8 @@
     
     if (self) {
         
-        //Init the Queue Array
-        self.uploadOperationQueueArray = [NSMutableArray new];
-        
         //Init the Donwload queue array
-        self.downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
         self.isCookiesAvailable = NO;
         self.isForbiddenCharactersAvailable = NO;
@@ -130,13 +120,11 @@
         //Credentials not set yet
         self.kindOfCredential = credentialNotSet;
         
-        //Network Queue
-        self.networkOperationsQueue =[NSOperationQueue new];
-        [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-       
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
+        
+        [self initUploadAndDownloadNoBackgroundManagers];
     }
     
     return self;
@@ -147,36 +135,41 @@
     self = [super init];
     
     if (self) {
-        
-        //Init the Queue Array
-        self.uploadOperationQueueArray = [NSMutableArray new];
-        
+    
         //Init the Donwload queue array
-        self.downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
         //Credentials not set yet
         self.kindOfCredential = credentialNotSet;
-        
-        //Network Queue
-        self.networkOperationsQueue =[NSOperationQueue new];
-        [self.networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
         self.downloadSessionManager = downloadSessionManager;
+        
+        [self initUploadAndDownloadNoBackgroundManagers];
     }
     
     return self;
 }
 
+- (void) initUploadAndDownloadNoBackgroundManagers {
+    
+    NSURLSessionConfiguration *uploadNoBackgroundConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    uploadNoBackgroundConfiguration.HTTPShouldUsePipelining = YES;
+    uploadNoBackgroundConfiguration.HTTPMaximumConnectionsPerHost = 1;
+    uploadNoBackgroundConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+    self.uploadSessionManagerNoBackground = [[AFURLSessionManager alloc] initWithSessionConfiguration:uploadNoBackgroundConfiguration];
+    
+    NSURLSessionConfiguration *downloadNoBackgroundConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    downloadNoBackgroundConfiguration.HTTPShouldUsePipelining = YES;
+    downloadNoBackgroundConfiguration.HTTPMaximumConnectionsPerHost = 1;
+    downloadNoBackgroundConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+    self.downloadSessionManagerNoBackground = [[AFURLSessionManager alloc] initWithSessionConfiguration:downloadNoBackgroundConfiguration];
+}
 
 - (AFSecurityPolicy *) createSecurityPolicy {
-    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-    [securityPolicy setValidatesDomainName:NO];
-    [securityPolicy setAllowInvalidCertificates:YES];
-    
-    return securityPolicy;
+    return [AFSecurityPolicy defaultPolicy];
 }
 
 - (void)setSecurityPolicyManagers:(AFSecurityPolicy *)securityPolicy {
@@ -474,8 +467,8 @@
 ///-----------------------------------
 /// @name Download File
 ///-----------------------------------
-/*
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
+
+- (NSURLSessionTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -483,29 +476,20 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    NSLog(@"Remote File Path: %@", remotePath);
-    NSLog(@"Local File Path: %@", localPath);
-    
-    NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
-        progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
-    } success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        successRequest(operation.response, request.redirectedServer);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-        
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
+    OCHTTPRequestOperation *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue success:^(NSURLResponse *response, NSURL *filePath) {
+        successRequest(response,filePath);
+    } failure:^(NSURLResponse *response, NSError *error) {
+        failureRequest(response,error);
     }];
     
-    return operation;
+    if (isLIFO) {
+        [self addDownloadTaskToTheNetworkQueue:downloadTask];
+    } else {
+        [downloadTask resume];
+    }
+    
+    return downloadTask;
 }
-*/
 
 ///-----------------------------------
 /// @name Download File Session
@@ -570,41 +554,45 @@
 ///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
-/*
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler{
+
+- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
+    
+    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    request = [self getRequestWithCredentials:request];
+    request.securityPolicy = self.securityPolicy;
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    OCUploadOperation *operation = [OCUploadOperation new];
+    NSURLSessionUploadTask *uploadTask = [request putLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
+                                                                  success:^(NSURLResponse *response, id responseObjec){
+                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                      //TODO: The second parameter is the redirected server
+                                                                      successRequest(response, @"");
+                                                                  } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
+                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+                                                                      //TODO: The second parameter is the redirected server
+                                                                      
+                                                                      NSData *responseData = (NSData*) responseObject;
+                                                                      
+                                                                      OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+                                                                      
+                                                                      [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+                                                                          
+                                                                          if (err) {
+                                                                              failureRequest(response, @"", err);
+                                                                          }else{
+                                                                              failureRequest(response, @"", error);
+                                                                          }
+                                                                          
+                                                                      }];
+                                                                      
+                                                                  } failureBeforeRequest:^(NSError *error) {
+                                                                      failureBeforeRequest(error);
+                                                                  }];
     
-    [operation createOperationWith:localPath toDestiny:remotePath onCommunication:sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
-        successRequest(response, redirectedServer);
-    } failureRequest:^(NSURLResponse *response, NSData *responseData, NSString *redirectedServer, NSError *error) {
-        
-        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-        
-        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-            
-            if (err) {
-                failureRequest(response, redirectedServer, err);
-            }else{
-                failureRequest(response, redirectedServer, error);
-            }
-            
-        }];
-        
-        
-    } failureBeforeRequest:^(NSError *error) {
-        failureBeforeRequest(error);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
-    
-    return operation;
+    return uploadTask;
 }
-*/
+
 ///-----------------------------------
 /// @name Upload File Session
 ///-----------------------------------
@@ -1369,7 +1357,7 @@
 
 #pragma mark - Remote thumbnails
 
-- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSURLSessionTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                      successRequest:(void(^)(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
@@ -1381,7 +1369,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    NSOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+    OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(OCHTTPRequestOperation *operation, id responseObject) {
                 NSData *response = (NSData*) responseObject;
                                     
@@ -1396,135 +1384,6 @@
 
     return operation;
 }
-
-
-#pragma mark - Queue System
-
-- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
-}
-
-/*
-- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
-    
-    [self eraseURLCache];
-    
-    //Suspended the queue while is added a new operation
-    [self.networkOperationsQueue setSuspended:YES];
-    
-    NSArray *operationArray = [self.networkOperationsQueue operations];
-    
-    //NSLog(@"operations array has: %d operations", operationArray.count);
-    //NSLog(@"current operation description: %@", operation.description);
-    
-    OCHTTPRequestOperation *lastOperationDownload;
-    OCHTTPRequestOperation *firstOperationDownload;
-    OCHTTPRequestOperation *lastOperationUpload;
-    OCHTTPRequestOperation *lastOperationNavigation;
-    
-    
-    //We get the last operation for each type
-    for (int i = 0 ; i < [operationArray count] ; i++) {
-        OCHTTPRequestOperation *currentOperation = [operationArray objectAtIndex:i];
-        
-        
-        switch (operation.typeOfOperation) {
-            case DownloadLIFOQueue:
-                if(currentOperation.typeOfOperation == DownloadLIFOQueue) {
-                    //Get first download operation in progress, for LIFO option
-                    if (currentOperation.isExecuting)
-                        firstOperationDownload = currentOperation;
-                }
-                 break;
-            
-            case DownloadFIFOQueue:
-                if(currentOperation.typeOfOperation == DownloadFIFOQueue) {
-                    lastOperationDownload = currentOperation;
-                }
-                break;
-            case UploadQueue:
-                if(currentOperation.typeOfOperation == UploadQueue)
-                    lastOperationUpload = currentOperation;
-                
-                break;
-            case NavigationQueue:
-                if(currentOperation.typeOfOperation == NavigationQueue)
-                    lastOperationNavigation = currentOperation;
-                
-                break;
-                
-            default:
-                break;
-        }
-    }
-    
-    //We add the dependency
-    switch (operation.typeOfOperation) {
-        case DownloadLIFOQueue:
-            //If there are download in progress, pause and store in download array
-            if (firstOperationDownload) {
-                [firstOperationDownload pause];
-                [self.downloadOperationQueueArray addObject:firstOperationDownload];
-            }
-            break;
-        case DownloadFIFOQueue:
-            if(lastOperationDownload)
-                [operation addDependency:lastOperationDownload];
-            
-            break;
-        case UploadQueue:
-            if(lastOperationUpload)
-                [operation addDependency:lastOperationUpload];
-            
-            break;
-        case NavigationQueue:
-            if(lastOperationNavigation)
-                [operation addDependency:lastOperationNavigation];
-            
-            break;
-            
-        default:
-            break;
-    }
-    
-    //Finally we add the new operation to the queue
-    [self.networkOperationsQueue addOperation:operation];
-    
-    //Relaunch the queue again
-    [self.networkOperationsQueue setSuspended:NO];
-    
-}
-*/
-///-----------------------------------
-/// @name Resume Next Download
-///-----------------------------------
-
-/**
- * This method is called when the download is finished (success or failure).
- * Here we check if exist download operation in LIFO queue array and begin with the next
- *
- * @warning Only we use this method when we are using LIFO queue system
- */
-/*
-- (void) resumeNextDownload{
-    
-    //Check if there are donwloads in array
-    if (self.downloadOperationQueueArray.count > 0) {
-        
-        OCHTTPRequestOperation *nextPausedDownload = [self.downloadOperationQueueArray lastObject];
-        //Check if the download operation was cancelled previously
-        if (nextPausedDownload.isCancelled) {
-            [nextPausedDownload cancel];
-            [self.downloadOperationQueueArray removeLastObject];
-            //Call again this method to the next download
-            [self resumeNextDownload];
-        } else {
-           
-            [nextPausedDownload resume];
-            [self.downloadOperationQueueArray removeLastObject];
-        }
-    }
-}
-*/
 
 #pragma mark - Clear Cache
 
@@ -1583,6 +1442,37 @@
         [itemList addObject:group];
         
     }
+}
+
+#pragma mark - Queue System
+
+- (void) addDownloadTaskToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
+    
+    //1. Cancel all tasks
+    //TODO: if this cancellation execute the failure block we should detect when we cancel it to be launched again for example using a flag on the OCHTTPRequestOperation
+    [self.downloadSessionManagerNoBackground.operationQueue cancelAllOperations];
+    
+    //2. Add the new tasks as the first
+    [self.downloadTaskNetworkQueueArray insertObject:operation atIndex:0];
+    
+    //3. Relaunch all the tasks in order
+    for (OCHTTPRequestOperation *current in self.downloadTaskNetworkQueueArray) {
+        [current resume];
+    }
+}
+
+///-----------------------------------
+/// @name Resume Next Download
+///-----------------------------------
+
+/**
+ * This method is called when the download is finished (success or failure).
+ * Here we check if exist download operation in LIFO queue array and begin with the next
+ *
+ * @warning Only we use this method when we are using LIFO queue system
+ */
+- (void) resumeNextDownload{
+    
 }
 
 @end

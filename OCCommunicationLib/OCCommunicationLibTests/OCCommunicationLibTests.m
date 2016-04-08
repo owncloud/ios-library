@@ -69,9 +69,8 @@
     
 	_sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:k_user andPassword:k_password];
-    
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
-    
+
     //Create Tests folder
     [self createFolderWithName:k_path_test_folder];
 	
@@ -107,15 +106,15 @@
     
     [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         //Folder created
-        NSLog(@"Folder %@ created", folder);
+        NSLog(@"Folder created");
         dispatch_semaphore_signal(semaphore);
 
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        NSLog(@"Error created:%@ folder", folder);
+        NSLog(@"Error created folder");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        NSLog(@"Error created:%@ folder", folder);
+        NSLog(@"Error created folder");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -147,11 +146,11 @@
     
     [_sharedOCCommunication deleteFileOrFolder:folder onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse * response, NSString *redirectedServer) {
         //Folder deleted
-        NSLog(@"Folder %@ deleted", path);
+        NSLog(@"Folder deleted");
         dispatch_semaphore_signal(semaphore);
     } failureRquest:^(NSURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
-        NSLog(@"Error deleted %@ folder", path);
+        NSLog(@"Error deleted folder");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -187,19 +186,16 @@
     remotePath = [remotePath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     
-    
-    
-    
     NSURLSessionUploadTask *uploadTask = nil;
     
     NSProgress *progress = nil;
     
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File: %@ uploaded", localPath);
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         NSLog(@"Failed uploading: %@", localPath);
-        NSLog(@"Error uploading: %@", error);
+        NSLog(@"Error uploading");
         dispatch_semaphore_signal(semaphore);
     } failureBeforeRequest:^(NSError *error) {
         NSLog(@"File that do not exist does not upload");
@@ -241,11 +237,11 @@
         NSLog(@"Folder created");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error testCreateFolder failureRequest: %@", error);
+        XCTFail(@"Error testCreateFolder failureRequest");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error testCreateFolder beforeRequest: %@", error);
+        XCTFail(@"Error testCreateFolder beforeRequest");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -269,8 +265,8 @@
 - (void)testCreateFolderWithForbiddenCharacters {
     NSArray* arrayForbiddenCharacters = [NSArray arrayWithObjects:@"\\",@"<",@">",@":",@"\"",@"|",@"?",@"*", nil];
     
-    for (NSString *currentCharacer in arrayForbiddenCharacters) {
-        NSString *folder = [NSString stringWithFormat:@"%@%@/%@",k_webdav_base_url,k_path_test_folder,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacer]];
+    for (NSString *currentCharacter in arrayForbiddenCharacters) {
+        NSString *folder = [NSString stringWithFormat:@"%@%@/%@",k_webdav_base_url,k_path_test_folder,[NSString stringWithFormat:@"%f%@-folder", [NSDate timeIntervalSinceReferenceDate], currentCharacter]];
         
         //We create a semaphore to wait until we recive the responses from Async calls
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -278,15 +274,15 @@
         [_sharedOCCommunication createFolder:folder onCommunication:_sharedOCCommunication withForbiddenCharactersSupported:NO successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
             //Folder created
             NSLog(@"Folder created");
-            XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
+            XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacter);
             dispatch_semaphore_signal(semaphore);
 
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacer);
+            XCTFail(@"Error testCreateFolderWithSpecialCharacters problem on: %@", currentCharacter);
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
-            NSLog(@"Forbbiden character detected: %@", currentCharacer);
+            NSLog(@"Forbbiden character detected: %@", currentCharacter);
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
         }];
@@ -327,13 +323,13 @@
         XCTFail(@"File Moved on the same folder");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error moving file on the same folder Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error moving file on the same folder and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
         if (error.code == OCErrorMovingTheDestinyAndOriginAreTheSame) {
             NSLog(@"File on the same folder not moved");
         } else {
-            XCTFail(@"Error moving file on same folder: %@", error);
+            XCTFail(@"Error moving file on same folder");
         }
         
         dispatch_semaphore_signal(semaphore);
@@ -380,10 +376,10 @@
         dispatch_semaphore_signal(semaphore);
 
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error moving file Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error moving file and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error moving file: %@", error);
+        XCTFail(@"Error moving file");
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -429,13 +425,13 @@
             XCTFail(@"File Moved and renamed");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error moving file and renamed Response: %@ and Error: %@", response, error);
+            XCTFail(@"Error moving file and renamed and Error");
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
             if (error.code == OCErrorMovingDestinyNameHaveForbiddenCharacters) {
                 NSLog(@"File with forbidden characters not moved");
             } else {
-                XCTFail(@"Error moving and renaming file: %@", error);
+                XCTFail(@"Error moving and renaming file");
             }
             
             dispatch_semaphore_signal(semaphore);
@@ -472,13 +468,13 @@
         XCTFail(@"Folder Moved inside himself");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error moving folder inside himself Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error moving folder inside himself and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
         if (error.code == OCErrorMovingFolderInsideHimself) {
             NSLog(@"File renamed not moved");
         } else {
-            XCTFail(@"Error moving folder inside himself: %@", error);
+            XCTFail(@"Error moving folder inside himself");
         }
         
         dispatch_semaphore_signal(semaphore);
@@ -518,10 +514,10 @@
         NSLog(@"Folder Moved");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error moving folder Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error moving folder and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error moving folder: %@", error);
+        XCTFail(@"Error moving folder");
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -565,14 +561,14 @@
             XCTFail(@"File renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error renaming file with forbidden characters Response: %@ and Error: %@", response, error);
+            XCTFail(@"Error renaming file with forbidden characters and Error");
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
             if (error.code == OCErrorMovingDestinyNameHaveForbiddenCharacters) {
                 NSLog(@"File not renamed with forbidden characters");
                 dispatch_semaphore_signal(semaphore);
             } else {
-                XCTFail(@"Error renaming file with forbidden characters: %@", error);
+                XCTFail(@"Error renaming file with forbidden characters");
                 dispatch_semaphore_signal(semaphore);
             }
         }];
@@ -613,10 +609,10 @@
         NSLog(@"File Renamed");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error renaming file Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error renaming file and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error renaming file: %@", error);
+        XCTFail(@"Error renaming file");
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -653,14 +649,14 @@
             XCTFail(@"Folder renamed with forbidden characters");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error renaming folder with forbidden characters Response: %@ and Error: %@", response, error);
+            XCTFail(@"Error renaming folder with forbidden characters and Error");
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
             if (error.code == OCErrorMovingDestinyNameHaveForbiddenCharacters) {
                 NSLog(@"Folder not renamed with forbidden characters");
                 dispatch_semaphore_signal(semaphore);
             } else {
-                XCTFail(@"Error renaming folder with forbidden characters: %@", error);
+                XCTFail(@"Error renaming folder with forbidden characters");
                 dispatch_semaphore_signal(semaphore);
             }
         }];
@@ -696,10 +692,10 @@
         NSLog(@"Folder Renamed");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error renaming folder Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error renaming folder and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error renaming folder: %@", error);
+        XCTFail(@"Error renaming folder");
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -735,7 +731,7 @@
         dispatch_semaphore_signal(semaphore);
     } failureRquest:^(NSURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
-        XCTFail(@"Error testDeleteFolder: %@", error);
+        XCTFail(@"Error testDeleteFolder");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -780,7 +776,7 @@
         dispatch_semaphore_signal(semaphore);
     } failureRquest:^(NSURLResponse * response, NSError * error, NSString *redirectedServer) {
         //Error
-        XCTFail(@"Error test delete file: %@", error);
+        XCTFail(@"Error test delete file");
         // Signal that block has completed
         dispatch_semaphore_signal(semaphore);
     }];
@@ -843,8 +839,6 @@
 
     //Path with 7 elements: {3 files, 3 folders and the parent folder}
     NSString *path = [NSString stringWithFormat:@"%@%@/Test Read Folder/", k_webdav_base_url, k_path_test_folder];
-    NSLog(@"Path: %@", path);
-    
     
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
@@ -894,7 +888,7 @@
         dispatch_semaphore_signal(semaphore);
         
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer) {
-        XCTFail(@"Error reading a folder - Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error reading a folder - and Error");
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -942,8 +936,6 @@
     //Path to the test
     NSString *path = [NSString stringWithFormat:@"%@%@/Test Read File/", k_webdav_base_url, k_path_test_folder];
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSLog(@"Path: %@", path);
-    
     
     [_sharedOCCommunication readFile:path onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *items, NSString *redirectedServer) {
         
@@ -962,7 +954,7 @@
         dispatch_semaphore_signal(semaphore);
         
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error reading the folder properties - Response: %@ and Error: %@", response, error);
+        XCTFail(@"Error reading the folder properties - and Error");
         dispatch_semaphore_signal(semaphore);
         
     }];
@@ -984,11 +976,11 @@
             NSLog(@"Folder created");
             dispatch_semaphore_signal(semaphore);
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error testCreateFolder: %@", error);
+            XCTFail(@"Error testCreateFolder");
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
         } errorBeforeRequest:^(NSError *error) {
-            XCTFail(@"Error testCreateFolder: %@", error);
+            XCTFail(@"Error testCreateFolder");
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
         }];
@@ -1010,7 +1002,7 @@
             dispatch_semaphore_signal(semaphore);
         } failureRquest:^(NSURLResponse * response, NSError * error, NSString *redirectedServer) {
             //Error
-            XCTFail(@"Error testDeleteFolder: %@", error);
+            XCTFail(@"Error testDeleteFolder");
             // Signal that block has completed
             dispatch_semaphore_signal(semaphore);
         }];
@@ -1050,7 +1042,7 @@
             dispatch_semaphore_signal(semaphore);
             
         } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-            XCTFail(@"Error reading the folder properties - Response: %@ and Error: %@", response, error);
+            XCTFail(@"Error reading the folder properties - and Error");
             dispatch_semaphore_signal(semaphore);
             
         }];
@@ -1074,10 +1066,10 @@
  * It the file download the test is ok
  *
  */
-/*
+
 - (void) testDownloadFile {
     
-    //Create Tests/Test Upload
+    //Create Tests/Test Download Folder
     NSString *downloadPath = [NSString stringWithFormat:@"%@/Test Download", k_path_test_folder];
     [self createFolderWithName:downloadPath];
     
@@ -1087,7 +1079,6 @@
     //Upload file /Tests/Test Download/test.jpeg
     NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Download/Test.jpeg", k_path_test_folder];
     [self uploadFilePath:bundlePath inRemotePath:uploadPath];
-    
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -1103,7 +1094,6 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:localPath])
         [[NSFileManager defaultManager] createDirectoryAtPath:localPath withIntermediateDirectories:NO attributes:nil error:&error];
     
-    
     //Documents/Test Download/image.png
     localPath = [localPath stringByAppendingString:@"/image.jpeg"];
     
@@ -1111,42 +1101,26 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
+    NSURLSessionTask *downloadTask = nil;
+    NSProgress *progress = nil;
     
-    __block NSOperation *operation = nil;
     
-    operation = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:_sharedOCCommunication progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+    downloadTask = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
-        NSLog(@"Download :%lu bytes of %lld bytes", (unsigned long)bytesRead, totalBytesExpectedToRead);
-        
-    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
-        
-        NSLog(@"Download file ok");
-        
-        //Delete the file
-        NSError *theError = nil;
-        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
-        
-        dispatch_semaphore_signal(semaphore);
-        
-        
-    } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        
-        XCTFail(@"Error download a file - Response: %@ - Error: %@", response, error);
-        
+        NSLog(@"File Downloaded ok");
         //Delete the file
         NSError *theError = nil;
         [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
         dispatch_semaphore_signal(semaphore);
         
+    } failureRequest:^(NSURLResponse *response, NSError *error) {
         
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        
-        NSLog(@"Cancel download");
-        [operation cancel];
-        
+        XCTFail(@"Error download a file - Response - Error");
+        //Delete the file
+        NSError *theError = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
+        dispatch_semaphore_signal(semaphore);
     }];
-    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1155,7 +1129,6 @@
     
     
 }
-*/
  
 ///-----------------------------------
 /// @name Test download not existing file
@@ -1194,9 +1167,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/test image not exist.PNG", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Local Paht: %@", localPath);
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionDownloadTask *downloadTask = nil;
     NSProgress *progress = nil;
     
@@ -1212,8 +1182,6 @@
         dispatch_semaphore_signal(semaphore);
         
     } failureRequest:^(NSURLResponse *response, NSError *error) {
-        
-        NSLog(@"Error download a file - Response: %@ - Error: %@", response, error);
         
         //Delete the file
         NSError *theError = nil;
@@ -1273,8 +1241,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionDownloadTask *downloadTask = nil;
     NSProgress *progress = nil;
     
@@ -1289,7 +1255,7 @@
         
     } failureRequest:^(NSURLResponse *response, NSError *error) {
         
-        XCTFail(@"Error download a file - Response: %@ - Error: %@", response, error);
+        XCTFail(@"Error download a file - Error");
         //Delete the file
         NSError *theError = nil;
         [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
@@ -1340,8 +1306,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Download/Test.jpeg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionDownloadTask *downloadTask = nil;
     NSProgress *progress = nil;
     
@@ -1356,7 +1320,7 @@
         
     } failureRequest:^(NSURLResponse *response, NSError *error) {
         
-        NSLog(@"Error downloading a file - Response: %@ - Error: %@", response, error);
+        NSLog(@"Error downloading a file - Error");
         //Delete the file
         NSError *theError = nil;
         [[NSFileManager defaultManager] removeItemAtPath:localPath error:&theError];
@@ -1368,134 +1332,6 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
-
-
-///-----------------------------------
-/// @name Test to upload a small file
-///-----------------------------------
-
-/**
- * This test try to uplad a file without chunks
- *
- */
-/*
-- (void) testUploadAFileNoChunks {
-    
-    //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
-    [self createFolderWithName:uploadPath];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
-    
-    //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", k_webdav_base_url, k_path_test_folder];
-    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
-    
-    __block NSOperation *operation = nil;
-    
-    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        if(totalBytesExpectedToWrote/1024 == 0) {
-            
-            if (bytesWrote>0) {
-                float percent;
-                
-                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
-                percent = percent / 100;
-                
-                NSLog(@"percent: %f", percent*100);
-            }
-        }
-        
-    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File Uploaded");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
-        XCTFail(@"Error. File do not uploaded: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    } failureBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error File does not exist");
-        dispatch_semaphore_signal(semaphore);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        XCTFail(@"Error Credentials. File do not uploaded");
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    
-}
- */
-
-///-----------------------------------
-/// @name Test to upload a big file
-///-----------------------------------
-
-/**
- * This test try to uplad a file with chunks
- * To test it we need at first download a file from the server
- */
-/*
-- (void) testUploadAFileWithChunks {
-    
-    //Create Tests/Test Upload
-    NSString *uploadPath = [NSString stringWithFormat:@"%@/Test Upload", k_path_test_folder];
-    [self createFolderWithName:uploadPath];
-    
-    //We create a semaphore to wait until we recive the responses from Async calls
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
-    
-    //Path of server file file
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video.mov", k_webdav_base_url, k_path_test_folder];
-    serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
-    
-    __block NSOperation *operation = nil;
-    
-    operation = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        if(totalBytesExpectedToWrote/1024 == 0) {
-            
-            if (bytesWrote>0) {
-                float percent;
-                
-                percent=totalBytesWrote*100/totalBytesExpectedToWrote;
-                percent = percent / 100;
-                
-                NSLog(@"percent: %f", percent*100);
-            }
-        }
-        
-    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
-        NSLog(@"File Uploaded");
-        dispatch_semaphore_signal(semaphore);
-    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
-        XCTFail(@"Error. File do not uploaded: %@", error);
-        dispatch_semaphore_signal(semaphore);
-    } failureBeforeRequest:^(NSError *error) {
-        XCTFail(@"Error File does not exist");
-        dispatch_semaphore_signal(semaphore);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        XCTFail(@"Error Credentials. File do not uploaded");
-        dispatch_semaphore_signal(semaphore);
-    }];
-    
-    // Run loop
-    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-}
- */
 
 ///-----------------------------------
 /// @name Test to upload a file that does not exist
@@ -1521,9 +1357,7 @@
     //Path of server file file
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/Name of the file that does not exist.png", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
-    
+
     NSURLSessionUploadTask *uploadTask = nil;
     
     NSProgress *progress = nil;
@@ -1535,7 +1369,7 @@
         
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         
-        XCTFail(@"Error. File do not uploaded: %@", error);
+        XCTFail(@"Error. File do not uploaded");
         dispatch_semaphore_signal(semaphore);
         
     } failureBeforeRequest:^(NSError *error) {
@@ -1579,8 +1413,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionUploadTask *uploadTask = nil;
     
     NSProgress *progress = nil;
@@ -1589,7 +1421,7 @@
         NSLog(@"File Uploaded with Special Characters");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
-        XCTFail(@"Error. File do not uploaded: %@", error);
+        XCTFail(@"Error. File do not uploaded");
         dispatch_semaphore_signal(semaphore);
     } failureBeforeRequest:^(NSError *error) {
         XCTFail(@"Error File does not exist");
@@ -1632,8 +1464,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/CompanyLogo.png", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionUploadTask *uploadTask = nil;
     
     NSProgress *progress = nil;
@@ -1645,7 +1475,7 @@
         
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         
-        XCTFail(@"Error. File do not uploaded: %@", error);
+        XCTFail(@"Error. File do not uploaded");
         dispatch_semaphore_signal(semaphore);
         
     } failureBeforeRequest:^(NSError *error) {
@@ -1692,8 +1522,6 @@
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSLog(@"Server URL: %@", serverUrl);
-    
     NSURLSessionUploadTask *uploadTask = nil;
     
     NSProgress *progress = nil;
@@ -1705,7 +1533,7 @@
         
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         
-        XCTFail(@"Error. File do not uploaded: %@", error);
+        XCTFail(@"Error. File do not uploaded");
         dispatch_semaphore_signal(semaphore);
         
     } failureBeforeRequest:^(NSError *error) {
@@ -1751,8 +1579,6 @@
     //Path of server file file (Special character added in file name)
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Server URL: %@", serverUrl);
     
     NSURLSessionUploadTask *uploadTask = nil;
     

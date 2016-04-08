@@ -134,23 +134,23 @@
             break;
         }
             
-        case kOCErrorSharedAPIUploadDisabled:
+        case kOCErrorServerForbidden:
             
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
             [details setValue:@"Public upload disabled by the admin" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPIUploadDisabled userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
             
-        case kOCErrorSharedAPINotUpdateShare:
+        case kOCErrorServerPathNotFound:
             
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
             [details setValue:@"Couldn't update share" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorSharedAPINotUpdateShare userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerPathNotFound userInfo:details];
             break;
         }
             
@@ -427,10 +427,8 @@
  */
 + (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url {
     NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
-    NSLog(@"cookies: %@", cookies);
     
     for (NSHTTPCookie *current in cookies) {
-        NSLog(@"Current: %@", current);
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
     }
 }
@@ -452,8 +450,6 @@
     //We add the cookies of that URL
     NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
     NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
-    
-    NSLog(@"cookieStorage: %@", cookieStorage);
     
     for (NSString *key in cookieHeaders) {
         [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
