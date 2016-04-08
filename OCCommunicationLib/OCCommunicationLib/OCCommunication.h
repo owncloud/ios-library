@@ -58,18 +58,18 @@ typedef enum {
 @property (nonatomic, strong) NSString *userAgent;
 
 //Public properties
-@property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
-@property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
-@property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
+@property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;
 
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *networkSessionManager;
 @property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
+@property (nonatomic, strong) AFURLSessionManager *uploadSessionManagerNoBackground;
+@property (nonatomic, strong) AFURLSessionManager *downloadSessionManagerNoBackground;
 
 /*This flag control the use of cookies on the requests.
- -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
- -On OC7 we can do several requests at the same time with the same session so we can set this flag to YES.
+ -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time you should set this as NO (by default).
+ -On OC7 we can do several requests at the same time with the same session so you can set this flag to YES.
  */
 @property BOOL isCookiesAvailable;
 
@@ -364,7 +364,7 @@ typedef enum {
  *
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return NSOperation -> You can cancel the download using this object.
+ * @return NSURLSessionTask -> You can cancel the download using this object.
  * Ex: [operation cancel]
  *
  * @warning the "remotePath" and "localFilePath" must not be on URL Encoding.
@@ -373,9 +373,9 @@ typedef enum {
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  */
-/*
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-*/
+
+- (NSURLSessionTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
+
 
 ///-----------------------------------
 /// @name Download File Session
@@ -440,15 +440,14 @@ typedef enum {
  * @param NSString -> remotePath the path where we want upload the file
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
- * @return NSOperation -> You can cancel the upload using this object
+ * @return NSURLSessionTask -> You can cancel the upload using this object
  * Ex: [operation cancel]
  *
  * @warning remember that you must to set the Credentials before call this method or any other.
  *
  */
-/*
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-*/
+
+- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest;
 
 ///-----------------------------------
 /// @name Upload File Session
@@ -803,10 +802,10 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return nsData -> thumbnail of the file with the size requested
- * @return NSOperation -> You can cancel the download using this object
+ * @return NSURLSessionTask -> You can cancel the download using this object
  *
  */
-- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSURLSessionTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                      successRequest:(void(^)(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
