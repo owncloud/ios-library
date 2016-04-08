@@ -285,4 +285,47 @@
  */
 + (BOOL) isPermissionToCanShare:(NSInteger) permissionValue;
 
+//-----------------------------------
+/// @name isAnyPermissionToEdit
+///-----------------------------------
+
+/**
+ * Method to know if any permission related to edit (canCreate, canChange and canDelete) is active by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isAnyPermissionToEdit:(NSInteger) permissionValue;
+
+//-----------------------------------
+/// @name isPermissionToRead
+///-----------------------------------
+
+/**
+ * Method to know if we have permission to Read by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
+
++ (BOOL) isPermissionToRead:(NSInteger) permissionValue;
+
+//---------------------------------------------------
+/// @name isPermissionToReadCreateUpdate
+///--------------------------------------------------
+
+/**
+ * Method to know if we have permissions to read,create and update by the permissionValue of the OCShareDto
+ *
+ * @param NSInteger -> permissionValue
+ *
+ * @return BOOL
+ *
+ */
++ (BOOL) isPermissionToReadCreateUpdate:(NSInteger) permissionValue;
+
 @end
