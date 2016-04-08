@@ -29,6 +29,9 @@
 //Timeout to upload
 #define k_timeout_upload 40 //seconds
 
+//Timeout for fast requests
+#define k_timeout_fast 5 //seconds
+
 //Chunk length
 #define k_OC_lenght_chunk 1048576
 

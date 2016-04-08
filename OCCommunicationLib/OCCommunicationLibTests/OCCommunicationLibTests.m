@@ -67,13 +67,13 @@
 {
     [super setUp];
     
-	_sharedOCCommunication = [[OCCommunication alloc] init];
+    _sharedOCCommunication = [[OCCommunication alloc] init];
     [_sharedOCCommunication setCredentialsWithUser:k_user andPassword:k_password];
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
-
+    
     //Create Tests folder
     [self createFolderWithName:k_path_test_folder];
-	
+    
 }
 
 - (void)tearDown
