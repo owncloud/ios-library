@@ -1,4 +1,11 @@
-## What's new in 1.2.0 version
+## What's new in 1.3.0 version
+
+- Updated AFNetworking library v2.6.0
+- All the network request made using NSOperation was modified to use NSURLSession
+- The ownCloud library it is ready to be used on Apple TV and Apple Watch
+- The download and upload now return the NSURLSessionTask to be canceled instead the NSOperation 
+
+## 1.2.0 version
 
 - Improved the search of users and groups for the internal share
 - Added support to share with all types of sharees (user, group, public share,federated sharing ); taking advantage of the  shareType
