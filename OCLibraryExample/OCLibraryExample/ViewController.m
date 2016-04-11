@@ -276,13 +276,12 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Encoding
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    _downloadOperation = nil;
+    self.downloadTask = nil;
     
-    _downloadOperation = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES onCommunication:[AppDelegate sharedOCCommunication] progressDownload:^(NSUInteger bytesRead, long long totalBytesRead, long long totalExpectedBytesRead) {
-        //Progress
-        _progressLabel.text = [NSString stringWithFormat:@"Downloading: %lld bytes", totalBytesRead];
+    NSProgress *progress = nil;
+    
+    [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Success
         NSLog(@"LocalFile : %@", localPath);
         _pathOfDownloadFile = localPath;
@@ -290,18 +289,23 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _downloadedImageView.image = image;
         _progressLabel.text = @"Success";
         _deleteLocalFile.enabled = YES;
+
+    } failureRequest:^(NSURLResponse *response, NSError *error) {
         
-    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         //Request failure
         NSLog(@"error while download a file: %@", error);
         _progressLabel.text = @"Error in download";
         _downloadButton.enabled = YES;
         
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        //Specifies that the operation should continue execution after the app has entered the background, and the expiration handler for that background task.
-        [_downloadOperation cancel];
     }];
     
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    [progress setKind:k_identify_download_progress];
 }
 
 - (void)downloadFileWithSesison{
@@ -378,16 +382,15 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     NSString *serverUrl = [NSString stringWithFormat:@"%@%@", baseUrl, pathOfUploadFile];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    _uploadOperation = nil;
+    self.uploadTask = nil;
     
     _uploadProgressLabel.text = @"";
     
+    NSProgress *progress = nil;
+    
     //Upload block
-    _uploadOperation = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] progressUpload:^(NSUInteger bytesWrite, long long totalBytesWrite, long long totalExpectedBytesWrite) {
-        //Progress
-         _uploadProgressLabel.text = [NSString stringWithFormat:@"Uploading: %lld bytes", totalBytesWrite];
-        
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
+    
+    self. uploadTask = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         //Success
         _pathOfRemoteUploadedFile = serverUrl;
         _uploadProgressLabel.text = @"Success";
@@ -398,24 +401,25 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         
         //Refresh the file list
         [self readFolder:nil];
-        
-    } failureRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error) {
+    } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
         //Request failure
         NSLog(@"error while upload a file: %@", error);
         _uploadProgressLabel.text = @"Error in download";
         _uploadButton.enabled = YES;
-        
     } failureBeforeRequest:^(NSError *error) {
         //Failure before the request
         NSLog(@"error while upload a file: %@", error);
         _uploadProgressLabel.text = @"Error in download";
         _uploadButton.enabled = YES;
-        
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        //Specifies that the operation should continue execution after the app has entered the background, and the expiration handler for that background task.
-        [_uploadOperation cancel];
     }];
     
+    // Observe fractionCompleted using KVO
+    [progress addObserver:self
+               forKeyPath:@"fractionCompleted"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    
+    [progress setKind:k_identify_upload_progress];
 }
 
 
@@ -567,17 +571,17 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //if there are a operation in progress cancel
     
     //if download operation in progress
-    if (_downloadOperation) {
-        [_downloadOperation cancel];
-        _downloadOperation = nil;
+    if (self.downloadTask) {
+        [self.downloadTask cancel];
+        self.downloadTask = nil;
         //Remove download file
         [self deleteDownloadedFile:nil];
     }
     
     //if upload operation in progress
-    if (_uploadOperation) {
-        [_uploadOperation cancel];
-        _uploadOperation = nil;
+    if (self.uploadTask) {
+        [self.uploadTask cancel];
+        self.uploadTask = nil;
         //Remove local file to upload
         [self deleteUploadLocalFile];
     }
