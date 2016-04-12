@@ -596,19 +596,6 @@
     return permissionsValue;
 }
 
-+ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue {
-    
-    BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
-    BOOL canChange = [self isPermissionToCanChange:permissionValue];
-    BOOL canDelete = [self isPermissionToCanDelete:permissionValue];
-
-    
-    BOOL canEdit = (canCreate || canChange || canDelete);
-    
-    return canEdit;
-    
-}
-
 + (BOOL) isPermissionToCanCreate:(NSInteger) permissionValue {
     BOOL canCreate = ((permissionValue & k_create_share_permission) > 0);
     return canCreate;
@@ -629,4 +616,34 @@
     return canShare;
 }
 
++ (BOOL) isAnyPermissionToEdit:(NSInteger) permissionValue {
+    
+    BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
+    BOOL canChange = [self isPermissionToCanChange:permissionValue];
+    BOOL canDelete = [self isPermissionToCanDelete:permissionValue];
+    
+    
+    BOOL canEdit = (canCreate || canChange || canDelete);
+    
+    return canEdit;
+    
+}
+
++ (BOOL) isPermissionToRead:(NSInteger) permissionValue {
+    BOOL canRead = ((permissionValue & k_read_share_permission) > 0);
+    return canRead;
+}
+
++ (BOOL) isPermissionToReadCreateUpdate:(NSInteger) permissionValue {
+    
+    BOOL canRead   = [self isPermissionToRead:permissionValue];
+    BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
+    BOOL canChange = [self isPermissionToCanChange:permissionValue];
+    
+    
+    BOOL canEdit = (canCreate && canChange && canRead);
+    
+    return canEdit;
+    
+}
 @end
