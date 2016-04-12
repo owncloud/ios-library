@@ -215,19 +215,6 @@
  */
 + (NSInteger) getPermissionsValueByCanEdit:(BOOL)canEdit andCanCreate:(BOOL)canCreate andCanChange:(BOOL)canChange andCanDelete:(BOOL)canDelete andCanShare:(BOOL)canShare andIsFolder:(BOOL) isFolder;
 
-//-----------------------------------
-/// @name isPermissionToCanEdit
-///-----------------------------------
-
-/**
- * Method know if we have permission to edit by the permissionValue of the OCShareDto
- *
- * @param NSInteger -> permissionValue
- *
- * @return BOOL
- *
- */
-+ (BOOL) isPermissionToCanEdit:(NSInteger) permissionValue;
 
 //-----------------------------------
 /// @name isPermissionToCanCreate
