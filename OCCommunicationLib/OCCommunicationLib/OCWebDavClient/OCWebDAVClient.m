@@ -289,7 +289,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (OCHTTPRequestOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
+- (OCHTTPRequestOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
@@ -303,8 +303,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
     
-    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManagerNoBackground downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
-        *progressValue = downloadProgress;
+    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManagerNoBackground downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
+        downloadProgress(progress);
     } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         return localDestinationUrl;
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
@@ -324,7 +324,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return downloadTask;
 }
 
-- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
@@ -338,8 +338,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
     
-    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
-        *progressValue = downloadProgress;
+    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
+        downloadProgress(progress);
     } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         return localDestinationUrl;
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
@@ -380,7 +380,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionUploadTask *)putLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+- (NSURLSessionUploadTask *)putLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication uploadProgress:(void(^)(NSProgress *))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -416,8 +416,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         sharedOCCommunication.uploadSessionManagerNoBackground.responseSerializer = [AFHTTPResponseSerializer serializer];
         
-        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManagerNoBackground uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull uploadProgress) {
-            *progressValue = uploadProgress;
+        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManagerNoBackground uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull progress) {
+            uploadProgress(progress);
         } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
             if (error) {
                 failure(response, responseObject, error);
@@ -433,7 +433,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -469,8 +469,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         
-        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull uploadProgress) {
-            *progressValue = uploadProgress;
+        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull progress) {
+            uploadProgress(progress);
         } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
                 if (error) {
                     failure(response, responseObject, error);

@@ -468,7 +468,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSURLSessionTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -476,7 +476,9 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    OCHTTPRequestOperation *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue success:^(NSURLResponse *response, NSURL *filePath) {
+    OCHTTPRequestOperation *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+        downloadProgress(progress);
+    } success:^(NSURLResponse *response, NSURL *filePath) {
         successRequest(response,filePath);
     } failure:^(NSURLResponse *response, NSError *error) {
         failureRequest(response,error);
@@ -497,26 +499,24 @@
 
 
 
-- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
-                                                                      success:^(NSURLResponse *response, NSURL *filePath) {
+    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+        downloadProgress(progress);
+    } success:^(NSURLResponse *response, NSURL *filePath) {
         
-                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                          successRequest(response,filePath);
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        successRequest(response,filePath);
         
-                                                                      } failure:^(NSURLResponse *response, NSError *error) {
-                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                          failureRequest(response,error);
-                                                                      }];
-    
-    
-    
+    } failure:^(NSURLResponse *response, NSError *error) {
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        failureRequest(response,error);
+    }];
     
     return downloadTask;
 }
@@ -555,7 +555,7 @@
 /// @name Upload File
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
+- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -563,32 +563,34 @@
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
-                                                                  success:^(NSURLResponse *response, id responseObjec){
-                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                      //TODO: The second parameter is the redirected server
-                                                                      successRequest(response, @"");
-                                                                  } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
-                                                                      [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                      //TODO: The second parameter is the redirected server
-                                                                      
-                                                                      NSData *responseData = (NSData*) responseObject;
-                                                                      
-                                                                      OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-                                                                      
-                                                                      [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-                                                                          
-                                                                          if (err) {
-                                                                              failureRequest(response, @"", err);
-                                                                          }else{
-                                                                              failureRequest(response, @"", error);
-                                                                          }
-                                                                          
-                                                                      }];
-                                                                      
-                                                                  } failureBeforeRequest:^(NSError *error) {
-                                                                      failureBeforeRequest(error);
-                                                                  }];
+    NSURLSessionUploadTask *uploadTask = [request putLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication uploadProgress:^(NSProgress *progress) {
+        uploadProgress(progress);
+    } success:^(NSURLResponse *response, id responseObjec) {
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        //TODO: The second parameter is the redirected server
+        successRequest(response, @"");
+    } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        //TODO: The second parameter is the redirected server
+        
+        NSData *responseData = (NSData*) responseObject;
+        
+        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+        
+        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+            
+            if (err) {
+                failureRequest(response, @"", err);
+            }else{
+                failureRequest(response, @"", error);
+            }
+            
+        }];
+    } failureBeforeRequest:^(NSError *error) {
+        failureBeforeRequest(error);
+    }];
+    
+    
     
     return uploadTask;
 }
@@ -597,7 +599,7 @@
 /// @name Upload File Session
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
@@ -605,8 +607,9 @@
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
-        success:^(NSURLResponse *response, id responseObjec){
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+            uploadProgress(progress);
+        } success:^(NSURLResponse *response, id responseObjec){
             [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");

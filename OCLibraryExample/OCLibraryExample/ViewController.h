@@ -53,7 +53,6 @@
 @property(nonatomic,strong)NSURLSessionTask *downloadTask;
 @property(nonatomic,strong)NSURLSessionTask *uploadTask;
 
-
 //Read Folder actions
 - (IBAction)readFolder:(id)sender;
 
