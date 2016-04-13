@@ -188,9 +188,9 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File: %@ uploaded", localPath);
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -201,12 +201,6 @@
         NSLog(@"File that do not exist does not upload");
         dispatch_semaphore_signal(semaphore);
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-               forKeyPath:@"fractionCompleted"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1102,10 +1096,10 @@
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionTask *downloadTask = nil;
-    NSProgress *progress = nil;
     
-    
-    downloadTask = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+    downloadTask = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
         NSLog(@"File Downloaded ok");
         //Delete the file
@@ -1168,10 +1162,10 @@
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = nil;
-    NSProgress *progress = nil;
-    
-    
-    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+   
+    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
         XCTFail(@"Download file ok, not possible");
         
@@ -1242,10 +1236,10 @@
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = nil;
-    NSProgress *progress = nil;
     
-    
-    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
         NSLog(@"File Downloaded ok");
         //Delete the file
@@ -1307,10 +1301,10 @@
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = nil;
-    NSProgress *progress = nil;
     
-    
-    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSURL *filePath) {
+    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSURL *filePath) {
         
         XCTFail(@"Download file ok, not possible");
         //Delete the file
@@ -1360,9 +1354,9 @@
 
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         
         XCTFail(@"Error We upload a file that does not exist");
         dispatch_semaphore_signal(semaphore);
@@ -1376,12 +1370,6 @@
         NSLog(@"File that do not exist does not upload");
         dispatch_semaphore_signal(semaphore);
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-               forKeyPath:@"fractionCompleted"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1415,9 +1403,9 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File Uploaded with Special Characters");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSString *redirectedServer, NSError *error) {
@@ -1427,12 +1415,6 @@
         XCTFail(@"Error File does not exist");
         dispatch_semaphore_signal(semaphore);
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-               forKeyPath:@"fractionCompleted"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1466,9 +1448,9 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
@@ -1482,14 +1464,6 @@
         NSLog(@"File that do not exist does not upload");
         dispatch_semaphore_signal(semaphore);
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-                    forKeyPath:@"fractionCompleted"
-                       options:NSKeyValueObservingOptionNew
-                       context:NULL];
-    
-    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1524,9 +1498,9 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         
         NSLog(@"File Uploaded");
         dispatch_semaphore_signal(semaphore);
@@ -1540,14 +1514,6 @@
         NSLog(@"File that do not exist does not upload");
         dispatch_semaphore_signal(semaphore);
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-               forKeyPath:@"fractionCompleted"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
-    
-    
     
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
@@ -1582,9 +1548,9 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    NSProgress *progress = nil;
-    
-    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication withProgress:&progress successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+        NSLog(@"File: %lld bytes", progress.completedUnitCount);
+    } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         
         XCTFail(@"Error We upload a file that does not exist");
         dispatch_semaphore_signal(semaphore);
@@ -1599,40 +1565,12 @@
         dispatch_semaphore_signal(semaphore);
     }];
     
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self
-               forKeyPath:@"fractionCompleted"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
-    
-    
-    
     // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     
 }
-
-
-//Method to get the callbacks of the upload progress
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
-        NSProgress *progress = (NSProgress *)object;
-        //DLog(@"Progress is %f", progress.fractionCompleted);
-        
-        float percent = roundf (progress.fractionCompleted * 100) / 100.0;
-        
-        //We make it on the main thread because we came from a delegate
-        dispatch_async(dispatch_get_main_queue(), ^{
-             NSLog(@"Progress is %f", percent);
-        });
-        
-    }
-    
-}
-
 
 ///-----------------------------------
 /// @name Test the share a folder
