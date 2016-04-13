@@ -346,21 +346,17 @@ typedef enum {
 ///-----------------------------------
 
 /**
- * This method download a file of a path and returns four blocks
+ * This method download a file of a path and returns blocks
  *
- * progressDownload: get the download inputs about the progress of the download
+ * progress: get the download inputs about the progress of the download
  * successRequest: the download it's complete
  * failureRequest: the download fail
- * shouldExectuteAsBackgroundTaskWithExpirationHandler: called when the system is in background and the file are downloading and the system will close the process
- * We normally cancel the download in this case
  *
  * @param remotePath -> NSString with the url of the file that the user want to download
  * Ex:http://www.myowncloudserver.com/owncloud/remote.php/webdav/Folder/image.jpg
  *
  * @param localPath -> NSString with the system path where the user want to store the file
  * Ex: /Users/userName/Library/Application Support/iPhone Simulator/7.0.3/Applications/35E6FC65-5492-427B-B6ED-EA9E25633508/Documents/Test Download/image.png
- *
- * @param NSProgress -> A progress object monitoring the current upload progress
  *
  * @param isLIFO -> BOOL to indicate if the dowload must be to LIFO download queue or FIFO download queue
  *
@@ -386,11 +382,16 @@ typedef enum {
 /**
  * Method to download a file. All the files will be download one by one in a queue. The files download also in background when the system close the app.
  *
+ * This method download a file of a path and returns blocks
+ *
+ * progress: get the download inputs about the progress of the download
+ * successRequest: the download it's complete
+ * failureRequest: the download fail
+ *
  * @param NSString -> remotePath the path of the file
  * @param NSString -> localPath the  local path where we want store the file
  * @param BOOL -> defaultPriority define if the priority is defined by the library (default) or not. It used to manage multiple downloads from the app.
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- * @param NSProgress -> A progress object monitoring the current upload progress
  *
  * @return NSURLSessionDownloadTask -> You can cancel the download using this object
  * Ex: [downloadTask cancel]
@@ -438,9 +439,15 @@ typedef enum {
 /**
  * Method to upload a file. All the files will be upload one by one in a queue.
  *
+ * This method download a file of a path and returns blocks
+ *
+ * progress: get the download inputs about the progress of the download
+ * successRequest: the download it's complete
+ * failureRequest: the download fail
+ * failureBeforeRequest: the download fail
+ *
  * @param NSString -> localPath the path where is the file that we want upload
  * @param NSString -> remotePath the path where we want upload the file
- * @param NSProgress -> A progress object monitoring the current upload progress
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return NSURLSessionUploadTask -> You can cancel the upload using this object
@@ -459,10 +466,16 @@ typedef enum {
 /**
  * Method to upload a file. All the files will be upload one by one in a queue. The files upload also in background when the system close the app.
  *
+ * This method download a file of a path and returns blocks
+ *
+ * progress: get the download inputs about the progress of the download
+ * successRequest: the download it's complete
+ * failureRequest: the download fail
+ * failureBeforeRequest: the download fail
+ *
  * @param NSString -> localPath the path where is the file that we want upload
  * @param NSString -> remotePath the path where we want upload the file
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- * @param NSProgress -> A progress object monitoring the current upload progress
  *
  * @return NSURLSessionUploadTask -> You can cancel the upload using this object
  * Ex: [uploadTask cancel]
