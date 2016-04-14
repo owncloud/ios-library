@@ -66,10 +66,9 @@
         
 #ifdef UNIT_TEST
         
-        //TODO: use [NSURLSessionConfiguration defaultSessionConfiguration] instead nil. Check it after everything compile and the tests pass
-        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
+        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
         self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 #else
         //Network Upload queue for NSURLSession (iOS 7)
