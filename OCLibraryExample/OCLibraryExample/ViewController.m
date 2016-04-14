@@ -276,11 +276,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Encoding
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    self.downloadTask = nil;
-    
-    NSProgress *progress = nil;
-    
-    [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] progress:^(NSProgress *progress) {
+    self.downloadTask = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] progress:^(NSProgress *progress) {
         
         //We make it on the main thread because it is an UX modification
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -305,10 +301,6 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _downloadButton.enabled = YES;
         
     }];
-    
-    // Observe fractionCompleted using KVO
-    [progress addObserver:self forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:NULL];
-    [progress setKind:k_identify_download_progress];
 }
 
 - (void)downloadFileWithSesison{

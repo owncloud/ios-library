@@ -65,7 +65,7 @@ By default the queue es FIFO. We will download the files in the order that the d
 But if we want to use the queue as LIFO (download first the last file that we add to download) we need to call "setDownloadQueueToLIFO" method
 Code example
 ~~~~~~~~~~~~
-.. code-block:: objective-c
+.. code-block:: objective-		c
 //Set the downloads with LIFO system
 [[AppDelegate sharedOCCommunication] setDownloadQueueToLIFO:YES];
 ç
