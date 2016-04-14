@@ -23,8 +23,6 @@
 // THE SOFTWARE.
 //
 
-@class OCChunkInputStream;
-
 typedef enum {
     DownloadFIFOQueue = 0,
     UploadQueue     = 1,
@@ -37,7 +35,6 @@ typedef enum {
 
 @property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
 @property (nonatomic, strong) NSString *localSource;
-@property (nonatomic, strong) OCChunkInputStream *chunkInputStream;
 
 
 

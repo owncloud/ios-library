@@ -30,7 +30,6 @@
 #import "OCFrameworkConstants.h"
 #import "OCCommunication.h"
 #import "OCChunkDto.h"
-#import "OCChunkInputStream.h"
 #import "UtilsFramework.h"
 #import "AFURLSessionManager.h"
 #import "NSString+Encode.h"
@@ -289,7 +288,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (OCHTTPRequestOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
+- (NSURLSessionDownloadTask *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     

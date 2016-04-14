@@ -43,8 +43,6 @@
 		EAABAA33183E688900909831 /* OCFileDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAA31183E688900909831 /* OCFileDto.m */; };
 		EAABAB1E1858594A00909831 /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
 		EAABAB1F1858594A00909831 /* OCChunkDto.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB191858594A00909831 /* OCChunkDto.m */; };
-		EAABAB201858594A00909831 /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
-		EAABAB211858594A00909831 /* OCChunkInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB1B1858594A00909831 /* OCChunkInputStream.m */; };
 		EAABAB2618585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
 		EAABAB2718585C5200909831 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = EAABAB2518585C5200909831 /* NSString+Encode.m */; };
 		EAABAB39185B353100909831 /* test.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EAABAB38185B353100909831 /* test.jpeg */; };
@@ -132,8 +130,6 @@
 		EAABAB1218574A7C00909831 /* OCErrorMsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OCErrorMsg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EAABAB181858594A00909831 /* OCChunkDto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = OCChunkDto.h; path = UploadSupport/OCChunkDto.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EAABAB191858594A00909831 /* OCChunkDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCChunkDto.m; path = UploadSupport/OCChunkDto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		EAABAB1A1858594A00909831 /* OCChunkInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = OCChunkInputStream.h; path = UploadSupport/OCChunkInputStream.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		EAABAB1B1858594A00909831 /* OCChunkInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = OCChunkInputStream.m; path = UploadSupport/OCChunkInputStream.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EAABAB2418585C5200909831 /* NSString+Encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = "NSString+Encode.h"; path = "Utils/NSString+Encode.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EAABAB2518585C5200909831 /* NSString+Encode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = "NSString+Encode.m"; path = "Utils/NSString+Encode.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EAABAB38185B353100909831 /* test.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = test.jpeg; path = Resources/test.jpeg; sourceTree = "<group>"; };
@@ -324,8 +320,6 @@
 			children = (
 				EAABAB181858594A00909831 /* OCChunkDto.h */,
 				EAABAB191858594A00909831 /* OCChunkDto.m */,
-				EAABAB1A1858594A00909831 /* OCChunkInputStream.h */,
-				EAABAB1B1858594A00909831 /* OCChunkInputStream.m */,
 			);
 			name = UploadSupport;
 			sourceTree = "<group>";
@@ -383,7 +377,7 @@
 		EA7CC88F183E11E600B6A4B4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = ownCloud;
 			};
 			buildConfigurationList = EA7CC892183E11E600B6A4B4 /* Build configuration list for PBXProject "ownCloud iOS library" */;
@@ -428,7 +422,6 @@
 				59A5B71F191907F100724BE3 /* AFNetworkReachabilityManager.m in Sources */,
 				EA7CC92E183E14A100B6A4B4 /* OCWebDAVClient.m in Sources */,
 				EAABAB1E1858594A00909831 /* OCChunkDto.m in Sources */,
-				EAABAB201858594A00909831 /* OCChunkInputStream.m in Sources */,
 				EA73DC831B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m in Sources */,
 				1345E4601884213400153F14 /* OCXMLShareByLinkParser.m in Sources */,
 				59A5B720191907F100724BE3 /* AFSecurityPolicy.m in Sources */,
@@ -453,7 +446,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EAABAB1F1858594A00909831 /* OCChunkDto.m in Sources */,
-				EAABAB211858594A00909831 /* OCChunkInputStream.m in Sources */,
 				EA7CC92F183E14A100B6A4B4 /* OCWebDAVClient.m in Sources */,
 				EA7CC935183E150000B6A4B4 /* OCCommunication.m in Sources */,
 				EA7CC913183E146000B6A4B4 /* UtilsFramework.m in Sources */,
@@ -505,6 +497,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -602,6 +595,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = UNIT_TEST;
 				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "owncloud.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -621,6 +615,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = "OCCommunicationLibTests/ownCloud iOS libraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "owncloud.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "ownCloud iOS libraryTests";
 				WRAPPER_EXTENSION = xctest;
 			};

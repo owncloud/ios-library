@@ -825,11 +825,5 @@ typedef enum {
                      successRequest:(void(^)(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
-#pragma mark - Queue system
-/*
- * Method that add an operation to the appropiate queue
- */
-- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation;
-
 
 @end

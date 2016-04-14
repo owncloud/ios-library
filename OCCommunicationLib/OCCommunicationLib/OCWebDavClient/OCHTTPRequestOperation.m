@@ -25,12 +25,11 @@
 
 
 #import "OCHTTPRequestOperation.h"
-#import "OCChunkInputStream.h"
 #import "OCFrameworkConstants.h"
 #import "UtilsFramework.h"
 #import "OCConstants.h"
 
-
+/*
 static dispatch_queue_t http_request_operation_processing_queue() {
     static dispatch_queue_t af_http_request_operation_processing_queue;
     static dispatch_once_t onceToken;
@@ -49,7 +48,7 @@ static dispatch_group_t http_request_operation_completion_group() {
     });
     
     return af_http_request_operation_completion_group;
-}
+}*/
 
 
 @interface OCHTTPRequestOperation ()

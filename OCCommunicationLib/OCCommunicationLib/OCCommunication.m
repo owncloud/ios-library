@@ -475,7 +475,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    OCHTTPRequestOperation *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+    NSURLSessionTask *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
         downloadProgress(progress);
     } success:^(NSURLResponse *response, NSURL *filePath) {
         successRequest(response,filePath);
@@ -872,7 +872,7 @@
             successRequest(operation.response, sharedList, request.redirectedServer);
         }
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -932,7 +932,7 @@
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -993,7 +993,7 @@
         }
 
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -1034,10 +1034,7 @@
         
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        
-        failureRequest(responseData, error, request.redirectedServer);
-        
-        
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
     
 }
@@ -1062,7 +1059,7 @@
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -1109,7 +1106,7 @@
         }
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -1153,7 +1150,7 @@
         }
 
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-         failureRequest(responseData, error, request.redirectedServer);
+         failureRequest(operation.response, error, request.redirectedServer);
     }];
     
 }
@@ -1225,7 +1222,7 @@
         
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
     }];
 }
 
@@ -1350,7 +1347,7 @@
         
     } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
         
-        failureRequest(responseData, error, request.redirectedServer);
+        failureRequest(operation.response, error, request.redirectedServer);
         
     }];
     
@@ -1374,13 +1371,10 @@
     OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(OCHTTPRequestOperation *operation, id responseObject) {
                 NSData *response = (NSData*) responseObject;
-                                    
-                //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-
+                
                 successRequest(operation.response, response, request.redirectedServer);
                                     
-            }
-            failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+            } failure:^(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error) {
                 failureRequest(operation.response, error, request.redirectedServer);
             }];
 
@@ -1448,7 +1442,7 @@
 
 #pragma mark - Queue System
 
-- (void) addDownloadTaskToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
+- (void) addDownloadTaskToTheNetworkQueue:(NSURLSessionTask *) operation {
     
     //1. Cancel all tasks
     //TODO: if this cancellation execute the failure block we should detect when we cancel it to be launched again for example using a flag on the OCHTTPRequestOperation

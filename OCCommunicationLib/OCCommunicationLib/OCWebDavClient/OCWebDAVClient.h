@@ -31,34 +31,33 @@
 
 @class OCCommunication;
 @class OCChunkDto;
-@class OCChunkInputStream;
 
 /** The key for a uniform (MIME) type identifier returned from the property request methods. */
-extern NSString *OCWebDAVContentTypeKey;
+extern NSString * _Nullable OCWebDAVContentTypeKey;
 
 /** The key for a unique entity identifier returned from the property request methods. */
-extern NSString *OCWebDAVETagKey;
+extern NSString * _Nullable OCWebDAVETagKey;
 
 /** The key for a content identifier tag returned from the property request methods. This is only supported on some servers, and usually defines whether the contents of a collection (folder) have changed. */
-extern NSString *OCWebDAVCTagKey;
+extern NSString * _Nullable OCWebDAVCTagKey;
 
 /** The key for the creation date of an entity. */
-extern NSString *OCWebDAVCreationDateKey;
+extern NSString * _Nullable OCWebDAVCreationDateKey;
 
 /** The key for last modification date of an entity. */
-extern NSString *OCWebDAVModificationDateKey;
+extern NSString * _Nullable OCWebDAVModificationDateKey;
 
 @interface OCWebDAVClient : AFHTTPSessionManager
 
-@property (readwrite, nonatomic, strong) NSMutableDictionary *defaultHeaders;
+@property (readwrite, nonatomic, strong) NSMutableDictionary * _Nullable defaultHeaders;
 //On redirections AFNetworking lose the request method on iOS6 and set a GET, we use this as workarround
-@property (nonatomic, strong) NSString *requestMethod;
+@property (nonatomic, strong) NSString * _Nullable requestMethod;
 //We use this variable to return the url of a redirected server to detect if we receive any sesion expired on SSO server
-@property (nonatomic, strong) NSString *redirectedServer;
+@property (nonatomic, strong) NSString * _Nullable redirectedServer;
 //We use this variable to get the Cookies from the storage provider
-@property (nonatomic, strong) NSString *originalUrlServer;
+@property (nonatomic, strong) NSString * _Nullable originalUrlServer;
 
-@property (nonatomic, strong) NSString *postStringForShare;
+@property (nonatomic, strong) NSString * _Nullable postStringForShare;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
@@ -66,22 +65,22 @@ extern NSString *OCWebDAVModificationDateKey;
  @param username The HTTP basic auth username
  @param password The HTTP basic auth password
  */
-- (void)setAuthorizationHeaderWithUsername:(NSString *)username
-                                  password:(NSString *)password;
+- (void)setAuthorizationHeaderWithUsername:(NSString * _Nonnull)username
+                                  password:(NSString * _Nonnull)password;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
  
  @param cookieString The HTTP token to login on SSO Servers
  */
-- (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString;
+- (void)setAuthorizationHeaderWithCookie:(NSString * _Nonnull) cookieString;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a token-based authentication value, such as an OAuth access token. This overwrites any existing value for this header.
  
  @param token The authentication token
  */
-- (void)setAuthorizationHeaderWithToken:(NSString *)token;
+- (void)setAuthorizationHeaderWithToken:(NSString * _Nonnull)token;
 
 
 /**
@@ -89,7 +88,7 @@ extern NSString *OCWebDAVModificationDateKey;
  
  @param userAgent -> String that indentifies the client app. Ex: "iOS-ownCloud"
  */
-- (void)setUserAgent:(NSString *)userAgent;
+- (void)setUserAgent:(NSString * _Nonnull)userAgent;
 
 /**
  Enqueues an operation to copy the object at a path to another path using a `COPY` request.
@@ -100,10 +99,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  */
-- (void)copyPath:(NSString *)source toPath:(NSString *)destination
- onCommunication:(OCCommunication *)sharedOCCommunication
-         success:(void(^)(OCHTTPRequestOperation *, id))success
-         failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)copyPath:(NSString * _Nonnull)source toPath:(NSString * _Nonnull)destination
+ onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull,  _Nonnull id))success
+         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to move the object at a path to another path using a `MOVE` request.
@@ -114,10 +113,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  */
-- (void)movePath:(NSString *)source toPath:(NSString *)destination
- onCommunication:(OCCommunication *)sharedOCCommunication
-         success:(void(^)(OCHTTPRequestOperation *, id))success
-         failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)movePath:(NSString * _Nonnull)source toPath:(NSString * _Nonnull)destination
+ onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to delete the object at a path using a `DELETE` request.
@@ -127,10 +126,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  */
-- (void)deletePath:(NSString *)path
-   onCommunication:(OCCommunication *)sharedOCCommunication
-           success:(void(^)(OCHTTPRequestOperation *, id))success
-           failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)deletePath:(NSString * _Nonnull)path
+   onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+           success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+           failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 
@@ -145,10 +144,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @see listPath:success:failure:
  @see recursiveListPath:success:failure:
  */
-- (void)propertiesOfPath:(NSString *)path
-         onCommunication: (OCCommunication *)sharedOCCommunication
-                 success:(void(^)(OCHTTPRequestOperation *, id ))success
-                 failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)propertiesOfPath:(NSString * _Nonnull)path
+         onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
+                 success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nonnull))success
+                 failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues a request to list the contents of a single collection and
@@ -163,10 +162,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @see propertiesOfPath:success:failure:
  @see recursiveListPath:success:failure:
  */
-- (void)listPath:(NSString *)path
- onCommunication: (OCCommunication *)sharedOCCommunication
-         success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
-         failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void)listPath:(NSString * _Nonnull)path
+ onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
+         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nullable responseObject))success
+         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 /**
@@ -183,10 +182,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @see propertiesOfPath:success:failure:
  @see recursiveListPath:success:failure:
  */
-- (void)listPath:(NSString *)path
- onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString *)token
-         success:(void(^)(OCHTTPRequestOperation *, id, NSString *token))success
-         failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *, NSString *token))failure;
+- (void)listPath:(NSString * _Nonnull)path
+ onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication withUserSessionToken:(NSString * _Nonnull)token
+         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nonnull, NSString * _Nonnull token))success
+         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull, NSString * _Nonnull token))failure;
 
 
 /**
@@ -201,7 +200,7 @@ extern NSString *OCWebDAVModificationDateKey;
  @see getPath:success:failure:
  */
 
-- (OCHTTPRequestOperation *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure;
+- (NSURLSessionDownloadTask * _Nonnull)downloadPath:(NSString * _Nonnull)remoteSource toPath:(NSString * _Nonnull)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))downloadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSError * _Nonnull error))failure;
 
 
 
@@ -217,7 +216,7 @@ extern NSString *OCWebDAVModificationDateKey;
  *
  @warning NSURLSession and NSRULSessionUploadTask only can be supported in iOS 7.
  */
-- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure;
+- (NSURLSessionDownloadTask * _Nonnull)downloadWithSessionPath:(NSString * _Nonnull)remoteSource toPath:(NSString * _Nonnull)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))downloadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSError * _Nonnull error))failure;
 
 /**
  Enqueues a request to check the server to know the kind of authentication needed.
@@ -227,10 +226,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  */
-- (void)checkServer:(NSString *)path onCommunication:
-(OCCommunication *)sharedOCCommunication
-            success:(void(^)(OCHTTPRequestOperation *, id))success
-            failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)checkServer:(NSString * _Nonnull)path onCommunication:
+(OCCommunication * _Nonnull)sharedOCCommunication
+            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues a request to creates a directory using a `MKCOL` request for the specified path.
@@ -240,10 +239,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with no arguments.
  @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
  */
-- (void)makeCollection:(NSString *)path
-       onCommunication:(OCCommunication *)sharedOCCommunication
-               success:(void(^)(OCHTTPRequestOperation *, id))success
-               failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)makeCollection:(NSString * _Nonnull)path
+       onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+               success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+               failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to upload the contents of a specified local
@@ -257,7 +256,7 @@ extern NSString *OCWebDAVModificationDateKey;
  @see putURL:path:success:failure:
  */
 
-- (NSURLSessionUploadTask *)putLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication uploadProgress:(void(^)(NSProgress *))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest;
+- (NSURLSessionUploadTask * _Nonnull)putLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication uploadProgress:(void(^ _Nonnull)(NSProgress * _Nonnull))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
 /**
  Creates an `NSURLSessionUploadTask` with the specified request for a local file.
@@ -270,24 +269,7 @@ extern NSString *OCWebDAVModificationDateKey;
  *
  @warning NSURLSession and NSRULSessionUploadTask only can be supported in iOS 7.
  */
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest;
-
-
-/**
- Enqueues an operation to upload the contents of a specified local
- file to a remote path using a `PUT` request.
- 
- @param currentChunkDto is an object that contain the current chunk that we will upload
- @param chunkInputStream is an object OCChunkInputStream with the stream of the chunk that we will upload
- @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
- 
- @see putURL:path:success:failure:
- */
-/*
-- (NSOperation *)putChunk:(OCChunkDto *) currentChunkDto fromInputStream:(OCChunkInputStream *)chunkInputStream andInputStreamForRedirection:(OCChunkInputStream *) chunkInputStreamForRedirection atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication  progress:(void(^)(NSUInteger, long long))progress success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, NSError *))failure forceCredentialsFailure:(void(^)(NSHTTPURLResponse *, NSError *))forceCredentialsFailure shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-*/
+- (NSURLSessionUploadTask * _Nonnull)putWithSessionLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
 ///-----------------------------------
 /// @name requestForUserNameByCookie
@@ -299,9 +281,9 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param NSString the cookie of the session
  *
  */
-- (void) requestUserNameByCookie:(NSString *) cookieString onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success
-                         failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void) requestUserNameByCookie:(NSString * _Nonnull) cookieString onCommunication:
+(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 ///-----------------------------------
@@ -317,9 +299,9 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void) getStatusOfTheServer:(NSString *)serverPath onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
-                      failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void) getStatusOfTheServer:(NSString * _Nonnull)serverPath onCommunication:
+(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull responseObject))success
+                      failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name Get All the shared files and folders of a server
@@ -333,10 +315,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a dictionary with the properties of the directory and its contents.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
  */
-- (void)listSharedByServer:(NSString *)serverPath
- onCommunication: (OCCommunication *)sharedOCCommunication
-         success:(void(^)(OCHTTPRequestOperation *operation, id responseObject))success
-         failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void)listSharedByServer:(NSString * _Nonnull)serverPath
+ onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
+         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull responseObject))success
+         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 ///-----------------------------------
@@ -352,10 +334,10 @@ extern NSString *OCWebDAVModificationDateKey;
  @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a dictionary with the properties of the directory and its contents.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
  */
-- (void)listSharedByServer:(NSString *)serverPath andPath:(NSString *) path
-           onCommunication:(OCCommunication *)sharedOCCommunication
-                   success:(void(^)(OCHTTPRequestOperation *, id))success
-                   failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)listSharedByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) path
+           onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                   success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                   failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer 
@@ -372,10 +354,10 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath andPassword:(NSString *)password
-                        onCommunication:(OCCommunication *)sharedOCCommunication
-                                success:(void(^)(OCHTTPRequestOperation *, id))success
-                                failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath andPassword:(NSString * _Nonnull)password
+                        onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                                success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                                failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
@@ -391,10 +373,10 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath
-                  onCommunication:(OCCommunication *)sharedOCCommunication
-                          success:(void(^)(OCHTTPRequestOperation *, id))success
-                          failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath
+                  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 ///-----------------------------------
@@ -413,9 +395,9 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
  */
-- (void)shareWith:(NSString *)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString *) serverPath andPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
-          success:(void(^)(OCHTTPRequestOperation *, id))success
-          failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)shareWith:(NSString * _Nonnull)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString * _Nonnull) serverPath andPath:(NSString * _Nonnull) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
@@ -429,10 +411,10 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
-- (void)unShareFileOrFolderByServer:(NSString *)serverPath
-                    onCommunication:(OCCommunication *)sharedOCCommunication
-                            success:(void(^)(OCHTTPRequestOperation *, id))success
-                            failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)unShareFileOrFolderByServer:(NSString * _Nonnull)serverPath
+                    onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name isShareFileOrFolderByServer
@@ -446,10 +428,10 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
-- (void)isShareFileOrFolderByServer:(NSString *)serverPath
-                    onCommunication:(OCCommunication *)sharedOCCommunication
-                            success:(void(^)(OCHTTPRequestOperation *, id))success
-                            failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure;
+- (void)isShareFileOrFolderByServer:(NSString * _Nonnull)serverPath
+                    onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
+                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name updateShareItem
@@ -464,10 +446,10 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
-- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
-         onCommunication:(OCCommunication *)sharedOCCommunication
-                 success:(void(^)(OCHTTPRequestOperation *operation, id response))success
-                 failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString * _Nonnull)serverPath withPasswordProtect:(NSString * _Nonnull)password andExpirationTime:(NSString * _Nonnull)expirationTime andPermissions:(NSInteger)permissions
+         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                 success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
+                 failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name searchUsersAndGroupsWith
@@ -484,9 +466,9 @@ extern NSString *OCWebDAVModificationDateKey;
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
-- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication
-                          success:(void(^)(OCHTTPRequestOperation *operation, id response))success
-                          failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void) searchUsersAndGroupsWith:(NSString * _Nonnull)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString * _Nonnull)serverPath onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
+                          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
+                          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name Get the server capabilities
@@ -501,8 +483,8 @@ extern NSString *OCWebDAVModificationDateKey;
  * @return capabilities -> OCCapabilities
  *
  */
-- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication success:(void(^)(OCHTTPRequestOperation *operation, id response))success
-                         failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error))failure;
+- (void) getCapabilitiesOfServer:(NSString * _Nonnull)serverPath onCommunication:(OCCommunication * _Nonnull)sharedOCComunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
+                         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 #pragma mark - Remote thumbnails
@@ -523,8 +505,8 @@ extern NSString *OCWebDAVModificationDateKey;
  * @return nsData -> thumbnail of the file with the size requested
  *
  */
-- (OCHTTPRequestOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
-                            success:(void(^)(OCHTTPRequestOperation *operation, id response))success
-                            failure:(void(^)(OCHTTPRequestOperation *operation, NSError *error))failure;
+- (OCHTTPRequestOperation * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
+                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
+                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 @end
