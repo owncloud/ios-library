@@ -98,13 +98,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString*)token success:(void(^)(OCHTTPRequestOperation *operation, id response, NSString *token))success failure:(void(^)(OCHTTPRequestOperation *operation, id  _Nullable responseObject, NSError *error, NSString *token))failure {
     
     //If is not nil is a redirection so we keep the original url server
-    if (!_originalUrlServer) {
-        _originalUrlServer = [request.URL absoluteString];
+    if (!self.originalUrlServer) {
+        self.originalUrlServer = [request.URL absoluteString];
     }
     
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
-        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     } else {
         [UtilsFramework deleteAllCookies];
     }
@@ -125,13 +125,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(OCHTTPRequestOperation *, id))success failure:(void(^)(OCHTTPRequestOperation *, id  _Nullable responseObject, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
-    if (!_originalUrlServer) {
-        _originalUrlServer = [request.URL absoluteString];
+    if (!self.originalUrlServer) {
+        self.originalUrlServer = [request.URL absoluteString];
     }
     
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
-        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+        request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     } else {
         [UtilsFramework deleteAllCookies];
     }
@@ -293,12 +293,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
     //If is not nil is a redirection so we keep the original url server
-    if (!_originalUrlServer) {
-        _originalUrlServer = [request.URL absoluteString];
+    if (!self.originalUrlServer) {
+        self.originalUrlServer = [request.URL absoluteString];
     }
     
     //We add the cookies of that URL
-    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
     
@@ -328,12 +328,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
     //If is not nil is a redirection so we keep the original url server
-    if (!_originalUrlServer) {
-        _originalUrlServer = [request.URL absoluteString];
+    if (!self.originalUrlServer) {
+        self.originalUrlServer = [request.URL absoluteString];
     }
     
     //We add the cookies of that URL
-    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
     
@@ -400,13 +400,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         
         //If is not nil is a redirection so we keep the original url server
-        if (!_originalUrlServer) {
-            _originalUrlServer = [request.URL absoluteString];
+        if (!self.originalUrlServer) {
+            self.originalUrlServer = [request.URL absoluteString];
         }
         
         if (sharedOCCommunication.isCookiesAvailable) {
             //We add the cookies of that URL
-            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
         } else {
             [UtilsFramework deleteAllCookies];
         }
@@ -453,13 +453,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         
         //If is not nil is a redirection so we keep the original url server
-        if (!_originalUrlServer) {
-            _originalUrlServer = [request.URL absoluteString];
+        if (!self.originalUrlServer) {
+            self.originalUrlServer = [request.URL absoluteString];
         }
         
         if (sharedOCCommunication.isCookiesAvailable) {
             //We add the cookies of that URL
-            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:_originalUrlServer];
+            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
         } else {
             [UtilsFramework deleteAllCookies];
         }
@@ -752,7 +752,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             
             if (sharedOCCommunication.isCookiesAvailable) {
                 //We add the cookies of that URL
-                request = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:_originalUrlServer];
+                request = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:self.originalUrlServer];
             } else {
                 [UtilsFramework deleteAllCookies];
             }
