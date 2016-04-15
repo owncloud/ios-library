@@ -153,7 +153,7 @@
  * @param NSURL -> url
  *
  */
-+ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url;
++ (void) addCookiesToStorageFromResponse: (NSURLResponse *) response andPath:(NSURL *) url;
 //-----------------------------------
 /// @name getRequestWithCookiesByRequest
 ///-----------------------------------

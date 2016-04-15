@@ -64,8 +64,6 @@
         self.xmlChars = [NSMutableString string];
     }
     
-    NSLog(@"self.xmlChars: %@", self.xmlChars);
-    
     [self.xmlChars setString:@""];
     
     if ([elementName isEqualToString:@"ocs"]) {
@@ -74,8 +72,6 @@
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
-    
-    NSLog(@"elementName: %@:%@", elementName,_xmlChars);
     
     if ([elementName isEqualToString:@"statuscode"]) {
         self.statusCode = [self.xmlChars intValue];
