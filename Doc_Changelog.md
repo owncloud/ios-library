@@ -1,6 +1,6 @@
-## What's new in 1.3.0 version
+## What's new in 2.0.0 version
 
-- Updated AFNetworking library v2.6.0
+- Updated AFNetworking library v3.0
 - All the network request made using NSOperation was modified to use NSURLSession
 - The ownCloud library it is ready to be used on Apple TV and Apple Watch
 - The download and upload now return the NSURLSessionTask to be canceled instead the NSOperation 
