@@ -28,7 +28,7 @@
 //Server with webdav url. ex: https://example.owncloud.com/owncloud/remote.php/webdav/
 #define k_webdav_base_url @""
 //Server user
-#define k_user @""
+#define k_user @"¡"
 //Server password
 #define k_password @""
 //Optional. You can change the folder of tests

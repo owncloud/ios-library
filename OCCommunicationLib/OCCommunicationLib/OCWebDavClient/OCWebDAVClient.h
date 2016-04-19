@@ -101,8 +101,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)copyPath:(NSString * _Nonnull)source toPath:(NSString * _Nonnull)destination
  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull,  _Nonnull id))success
-         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull,  _Nonnull id))success
+         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to move the object at a path to another path using a `MOVE` request.
@@ -115,8 +115,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)movePath:(NSString * _Nonnull)source toPath:(NSString * _Nonnull)destination
  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to delete the object at a path using a `DELETE` request.
@@ -128,8 +128,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)deletePath:(NSString * _Nonnull)path
    onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-           success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-           failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+           success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+           failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 
@@ -146,8 +146,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)propertiesOfPath:(NSString * _Nonnull)path
          onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
-                 success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nonnull))success
-                 failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nonnull))success
+                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues a request to list the contents of a single collection and
@@ -164,8 +164,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)listPath:(NSString * _Nonnull)path
  onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
-         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nullable responseObject))success
-         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nullable responseObject))success
+         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 /**
@@ -184,8 +184,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)listPath:(NSString * _Nonnull)path
  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication withUserSessionToken:(NSString * _Nonnull)token
-         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nonnull, NSString * _Nonnull token))success
-         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull, NSString * _Nonnull token))failure;
+         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nonnull, NSString * _Nonnull token))success
+         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull, NSString * _Nonnull token))failure;
 
 
 /**
@@ -228,8 +228,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)checkServer:(NSString * _Nonnull)path onCommunication:
 (OCCommunication * _Nonnull)sharedOCCommunication
-            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+            success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+            failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues a request to creates a directory using a `MKCOL` request for the specified path.
@@ -241,8 +241,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)makeCollection:(NSString * _Nonnull)path
        onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-               success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-               failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+               success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+               failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to upload the contents of a specified local
@@ -282,8 +282,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  *
  */
 - (void) requestUserNameByCookie:(NSString * _Nonnull) cookieString onCommunication:
-(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 ///-----------------------------------
@@ -300,8 +300,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  *
  */
 - (void) getStatusOfTheServer:(NSString * _Nonnull)serverPath onCommunication:
-(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull responseObject))success
-                      failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull responseObject))success
+                      failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name Get All the shared files and folders of a server
@@ -317,8 +317,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)listSharedByServer:(NSString * _Nonnull)serverPath
  onCommunication: (OCCommunication * _Nonnull)sharedOCCommunication
-         success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull responseObject))success
-         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull responseObject))success
+         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 ///-----------------------------------
@@ -336,8 +336,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)listSharedByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) path
            onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                   success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                   failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                   success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                   failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer 
@@ -356,8 +356,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath andPassword:(NSString * _Nonnull)password
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                                success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                                failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                                success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                                failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
@@ -375,8 +375,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath
                   onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 
 ///-----------------------------------
@@ -396,8 +396,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  *
  */
 - (void)shareWith:(NSString * _Nonnull)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString * _Nonnull) serverPath andPath:(NSString * _Nonnull) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nullable responseObject, NSError * _Nonnull))failure;
+          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name unShareFileOrFolderByServer
@@ -413,8 +413,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)unShareFileOrFolderByServer:(NSString * _Nonnull)serverPath
                     onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                            success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                            failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name isShareFileOrFolderByServer
@@ -430,8 +430,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)isShareFileOrFolderByServer:(NSString * _Nonnull)serverPath
                     onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id _Nonnull))success
-                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                            success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                            failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 ///-----------------------------------
 /// @name updateShareItem
@@ -448,8 +448,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString * _Nonnull)serverPath withPasswordProtect:(NSString * _Nonnull)password andExpirationTime:(NSString * _Nonnull)expirationTime andPermissions:(NSInteger)permissions
          onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-                 success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
-                 failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
+                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name searchUsersAndGroupsWith
@@ -467,8 +467,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
 - (void) searchUsersAndGroupsWith:(NSString * _Nonnull)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString * _Nonnull)serverPath onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
-                          success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
-                          failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+                          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name Get the server capabilities
@@ -483,8 +483,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  * @return capabilities -> OCCapabilities
  *
  */
-- (void) getCapabilitiesOfServer:(NSString * _Nonnull)serverPath onCommunication:(OCCommunication * _Nonnull)sharedOCComunication success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
-                         failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+- (void) getCapabilitiesOfServer:(NSString * _Nonnull)serverPath onCommunication:(OCCommunication * _Nonnull)sharedOCComunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 
 #pragma mark - Remote thumbnails
@@ -506,7 +506,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  *
  */
 - (OCHTTPRequestOperation * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
-                            success:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id _Nonnull response))success
-                            failure:(void(^ _Nonnull)(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
+                            success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
+                            failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 @end

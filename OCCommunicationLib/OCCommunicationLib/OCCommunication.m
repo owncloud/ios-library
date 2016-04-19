@@ -282,8 +282,8 @@
 ///-----------------------------------
 - (void) checkServer: (NSString *) path
       onCommunication:(OCCommunication *)sharedOCCommunication
-       successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest
-       failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
 
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     
@@ -294,12 +294,12 @@
     path = [path encodeString:NSUTF8StringEncoding];
     
     [request checkServer:path onCommunication:sharedOCCommunication
-                    success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                    success:^(NSHTTPURLResponse *response, id responseObject) {
                         if (successRequest) {
-                            successRequest(operation.response, request.redirectedServer);
+                            successRequest(response, request.redirectedServer);
                         }
-                    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-                        failureRequest(operation.response, error, request.redirectedServer);
+                    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+                        failureRequest(response, error, request.redirectedServer);
                     }];
 }
 
@@ -308,8 +308,8 @@
 ///-----------------------------------
 - (void) createFolder: (NSString *) path
       onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
-       successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest
-       failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
    errorBeforeRequest:(void(^)(NSError *error)) errorBeforeRequest {
     
     
@@ -324,20 +324,20 @@
         path = [path encodeString:NSUTF8StringEncoding];
         
         [request makeCollection:path onCommunication:sharedOCCommunication
-                        success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                        success:^(NSHTTPURLResponse *response, id responseObject) {
                             if (successRequest) {
-                                successRequest(operation.response, request.redirectedServer);
+                                successRequest(response, request.redirectedServer);
                             }
-                        } failure:^(OCHTTPRequestOperation *operation, NSData *response, NSError *error) {
+                        } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
                             
                             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
                             
-                            [serverErrorParser startToParseWithData:response withCompleteBlock:^(NSError *err) {
+                            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
                                 
                                 if (err) {
-                                    failureRequest(operation.response, err, request.redirectedServer);
+                                    failureRequest(response, err, request.redirectedServer);
                                 }else{
-                                    failureRequest(operation.response, error, request.redirectedServer);
+                                    failureRequest(response, error, request.redirectedServer);
                                 }
                                 
                                 
@@ -353,8 +353,8 @@
 - (void) moveFileOrFolder:(NSString *)sourcePath
                 toDestiny:(NSString *)destinyPath
           onCommunication:(OCCommunication *)sharedOCCommunication withForbiddenCharactersSupported:(BOOL)isFCSupported
-           successRequest:(void (^)(NSURLResponse *response, NSString *redirectServer))successRequest
-           failureRequest:(void (^)(NSURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest
+           successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectServer))successRequest
+           failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest
        errorBeforeRequest:(void (^)(NSError *error))errorBeforeRequest {
     
     if ([UtilsFramework isTheSameFileOrFolderByNewURLString:destinyPath andOriginURLString:sourcePath]) {
@@ -378,20 +378,20 @@
         request = [self getRequestWithCredentials:request];
         request.securityPolicy = self.securityPolicy;
         
-        [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
             if (successRequest) {
-                successRequest(operation.response, request.redirectedServer);
+                successRequest(response, request.redirectedServer);
             }
-        } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
+        } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
             
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
             [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
                 
                 if (err) {
-                    failureRequest(operation.response, err, request.redirectedServer);
+                    failureRequest(response, err, request.redirectedServer);
                 }else{
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
                 
             }];
@@ -406,8 +406,8 @@
 ///-----------------------------------
 - (void) deleteFileOrFolder:(NSString *)path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void (^)(NSURLResponse *response, NSString *redirectedServer))successRequest
-              failureRquest:(void (^)(NSURLResponse *resposne, NSError *error, NSString *redirectedServer))failureRequest {
+             successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+              failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error, NSString *redirectedServer))failureRequest {
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -415,12 +415,12 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request deletePath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request deletePath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            successRequest(operation.response, request.redirectedServer);
+            successRequest(response, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -430,8 +430,8 @@
 ///-----------------------------------
 - (void) readFolder: (NSString *) path withUserSessionToken:(NSString *)token
     onCommunication:(OCCommunication *)sharedOCCommunication
-     successRequest:(void(^)(NSURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
-     failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer)) failureRequest{
+     successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token)) successRequest
+     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer)) failureRequest{
     
     if (!token){
         token = @"no token";
@@ -443,23 +443,23 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(OCHTTPRequestOperation *operation, id responseObject, NSString *token) {
+    [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(NSHTTPURLResponse *response, id responseObject, NSString *token) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             
 //            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStr: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, request.redirectedServer, token);
+            successRequest(response, directoryList, request.redirectedServer, token);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error, NSString *token) {
-        failureRequest(operation.response, error, token, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
+        failureRequest(response, error, token, request.redirectedServer);
     }];
 }
 
@@ -669,8 +669,8 @@
 ///-----------------------------------
 - (void) readFile: (NSString *) path
   onCommunication:(OCCommunication *)sharedOCCommunication
-   successRequest:(void(^)(NSURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
-   failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+   successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer)) successRequest
+   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     path = [path encodeString:NSUTF8StringEncoding];
     
@@ -678,24 +678,24 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             
 //            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStrReadFile: %@", newStr);
 
             OCXMLParser *parser = [[OCXMLParser alloc]init];
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, request.redirectedServer);
+            successRequest(response, directoryList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
         
     }];
     
@@ -708,8 +708,8 @@
 }
 
 - (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
-                   successRequest:(void(^)(NSURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
-                   failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
+                   successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request.securityPolicy = self.securityPolicy;
@@ -718,7 +718,7 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         NSData *data = (NSData*) responseObject;
         NSString *versionString = [NSString new];
@@ -736,10 +736,10 @@
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
-        success(operation.response, versionString, request.redirectedServer);
+        success(response, versionString, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
     
 }
@@ -749,17 +749,17 @@
 ///-----------------------------------
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(NSURLResponse *response, NSData *responseData, NSString *redirectedServer))success
-                     failure:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer))failure{
+(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure{
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        success(operation.response, responseObject, request.redirectedServer);
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        success(response, responseObject, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
 }
 
@@ -774,7 +774,7 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         if (responseObject) {
             
@@ -783,7 +783,7 @@
             
             if(error) {
                 // NSLog(@"Error parsing JSON: %@", error);
-                failure(operation.response, operation.error, request.redirectedServer);
+                failure(response, error, request.redirectedServer);
             }else{
                 
                 self.currentServerVersion = [jsonArray valueForKey:@"version"];
@@ -794,17 +794,17 @@
                 BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters];
                 BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_capabilities];
                 
-                success(operation.response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
+                success(response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
             }
             
         } else {
             // NSLog(@"Error parsing JSON: data is null");
-            failure(operation.response, operation.error, request.redirectedServer);
+            failure(response, nil, request.redirectedServer);
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
 
     
@@ -815,8 +815,8 @@
 
 - (void) readSharedByServer: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void(^)(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
-             failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+             successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
@@ -825,29 +825,29 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request listSharedByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request listSharedByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
            // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, request.redirectedServer);
+            successRequest(response, sharedList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 - (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void(^)(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
-             failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+             successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+             failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
@@ -858,28 +858,28 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
            // NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, request.redirectedServer);
+            successRequest(response, sharedList, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
@@ -888,15 +888,15 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
       //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
@@ -906,19 +906,19 @@
                 
                 if (url != nil) {
                     
-                    successRequest(operation.response, url, request.redirectedServer);
+                    successRequest(response, url, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(operation.response, token, request.redirectedServer);
+                    successRequest(response, token, request.redirectedServer);
                     
                 }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
                 
                 break;
@@ -927,20 +927,20 @@
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
@@ -949,15 +949,15 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
       //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
@@ -967,19 +967,19 @@
                 
                 if (url != nil) {
                     
-                    successRequest(operation.response, url, request.redirectedServer);
+                    successRequest(response, url, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(operation.response, token, request.redirectedServer);
+                    successRequest(response, token, request.redirectedServer);
                     
                 }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
 
                 break;
@@ -988,18 +988,18 @@
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 - (void)shareWith:(NSString *)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString *) serverPath andFileOrFolderPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
-          successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer))successRequest
-          failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest{
+          successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
+          failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest{
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
@@ -1009,40 +1009,40 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        NSData *response = (NSData*) responseObject;
+    [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
         //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
-                successRequest(operation.response, request.redirectedServer);                
+                successRequest(response, request.redirectedServer);
                 break;
             }
                 
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
     
 }
 
 - (void) unShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest
-                      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
     
     path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
@@ -1052,21 +1052,21 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
             //Return success
-            successRequest(operation.response, request.redirectedServer);
+            successRequest(response, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 - (void) isShareFileOrFolderByServer: (NSString *) path andIdRemoteShared: (NSInteger) idRemoteShared
                      onCommunication:(OCCommunication *)sharedOCCommunication
-                      successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto)) successRequest
-                      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+                      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto)) successRequest
+                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
@@ -1076,15 +1076,15 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
         
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
             // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             
              BOOL isShared = NO;
             
@@ -1102,18 +1102,18 @@
             }
      
             //Return success
-            successRequest(operation.response, request.redirectedServer, isShared, shareDto);
+            successRequest(response, request.redirectedServer, isShared, shareDto);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
 - (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest
-      failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
     
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -1124,38 +1124,38 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
      //   NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
-                successRequest(operation.response, request.redirectedServer);
+                successRequest(response, request.redirectedServer);
                 break;
             }
             
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-         failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+         failureRequest(response, error, request.redirectedServer);
     }];
     
 }
 
-- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
+- (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *itemList, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_access_sharee_api];
@@ -1167,15 +1167,15 @@
     request.securityPolicy = self.securityPolicy;
     
     
-    [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         NSMutableArray *itemList = [NSMutableArray new];
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
         
         if (error == nil) {
             
@@ -1211,22 +1211,22 @@
                 }
                 
                 NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
                 
             }
             
             //Return success
-            successRequest(operation.response, itemList, request.redirectedServer);
+            successRequest(response, itemList, request.redirectedServer);
             
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
-- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
+- (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCComunication successRequest:(void(^)(NSHTTPURLResponse *response, OCCapabilities *capabilities, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_capabilities];
@@ -1235,15 +1235,13 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
-        
-        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        NSData *responseData = (NSData*) responseObject;
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
         NSLog(@"dic: %@",jsongParsed);
         
         OCCapabilities *capabilities = [OCCapabilities new];
@@ -1343,12 +1341,10 @@
             
         }
         
-        successRequest(operation.response, capabilities, request.redirectedServer);
+        successRequest(response, capabilities, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSData *responseData, NSError *error) {
-        
-        failureRequest(operation.response, error, request.redirectedServer);
-        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
     
 }
@@ -1357,8 +1353,8 @@
 #pragma mark - Remote thumbnails
 
 - (NSURLSessionTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
-                     successRequest:(void(^)(NSURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
-                     failureRequest:(void(^)(NSURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+                     successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
@@ -1369,13 +1365,13 @@
     request.securityPolicy = self.securityPolicy;
     
     OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
-            success:^(OCHTTPRequestOperation *operation, id responseObject) {
-                NSData *response = (NSData*) responseObject;
+            success:^(NSHTTPURLResponse *response, id responseObject) {
+                NSData *responseData = (NSData*) responseObject;
                 
-                successRequest(operation.response, response, request.redirectedServer);
+                successRequest(response, responseData, request.redirectedServer);
                                     
-            } failure:^(OCHTTPRequestOperation * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error) {
-                failureRequest(operation.response, error, request.redirectedServer);
+            } failure:^(NSHTTPURLResponse *response, id  _Nullable responseObject, NSError * _Nonnull error) {
+                failureRequest(response, error, request.redirectedServer);
             }];
 
     return operation;
