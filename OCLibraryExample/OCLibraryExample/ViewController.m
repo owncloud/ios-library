@@ -228,7 +228,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    [[AppDelegate sharedOCCommunication] readFolder:path withUserSessionToken:[UtilsFramework getUserSessionToken] onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token) {
+    [[AppDelegate sharedOCCommunication] readFolder:path withUserSessionToken:[UtilsFramework getUserSessionToken] onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSArray *items, NSString *redirectedServer, NSString *token) {
         //Success
         NSLog(@"succes");
         for (OCFileDto *itemDto in items) {
@@ -244,7 +244,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         _goButton.enabled = YES;
         _goInfoLabel.text = @"Success";
 
-    } failureRequest:^(NSURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer) {
+    } failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *token, NSString *redirectedServer) {
         //Request failure
         NSLog(@"Error: %@", error);
         _goButton.enabled = YES;
@@ -533,7 +533,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 - (void) deleteFile {
     
     //Delete Block
-    [[AppDelegate sharedOCCommunication] deleteFileOrFolder:_pathOfRemoteUploadedFile onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
+    [[AppDelegate sharedOCCommunication] deleteFileOrFolder:_pathOfRemoteUploadedFile onCommunication:[AppDelegate sharedOCCommunication] successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
         //Success
         _uploadProgressLabel.text = @"";
         _deleteRemoteFile.enabled = NO;
@@ -544,7 +544,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
         //Refresh the file list
         [self readFolder:nil];
         
-    } failureRquest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
+    } failureRquest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
         //Failure
         NSLog(@"error while delete a file: %@", error);
         _uploadProgressLabel.text = @"Error in delete file";
