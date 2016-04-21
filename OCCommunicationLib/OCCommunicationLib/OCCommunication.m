@@ -467,7 +467,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSURLSessionTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionDownloadTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -475,7 +475,7 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    NSURLSessionTask *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+    NSURLSessionDownloadTask *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
         downloadProgress(progress);
     } success:^(NSURLResponse *response, NSURL *filePath) {
         successRequest(response,filePath);
