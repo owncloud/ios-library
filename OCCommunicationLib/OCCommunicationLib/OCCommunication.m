@@ -1387,6 +1387,8 @@
             } failure:^(NSHTTPURLResponse *response, id  _Nullable responseObject, NSError * _Nonnull error) {
                 failureRequest(response, error, request.redirectedServer);
             }];
+    
+    [operation resume];
 
     return operation;
 }
