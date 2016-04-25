@@ -145,8 +145,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         }
     }];
     
-    [operation resume];
-    
     return operation;
     
 }

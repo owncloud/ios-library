@@ -147,6 +147,15 @@
         self.downloadSessionManager = downloadSessionManager;
         
         [self initUploadAndDownloadNoBackgroundManagers];
+        
+        NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        networkConfiguration.HTTPShouldUsePipelining = YES;
+        networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
+        [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
     }
     
     return self;
@@ -165,6 +174,15 @@
     downloadNoBackgroundConfiguration.HTTPMaximumConnectionsPerHost = 1;
     downloadNoBackgroundConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
     self.downloadSessionManagerNoBackground = [[AFURLSessionManager alloc] initWithSessionConfiguration:downloadNoBackgroundConfiguration];
+    
+    NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    networkConfiguration.HTTPShouldUsePipelining = YES;
+    networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
+    networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+    
+    self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
+    [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+    self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 }
 
 - (AFSecurityPolicy *) createSecurityPolicy {
@@ -193,10 +211,6 @@
 - (void) setCredentialsOauthWithToken:(NSString*) token {
     self.kindOfCredential = credentialOauth;
     self.password = token;
-}
-
-- (void) setUserAgent:(NSString *)userAgent{
-    self.userAgent = userAgent;
 }
 
 ///-----------------------------------
