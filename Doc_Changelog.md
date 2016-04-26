@@ -1,4 +1,11 @@
-## What's new in 1.2.0 version
+## What's new in 1.2.1 version
+
+- Added support to get the remote thumbnails of a file
+- Added autocompletion of users in remote servers in the view of share search
+- Updated permission method to check availabilty of allow editing in a share link
+- Changes in AFNetworking security policy to request accept new certificate after it has changed 
+
+## 1.2.0 version
 
 - Improved the search of users and groups for the internal share
 - Added support to share with all types of sharees (user, group, public share,federated sharing ); taking advantage of the  shareType
