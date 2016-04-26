@@ -177,6 +177,10 @@
         
         _currentShared.uidOwner = _xmlChars;
         
+    } else if ([elementName isEqualToString:@"uid_file_owner"]) {
+    
+    _currentShared.uidFileOwner = _xmlChars;
+    
     } else if ([elementName isEqualToString:@"share_with_displayname"]) {
         
         _currentShared.shareWithDisplayName = _xmlChars;
@@ -190,8 +194,16 @@
             //To not have a nil we set an empty string
             _currentShared.shareWithDisplayName = @"";
         }
-
         
+    } else if ([elementName isEqualToString:@"file_target"]) {
+    
+        if(![_currentShared.uidOwner isEqualToString:_currentShared.uidFileOwner]) {
+            if (_currentShared.isDirectory) {
+                _currentShared.path = [_xmlChars stringByAppendingString:@"/"];
+            } else {
+                _currentShared.path = _xmlChars;
+            }
+        }
     }
 }
 
