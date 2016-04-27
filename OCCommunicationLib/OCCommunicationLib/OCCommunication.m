@@ -481,7 +481,7 @@
 /// @name Download File
 ///-----------------------------------
 
-- (NSURLSessionDownloadTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionDownloadTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -489,19 +489,13 @@
     request = [self getRequestWithCredentials:request];
     request.securityPolicy = self.securityPolicy;
     
-    NSURLSessionDownloadTask *downloadTask = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+    NSURLSessionDownloadTask *downloadTask = [request downloadPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
         downloadProgress(progress);
     } success:^(NSURLResponse *response, NSURL *filePath) {
         successRequest(response,filePath);
     } failure:^(NSURLResponse *response, NSError *error) {
         failureRequest(response,error);
     }];
-    
-    if (isLIFO) {
-        [self addDownloadTaskToTheNetworkQueue:downloadTask];
-    } else {
-        [downloadTask resume];
-    }
     
     return downloadTask;
 }
@@ -516,7 +510,6 @@
     
     OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
     request = [self getRequestWithCredentials:request];
-    
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
     NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
@@ -1450,37 +1443,6 @@
         [itemList addObject:group];
         
     }
-}
-
-#pragma mark - Queue System
-
-- (void) addDownloadTaskToTheNetworkQueue:(NSURLSessionTask *) operation {
-    
-    //1. Cancel all tasks
-    //TODO: if this cancellation execute the failure block we should detect when we cancel it to be launched again for example using a flag on the OCHTTPRequestOperation
-    [self.downloadSessionManagerNoBackground.operationQueue cancelAllOperations];
-    
-    //2. Add the new tasks as the first
-    [self.downloadTaskNetworkQueueArray insertObject:operation atIndex:0];
-    
-    //3. Relaunch all the tasks in order
-    for (OCHTTPRequestOperation *current in self.downloadTaskNetworkQueueArray) {
-        [current resume];
-    }
-}
-
-///-----------------------------------
-/// @name Resume Next Download
-///-----------------------------------
-
-/**
- * This method is called when the download is finished (success or failure).
- * Here we check if exist download operation in LIFO queue array and begin with the next
- *
- * @warning Only we use this method when we are using LIFO queue system
- */
-- (void) resumeNextDownload{
-    
 }
 
 @end

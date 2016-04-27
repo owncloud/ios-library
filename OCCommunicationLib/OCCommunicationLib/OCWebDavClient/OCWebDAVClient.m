@@ -286,7 +286,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (NSURLSessionDownloadTask *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination withLIFOSystem:(BOOL)isLIFO defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
+- (NSURLSessionDownloadTask *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
@@ -312,10 +312,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         }
     }];
     
-    //Set type download operation
-    //TODO:Manage the queue and order the downloads
-    if (isLIFO) {
-    } else {
+    if (defaultPriority) {
+        [downloadTask resume];
     }
     
     return downloadTask;
