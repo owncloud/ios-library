@@ -189,21 +189,6 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 
 
 /**
- Enqueues an operation to download the contents of a file directly to disk using a `GET` request.
- 
- @param remoteSource The path to be fetched, relative to the HTTP client's base URL.
- @param localDestination A local URL to save the contents of a remote file to.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
- 
- @see getPath:success:failure:
- */
-
-- (NSURLSessionDownloadTask * _Nonnull)downloadPath:(NSString * _Nonnull)remoteSource toPath:(NSString * _Nonnull)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))downloadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSError * _Nonnull error))failure;
-
-
-
-/**
  Creates an `NSURLSessionDownloadTask` with the specified request for a local file.
  
  @param remoteSource is a string with the path of the file in the server 
@@ -242,20 +227,6 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
        onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
-
-/**
- Enqueues an operation to upload the contents of a specified local
- file to a remote path using a `PUT` request.
- 
- @param localSource A URL for a local file whose contents will be written the server.
- @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
- 
- @see putURL:path:success:failure:
- */
-
-- (NSURLSessionUploadTask * _Nonnull)putLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication uploadProgress:(void(^ _Nonnull)(NSProgress * _Nonnull))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
 /**
  Creates an `NSURLSessionUploadTask` with the specified request for a local file.

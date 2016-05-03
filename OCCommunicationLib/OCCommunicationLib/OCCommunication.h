@@ -64,8 +64,6 @@ typedef enum {
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *networkSessionManager;
 @property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
-@property (nonatomic, strong) AFURLSessionManager *uploadSessionManagerNoBackground;
-@property (nonatomic, strong) AFURLSessionManager *downloadSessionManagerNoBackground;
 
 /*This flag control the use of cookies on the requests.
  -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time you should set this as NO (by default).
@@ -340,39 +338,6 @@ typedef enum {
              successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
               failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error, NSString *redirectedServer))failureRequest;
 
-
-///-----------------------------------
-/// @name Download File
-///-----------------------------------
-
-/**
- * This method download a file of a path and returns blocks
- *
- * progress: get the download inputs about the progress of the download
- * successRequest: the download it's complete
- * failureRequest: the download fail
- *
- * @param remotePath -> NSString with the url of the file that the user want to download
- * Ex:http://www.myowncloudserver.com/owncloud/remote.php/webdav/Folder/image.jpg
- *
- * @param localPath -> NSString with the system path where the user want to store the file
- * Ex: /Users/userName/Library/Application Support/iPhone Simulator/7.0.3/Applications/35E6FC65-5492-427B-B6ED-EA9E25633508/Documents/Test Download/image.png
- *
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return NSURLSessionTask -> You can cancel the download using this object.
- * Ex: [operation cancel]
- *
- * @warning the "remotePath" and "localFilePath" must not be on URL Encoding.
- * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/image.jpg
- * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/image.jpg
- *
- * @warning remember that you must to set the Credentials before call this method or any other.
- */
-
-- (NSURLSessionDownloadTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
-
-
 ///-----------------------------------
 /// @name Download File Session
 ///-----------------------------------
@@ -429,36 +394,8 @@ typedef enum {
 
 - (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block;
 
-
 ///-----------------------------------
 /// @name Upload File
-///-----------------------------------
-
-/**
- * Method to upload a file. All the files will be upload one by one in a queue.
- *
- * This method download a file of a path and returns blocks
- *
- * progress: get the download inputs about the progress of the download
- * successRequest: the download it's complete
- * failureRequest: the download fail
- * failureBeforeRequest: the download fail
- *
- * @param NSString -> localPath the path where is the file that we want upload
- * @param NSString -> remotePath the path where we want upload the file
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return NSURLSessionUploadTask -> You can cancel the upload using this object
- * Ex: [operation cancel]
- *
- * @warning remember that you must to set the Credentials before call this method or any other.
- *
- */
-
-- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest;
-
-///-----------------------------------
-/// @name Upload File Session
 ///-----------------------------------
 
 /**

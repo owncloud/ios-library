@@ -285,40 +285,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [self mr_listPath:path depth:1 withUserSessionToken:token onCommunication:sharedOCCommunication success:success failure:failure];
 }
 
-
-- (NSURLSessionDownloadTask *)downloadPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
-    
-    //If is not nil is a redirection so we keep the original url server
-    if (!self.originalUrlServer) {
-        self.originalUrlServer = [request.URL absoluteString];
-    }
-    
-    //We add the cookies of that URL
-    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
-    
-    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
-    
-    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManagerNoBackground downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
-        downloadProgress(progress);
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return localDestinationUrl;
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        if (error) {
-            failure(response, error);
-        } else {
-            success(response,filePath);
-        }
-    }];
-    
-    if (defaultPriority) {
-        [downloadTask resume];
-    }
-    
-    return downloadTask;
-}
-
 - (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
@@ -373,60 +339,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [operation resume];
 }
-
-
-- (NSURLSessionUploadTask *)putLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication uploadProgress:(void(^)(NSProgress *))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-    if (localSource == nil || ![fileManager fileExistsAtPath:localSource]) {
-        NSMutableDictionary* details = [NSMutableDictionary dictionary];
-        [details setValue:@"You are trying upload a file that does not exist" forKey:NSLocalizedDescriptionKey];
-        
-        NSError *error = [NSError errorWithDomain:k_domain_error_code code:OCErrorFileToUploadDoesNotExist userInfo:details];
-        
-        failureBeforeRequest(error);
-        
-        return nil;
-    } else {
-        
-        NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:remoteDestination parameters:nil];
-        [request setTimeoutInterval:k_timeout_upload];
-        [request setValue:[NSString stringWithFormat:@"%lld", [UtilsFramework getSizeInBytesByPath:localSource]] forHTTPHeaderField:@"Content-Length"];
-        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-        
-        //If is not nil is a redirection so we keep the original url server
-        if (!self.originalUrlServer) {
-            self.originalUrlServer = [request.URL absoluteString];
-        }
-        
-        if (sharedOCCommunication.isCookiesAvailable) {
-            //We add the cookies of that URL
-            request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
-        } else {
-            [UtilsFramework deleteAllCookies];
-        }
-        
-        NSURL *file = [NSURL fileURLWithPath:localSource];
-        
-        sharedOCCommunication.uploadSessionManagerNoBackground.responseSerializer = [AFHTTPResponseSerializer serializer];
-        
-        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManagerNoBackground uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull progress) {
-            uploadProgress(progress);
-        } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-            if (error) {
-                failure(response, responseObject, error);
-            } else {
-                success(response,responseObject);
-            }
-        }];
-        
-        [uploadTask resume];
-        
-        return uploadTask;
-    }
-}
-
 
 - (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     

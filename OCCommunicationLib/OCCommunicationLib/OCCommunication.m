@@ -97,8 +97,6 @@
         self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 #endif
         
-        [self initUploadAndDownloadNoBackgroundManagers];
-        
     }
     
     return self;
@@ -122,8 +120,6 @@
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
-        
-        [self initUploadAndDownloadNoBackgroundManagers];
     }
     
     return self;
@@ -146,8 +142,6 @@
         self.uploadSessionManager = uploadSessionManager;
         self.downloadSessionManager = downloadSessionManager;
         
-        [self initUploadAndDownloadNoBackgroundManagers];
-        
         NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
         networkConfiguration.HTTPShouldUsePipelining = YES;
         networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
@@ -159,30 +153,6 @@
     }
     
     return self;
-}
-
-- (void) initUploadAndDownloadNoBackgroundManagers {
-    
-    NSURLSessionConfiguration *uploadNoBackgroundConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    uploadNoBackgroundConfiguration.HTTPShouldUsePipelining = YES;
-    uploadNoBackgroundConfiguration.HTTPMaximumConnectionsPerHost = 1;
-    uploadNoBackgroundConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-    self.uploadSessionManagerNoBackground = [[AFURLSessionManager alloc] initWithSessionConfiguration:uploadNoBackgroundConfiguration];
-    
-    NSURLSessionConfiguration *downloadNoBackgroundConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    downloadNoBackgroundConfiguration.HTTPShouldUsePipelining = YES;
-    downloadNoBackgroundConfiguration.HTTPMaximumConnectionsPerHost = 1;
-    downloadNoBackgroundConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-    self.downloadSessionManagerNoBackground = [[AFURLSessionManager alloc] initWithSessionConfiguration:downloadNoBackgroundConfiguration];
-    
-    NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    networkConfiguration.HTTPShouldUsePipelining = YES;
-    networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
-    networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-    
-    self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
-    [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
-    self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 }
 
 - (AFSecurityPolicy *) createSecurityPolicy {
@@ -478,29 +448,6 @@
 }
 
 ///-----------------------------------
-/// @name Download File
-///-----------------------------------
-
-- (NSURLSessionDownloadTask *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
-    
-    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
-    request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
-    
-    NSURLSessionDownloadTask *downloadTask = [request downloadPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
-        downloadProgress(progress);
-    } success:^(NSURLResponse *response, NSURL *filePath) {
-        successRequest(response,filePath);
-    } failure:^(NSURLResponse *response, NSError *error) {
-        failureRequest(response,error);
-    }];
-    
-    return downloadTask;
-}
-
-///-----------------------------------
 /// @name Download File Session
 ///-----------------------------------
 
@@ -552,53 +499,6 @@
         block(session,downloadTask,bytesWritten,totalBytesWritten,totalBytesExpectedToWrite);
     }];
     
-    
-}
-
-
-
-///-----------------------------------
-/// @name Upload File
-///-----------------------------------
-
-- (NSURLSessionUploadTask *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
-    request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
-    
-    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
-    
-    NSURLSessionUploadTask *uploadTask = [request putLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication uploadProgress:^(NSProgress *progress) {
-        uploadProgress(progress);
-    } success:^(NSURLResponse *response, id responseObjec) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-        //TODO: The second parameter is the redirected server
-        successRequest(response, @"");
-    } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-        //TODO: The second parameter is the redirected server
-        
-        NSData *responseData = (NSData*) responseObject;
-        
-        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-        
-        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-            
-            if (err) {
-                failureRequest(response, @"", err);
-            }else{
-                failureRequest(response, @"", error);
-            }
-            
-        }];
-    } failureBeforeRequest:^(NSError *error) {
-        failureBeforeRequest(error);
-    }];
-    
-    
-    
-    return uploadTask;
 }
 
 ///-----------------------------------
