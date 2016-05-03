@@ -1,9 +1,9 @@
 ## What's new in 1.2.1 version
 
-- Added support to get the remote thumbnails of a file
-- Added autocompletion of users in remote servers in the view of share search
-- Updated permission method to check availabilty of allow editing in a share link
-- Changes in AFNetworking security policy to request accept new certificate after it has changed 
+- Added support to get remote thumbnails for images and videos
+- Added auto-complete of external users when you share (this relies on defining remote trusted servers)
+- Added support to allow editing permission when sharing a folder by link
+- Changes in AFNetworking security policy to request accept new certificate after updating it
 
 ## 1.2.0 version
 
