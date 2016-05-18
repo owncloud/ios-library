@@ -93,7 +93,7 @@ typedef enum {
  * @param downloadSessionManager -> AFURLSessionManager
  *
  */
--(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager andNetworkSessionManager:(AFURLSessionManager *) networkSessionManager;
 
 
 - (AFSecurityPolicy *) createSecurityPolicy;

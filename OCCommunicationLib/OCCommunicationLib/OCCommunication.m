@@ -125,7 +125,7 @@
     return self;
 }
 
--(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager {
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager andNetworkSessionManager:(AFURLSessionManager *) networkSessionManager {
     
     self = [super init];
     
@@ -141,15 +141,7 @@
         
         self.uploadSessionManager = uploadSessionManager;
         self.downloadSessionManager = downloadSessionManager;
-        
-        NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-        networkConfiguration.HTTPShouldUsePipelining = YES;
-        networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
-        networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        
-        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
-        [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
-        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        self.networkSessionManager = networkSessionManager;
     }
     
     return self;
