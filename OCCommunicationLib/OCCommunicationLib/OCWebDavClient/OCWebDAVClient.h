@@ -47,7 +47,7 @@ extern NSString * _Nullable OCWebDAVCreationDateKey;
 /** The key for last modification date of an entity. */
 extern NSString * _Nullable OCWebDAVModificationDateKey;
 
-@interface OCWebDAVClient : AFHTTPSessionManager
+@interface OCWebDAVClient : NSObject
 
 @property (readwrite, nonatomic, strong) NSMutableDictionary * _Nullable defaultHeaders;
 //On redirections AFNetworking lose the request method on iOS6 and set a GET, we use this as workarround
@@ -251,7 +251,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  * @param NSString the cookie of the session
  *
  */
-- (void) requestUserNameByCookie:(NSString * _Nonnull) cookieString onCommunication:
+- (void) requestUserNameOfServer:(NSString * _Nonnull) path byCookie:(NSString * _Nonnull) cookieString onCommunication:
 (OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 

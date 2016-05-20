@@ -59,11 +59,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 @implementation OCWebDAVClient
 
-
-- (id)initWithBaseURL:(NSURL *)url {
-    if ((self = [super initWithBaseURL:url])) {
-        
-        
+- (id) init {
+    
+    self = [super init];
+    
+    if (self != nil) {
+        self.defaultHeaders = [NSMutableDictionary new];
     }
     
     return self;
@@ -71,28 +72,24 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
 	NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", username, password];
-    
-    [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString: basicAuthCredentials]]];
+
+    [self.defaultHeaders setObject:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString: basicAuthCredentials]] forKey:@"Authorization"];
 }
 
 - (void)setAuthorizationHeaderWithCookie:(NSString *) cookieString {
-    [self setDefaultHeader:@"Cookie" value:cookieString];
+    [self.defaultHeaders setObject:cookieString forKey:@"Cookie"];
 }
 
 - (void)setAuthorizationHeaderWithToken:(NSString *)token {
-    // [self setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Token token=\"%@\"", token]];
-    [self setDefaultHeader:@"Authorization" value:token];
-    
+    [self.defaultHeaders setObject:token forKey:@"Authorization"];
 }
 
 - (void)setDefaultHeader:(NSString *)header value:(NSString *)value {
-    
-    [[self requestSerializer] setValue:value forHTTPHeaderField:header];
+    [self.defaultHeaders setObject:value forKey:header];
 }
 
 - (void)setUserAgent:(NSString *)userAgent{
-    
-    [[self requestSerializer] setValue:userAgent forHTTPHeaderField:@"User-Agent"];
+    [self.defaultHeaders setObject:userAgent forKey:@"User-Agent"];
 }
 
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString*)token success:(void(^)(NSHTTPURLResponse *operation, id response, NSString *token))success failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error, NSString *token))failure {
@@ -149,7 +146,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
     
-    NSMutableURLRequest *request = [[self requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer new] requestWithMethod:method URLString:path parameters:nil error:nil];
+    [request setAllHTTPHeaderFields:self.defaultHeaders];
     
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval: k_timeout_webdav];
@@ -159,7 +157,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (NSMutableURLRequest *)sharedRequestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
     
-    NSMutableURLRequest *request = [[self requestSerializer] requestWithMethod:method URLString:path parameters:parameters error:nil];
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer new] requestWithMethod:method URLString:path parameters:nil error:nil];
+    
+    [request setAllHTTPHeaderFields:self.defaultHeaders];
     
     //NSMutableURLRequest *request = [super requestWithMethod:method path:path parameters:parameters];
     [request setCachePolicy: NSURLRequestReloadIgnoringLocalCacheData];
@@ -177,27 +177,27 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
  onCommunication:(OCCommunication *)sharedOCCommunication
          success:(void(^)(NSHTTPURLResponse *, id))success
          failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
-    NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
+    /*NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
     _requestMethod = @"COPY";
     
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
     [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
-    [operation resume];
+    [operation resume];*/
 }
 
 - (void)movePath:(NSString *)source toPath:(NSString *)destination
  onCommunication:(OCCommunication *)sharedOCCommunication
          success:(void(^)(NSHTTPURLResponse *, id))success
          failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
-    NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
+    /*NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
     _requestMethod = @"MOVE";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
     [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
-    [operation resume];
+    [operation resume];*/
 }
 
 - (void)deletePath:(NSString *)path
@@ -394,11 +394,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }
 }
 
-- (void) requestUserNameByCookie:(NSString *) cookieString onCommunication:
-(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, id))success
-                         failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
+- (void) requestUserNameOfServer:(NSString * _Nonnull) path byCookie:(NSString * _Nonnull) cookieString onCommunication:
+(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
+    
     NSString *apiUserUrl = nil;
-    apiUserUrl = [NSString stringWithFormat:@"%@%@", self.baseURL, k_api_user_url_json];
+    apiUserUrl = [NSString stringWithFormat:@"%@%@", path, k_api_user_url_json];
     
     NSLog(@"api user name call: %@", apiUserUrl);
     

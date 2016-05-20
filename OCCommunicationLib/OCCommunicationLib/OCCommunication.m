@@ -203,6 +203,7 @@
                 break;
             }
             case credentialCookie:
+                NSLog(@"Cookie: %@", self.password);
                 [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
                 break;
             case credentialOauth:
@@ -261,7 +262,7 @@
        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
 
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
@@ -293,9 +294,9 @@
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
         errorBeforeRequest(error);
     } else {
-        OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+        OCWebDAVClient *request = [OCWebDAVClient new];
         request = [self getRequestWithCredentials:request];
-        request.securityPolicy = self.securityPolicy;
+        
         
         path = [path encodeString:NSUTF8StringEncoding];
         
@@ -350,9 +351,9 @@
         sourcePath = [sourcePath encodeString:NSUTF8StringEncoding];
         destinyPath = [destinyPath encodeString:NSUTF8StringEncoding];
         
-        OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+        OCWebDAVClient *request = [OCWebDAVClient new];
         request = [self getRequestWithCredentials:request];
-        request.securityPolicy = self.securityPolicy;
+        
         
         [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
             if (successRequest) {
@@ -387,9 +388,9 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request deletePath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
@@ -415,9 +416,9 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(NSHTTPURLResponse *response, id responseObject, NSString *token) {
         if (successRequest) {
@@ -448,7 +449,7 @@
 
 - (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -500,9 +501,9 @@
 
 - (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
@@ -574,9 +575,9 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -611,8 +612,7 @@
                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    request.securityPolicy = self.securityPolicy;
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
@@ -652,11 +652,11 @@
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
                      failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
     
-    [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+    
+    [request requestUserNameOfServer: path byCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         success(response, responseObject, request.redirectedServer);
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
         failure(response, error, request.redirectedServer);
@@ -667,8 +667,7 @@
                      successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer)) success
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    request.securityPolicy = self.securityPolicy;
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
@@ -721,9 +720,9 @@
     path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request listSharedByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
@@ -754,9 +753,9 @@
     
    path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
@@ -784,9 +783,9 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -845,9 +844,9 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -905,9 +904,9 @@
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     userOrGroup = [userOrGroup encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         NSData *responseData = (NSData*) responseObject;
@@ -948,9 +947,9 @@
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
@@ -972,9 +971,9 @@
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
@@ -1020,9 +1019,9 @@
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)shareId]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -1062,9 +1061,9 @@
     
     searchString = [searchString encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     
     [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
@@ -1131,9 +1130,9 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_capabilities];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -1260,9 +1259,9 @@
     serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
     filePath = [filePath encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = self.securityPolicy;
+    
     
     OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(NSHTTPURLResponse *response, id responseObject) {
