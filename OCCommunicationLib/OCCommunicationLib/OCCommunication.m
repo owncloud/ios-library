@@ -435,6 +435,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
+        NSLog(@"Failure");
         failureRequest(response, error, token, request.redirectedServer);
     }];
 }
