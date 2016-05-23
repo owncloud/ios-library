@@ -188,7 +188,7 @@
     
     NSURLSessionUploadTask *uploadTask = nil;
     
-    uploadTask = [_sharedOCCommunication uploadFile:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+    uploadTask = [_sharedOCCommunication uploadFileSession:localPath toDestiny:serverUrl onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
         NSLog(@"File: %lld bytes", progress.completedUnitCount);
     } successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
         NSLog(@"File: %@ uploaded", localPath);
@@ -1097,7 +1097,7 @@
     
     NSURLSessionTask *downloadTask = nil;
     
-    downloadTask = [_sharedOCCommunication downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
+    downloadTask = [_sharedOCCommunication downloadFileSession:serverUrl toDestiny:localPath defaultPriority:YES onCommunication:_sharedOCCommunication progress:^(NSProgress *progress) {
         NSLog(@"File: %lld bytes", progress.completedUnitCount);
     } successRequest:^(NSURLResponse *response, NSURL *filePath) {
         

@@ -177,27 +177,25 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
  onCommunication:(OCCommunication *)sharedOCCommunication
          success:(void(^)(NSHTTPURLResponse *, id))success
          failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
-    /*NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
     _requestMethod = @"COPY";
     
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
-    [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
+    [request setValue:destination forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
-    [operation resume];*/
+    [operation resume];
 }
 
 - (void)movePath:(NSString *)source toPath:(NSString *)destination
  onCommunication:(OCCommunication *)sharedOCCommunication
          success:(void(^)(NSHTTPURLResponse *, id))success
          failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
-    /*NSString *destinationPath = [NSString stringWithFormat:@"%@%@",[self.baseURL absoluteString], destination];
     _requestMethod = @"MOVE";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
-    [request setValue:destinationPath forHTTPHeaderField:@"Destination"];
+    [request setValue:destination forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
 	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
-    [operation resume];*/
+    [operation resume];
 }
 
 - (void)deletePath:(NSString *)path
