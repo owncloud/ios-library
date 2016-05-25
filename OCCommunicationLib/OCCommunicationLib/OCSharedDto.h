@@ -54,6 +54,8 @@ typedef enum {
 @property (nonatomic, copy) NSString *uidOwner;
 @property (nonatomic, copy) NSString *shareWithDisplayName;
 @property (nonatomic, copy) NSString *displayNameOwner;
+@property (nonatomic, copy) NSString *uidFileOwner;
+@property (nonatomic, copy) NSString *fileTarget;
 
 
 @end

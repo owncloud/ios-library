@@ -5,6 +5,15 @@
 - The ownCloud library it is ready to be used on Apple TV and Apple Watch
 - The download and upload now return the NSURLSessionTask to be canceled instead the NSOperation 
 
+
+## 1.2.1 version
+
+- Added support to get remote thumbnails for images and videos
+- Added auto-complete of external users when you share (this relies on defining remote trusted servers)
+- Added support to allow editing permission when sharing a folder by link
+- Changes in AFNetworking security policy to request accept new certificate after updating it
+
+
 ## 1.2.0 version
 
 - Improved the search of users and groups for the internal share
