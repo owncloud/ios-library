@@ -23,17 +23,9 @@
 // THE SOFTWARE.
 //
 
-typedef enum {
-    DownloadFIFOQueue = 0,
-    UploadQueue     = 1,
-    NavigationQueue = 2,
-    DownloadLIFOQueue = 3,
-} typeOfOperationQueue;
-
 
 @interface OCHTTPRequestOperation : NSURLSessionDataTask
 
-@property (nonatomic, assign) typeOfOperationQueue typeOfOperation;
 @property (nonatomic, strong) NSString *localSource;
 
 
