@@ -90,19 +90,6 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void)setUserAgent:(NSString * _Nonnull)userAgent;
 
-/**
- Enqueues an operation to copy the object at a path to another path using a `COPY` request.
- 
- @param source The path to copy.
- @param destination The path to copy the item to.
- @param sharedOCCommunication Singleton of communication to add the operation on the queue.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
- */
-- (void)copyPath:(NSString * _Nonnull)source toPath:(NSString * _Nonnull)destination
- onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
-         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull,  _Nonnull id))success
-         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
 
 /**
  Enqueues an operation to move the object at a path to another path using a `MOVE` request.
