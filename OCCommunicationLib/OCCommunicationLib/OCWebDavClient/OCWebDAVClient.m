@@ -376,8 +376,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 }
         }];
         
+        [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication];
         [uploadTask resume];
-        
         return uploadTask;
     }
 }
