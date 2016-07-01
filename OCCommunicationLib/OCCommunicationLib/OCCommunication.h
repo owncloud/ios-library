@@ -58,18 +58,16 @@ typedef enum {
 @property (nonatomic, strong) NSString *userAgent;
 
 //Public properties
-@property (nonatomic, strong) NSOperationQueue *networkOperationsQueue;
-@property (nonatomic, strong) NSMutableArray *downloadOperationQueueArray;
-@property (nonatomic, strong) NSMutableArray *uploadOperationQueueArray;
+@property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;
 
 @property (nonatomic, strong) AFURLSessionManager *uploadSessionManager;
 @property (nonatomic, strong) AFURLSessionManager *downloadSessionManager;
+@property (nonatomic, strong) AFURLSessionManager *networkSessionManager;
 @property (nonatomic, strong) AFSecurityPolicy * securityPolicy;
 
-
 /*This flag control the use of cookies on the requests.
- -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time we should set this as NO (by default).
- -On OC7 we can do several requests at the same time with the same session so we can set this flag to YES.
+ -On OC6 the use of cookies limit to one request at the same time. So if we want to do several requests at the same time you should set this as NO (by default).
+ -On OC7 we can do several requests at the same time with the same session so you can set this flag to YES.
  */
 @property BOOL isCookiesAvailable;
 
@@ -95,10 +93,11 @@ typedef enum {
  * @param downloadSessionManager -> AFURLSessionManager
  *
  */
--(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager;
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager andNetworkSessionManager:(AFURLSessionManager *) networkSessionManager;
 
 
 - (AFSecurityPolicy *) createSecurityPolicy;
+- (void)setSecurityPolicyManagers:(AFSecurityPolicy *)securityPolicy;
 
 
 #pragma mark - Credentials
@@ -339,43 +338,6 @@ typedef enum {
              successRequest:(void (^)(NSHTTPURLResponse *response, NSString *redirectedServer))successRequest
               failureRquest:(void (^)(NSHTTPURLResponse *resposne, NSError *error, NSString *redirectedServer))failureRequest;
 
-
-///-----------------------------------
-/// @name Download File
-///-----------------------------------
-
-/**
- * This method download a file of a path and returns four blocks
- *
- * progressDownload: get the download inputs about the progress of the download
- * successRequest: the download it's complete
- * failureRequest: the download fail
- * shouldExectuteAsBackgroundTaskWithExpirationHandler: called when the system is in background and the file are downloading and the system will close the process
- * We normally cancel the download in this case
- *
- * @param remotePath -> NSString with the url of the file that the user want to download
- * Ex:http://www.myowncloudserver.com/owncloud/remote.php/webdav/Folder/image.jpg
- *
- * @param localPath -> NSString with the system path where the user want to store the file
- * Ex: /Users/userName/Library/Application Support/iPhone Simulator/7.0.3/Applications/35E6FC65-5492-427B-B6ED-EA9E25633508/Documents/Test Download/image.png
- *
- * @param isLIFO -> BOOL to indicate if the dowload must be to LIFO download queue or FIFO download queue
- *
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return NSOperation -> You can cancel the download using this object.
- * Ex: [operation cancel]
- *
- * @warning the "remotePath" and "localFilePath" must not be on URL Encoding.
- * Correct path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other Folder/image.jpg
- * Wrong path: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Other%20Folder/image.jpg
- *
- * @warning remember that you must to set the Credentials before call this method or any other.
- */
-
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-
-
 ///-----------------------------------
 /// @name Download File Session
 ///-----------------------------------
@@ -383,11 +345,16 @@ typedef enum {
 /**
  * Method to download a file. All the files will be download one by one in a queue. The files download also in background when the system close the app.
  *
+ * This method download a file of a path and returns blocks
+ *
+ * progress: get the download inputs about the progress of the download
+ * successRequest: the download it's complete
+ * failureRequest: the download fail
+ *
  * @param NSString -> remotePath the path of the file
  * @param NSString -> localPath the  local path where we want store the file
  * @param BOOL -> defaultPriority define if the priority is defined by the library (default) or not. It used to manage multiple downloads from the app.
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- * @param NSProgress -> A progress object monitoring the current upload progress
  *
  * @return NSURLSessionDownloadTask -> You can cancel the download using this object
  * Ex: [downloadTask cancel]
@@ -398,7 +365,7 @@ typedef enum {
  *
  */
 
-- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest;
 
 ///-----------------------------------
 /// @name Set Download Task Complete Block
@@ -427,39 +394,23 @@ typedef enum {
 
 - (void) setDownloadTaskDidGetBodyDataBlock: (void(^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite)) block;
 
-
 ///-----------------------------------
 /// @name Upload File
 ///-----------------------------------
 
 /**
- * Method to upload a file. All the files will be upload one by one in a queue.
- *
- * @param NSString -> localPath the path where is the file that we want upload
- * @param NSString -> remotePath the path where we want upload the file
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- *
- * @return NSOperation -> You can cancel the upload using this object
- * Ex: [operation cancel]
- *
- * @warning remember that you must to set the Credentials before call this method or any other.
- *
- */
-
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler;
-
-
-///-----------------------------------
-/// @name Upload File Session
-///-----------------------------------
-
-/**
  * Method to upload a file. All the files will be upload one by one in a queue. The files upload also in background when the system close the app.
  *
+ * This method download a file of a path and returns blocks
+ *
+ * progress: get the download inputs about the progress of the download
+ * successRequest: the download it's complete
+ * failureRequest: the download fail
+ * failureBeforeRequest: the download fail
+ *
  * @param NSString -> localPath the path where is the file that we want upload
  * @param NSString -> remotePath the path where we want upload the file
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
- * @param NSProgress -> A progress object monitoring the current upload progress
  *
  * @return NSURLSessionUploadTask -> You can cancel the upload using this object
  * Ex: [uploadTask cancel]
@@ -470,7 +421,7 @@ typedef enum {
  *
  */
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest;
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest;
 
 
 ///-----------------------------------
@@ -802,18 +753,12 @@ typedef enum {
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return nsData -> thumbnail of the file with the size requested
- * @return NSOperation -> You can cancel the download using this object
+ * @return NSURLSessionTask -> You can cancel the download using this object
  *
  */
-- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSURLSessionTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                      successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
-
-#pragma mark - Queue system
-/*
- * Method that add an operation to the appropiate queue
- */
-- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation;
 
 
 @end

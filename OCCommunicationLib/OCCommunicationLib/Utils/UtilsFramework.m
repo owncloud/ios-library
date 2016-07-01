@@ -425,14 +425,13 @@
  * @param NSURL -> url
  *
  */
-+ (void) addCookiesToStorageFromResponse: (NSHTTPURLResponse *) response andPath:(NSURL *) url {
-    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
-    NSLog(@"cookies: %@", cookies);
++ (void) addCookiesToStorageFromResponse: (NSURLResponse *) response andPath:(NSURL *) url {
+    //TODO: Using NSURLSession this should not be necessary
+    /*NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
     
     for (NSHTTPCookie *current in cookies) {
-        NSLog(@"Current: %@", current);
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
-    }
+    }*/
 }
 
 //-----------------------------------
@@ -452,8 +451,6 @@
     //We add the cookies of that URL
     NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
     NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
-    
-    NSLog(@"cookieStorage: %@", cookieStorage);
     
     for (NSString *key in cookieHeaders) {
         [request addValue:cookieHeaders[key] forHTTPHeaderField:key];

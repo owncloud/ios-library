@@ -31,7 +31,6 @@
 #import "OCXMLServerErrorsParser.h"
 #import "NSString+Encode.h"
 #import "OCFrameworkConstants.h"
-#import "OCUploadOperation.h"
 #import "OCWebDAVClient.h"
 #import "OCXMLShareByLinkParser.h"
 #import "OCErrorMsg.h"
@@ -54,46 +53,49 @@
     
     if (self) {
         
-        //Init the Queue Array
-        _uploadOperationQueueArray = [NSMutableArray new];
-        
         //Init the Donwload queue array
-        _downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
         //Credentials not set yet
-        _kindOfCredential = credentialNotSet;
+        self.kindOfCredential = credentialNotSet;
         
-        //Network Queue
-        _networkOperationsQueue =[NSOperationQueue new];
-        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
-        [self setSecurityPolicy:[self createSecurityPolicy]];
+        self.isCookiesAvailable = NO;
+        self.isForbiddenCharactersAvailable = NO;
         
-        _isCookiesAvailable = NO;
-        _isForbiddenCharactersAvailable = NO;
-
 #ifdef UNIT_TEST
-        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:nil];
-
+        
+        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
 #else
         //Network Upload queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_session_name];
-        configuration.HTTPMaximumConnectionsPerHost = 1;
-        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        _uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-        [_uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        NSURLSessionConfiguration *uploadConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:k_session_name];
+        uploadConfiguration.HTTPShouldUsePipelining = YES;
+        uploadConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        uploadConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:uploadConfiguration];
+        [self.uploadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         
         //Network Download queue for NSURLSession (iOS 7)
-        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:k_download_session_name];
+        NSURLSessionConfiguration *downConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:k_download_session_name];
         downConfiguration.HTTPShouldUsePipelining = YES;
         downConfiguration.HTTPMaximumConnectionsPerHost = 1;
         downConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-        _downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
-        [_downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
- 
-#endif
+        self.downloadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:downConfiguration];
+        [self.downloadSessionManager.operationQueue setMaxConcurrentOperationCount:1];
         
+        //Network Download queue for NSURLSession (iOS 7)
+        NSURLSessionConfiguration *networkConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        networkConfiguration.HTTPShouldUsePipelining = YES;
+        networkConfiguration.HTTPMaximumConnectionsPerHost = 1;
+        networkConfiguration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        self.networkSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:networkConfiguration];
+        [self.networkSessionManager.operationQueue setMaxConcurrentOperationCount:1];
+        self.networkSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+#endif
         
     }
     
@@ -106,89 +108,71 @@
     
     if (self) {
         
-        //Init the Queue Array
-        _uploadOperationQueueArray = [NSMutableArray new];
-        
         //Init the Donwload queue array
-        _downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
-        _isCookiesAvailable = NO;
-        _isForbiddenCharactersAvailable = NO;
+        self.isCookiesAvailable = NO;
+        self.isForbiddenCharactersAvailable = NO;
         
         //Credentials not set yet
-        _kindOfCredential = credentialNotSet;
+        self.kindOfCredential = credentialNotSet;
         
-        //Network Queue
-        _networkOperationsQueue =[NSOperationQueue new];
-        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-       
-        [self setSecurityPolicy:[self createSecurityPolicy]];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
-        _uploadSessionManager = uploadSessionManager;
+        self.uploadSessionManager = uploadSessionManager;
     }
     
     return self;
 }
 
--(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager {
+-(id) initWithUploadSessionManager:(AFURLSessionManager *) uploadSessionManager andDownloadSessionManager:(AFURLSessionManager *) downloadSessionManager andNetworkSessionManager:(AFURLSessionManager *) networkSessionManager {
     
     self = [super init];
     
     if (self) {
-        
-        //Init the Queue Array
-        _uploadOperationQueueArray = [NSMutableArray new];
-        
+    
         //Init the Donwload queue array
-        _downloadOperationQueueArray = [NSMutableArray new];
+        self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
         //Credentials not set yet
-        _kindOfCredential = credentialNotSet;
+        self.kindOfCredential = credentialNotSet;
         
-        //Network Queue
-        _networkOperationsQueue =[NSOperationQueue new];
-        [_networkOperationsQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
-        [self setSecurityPolicy:[self createSecurityPolicy]];
-        
-        _uploadSessionManager = uploadSessionManager;
-        _downloadSessionManager = downloadSessionManager;
+        self.uploadSessionManager = uploadSessionManager;
+        self.downloadSessionManager = downloadSessionManager;
+        self.networkSessionManager = networkSessionManager;
     }
     
     return self;
 }
-
 
 - (AFSecurityPolicy *) createSecurityPolicy {
     return [AFSecurityPolicy defaultPolicy];
 }
 
-- (void)setSecurityPolicy:(AFSecurityPolicy *)securityPolicy {
-    _securityPolicy = securityPolicy;
-    _uploadSessionManager.securityPolicy = securityPolicy;
-    _downloadSessionManager.securityPolicy = securityPolicy;
+- (void)setSecurityPolicyManagers:(AFSecurityPolicy *)securityPolicy {
+    self.securityPolicy = securityPolicy;
+    self.uploadSessionManager.securityPolicy = securityPolicy;
+    self.downloadSessionManager.securityPolicy = securityPolicy;
 }
 
 #pragma mark - Setting Credentials
 
 - (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
-    _kindOfCredential = credentialNormal;
-    _user = user;
-    _password = password;
+    self.kindOfCredential = credentialNormal;
+    self.user = user;
+    self.password = password;
 }
 
 - (void) setCredentialsWithCookie:(NSString*) cookie {
-    _kindOfCredential = credentialCookie;
-    _password = cookie;
+    self.kindOfCredential = credentialCookie;
+    self.password = cookie;
 }
 
 - (void) setCredentialsOauthWithToken:(NSString*) token {
-    _kindOfCredential = credentialOauth;
-    _password = token;
-}
-
-- (void) setUserAgent:(NSString *)userAgent{
-    _userAgent = userAgent;
+    self.kindOfCredential = credentialOauth;
+    self.password = token;
 }
 
 ///-----------------------------------
@@ -208,21 +192,22 @@
     if ([request isKindOfClass:[NSMutableURLRequest class]]) {
         NSMutableURLRequest *myRequest = (NSMutableURLRequest *)request;
         
-        switch (_kindOfCredential) {
+        switch (self.kindOfCredential) {
             case credentialNotSet:
                 //Without credentials
                 break;
             case credentialNormal:
             {
-                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", _user, _password];
+                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.user, self.password];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
                 break;
             }
             case credentialCookie:
-                [myRequest addValue:_password forHTTPHeaderField:@"Cookie"];
+                NSLog(@"Cookie: %@", self.password);
+                [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
                 break;
             case credentialOauth:
-                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", _password] forHTTPHeaderField:@"Authorization"];
+                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.password] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
                 break;
@@ -237,18 +222,18 @@
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
-        switch (_kindOfCredential) {
+        switch (self.kindOfCredential) {
             case credentialNotSet:
                 //Without credentials
                 break;
             case credentialNormal:
-                [myRequest setAuthorizationHeaderWithUsername:_user password:_password];
+                [myRequest setAuthorizationHeaderWithUsername:self.user password:self.password];
                 break;
             case credentialCookie:
-                [myRequest setAuthorizationHeaderWithCookie:_password];
+                [myRequest setAuthorizationHeaderWithCookie:self.password];
                 break;
             case credentialOauth:
-                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", _password]];
+                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.password]];
                 break;
             default:
                 break;
@@ -277,7 +262,7 @@
        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
 
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
@@ -286,12 +271,12 @@
     path = [path encodeString:NSUTF8StringEncoding];
     
     [request checkServer:path onCommunication:sharedOCCommunication
-                    success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                    success:^(NSHTTPURLResponse *response, id responseObject) {
                         if (successRequest) {
-                            successRequest(operation.response, request.redirectedServer);
+                            successRequest(response, request.redirectedServer);
                         }
-                    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-                        failureRequest(operation.response, error, request.redirectedServer);
+                    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+                        failureRequest(response, error, request.redirectedServer);
                     }];
 }
 
@@ -309,27 +294,27 @@
         NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
         errorBeforeRequest(error);
     } else {
-        OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+        OCWebDAVClient *request = [OCWebDAVClient new];
         request = [self getRequestWithCredentials:request];
-        request.securityPolicy = _securityPolicy;
+        
         
         path = [path encodeString:NSUTF8StringEncoding];
         
         [request makeCollection:path onCommunication:sharedOCCommunication
-                        success:^(OCHTTPRequestOperation *operation, id responseObject) {
+                        success:^(NSHTTPURLResponse *response, id responseObject) {
                             if (successRequest) {
-                                successRequest(operation.response, request.redirectedServer);
+                                successRequest(response, request.redirectedServer);
                             }
-                        } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+                        } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
                             
                             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
                             
-                            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+                            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
                                 
                                 if (err) {
-                                    failureRequest(operation.response, err, request.redirectedServer);
+                                    failureRequest(response, err, request.redirectedServer);
                                 }else{
-                                    failureRequest(operation.response, error, request.redirectedServer);
+                                    failureRequest(response, error, request.redirectedServer);
                                 }
                                 
                                 
@@ -366,24 +351,24 @@
         sourcePath = [sourcePath encodeString:NSUTF8StringEncoding];
         destinyPath = [destinyPath encodeString:NSUTF8StringEncoding];
         
-        OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+        OCWebDAVClient *request = [OCWebDAVClient new];
         request = [self getRequestWithCredentials:request];
-        request.securityPolicy = _securityPolicy;
         
-        [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+        
+        [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
             if (successRequest) {
-                successRequest(operation.response, request.redirectedServer);
+                successRequest(response, request.redirectedServer);
             }
-        } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
+        } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
             
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
-            [serverErrorParser startToParseWithData:operation.responseData withCompleteBlock:^(NSError *err) {
+            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
                 
                 if (err) {
-                    failureRequest(operation.response, err, request.redirectedServer);
+                    failureRequest(response, err, request.redirectedServer);
                 }else{
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
                 
             }];
@@ -403,16 +388,16 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request deletePath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request deletePath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            successRequest(operation.response, request.redirectedServer);
+            successRequest(response, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -431,65 +416,30 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(OCHTTPRequestOperation *operation, id responseObject, NSString *token) {
+    
+    [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(NSHTTPURLResponse *response, id responseObject, NSString *token) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             
 //            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStr: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, request.redirectedServer, token);
+            successRequest(response, directoryList, request.redirectedServer, token);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error, NSString *token) {
-        failureRequest(operation.response, error, token, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
+        NSLog(@"Failure");
+        failureRequest(response, error, token, request.redirectedServer);
     }];
 }
-
-///-----------------------------------
-/// @name Download File
-///-----------------------------------
-
-- (NSOperation *) downloadFile:(NSString *)remotePath toDestiny:(NSString *)localPath withLIFOSystem:(BOOL)isLIFO onCommunication:(OCCommunication *)sharedOCCommunication progressDownload:(void(^)(NSUInteger bytesRead,long long totalBytesRead,long long totalBytesExpectedToRead))progressDownload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
-    
-    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
-    
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
-    request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
-    
-    NSLog(@"Remote File Path: %@", remotePath);
-    NSLog(@"Local File Path: %@", localPath);
-    
-    NSOperation *operation = [request downloadPath:remotePath toPath:localPath withLIFOSystem:isLIFO onCommunication:sharedOCCommunication progress:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
-        progressDownload(bytesRead,totalBytesRead,totalBytesExpectedToRead);
-    } success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        successRequest(operation.response, request.redirectedServer);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-        
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
-        if (operation.typeOfOperation == DownloadLIFOQueue)
-            [self resumeNextDownload];
-        
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
-    
-    return operation;
-}
-
 
 ///-----------------------------------
 /// @name Download File Session
@@ -497,26 +447,23 @@
 
 
 
-- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
+- (NSURLSessionDownloadTask *) downloadFileSession:(NSString *)remotePath toDestiny:(NSString *)localPath defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress successRequest:(void(^)(NSURLResponse *response, NSURL *filePath)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSError *error)) failureRequest {
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication withProgress:progressValue
-                                                                      success:^(NSURLResponse *response, NSURL *filePath) {
+    NSURLSessionDownloadTask *downloadTask = [request downloadWithSessionPath:remotePath toPath:localPath defaultPriority:defaultPriority onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+        downloadProgress(progress);
+    } success:^(NSURLResponse *response, NSURL *filePath) {
         
-                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                          successRequest(response,filePath);
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        successRequest(response,filePath);
         
-                                                                      } failure:^(NSURLResponse *response, NSError *error) {
-                                                                          [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
-                                                                          failureRequest(response,error);
-                                                                      }];
-    
-    
-    
+    } failure:^(NSURLResponse *response, NSError *error) {
+        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+        failureRequest(response,error);
+    }];
     
     return downloadTask;
 }
@@ -546,68 +493,28 @@
         block(session,downloadTask,bytesWritten,totalBytesWritten,totalBytesExpectedToWrite);
     }];
     
-    
-}
-
-
-
-///-----------------------------------
-/// @name Upload File
-///-----------------------------------
-
-- (NSOperation *) uploadFile:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progressUpload:(void(^)(NSUInteger bytesWrote,long long totalBytesWrote, long long totalBytesExpectedToWrote))progressUpload successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest  failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest shouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler{
-    
-    remotePath = [remotePath encodeString:NSUTF8StringEncoding];
-    
-    OCUploadOperation *operation = [OCUploadOperation new];
-    
-    [operation createOperationWith:localPath toDestiny:remotePath onCommunication:sharedOCCommunication progressUpload:^(NSUInteger bytesWrote, long long totalBytesWrote, long long totalBytesExpectedToWrote) {
-        progressUpload(bytesWrote, totalBytesWrote, totalBytesExpectedToWrote);
-    } successRequest:^(NSHTTPURLResponse *response, NSString *redirectedServer) {
-        successRequest(response, redirectedServer);
-    } failureRequest:^(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer, NSError *error) {
-        
-        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-        
-        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-            
-            if (err) {
-                failureRequest(response, redirectedServer, err);
-            }else{
-                failureRequest(response, redirectedServer, error);
-            }
-            
-        }];
-        
-        
-    } failureBeforeRequest:^(NSError *error) {
-        failureBeforeRequest(error);
-    } shouldExecuteAsBackgroundTaskWithExpirationHandler:^{
-        handler();
-    }];
-    
-    return operation;
 }
 
 ///-----------------------------------
 /// @name Upload File Session
 ///-----------------------------------
 
-- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication withProgress:(NSProgress * __autoreleasing *) progressValue successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
+- (NSURLSessionUploadTask *) uploadFileSession:(NSString *) localPath toDestiny:(NSString *) remotePath onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress successRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer)) successRequest failureRequest:(void(^)(NSURLResponse *response, NSString *redirectedServer, NSError *error)) failureRequest failureBeforeRequest:(void(^)(NSError *error)) failureBeforeRequest {
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
+    
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication withProgress:progressValue
-        success:^(NSURLResponse *response, id responseObjec){
-            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+            uploadProgress(progress);
+        } success:^(NSURLResponse *response, id responseObjec){
+            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
             successRequest(response, @"");
         } failure:^(NSURLResponse *response, id responseObject, NSError *error) {
-            [UtilsFramework addCookiesToStorageFromResponse:(NSHTTPURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
+            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
             //TODO: The second parameter is the redirected server
 
             NSData *responseData = (NSData*) responseObject;
@@ -668,28 +575,28 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             
 //            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStrReadFile: %@", newStr);
 
             OCXMLParser *parser = [[OCXMLParser alloc]init];
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
             //Return success
-            successRequest(operation.response, directoryList, request.redirectedServer);
+            successRequest(response, directoryList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
         
     }];
     
@@ -705,14 +612,13 @@
                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    request.securityPolicy = _securityPolicy;
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
     }
     
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         NSData *data = (NSData*) responseObject;
         NSString *versionString = [NSString new];
@@ -730,10 +636,10 @@
         } else {
             NSLog(@"Error parsing JSON: data is null");
         }
-        success(operation.response, versionString, request.redirectedServer);
+        success(response, versionString, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
     
 }
@@ -746,14 +652,14 @@
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
                      failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request requestUserNameByCookie:cookieString onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        success(operation.response, operation.responseData, request.redirectedServer);
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    
+    [request requestUserNameOfServer: path byCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        success(response, responseObject, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
 }
 
@@ -761,14 +667,13 @@
                      successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer)) success
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:path]];
-    request.securityPolicy = _securityPolicy;
+    OCWebDAVClient *request = [OCWebDAVClient new];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
     }
     
-    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    [request getStatusOfTheServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
         if (responseObject) {
             
@@ -777,7 +682,7 @@
             
             if(error) {
                 // NSLog(@"Error parsing JSON: %@", error);
-                failure(operation.response, operation.error, request.redirectedServer);
+                failure(response, error, request.redirectedServer);
             }else{
                 
                 self.currentServerVersion = [jsonArray valueForKey:@"version"];
@@ -788,17 +693,17 @@
                 BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_forbidden_characters];
                 BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_capabilities];
                 
-                success(operation.response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
+                success(response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, request.redirectedServer);
             }
             
         } else {
             // NSLog(@"Error parsing JSON: data is null");
-            failure(operation.response, operation.error, request.redirectedServer);
+            failure(response, nil, request.redirectedServer);
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failure(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failure(response, error, request.redirectedServer);
     }];
 
     
@@ -815,26 +720,26 @@
     path = [path encodeString:NSUTF8StringEncoding];
     path = [path stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request listSharedByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request listSharedByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
            // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, request.redirectedServer);
+            successRequest(response, sharedList, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -848,25 +753,25 @@
     
    path = [path encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
            // NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
             //Return success
-            successRequest(operation.response, sharedList, request.redirectedServer);
+            successRequest(response, sharedList, request.redirectedServer);
         }
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -878,19 +783,19 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
       //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
@@ -900,19 +805,19 @@
                 
                 if (url != nil) {
                     
-                    successRequest(operation.response, url, request.redirectedServer);
+                    successRequest(response, url, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(operation.response, token, request.redirectedServer);
+                    successRequest(response, token, request.redirectedServer);
                     
                 }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
                 
                 break;
@@ -921,12 +826,12 @@
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -939,19 +844,19 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
       //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
@@ -961,19 +866,19 @@
                 
                 if (url != nil) {
                     
-                    successRequest(operation.response, url, request.redirectedServer);
+                    successRequest(response, url, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(operation.response, token, request.redirectedServer);
+                    successRequest(response, token, request.redirectedServer);
                     
                 }else{
                     
                     NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                    failureRequest(operation.response, error, request.redirectedServer);
+                    failureRequest(response, error, request.redirectedServer);
                 }
 
                 break;
@@ -982,12 +887,12 @@
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -999,39 +904,36 @@
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     userOrGroup = [userOrGroup encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
-        NSData *response = (NSData*) responseObject;
+    
+    [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
         //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
-                successRequest(operation.response, request.redirectedServer);                
+                successRequest(response, request.redirectedServer);
                 break;
             }
                 
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        
-        failureRequest(operation.response, error, request.redirectedServer);
-        
-        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
     
 }
@@ -1045,18 +947,18 @@
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
             //Return success
-            successRequest(operation.response, request.redirectedServer);
+            successRequest(response, request.redirectedServer);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -1069,19 +971,19 @@
     path = [path stringByAppendingString:k_url_acces_shared_api];
     path = [path stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)idRemoteShared]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
         
-            NSData *response = (NSData*) responseObject;
+            NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
             // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
             
-            [parser initParserWithData:response];
+            [parser initParserWithData:responseData];
             
              BOOL isShared = NO;
             
@@ -1099,11 +1001,11 @@
             }
      
             //Return success
-            successRequest(operation.response, request.redirectedServer, isShared, shareDto);
+            successRequest(response, request.redirectedServer, isShared, shareDto);
         }
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -1117,37 +1019,37 @@
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)shareId]];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
         
      //   NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
         
-        [parser initParserWithData:response];
+        [parser initParserWithData:responseData];
         
         
         switch (parser.statusCode) {
             case kOCSharedAPISuccessful:
             {
-                successRequest(operation.response, request.redirectedServer);
+                successRequest(response, request.redirectedServer);
                 break;
             }
             
             default:
             {
                 NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }
         }
 
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-         failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+         failureRequest(response, error, request.redirectedServer);
     }];
     
 }
@@ -1159,20 +1061,20 @@
     
     searchString = [searchString encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
     
-    [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request searchUsersAndGroupsWith:searchString forPage:page with:resultsPerPage ofServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
+        NSData *responseData = (NSData*) responseObject;
         
         NSMutableArray *itemList = [NSMutableArray new];
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
         
         if (error == nil) {
             
@@ -1208,18 +1110,18 @@
                 }
                 
                 NSError *error = [UtilsFramework getErrorWithCode:statusCode andCustomMessageFromTheServer:message];
-                failureRequest(operation.response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
                 
             }
             
             //Return success
-            successRequest(operation.response, itemList, request.redirectedServer);
+            successRequest(response, itemList, request.redirectedServer);
             
         }
         
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        failureRequest(operation.response, error, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
 }
 
@@ -1228,24 +1130,22 @@
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_capabilities];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(OCHTTPRequestOperation *operation, id responseObject) {
+    
+    [request getCapabilitiesOfServer:serverPath onCommunication:sharedOCComunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        NSData *response = (NSData*) responseObject;
-        
-        NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        NSData *responseData = (NSData*) responseObject;
         
         //Parse
         NSError *error;
-        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
+        NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
         NSLog(@"dic: %@",jsongParsed);
         
         OCCapabilities *capabilities = [OCCapabilities new];
         
-        if (jsongParsed.allKeys > 0 ) {
+        if (jsongParsed.allKeys > 0) {
             
             NSDictionary *ocs = [jsongParsed valueForKey:@"ocs"];
             NSDictionary *data = [ocs valueForKey:@"data"];
@@ -1340,12 +1240,10 @@
             
         }
         
-        successRequest(operation.response, capabilities, request.redirectedServer);
+        successRequest(response, capabilities, request.redirectedServer);
         
-    } failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-        
-        failureRequest(operation.response, error, request.redirectedServer);
-        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
     }];
     
 }
@@ -1353,7 +1251,7 @@
 
 #pragma mark - Remote thumbnails
 
-- (NSOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
+- (NSURLSessionTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString *)filePath withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCComunication
                      successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
@@ -1361,149 +1259,24 @@
     serverPath = [serverPath stringByAppendingString:k_url_thumbnails];
     filePath = [filePath encodeString:NSUTF8StringEncoding];
     
-    OCWebDAVClient *request = [[OCWebDAVClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+    OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
-    request.securityPolicy = _securityPolicy;
     
-    NSOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
-            success:^(OCHTTPRequestOperation *operation, id responseObject) {
-                NSData *response = (NSData*) responseObject;
+    
+    OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+            success:^(NSHTTPURLResponse *response, id responseObject) {
+                NSData *responseData = (NSData*) responseObject;
+                
+                successRequest(response, responseData, request.redirectedServer);
                                     
-                //NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
-
-                successRequest(operation.response, response, request.redirectedServer);
-                                    
-            }
-            failure:^(OCHTTPRequestOperation *operation, NSError *error) {
-                failureRequest(operation.response, error, request.redirectedServer);
+            } failure:^(NSHTTPURLResponse *response, id  _Nullable responseObject, NSError * _Nonnull error) {
+                failureRequest(response, error, request.redirectedServer);
             }];
+    
+    [operation resume];
 
     return operation;
 }
-
-
-#pragma mark - Queue System
-
-- (void) addOperationToTheNetworkQueue:(OCHTTPRequestOperation *) operation {
-    
-    [self eraseURLCache];
-    
-    //Suspended the queue while is added a new operation
-    [_networkOperationsQueue setSuspended:YES];
-    
-    NSArray *operationArray = [_networkOperationsQueue operations];
-    
-    //NSLog(@"operations array has: %d operations", operationArray.count);
-    //NSLog(@"current operation description: %@", operation.description);
-    
-    OCHTTPRequestOperation *lastOperationDownload;
-    OCHTTPRequestOperation *firstOperationDownload;
-    OCHTTPRequestOperation *lastOperationUpload;
-    OCHTTPRequestOperation *lastOperationNavigation;
-    
-    
-    //We get the last operation for each type
-    for (int i = 0 ; i < [operationArray count] ; i++) {
-        OCHTTPRequestOperation *currentOperation = [operationArray objectAtIndex:i];
-        
-        
-        switch (operation.typeOfOperation) {
-            case DownloadLIFOQueue:
-                if(currentOperation.typeOfOperation == DownloadLIFOQueue) {
-                    //Get first download operation in progress, for LIFO option
-                    if (currentOperation.isExecuting)
-                        firstOperationDownload = currentOperation;
-                }
-                 break;
-            
-            case DownloadFIFOQueue:
-                if(currentOperation.typeOfOperation == DownloadFIFOQueue) {
-                    lastOperationDownload = currentOperation;
-                }
-                break;
-            case UploadQueue:
-                if(currentOperation.typeOfOperation == UploadQueue)
-                    lastOperationUpload = currentOperation;
-                
-                break;
-            case NavigationQueue:
-                if(currentOperation.typeOfOperation == NavigationQueue)
-                    lastOperationNavigation = currentOperation;
-                
-                break;
-                
-            default:
-                break;
-        }
-    }
-    
-    //We add the dependency
-    switch (operation.typeOfOperation) {
-        case DownloadLIFOQueue:
-            //If there are download in progress, pause and store in download array
-            if (firstOperationDownload) {
-                [firstOperationDownload pause];
-                [_downloadOperationQueueArray addObject:firstOperationDownload];
-            }
-            break;
-        case DownloadFIFOQueue:
-            if(lastOperationDownload)
-                [operation addDependency:lastOperationDownload];
-            
-            break;
-        case UploadQueue:
-            if(lastOperationUpload)
-                [operation addDependency:lastOperationUpload];
-            
-            break;
-        case NavigationQueue:
-            if(lastOperationNavigation)
-                [operation addDependency:lastOperationNavigation];
-            
-            break;
-            
-        default:
-            break;
-    }
-    
-    //Finally we add the new operation to the queue
-    [self.networkOperationsQueue addOperation:operation];
-    
-    //Relaunch the queue again
-    [_networkOperationsQueue setSuspended:NO];
-    
-}
-
-///-----------------------------------
-/// @name Resume Next Download
-///-----------------------------------
-
-/**
- * This method is called when the download is finished (success or failure).
- * Here we check if exist download operation in LIFO queue array and begin with the next
- *
- * @warning Only we use this method when we are using LIFO queue system
- */
-- (void) resumeNextDownload{
-    
-    //Check if there are donwloads in array
-    if (_downloadOperationQueueArray.count > 0) {
-        
-        OCHTTPRequestOperation *nextPausedDownload = [_downloadOperationQueueArray lastObject];
-        //Check if the download operation was cancelled previously
-        if (nextPausedDownload.isCancelled) {
-            [nextPausedDownload cancel];
-            [_downloadOperationQueueArray removeLastObject];
-            //Call again this method to the next download
-            [self resumeNextDownload];
-        } else {
-           
-            [nextPausedDownload resume];
-            [_downloadOperationQueueArray removeLastObject];
-        }
-    }
-}
-
 
 #pragma mark - Clear Cache
 

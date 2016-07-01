@@ -1,5 +1,5 @@
 //
-//  OCChunkInputStream.h
+//  OCConstants.h
 //  Owncloud iOs Client
 //
 // Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)

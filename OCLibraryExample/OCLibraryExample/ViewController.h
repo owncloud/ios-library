@@ -50,9 +50,8 @@
 @property (nonatomic,strong)NSString *pathOfLocalUploadedFile;
 
 //Operations
-@property(nonatomic,strong)NSOperation *downloadOperation;
-@property(nonatomic,strong)NSOperation *uploadOperation;
-
+@property(nonatomic,strong)NSURLSessionTask *downloadTask;
+@property(nonatomic,strong)NSURLSessionTask *uploadTask;
 
 //Read Folder actions
 - (IBAction)readFolder:(id)sender;
