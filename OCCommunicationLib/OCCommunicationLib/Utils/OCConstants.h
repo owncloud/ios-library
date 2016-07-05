@@ -39,6 +39,7 @@
 #define k_max_file_share_permission 19
 #define k_min_folder_share_permission 1
 #define k_max_folder_share_permission 31
-#define k_defaul_file_remote_share_permission 3
-#define k_defaul_folder_remote_share_permission 15
+#define k_defaul_file_remote_share_permission_no_support_share_option 3
+#define k_defaul_folder_remote_share_permission_no_support_share_option 15
+
 
