@@ -65,7 +65,7 @@
 //Version of the server that support forbidden characters
 #define k_version_support_forbidden_characters [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
 
-//vErsion of the server that support Capabilities
+//Version of the server that support Capabilities
 #define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
 
 //Version of the server that support enable/disabled share privilege option for federated shares
