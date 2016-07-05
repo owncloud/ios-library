@@ -68,7 +68,7 @@
 //vErsion of the server that support Capabilities
 #define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
 
-//vErsion of the server that support Capabilities
+//Version of the server that support enable/disabled share privilege option for federated shares
 #define k_version_support_share_option_fed_share [NSArray arrayWithObjects:  @"9", @"1", @"0", nil]
 
 //Name of the session using for upload files with NSURLSession
