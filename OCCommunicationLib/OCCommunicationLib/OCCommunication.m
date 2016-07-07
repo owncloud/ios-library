@@ -729,7 +729,7 @@
             NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-           // NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+          //NSLog(@"response: %@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
             
             [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
@@ -762,7 +762,10 @@
             NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
             
-           // NSString *str = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+//            NSString *str = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+//            NSLog(@"responseDataReadSharedByServer:andPath: %@", str);
+//            NSLog(@"pathFolders: %@", path);
+//            NSLog(@"serverPath: %@", serverPath);
             
             [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
