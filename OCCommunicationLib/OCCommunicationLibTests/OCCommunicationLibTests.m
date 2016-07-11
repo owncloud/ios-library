@@ -2134,7 +2134,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication getFeaturesSupportedByServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, NSString *redirectedServer) {
+    [_sharedOCCommunication getFeaturesSupportedByServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer) {
         
         NSLog(@"Server features correctly read");
         NSLog(@"hasShareSupport: %d", hasShareSupport);
@@ -2142,6 +2142,7 @@
         NSLog(@"hasCookiesSupport: %d", hasCookiesSupport);
         NSLog(@"hasForbiddenCharactersSupport: %d", hasForbiddenCharactersSupport);
         NSLog(@"hasCapabilitiesSupport: %d", hasCapabilitiesSupport);
+        NSLog(@"hasFedSharesOptionShareSupport: %d", hasFedSharesOptionShareSupport);
         
         dispatch_semaphore_signal(semaphore);
         

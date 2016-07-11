@@ -59,14 +59,17 @@
 //Version of the server that have sharee API
 #define k_version_support_sharee_api [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
 
-//Version of the server that support cookies
+//Version of the server that supports cookies
 #define k_version_support_cookies [NSArray arrayWithObjects:  @"7", @"0", @"0", nil]
 
-//Version of the server that support forbidden characters
+//Version of the server that supports forbidden characters
 #define k_version_support_forbidden_characters [NSArray arrayWithObjects:  @"8", @"1", @"0", nil]
 
-//vErsion of the server that support Capabilities
+//Version of the server that supports Capabilities
 #define k_version_support_capabilities [NSArray arrayWithObjects:  @"8", @"2", @"0", nil]
+
+//Version of the server that supports enable/disabled share privilege option for federated shares
+#define k_version_support_share_option_fed_share [NSArray arrayWithObjects:  @"9", @"1", @"0", nil]
 
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
