@@ -77,11 +77,18 @@
 //Name of the download session using for download files with NSURLSession
 #define k_download_session_name @"com.owncloud.download.session"
 
+//Name of the download session using for download files with NSURLSession in ownCloudExtApp
+#define k_download_session_name_ext_app @"com.owncloud.download.session.extApp.extension"
+
 //Name of the download session using for download files with NSURLSession
 #define k_download_folder_session_name @"com.owncloud.download.folder.session"
 
 //Name of the download session using for download files with NSURLSession
 #define k_network_operation_session_name @"com.owncloud.network.operation.session"
+
+//Name of the container to configure NSURLSessions
+#define k_shared_container_identifier @"group.com.owncloud.iOSmobileapp";
+
 
 
 
