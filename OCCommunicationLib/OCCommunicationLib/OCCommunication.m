@@ -584,7 +584,7 @@
         if (successRequest) {
             NSData *responseData = (NSData*) responseObject;
             
-//            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+//            NSString* newStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStrReadFile: %@", newStr);
 
             OCXMLParser *parser = [[OCXMLParser alloc]init];
