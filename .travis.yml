@@ -10,7 +10,6 @@ xcode_sdk: iphonesimulator
 
 before_install:
 - brew update; brew update
-- brew reinstall -v --HEAD xctool
 - echo "#define k_base_url @\"$baseUrlTravis\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define k_webdav_base_url @\"$webdavBaseUrlTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
 - echo "#define k_user @\"$userTravis\"" >> OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h
