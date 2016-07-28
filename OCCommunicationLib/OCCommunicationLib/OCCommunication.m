@@ -424,8 +424,8 @@
         if (successRequest) {
             NSData *responseData = (NSData*) responseObject;
             
-//            NSString* newStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-//            NSLog(@"newStr: %@", newStr);
+//            NSString* newStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+//            NSLog(@"newStrReadFolder: %@", newStr);
             
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:responseData];
