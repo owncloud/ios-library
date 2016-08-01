@@ -64,9 +64,6 @@
         self.isCookiesAvailable = NO;
         self.isForbiddenCharactersAvailable = NO;
         
-        self.isSAMLRedirectionProcess = NO;
-        self.numberCurrentSAMLRedirectionProcess = 0;
-        
 #ifdef UNIT_TEST
         
         self.uploadSessionManager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];

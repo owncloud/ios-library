@@ -75,13 +75,6 @@ typedef enum {
 @property BOOL isForbiddenCharactersAvailable;
 
 
-/* This flag indicate if we are follow redirection process */
-@property BOOL isSAMLRedirectionProcess;
-
-/* This flag indicate the number of redirections made so far */
-@property NSInteger numberCurrentSAMLRedirectionProcess;
-
-
 
 ///-----------------------------------
 /// @name Init with Upload Session Manager
