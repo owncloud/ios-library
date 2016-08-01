@@ -42,4 +42,4 @@
 #define k_default_file_remote_share_permission_no_support_share_option 3
 #define k_default_folder_remote_share_permission_no_support_share_option 15
 
-
+#define k_max_redirections_allow 5

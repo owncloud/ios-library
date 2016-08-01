@@ -30,7 +30,7 @@
 #import "OCErrorMsg.h"
 #import "OCConstants.h"
 
-#define kSAMLFragmentArray [NSArray arrayWithObjects: @"wayf", @"saml", nil]
+#define kSAMLFragmentArray [NSArray arrayWithObjects: @"wayf", @"saml", @"sso_orig_uri", nil]
 
 @implementation UtilsFramework
 

@@ -621,6 +621,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 - (void) setRedirectionBlockOnDatataskWithOCCommunication: (OCCommunication *) sharedOCCommunication {
     
+    
     [sharedOCCommunication.networkSessionManager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
         
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
@@ -633,6 +634,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             if ([UtilsFramework isURLWithSamlFragment:responseURLString] || httpResponse.statusCode == k_redirected_code_1) {
                 //We set the redirectedServer in case SAML or is a permanent redirection
                 self.redirectedServer = responseURLString;
+                
             }
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
@@ -658,6 +660,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         } else {
             return request;
         }
+        
     }];
 }
 
