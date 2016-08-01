@@ -852,6 +852,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             if ([UtilsFramework isURLWithSamlFragment:responseURLString] || httpResponse.statusCode == k_redirected_code_1) {
                 //We set the redirectedServer in case SAML or is a permanent redirection
                 self.redirectedServer = responseURLString;
+                
             }
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
@@ -886,6 +887,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         } else {
             return request;
         }
+        
     }];
     
     return operation;
