@@ -74,6 +74,8 @@ typedef enum {
 /* This flag indicate if the server handling forbidden characters */
 @property BOOL isForbiddenCharactersAvailable;
 
+
+
 ///-----------------------------------
 /// @name Init with Upload Session Manager
 ///-----------------------------------

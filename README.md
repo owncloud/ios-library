@@ -1,4 +1,4 @@
-# ownCloud iOS Library v 1.2.1
+# ownCloud iOS Library v 2.0.0
 
 ### Introduction
 Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
@@ -92,7 +92,7 @@ Source: http://nvie.com/posts/a-successful-git-branching-model
 
 ownCloud iOS library is available under the MIT License. 
  
-Copyright (c) 2015 ownCloud (http://www.owncloud.org/)
+Copyright (c) 2016 ownCloud (http://www.owncloud.org/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -109,13 +109,13 @@ THE SOFTWARE.
 
 #### Third party libraries
 
-ownCloud iOS library uses AFNetworking version 2.6.0. AFNetworking is available under the MIT license. 
+ownCloud iOS library uses AFNetworking version 3.1.0 AFNetworking is available under the MIT license. 
 
 ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/DZWebDAVClient. Copyright (c) 2012 Zachary Waldowski, Troy Brant, Marcus Rohrmoser, and Sam Soffes under the MIT license.
 
 
 ### Compatibility
 
-ownCloud iOS library supports iOS 7, iOS 8 and iOS 9 and works in Xcode 7.
+ownCloud iOS library supports iOS 8 and iOS 9 and works in Xcode 7.
 
 ownCloud iOS library supports ownCloud server from version 4.5.
