@@ -2,7 +2,7 @@
 //  ConfigTests.h
 //  ownCloud iOS library
 //
-// Copyright (C) 2015 ownCloud Inc. (http://www.owncloud.org/)
+// Copyright (C) 2016, ownCloud GmbH.  ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
