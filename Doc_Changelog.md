@@ -1,4 +1,7 @@
-## What's new in 2.0.0 version
+## What's new in 2.0.1 version
+- Updated Copyright, Xcode8 and iOS10 support
+
+## 2.0.0 version
 
 - Updated AFNetworking library v3.1.0
 - All the network request made using NSOperation was modified to use NSURLSession
