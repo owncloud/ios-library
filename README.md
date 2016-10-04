@@ -6,7 +6,7 @@ Add this library in your project and integrate your application with ownCloud se
 
 ### Install Library
 #### 2.1. Information how to get the library
-Get this code and compile with Xcode 6. In the repository it is not only the library project “ownCloud iOS library” but also the example project “OCLibraryExample”. Thanks to the “OCLibraryExample” you will learn how to use the library.
+Get this code and compile with Xcode 8. In the repository it is not only the library project “ownCloud iOS library” but also the example project “OCLibraryExample”. Thanks to the “OCLibraryExample” you will learn how to use the library.
 #### 2.2. Add library to your project
 There are two ways of adding this library to your code:
 
