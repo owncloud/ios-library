@@ -1,11 +1,11 @@
 language: objective-c
 osx_image: xcode8
-xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
-xcode_scheme: ownCloud iOS library
-xcode_sdk: iphonesimulator
+#xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
+#xcode_scheme: ownCloud iOS library
+#xcode_sdk: iphonesimulator
 
 script:
-- xcodebuild -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=YES
+- set -o pipefail && xcodebuild -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' clean test build | xcpretty -c
 #- xctool test -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=YES
 
 before_install:
