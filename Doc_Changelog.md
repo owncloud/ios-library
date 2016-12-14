@@ -1,4 +1,7 @@
-## What's new in 2.0.1 version
+## What's new in 2.0.2 version
+- Updated travis validation
+
+## 2.0.1 version
 - Updated Copyright, Xcode8 and iOS10 support
 
 ## 2.0.0 version
