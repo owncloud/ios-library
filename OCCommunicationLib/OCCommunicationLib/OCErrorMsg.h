@@ -32,6 +32,7 @@
 #define kOCErrorProxyAuth 407
 #define kOCErrorServerTimeout 408
 #define kOCErrorServerInternalError 500
+#define kOCErrorServerMaintenanceError 503
 #define kOCErrorServerInsufficientStorage 507
 
 #define kOCErrorSharedAPIWrong 400
