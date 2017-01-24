@@ -627,6 +627,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [sessionManager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
         
+        if (response == nil) {
+            // needed to handle fake redirects to canonical addresses, as explained in https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/URLLoadingSystem/Articles/RequestChanges.html
+            return request;
+        }
+        
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
         NSDictionary *dict = [httpResponse allHeaderFields];
         //Server path of redirected server
@@ -638,6 +643,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 //We set the redirectedServer in case SAML or is a permanent redirection
                 self.redirectedServer = responseURLString;
                 
+                if ([UtilsFramework isURLWithSamlFragment:responseURLString]) {
+                    // if SAML request, we don't want to follow it; WebView takes care, not here -> nil to NO FOLLOW
+                    return nil;
+                }
             }
             
             NSMutableURLRequest *requestRedirect = [request mutableCopy];
@@ -654,14 +663,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             
             if (sharedOCCommunication.isCookiesAvailable) {
                 //We add the cookies of that URL
-                request = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:self.originalUrlServer];
+                // really needed? are not automatically added by NSURLSession?
+                requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:self.originalUrlServer];
             } else {
                 [UtilsFramework deleteAllCookies];
             }
+            
             return requestRedirect;
             
         } else {
-            return request;
+            // no location to redirect -> nil to NO FOLLOW
+            return nil;
         }
         
     }];
