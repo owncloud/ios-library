@@ -414,6 +414,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: urlString parameters: nil];
 
+    request.HTTPShouldHandleCookies = false;
+    
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     [operation resume];
