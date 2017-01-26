@@ -317,6 +317,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
     _requestMethod = @"HEAD";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
+    request.HTTPShouldHandleCookies = false;
     OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     [operation resume];
@@ -661,14 +662,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 //It is a request to share a file by link
                 requestRedirect = [self sharedRequestWithMethod:_requestMethod path:responseURLString parameters:nil];
                 [requestRedirect setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
-            }
-            
-            if (sharedOCCommunication.isCookiesAvailable) {
-                //We add the cookies of that URL
-                // really needed? are not automatically added by NSURLSession?
-                requestRedirect = [UtilsFramework getRequestWithCookiesByRequest:requestRedirect andOriginalUrlServer:self.originalUrlServer];
-            } else {
-                [UtilsFramework deleteAllCookies];
             }
             
             return requestRedirect;

@@ -263,6 +263,7 @@
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
 
     OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
