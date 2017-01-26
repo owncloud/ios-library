@@ -61,7 +61,7 @@
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
-        self.isCookiesAvailable = NO;
+        self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
 #ifdef UNIT_TEST
@@ -111,7 +111,7 @@
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
-        self.isCookiesAvailable = NO;
+        self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
         //Credentials not set yet
