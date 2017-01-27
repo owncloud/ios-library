@@ -61,7 +61,7 @@
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
-        self.isCookiesAvailable = NO;
+        self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
 #ifdef UNIT_TEST
@@ -111,7 +111,7 @@
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
-        self.isCookiesAvailable = NO;
+        self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
         //Credentials not set yet
@@ -263,6 +263,7 @@
        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
 
     OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
     
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
