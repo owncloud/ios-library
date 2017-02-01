@@ -1,4 +1,10 @@
-## What's new in 2.0.2 version
+## What's new in 2.0.3 version
+- Added specific error code for maintenance mode
+- Added specific error code for quota excess
+- Improved recognition of SAML expiration
+- Improved handling of cookies in HEAD requests
+
+## 2.0.2 version
 - Updated travis validation
 
 ## 2.0.1 version
