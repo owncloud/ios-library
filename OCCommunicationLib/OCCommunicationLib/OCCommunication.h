@@ -49,7 +49,8 @@ typedef enum {
     OCErrorMovingDestinyNameHaveForbiddenCharacters = 110,//On move file or folder
     OCErrorMovingTheDestinyAndOriginAreTheSame = 111, //On move file or folder
     OCErrorMovingFolderInsideHimself = 112, //On move file or folder
-    OCErrorFileToUploadDoesNotExist = 120 //The file that we want upload does not exist
+    OCErrorFileToUploadDoesNotExist = 120, //The file that we want upload does not exist
+    OCErrorFirewallRule = 130 //The file that we want upload does not exist
 } OCErrorEnum;
 
 //Private properties
