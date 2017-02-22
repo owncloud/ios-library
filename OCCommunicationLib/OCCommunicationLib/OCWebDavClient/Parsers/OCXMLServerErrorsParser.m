@@ -29,6 +29,7 @@
 #import "OCXMLServerErrorsParser.h"
 #import "UtilsFramework.h"
 #import "OCErrorMsg.h"
+#import "OCCommunication.h"
 
 #define k_excepcion_element @"s:exception"
 #define k_message_element @"s:message"
@@ -76,7 +77,7 @@ NSString *OCErrorMessage = @"oc_message";
         self.xmlString = [NSMutableString string];
     }
     
-  //  NSLog(@"xml String: %@", self.xmlString);
+    NSLog(@"xml String: %@", self.xmlString);
     
     if (!self.resultDict) {
         self.resultDict = [NSMutableDictionary dictionary];
@@ -85,8 +86,6 @@ NSString *OCErrorMessage = @"oc_message";
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
-    
-  //  NSLog(@"elementName: %@:%@", elementName,self.xmlString);
     
     if ([elementName isEqualToString:k_excepcion_element]) {
         
@@ -113,7 +112,7 @@ NSString *OCErrorMessage = @"oc_message";
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
-  //  NSLog(@"Finish: %@", self.resultDict);
+    NSLog(@"Finish: %@", self.resultDict);
     
     [self checkTheResultLookingForErrors];
 
@@ -126,7 +125,9 @@ NSString *OCErrorMessage = @"oc_message";
     NSError *error = nil;
     
     if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
-        error = [UtilsFramework getErrorByCodeId:OCServerErrorForbiddenCharacters];
+        error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
+    } else if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
+        error = [UtilsFramework getErrorByCodeId:OCErrorFirewallRule];
     }
     
     self.finishBlock(error);

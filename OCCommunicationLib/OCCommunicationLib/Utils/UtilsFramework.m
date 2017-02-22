@@ -239,16 +239,6 @@
             break;
         }
             
-        case OCServerErrorForbiddenCharacters:
-        {
-            NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"Server said: File name contains at least one invalid character" forKey:NSLocalizedDescriptionKey];
-            
-            error = [NSError errorWithDomain:k_domain_error_code code:OCServerErrorForbiddenCharacters userInfo:details];
-            break;
-        }
-            
-            
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
