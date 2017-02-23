@@ -126,8 +126,9 @@ NSString *OCErrorMessage = @"oc_message";
     
     if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
         error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
-    } else if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
-        error = [UtilsFramework getErrorByCodeId:OCErrorFirewallRule];
+    } else {
+        //TODO: here we should control an status error code on the XML to know the exact error
+        error = [UtilsFramework getErrorWithCode:OCErrorForbidenUnknow andCustomMessageFromTheServer:self.message];
     }
     
     self.finishBlock(error);

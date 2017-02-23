@@ -238,7 +238,14 @@
             error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
+        case OCErrorForbidenUnknow:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"You are trying to do a forbbiden operation" forKey:NSLocalizedDescriptionKey];
             
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbidenUnknow userInfo:details];
+            break;
+        }
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
