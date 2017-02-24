@@ -272,6 +272,16 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
+    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        if (successRequest) {
+            successRequest(response, request.redirectedServer);
+        }
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+    }];
+    
+    
+    
     [request checkServer:path onCommunication:sharedOCCommunication
                     success:^(NSHTTPURLResponse *response, id responseObject) {
                         if (successRequest) {
