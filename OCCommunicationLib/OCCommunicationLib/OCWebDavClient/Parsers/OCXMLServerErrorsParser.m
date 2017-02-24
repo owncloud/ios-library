@@ -128,7 +128,7 @@ NSString *OCErrorMessage = @"oc_message";
         error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
     } else {
         //TODO: here we should control an status error code on the XML to know the exact error
-        error = [UtilsFramework getErrorWithCode:OCErrorForbidenUnknow andCustomMessageFromTheServer:self.message];
+        error = [UtilsFramework getErrorWithCode:OCErrorForbidenUnknow andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
     }
     
     self.finishBlock(error);
