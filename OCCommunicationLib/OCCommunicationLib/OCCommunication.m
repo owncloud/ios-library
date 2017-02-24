@@ -412,8 +412,18 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
-        NSLog(@"Failure");
-        failureRequest(response, error, token, request.redirectedServer);
+        
+        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+        
+        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+            
+            if (err) {
+                failureRequest(response, err,token, request.redirectedServer);
+            }else{
+                failureRequest(response, error, token, request.redirectedServer);
+            }
+            
+        }];
     }];
 }
 
@@ -1331,7 +1341,7 @@
 
 - (void) returnErrorWithResponse:(NSHTTPURLResponse *) response andResponseData:(NSData *) responseData andError:(NSError *) error failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest andRequest:(OCWebDAVClient *) request {
     OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-    
+       
     [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
         
         if (err) {
