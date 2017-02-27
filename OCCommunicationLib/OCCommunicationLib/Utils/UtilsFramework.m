@@ -426,12 +426,13 @@
  *
  */
 + (void) addCookiesToStorageFromResponse: (NSURLResponse *) response andPath:(NSURL *) url {
-    //TODO: Using NSURLSession this should not be necessary
-    /*NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:url];
+    
+    NSHTTPURLResponse *responseHTTP = (NSHTTPURLResponse *) response;
+    NSArray* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[responseHTTP allHeaderFields] forURL:url];
     
     for (NSHTTPCookie *current in cookies) {
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:current];
-    }*/
+    }
 }
 
 //-----------------------------------
