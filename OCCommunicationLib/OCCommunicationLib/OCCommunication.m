@@ -274,11 +274,9 @@
     [request checkServer:path onCommunication:sharedOCCommunication
                     success:^(NSHTTPURLResponse *response, id responseObject) {
                         if (successRequest) {
-                            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
                             successRequest(response, request.redirectedServer);
                         }
                     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-                        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
                         failureRequest(response, error, request.redirectedServer);
                     }];
 }
@@ -306,11 +304,10 @@
         [request makeCollection:path onCommunication:sharedOCCommunication
                         success:^(NSHTTPURLResponse *response, id responseObject) {
                             if (successRequest) {
-                                [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
                                 successRequest(response, request.redirectedServer);
                             }
                         } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-                            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
+                            
                             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
                             
                             [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
@@ -361,12 +358,9 @@
         
         [request movePath:sourcePath toPath:destinyPath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
             if (successRequest) {
-                [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:sourcePath]];
                 successRequest(response, request.redirectedServer);
             }
         } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-            
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:sourcePath]];
             
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
@@ -401,11 +395,9 @@
     
     [request deletePath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
             successRequest(response, request.redirectedServer);
         }
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -431,7 +423,6 @@
     
     [request listPath:path onCommunication:sharedOCCommunication withUserSessionToken:token success:^(NSHTTPURLResponse *response, id responseObject, NSString *token) {
         if (successRequest) {
-            
             NSData *responseData = (NSData*) responseObject;
             
 //            NSString* newStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
@@ -441,15 +432,12 @@
             [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
-            
             //Return success
             successRequest(response, directoryList, request.redirectedServer, token);
         }
         
     } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
         NSLog(@"Failure");
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, token, request.redirectedServer);
     }];
 }
@@ -604,14 +592,11 @@
             [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
             
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
-            
             //Return success
             successRequest(response, directoryList, request.redirectedServer);
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
         
     }];
@@ -673,10 +658,8 @@
     
     
     [request requestUserNameOfServer: path byCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         success(response, responseObject, request.redirectedServer);
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failure(response, error, request.redirectedServer);
     }];
 }
@@ -712,13 +695,11 @@
                 BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_capabilities];
                 BOOL hasFedSharesOptionShareSupport = [UtilsFramework isServerVersion:self.currentServerVersion higherThanLimitVersion:k_version_support_share_option_fed_share];
 
-                [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
-                
                 success(response, hasShareSupport, hasShareeSupport, hasCookiesSupport, hasForbiddenCharactersSupport, hasCapabilitiesSupport, hasFedSharesOptionShareSupport, request.redirectedServer);
             }
             
         } else {
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
+            // NSLog(@"Error parsing JSON: data is null");
             failure(response, nil, request.redirectedServer);
         }
         
@@ -755,14 +736,11 @@
             [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
-            
             //Return success
             successRequest(response, sharedList, request.redirectedServer);
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -794,13 +772,10 @@
             [parser initParserWithData:responseData];
             NSMutableArray *sharedList = [parser.shareList mutableCopy];
             
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
-            
             //Return success
             successRequest(response, sharedList, request.redirectedServer);
         }
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -818,8 +793,6 @@
     
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath andPassword:password onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
-        
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
         
         NSData *responseData = (NSData*) responseObject;
         
@@ -863,7 +836,6 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -883,8 +855,6 @@
     
     [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
-        
         NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
@@ -927,7 +897,6 @@
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -945,9 +914,6 @@
     
     
     [request shareWith:userOrGroup shareeType:shareeType inServer:serverPath andPath:filePath andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
-        
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
-        
         NSData *responseData = (NSData*) responseObject;
         
         OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
@@ -972,7 +938,6 @@
         
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
         failureRequest(response, error, request.redirectedServer);
     }];
     
@@ -993,13 +958,11 @@
     
     [request unShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
             //Return success
             successRequest(response, request.redirectedServer);
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -1019,8 +982,6 @@
     
     [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
-            
-            [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         
             NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
@@ -1049,7 +1010,6 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:path]];
         failureRequest(response, error, request.redirectedServer);
     }];
 }
@@ -1069,8 +1029,6 @@
     
     
     [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
-        
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
         
         NSData *responseData = (NSData*) responseObject;
         
@@ -1096,7 +1054,6 @@
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:serverPath]];
          failureRequest(response, error, request.redirectedServer);
     }];
     
