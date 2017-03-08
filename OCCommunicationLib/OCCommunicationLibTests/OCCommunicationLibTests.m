@@ -465,7 +465,7 @@
         XCTFail(@"Error moving folder inside himself and Error");
         dispatch_semaphore_signal(semaphore);
     } errorBeforeRequest:^(NSError *error) {
-        if (error.code == OCErrorMovingFolderInsideHimself) {
+        if (error.code == OCErrorMovingFolderInsideItself) {
             NSLog(@"File renamed not moved");
         } else {
             XCTFail(@"Error moving folder inside himself");

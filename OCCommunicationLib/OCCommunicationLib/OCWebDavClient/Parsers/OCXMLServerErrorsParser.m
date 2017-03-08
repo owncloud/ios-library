@@ -125,10 +125,10 @@ NSString *OCErrorMessage = @"oc_message";
     NSError *error = nil;
     
     if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
-        error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
+        error = [UtilsFramework getErrorByCodeId:OCErrorForbiddenCharacters];
     } else {
         //TODO: here we should control an status error code on the XML to know the exact error
-        error = [UtilsFramework getErrorWithCode:OCErrorForbidenUnknow andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
+        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenUnknown andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
     }
     
     self.finishBlock(error);
