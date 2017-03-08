@@ -77,7 +77,7 @@ NSString *OCErrorMessage = @"oc_message";
         self.xmlString = [NSMutableString string];
     }
     
-    NSLog(@"xml String: %@", self.xmlString);
+    //NSLog(@"xml String: %@", self.xmlString);
     
     if (!self.resultDict) {
         self.resultDict = [NSMutableDictionary dictionary];
@@ -112,7 +112,7 @@ NSString *OCErrorMessage = @"oc_message";
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
-    NSLog(@"Finish: %@", self.resultDict);
+    //NSLog(@"Finish: %@", self.resultDict);
     
     [self checkTheResultLookingForErrors];
 
