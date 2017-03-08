@@ -53,49 +53,49 @@
  * @isFCSupported -> From ownCloud 8.1 the forbidden characters are controller by the server except the '/'
  */
 + (BOOL) isForbiddenCharactersInFileName:(NSString*)fileName withForbiddenCharactersSupported:(BOOL)isFCSupported{
-    BOOL thereAreForbidenCharacters = NO;
+    BOOL thereAreForbiddenCharacters = NO;
     
     //Check the filename
     for(NSInteger i = 0 ;i<[fileName length]; i++) {
         
         if ([fileName characterAtIndex:i]=='/'){
-            thereAreForbidenCharacters = YES;
+            thereAreForbiddenCharacters = YES;
         }
         
         if (!isFCSupported) {
             
             if ([fileName characterAtIndex:i] == '\\'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '<'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '>'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '"'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == ','){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == ':'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '|'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '?'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
             if ([fileName characterAtIndex:i] == '*'){
-                thereAreForbidenCharacters = YES;
+                thereAreForbiddenCharacters = YES;
             }
         }
  
     }
     
-    return thereAreForbidenCharacters;
+    return thereAreForbiddenCharacters;
 }
 
 + (NSError *) getErrorWithCode:(NSInteger)errorCode andCustomMessageFromTheServer:(NSString *)message {
@@ -158,9 +158,9 @@
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"Unknow error" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"Unknown error" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknow userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknown userInfo:details];
             break;
         }
     }
@@ -185,12 +185,12 @@
     NSError *error = nil;
     
     switch (errorCode) {
-        case OCErrorForbidenCharacters:
+        case OCErrorForbiddenCharacters:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"You have entered forbbiden characters" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"You have entered forbidden characters" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbidenCharacters userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenCharacters userInfo:details];
             break;
         }
             
@@ -212,12 +212,12 @@
             break;
         }
             
-        case OCErrorMovingFolderInsideHimself:
+        case OCErrorMovingFolderInsideItself:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"You are trying to move a folder inside himself" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"You are trying to move a folder inside itself" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingFolderInsideHimself userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorMovingFolderInsideItself userInfo:details];
             break;
         }
             
@@ -233,25 +233,25 @@
         case kOCErrorServerForbidden:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"You are trying to do a forbbiden operation" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"You are trying to do a forbidden operation" forKey:NSLocalizedDescriptionKey];
             
             error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
-        case OCErrorForbidenUnknow:
+        case OCErrorForbiddenUnknown:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"You are trying to do a forbbiden operation" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"You are trying to do a forbidden operation" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbidenUnknow userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenUnknown userInfo:details];
             break;
         }
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"Unknow error" forKey:NSLocalizedDescriptionKey];
+            [details setValue:@"Unknown error" forKey:NSLocalizedDescriptionKey];
             
-            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknow userInfo:details];
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorUnknown userInfo:details];
             break;
         }
     }

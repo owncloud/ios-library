@@ -292,7 +292,7 @@
     
     
     if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
-        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
+        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbiddenCharacters];
         errorBeforeRequest(error);
     } else {
         OCWebDAVClient *request = [OCWebDAVClient new];
@@ -328,7 +328,7 @@
         errorBeforeRequest(error);
     } else if ([UtilsFramework isAFolderUnderItByNewURLString:destinyPath andOriginURLString:sourcePath]) {
         //We check we are not trying to move a folder inside himself
-        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideHimself];
+        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideItself];
         errorBeforeRequest(error);
     } else if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
         //We check that we are making a move not a rename to prevent special characters problems
