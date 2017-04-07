@@ -24,6 +24,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OCServerFeatures.h"
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
@@ -511,6 +512,8 @@ typedef enum {
 ///-----------------------------------
 
 /**
+ * DEPRECATED use + getFeaturesSupportedByServerForVersion: instead
+ *
  * Method get the features supported by the path server using the version string.
  *
  * Right now support:
@@ -519,6 +522,7 @@ typedef enum {
  * - Cookies
  * - Forbidden character manage by the server side
  * - Capabilities
+ * - Federated Shares has Option of Share
  *
  * @param path -> NSString server path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
@@ -530,8 +534,30 @@ typedef enum {
 
 - (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                        successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer)) success
-                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure;
+                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure __deprecated_msg("Use + getFeaturesSupportedByServerForVersion: instead");
 
+
+///-----------------------------------
+/// @name Get Features Supported By Server
+///-----------------------------------
+
+/**
+ * Method get the features supported by server for version.
+ *
+ * Right now support:
+ * - Share API
+ * - Sharee API
+ * - Cookies
+ * - Forbidden character manage by the server side
+ * - Capabilities
+ * - Federated Shares has Option of Share
+ *
+ * @param version -> NSString server version
+ *
+ * @return OCServerFeatures obj
+ *
+ */
+- (OCServerFeatures *) getFeaturesSupportedByServerForVersion:(NSString *)version;
 
 
 ///-----------------------------------

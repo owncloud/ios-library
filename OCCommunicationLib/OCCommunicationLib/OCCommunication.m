@@ -37,6 +37,7 @@
 #import "AFURLSessionManager.h"
 #import "OCShareUser.h"
 #import "OCCapabilities.h"
+#import "OCServerFeatures.h"
 
 @interface OCCommunication ()
 
@@ -203,7 +204,7 @@
                 break;
             }
             case credentialCookie:
-                NSLog(@"Cookie: %@", self.password);
+                //NSLog(@"Cookie: %@", self.password);
                 [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
                 break;
             case credentialOauth:
@@ -708,11 +709,21 @@
         failure(response, error, request.redirectedServer);
     }];
 
-    
-    
-    
 }
 
+- (OCServerFeatures *) getFeaturesSupportedByServerForVersion:(NSString *)version {
+    
+    BOOL hasShareSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_shared];
+    BOOL hasShareeSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_sharee_api];
+    BOOL hasCookiesSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_cookies];
+    BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_forbidden_characters];
+    BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_capabilities];
+    BOOL hasFedSharesOptionShareSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_share_option_fed_share];
+    
+    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport];
+    
+    return supportedFeatures;
+}
 
 - (void) readSharedByServer: (NSString *) path
             onCommunication:(OCCommunication *)sharedOCCommunication
@@ -1146,7 +1157,7 @@
         //Parse
         NSError *error;
         NSDictionary *jsongParsed = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-        NSLog(@"dic: %@",jsongParsed);
+        //NSLog(@"dic: %@",jsongParsed);
         
         OCCapabilities *capabilities = [OCCapabilities new];
         
