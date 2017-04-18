@@ -35,8 +35,7 @@
 #import "NSString+Encode.h"
 #import "OCConstants.h"
 
-#define k_api_user_url_xml @"index.php/ocs/cloud/user"
-#define k_api_user_url_json @"index.php/ocs/cloud/user?format=json"
+#define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
 #define k_group_sharee_type 1
