@@ -443,6 +443,45 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [operation resume];
 }
 
+
+- (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath
+                                andPath:(NSString * _Nonnull)filePath
+                               password:(NSString * _Nullable)password
+                         expirationTime:(NSString * _Nullable)expirationTime
+                            publicUpload:(BOOL)publicUpload
+                               linkName:(NSString * _Nullable)linkName
+                        onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                                success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                                failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
+   
+    NSParameterAssert(success);
+    
+    self.requestMethod = @"POST";
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:self.requestMethod path:serverPath parameters:nil];
+    self.postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
+    
+    if (password) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&password=%@",self.postStringForShare,password];
+    }
+    if (expirationTime) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&expireDate=%@",self.postStringForShare,expirationTime];
+    }
+    if (publicUpload) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
+    }
+    if (linkName) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&name=%@",self.postStringForShare,linkName];
+    }
+
+    
+    [request setHTTPBody:[self.postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+    [operation resume];
+}
+
 - (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath andPassword:(NSString *)password
                         onCommunication:(OCCommunication *)sharedOCCommunication
                                 success:(void(^)(NSHTTPURLResponse *, id))success
@@ -526,7 +565,48 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [operation resume];
 }
 
-- (void) updateShareItem:(NSInteger)shareId ofServerPath:(NSString*)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
+- (void) updateShareItem:(NSInteger)shareId
+            ofServerPath:(NSString * _Nonnull)serverPath
+     withPasswordProtect:(NSString * _Nullable)password
+       andExpirationTime:(NSString * _Nullable)expirationTime
+         andPublicUpload:(NSString * _Nullable)publicUpload
+             andLinkName:(NSString * _Nullable)linkName
+         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
+                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure {
+    
+    NSParameterAssert(success);
+    
+    _requestMethod = @"PUT";
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
+    
+    self.postStringForShare = @"";
+    
+    if (password) {
+        self.postStringForShare = [NSString stringWithFormat:@"password=%@",password];
+    } else if (expirationTime) {
+        self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
+    }else if (linkName) {
+        self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
+    } if ([publicUpload isEqualToString:@"false"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
+    } else if ([publicUpload isEqualToString:@"false"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
+    }
+    
+    [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+    [operation resume];
+}
+
+- (void) updateShareItem:(NSInteger)shareId
+            ofServerPath:(NSString*)serverPath
+     withPasswordProtect:(NSString*)password
+       andExpirationTime:(NSString*)expirationTime
+          andPermissions:(NSInteger)permissions
          onCommunication:(OCCommunication *)sharedOCCommunication
                  success:(void(^)(NSHTTPURLResponse *, id response))success
                  failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *error))failure{

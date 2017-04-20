@@ -195,7 +195,14 @@
             _currentShared.shareWithDisplayName = @"";
         }
         
-    } 
+    } else if ([elementName isEqualToString:@"name"]) {
+        
+        _currentShared.name = _xmlChars;
+        
+    } else if ([elementName isEqualToString:@"url"]) {
+        
+        _currentShared.url = _xmlChars;
+    }
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
