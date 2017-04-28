@@ -50,7 +50,8 @@ typedef enum {
     OCErrorMovingTheDestinyAndOriginAreTheSame = 111, //On move file or folder
     OCErrorMovingFolderInsideItself = 112, //On move file or folder
     OCErrorFileToUploadDoesNotExist = 120, //The file that we want upload does not exist
-    OCErrorForbiddenUnknown = 130 //For example the file that we want upload does not exist
+    OCErrorForbiddenUnknown = 130, //For example, no write permissions to the target folder of an upload
+    OCErrorForbiddenWithSpecificMessage = 131 // For example, forbidden due to a firewall rule
 } OCErrorEnum;
 
 //Private properties

@@ -35,6 +35,7 @@
 #define k_message_element @"s:message"
 
 #define k_forbidden_character_error @"InvalidPath"
+#define k_forbidden @"Forbidden"
 
 NSString *OCErrorException = @"oc_exception";
 NSString *OCErrorMessage = @"oc_message";
@@ -123,12 +124,19 @@ NSString *OCErrorMessage = @"oc_message";
 - (void) checkTheResultLookingForErrors{
     
     NSError *error = nil;
+    NSString *errorMessage = [self.resultDict objectForKey:OCErrorMessage];
+    if (errorMessage != nil) {
+        errorMessage = [errorMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    }
     
     if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
         error = [UtilsFramework getErrorByCodeId:OCErrorForbiddenCharacters];
+    } else if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden] &&
+               errorMessage != nil && errorMessage.length > 0) {
+        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenWithSpecificMessage andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
     } else {
         //TODO: here we should control an status error code on the XML to know the exact error
-        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenUnknown andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
+        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenUnknown andCustomMessageFromTheServer:errorMessage];
     }
     
     self.finishBlock(error);
