@@ -33,5 +33,7 @@
 @property (nonatomic, strong) ConfigTests *configTests;
 @property (nonatomic, strong) OCCommunication *sharedOCCommunication;
 
+-(void) privateTestGetFeaturesSupportedByServerForVersion: (NSString *) version
+                                            expectedResults: (NSArray *) expectedResults;
 
 @end

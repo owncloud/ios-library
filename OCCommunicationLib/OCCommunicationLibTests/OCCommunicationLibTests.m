@@ -2131,7 +2131,7 @@
  */
 - (void) testGetFeaturesSupportedByServer {
     
-    //We create a semaphore to wait until we recive the responses from Async calls
+    //We create a semaphore to wait until we receive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     [_sharedOCCommunication getFeaturesSupportedByServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer) {
@@ -2159,6 +2159,119 @@
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     
 }
+
+///-----------------------------------
+/// @name testGetFeaturesSupportedByServerForVersion
+///-----------------------------------
+
+- (void) privateTestGetFeaturesSupportedByServerForVersion:(NSString *)version expectedResults:(NSArray *)expectedResults {
+    OCServerFeatures *supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:version ];
+    
+    if (!supportedFeatures) {
+        XCTFail(@"Error reading server features for version %@, got NIL", version);
+    }
+    
+    if (supportedFeatures.hasShareSupport != [[expectedResults objectAtIndex:0] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasShareSupport %d for expected result %@", version, supportedFeatures.hasShareSupport, expectedResults[0]);
+    };
+    
+    if (supportedFeatures.hasShareeSupport != [[expectedResults objectAtIndex:1] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasShareeSupport %d", version, supportedFeatures.hasShareeSupport);
+    };
+    
+    if (supportedFeatures.hasCookiesSupport != [[expectedResults objectAtIndex:2] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasCookiesSupport %d", version, supportedFeatures.hasCookiesSupport);
+    };
+    
+    if (supportedFeatures.hasForbiddenCharactersSupport != [[expectedResults objectAtIndex:3] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasForbiddenCharactersSupport %d", version, supportedFeatures.hasForbiddenCharactersSupport);
+    };
+    
+    if (supportedFeatures.hasCapabilitiesSupport != [[expectedResults objectAtIndex:4] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasCapabilitiesSupport %d", version, supportedFeatures.hasCapabilitiesSupport);
+    };
+    
+    if (supportedFeatures.hasFedSharesOptionShareSupport != [[expectedResults objectAtIndex:5] boolValue]) {
+        XCTFail(@"Server version %@ wrongly reported hasFedSharesOptionShareSupport %d", version, supportedFeatures.hasFedSharesOptionShareSupport);
+    };
+    
+    NSLog(@"Serverion version %@ process correctly", version);
+    
+}
+
+/**
+ * This test checks if we can get all the features supported by the server
+ */
+- (void) testGetFeaturesSupportedByServerForVersion {
+
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"4.0.0"
+                                             expectedResults:[NSArray arrayWithObjects:
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             [NSNumber numberWithBool:FALSE],
+                                                             nil]
+     ];
+    
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"5.0.27"
+                                       expectedResults:[NSArray arrayWithObjects:
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        nil]
+     ];
+    
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"7.0.0"
+                                       expectedResults:[NSArray arrayWithObjects:
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        nil]
+     ];
+    
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"8.1.0"
+                                       expectedResults:[NSArray arrayWithObjects:
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        nil]
+     ];
+    
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"8.2.0"
+                                       expectedResults:[NSArray arrayWithObjects:
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:FALSE],
+                                                        nil]
+     ];
+    
+    [self privateTestGetFeaturesSupportedByServerForVersion:@"9.1.0"
+                                       expectedResults:[NSArray arrayWithObjects:
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        [NSNumber numberWithBool:TRUE],
+                                                        nil]
+     ];
+    
+}
+
 
 ///-----------------------------------
 /// @name Test share with remote user federated sharing
