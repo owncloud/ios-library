@@ -272,14 +272,13 @@
     
     path = [path encodeString:NSUTF8StringEncoding];
     
-    [request checkServer:path onCommunication:sharedOCCommunication
-                    success:^(NSHTTPURLResponse *response, id responseObject) {
-                        if (successRequest) {
-                            successRequest(response, request.redirectedServer);
-                        }
-                    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-                        failureRequest(response, error, request.redirectedServer);
-                    }];
+    [request propertiesOfPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        if (successRequest) {
+            successRequest(response, request.redirectedServer);
+        }
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+    }];
 }
 
 ///-----------------------------------
@@ -293,7 +292,7 @@
     
     
     if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:path] withForbiddenCharactersSupported:isFCSupported]) {
-        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbidenCharacters];
+        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorForbiddenCharacters];
         errorBeforeRequest(error);
     } else {
         OCWebDAVClient *request = [OCWebDAVClient new];
@@ -308,20 +307,7 @@
                                 successRequest(response, request.redirectedServer);
                             }
                         } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-                            
-                            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-                            
-                            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-                                
-                                if (err) {
-                                    failureRequest(response, err, request.redirectedServer);
-                                }else{
-                                    failureRequest(response, error, request.redirectedServer);
-                                }
-                                
-                                
-                            }];
-                            
+                            [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
                         }];
     }
 }
@@ -342,7 +328,7 @@
         errorBeforeRequest(error);
     } else if ([UtilsFramework isAFolderUnderItByNewURLString:destinyPath andOriginURLString:sourcePath]) {
         //We check we are not trying to move a folder inside himself
-        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideHimself];
+        NSError *error = [UtilsFramework getErrorByCodeId:OCErrorMovingFolderInsideItself];
         errorBeforeRequest(error);
     } else if ([UtilsFramework isForbiddenCharactersInFileName:[UtilsFramework getFileNameOrFolderByPath:destinyPath] withForbiddenCharactersSupported:isFCSupported]) {
         //We check that we are making a move not a rename to prevent special characters problems
@@ -362,23 +348,10 @@
                 successRequest(response, request.redirectedServer);
             }
         } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-            
-            OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
-            
-            [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
-                
-                if (err) {
-                    failureRequest(response, err, request.redirectedServer);
-                }else{
-                    failureRequest(response, error, request.redirectedServer);
-                }
-                
-            }];
-            
+            [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
         }];
     }
 }
-
 
 ///-----------------------------------
 /// @name Delete a file or a folder
@@ -399,7 +372,7 @@
             successRequest(response, request.redirectedServer);
         }
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -438,8 +411,18 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, id responseData, NSError *error, NSString *token) {
-        NSLog(@"Failure");
-        failureRequest(response, error, token, request.redirectedServer);
+        
+        OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+        
+        [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+            
+            if (err) {
+                failureRequest(response, err,token, request.redirectedServer);
+            }else{
+                failureRequest(response, error, token, request.redirectedServer);
+            }
+            
+        }];
     }];
 }
 
@@ -521,6 +504,9 @@
 
             NSData *responseData = (NSData*) responseObject;
             
+            NSString* newStr = [NSString stringWithUTF8String:[responseData bytes]];
+            NSLog(@"newStr: %@", newStr);
+            
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
             [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
@@ -598,8 +584,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
-        
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
     
 }
@@ -612,7 +597,7 @@
 
 - (void) getServerVersionWithPath:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *serverVersion, NSString *redirectedServer)) success
-                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
+                   failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     OCWebDAVClient *request = [OCWebDAVClient new];
     
@@ -641,7 +626,7 @@
         success(response, versionString, request.redirectedServer);
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failure(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
     
 }
@@ -652,7 +637,7 @@
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
-                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure{
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
     
     OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
@@ -661,13 +646,13 @@
     [request requestUserNameOfServer: path byCookie:cookieString onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         success(response, responseObject, request.redirectedServer);
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failure(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
 - (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                      successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer)) success
-                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure{
+                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     OCWebDAVClient *request = [OCWebDAVClient new];
     
@@ -684,7 +669,7 @@
             
             if(error) {
                 // NSLog(@"Error parsing JSON: %@", error);
-                failure(response, error, request.redirectedServer);
+                failureRequest(response, error, request.redirectedServer);
             }else{
                 
                 self.currentServerVersion = [jsonArray valueForKey:@"version"];
@@ -701,12 +686,12 @@
             
         } else {
             // NSLog(@"Error parsing JSON: data is null");
-            failure(response, nil, request.redirectedServer);
+            failureRequest(response, nil, request.redirectedServer);
         }
         
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failure(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 
 }
@@ -752,7 +737,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -787,7 +772,7 @@
             successRequest(response, sharedList, request.redirectedServer);
         }
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -847,7 +832,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -908,7 +893,7 @@
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -949,7 +934,7 @@
         
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
     
 }
@@ -974,7 +959,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -1021,7 +1006,7 @@
         }
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -1065,7 +1050,7 @@
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-         failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
     
 }
@@ -1137,7 +1122,7 @@
         
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
 }
 
@@ -1259,7 +1244,7 @@
         successRequest(response, capabilities, request.redirectedServer);
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(response, error, request.redirectedServer);
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
     }];
     
 }
@@ -1351,6 +1336,20 @@
         [itemList addObject:group];
         
     }
+}
+
+- (void) returnErrorWithResponse:(NSHTTPURLResponse *) response andResponseData:(NSData *) responseData andError:(NSError *) error failureRequest:(void (^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest andRequest:(OCWebDAVClient *) request {
+    OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
+       
+    [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
+        
+        if (err) {
+            failureRequest(response, err, request.redirectedServer);
+        }else{
+            failureRequest(response, error, request.redirectedServer);
+        }
+        
+    }];
 }
 
 @end

@@ -190,19 +190,6 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 - (NSURLSessionDownloadTask * _Nonnull)downloadWithSessionPath:(NSString * _Nonnull)remoteSource toPath:(NSString * _Nonnull)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))downloadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull response, NSError * _Nonnull error))failure;
 
 /**
- Enqueues a request to check the server to know the kind of authentication needed.
- 
- @param path The path of the server.
- @param sharedOCCommunication Singleton of communication to add the operation on the queue.
- @param success A block callback, to be fired upon successful completion, with no arguments.
- @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and the network error that occurred.
- */
-- (void)checkServer:(NSString * _Nonnull)path onCommunication:
-(OCCommunication * _Nonnull)sharedOCCommunication
-            success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-            failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
-
-/**
  Enqueues a request to creates a directory using a `MKCOL` request for the specified path.
  
  @param path The path for which to create a directory.

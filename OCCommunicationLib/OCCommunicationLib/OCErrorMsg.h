@@ -38,7 +38,3 @@
 #define kOCErrorSharedAPIWrong 400
 #define kOCSharedAPISuccessful 100
 #define kOCShareeAPISuccessful 200
-
-typedef enum {
-    OCServerErrorForbiddenCharacters = 101,
-} OCServerErrorEnum;
