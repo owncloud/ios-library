@@ -2131,7 +2131,7 @@
  */
 - (void) testGetFeaturesSupportedByServer {
     
-    //We create a semaphore to wait until we recive the responses from Async calls
+    //We create a semaphore to wait until we receive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     [_sharedOCCommunication getFeaturesSupportedByServer:k_base_url onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer) {
@@ -2159,6 +2159,97 @@
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     
 }
+
+///-----------------------------------
+/// @name testGetFeaturesSupportedByServerForVersion
+///-----------------------------------
+
+/**
+ * This test checks if we can get all the features supported by the server
+ */
+- (void) testGetFeaturesSupportedByServerForVersion {
+
+    // 1: version < 5.0.27
+    OCServerFeatures *expectedResult = [[OCServerFeatures alloc]
+                                        initWithSupportForShare: NO
+                                        sharee: NO
+                                        cookies: NO
+                                        forbiddenCharacters: NO
+                                        capabilities: NO
+                                        fedSharesOptionShare: NO
+                                        ];
+    OCServerFeatures *supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"4.0.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result %@ for version 4.0.0 did not match the expected value %@", supportedFeatures, expectedResult);
+                                        
+                                        
+    // 2: 5.0.27 <= version < 7.0.0
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: NO
+                      cookies: NO
+                      forbiddenCharacters: NO
+                      capabilities: NO
+                      fedSharesOptionShare: NO
+                      ];
+    
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"5.0.27"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 5.0.27 did not match the expected value");
+    
+    
+    // 3: 7.0.0 <= version < 8.1.0
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: NO
+                      cookies: YES
+                      forbiddenCharacters: NO
+                      capabilities: NO
+                      fedSharesOptionShare: NO
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"7.0.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 7.0.0 did not match the expected value");
+    
+    
+    
+    // 4: 8.1.0 <= version < 8.2.0
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: NO
+                      cookies: YES
+                      forbiddenCharacters: YES
+                      capabilities: NO
+                      fedSharesOptionShare: NO
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.1.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.1.0 did not match the expected value");
+    
+
+    // 5: 8.2.0 <= version < 9.1.0
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: YES
+                      cookies: YES
+                      forbiddenCharacters: YES
+                      capabilities: YES
+                      fedSharesOptionShare: NO
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.2.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.2.0 did not match the expected value");
+    
+    
+    // 5: 9.1.0 <= version
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: YES
+                      cookies: YES
+                      forbiddenCharacters: YES
+                      capabilities: YES
+                      fedSharesOptionShare: YES
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"9.1.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 9.1.0 did not match the expected value");
+    
+}
+
 
 ///-----------------------------------
 /// @name Test share with remote user federated sharing

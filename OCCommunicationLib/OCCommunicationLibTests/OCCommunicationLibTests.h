@@ -33,5 +33,4 @@
 @property (nonatomic, strong) ConfigTests *configTests;
 @property (nonatomic, strong) OCCommunication *sharedOCCommunication;
 
-
 @end
