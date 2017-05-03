@@ -25,4 +25,20 @@
     
     return self;
 }
+
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![other isKindOfClass:[self class]])
+        return NO;
+    OCServerFeatures *castedOther = (OCServerFeatures *)other;
+    return (castedOther.hasShareSupport == self.hasShareSupport &&
+            castedOther.hasShareeSupport == self.hasShareeSupport &&
+            castedOther.hasCookiesSupport == self.hasCookiesSupport &&
+            castedOther.hasForbiddenCharactersSupport == self.hasForbiddenCharactersSupport &&
+            castedOther.hasCapabilitiesSupport == self.hasCapabilitiesSupport &&
+            castedOther.hasFedSharesOptionShareSupport == self.hasFedSharesOptionShareSupport);
+
+}
+
 @end
