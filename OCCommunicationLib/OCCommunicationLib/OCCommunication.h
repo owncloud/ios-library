@@ -602,7 +602,7 @@ typedef enum {
 
 
 ///-----------------------------------
-/// @name shareFileOrFolderByServerPath
+/// @name shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication
 ///-----------------------------------
 
 /**
@@ -636,6 +636,8 @@ typedef enum {
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder with password
  *
  * @param serverPath -> NSString server path
@@ -650,7 +652,8 @@ typedef enum {
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+__deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
 
 
 
@@ -659,6 +662,8 @@ typedef enum {
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder
  *
  * @param serverPath -> NSString server path
@@ -672,7 +677,8 @@ typedef enum {
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest ;
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+__deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
 
 
 
@@ -794,7 +800,7 @@ typedef enum {
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
-        __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
+__deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
 
 
 ///-----------------------------------
