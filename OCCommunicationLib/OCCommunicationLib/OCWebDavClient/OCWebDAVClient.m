@@ -589,7 +589,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
     }else if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
-    } if ([publicUpload isEqualToString:@"false"]) {
+    } if ([publicUpload isEqualToString:@"true"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
     } else if ([publicUpload isEqualToString:@"false"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
