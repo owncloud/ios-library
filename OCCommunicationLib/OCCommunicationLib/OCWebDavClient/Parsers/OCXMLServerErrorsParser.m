@@ -29,11 +29,13 @@
 #import "OCXMLServerErrorsParser.h"
 #import "UtilsFramework.h"
 #import "OCErrorMsg.h"
+#import "OCCommunication.h"
 
 #define k_excepcion_element @"s:exception"
 #define k_message_element @"s:message"
 
 #define k_forbidden_character_error @"InvalidPath"
+#define k_forbidden @"Forbidden"
 
 NSString *OCErrorException = @"oc_exception";
 NSString *OCErrorMessage = @"oc_message";
@@ -76,7 +78,7 @@ NSString *OCErrorMessage = @"oc_message";
         self.xmlString = [NSMutableString string];
     }
     
-  //  NSLog(@"xml String: %@", self.xmlString);
+    //NSLog(@"xml String: %@", self.xmlString);
     
     if (!self.resultDict) {
         self.resultDict = [NSMutableDictionary dictionary];
@@ -85,8 +87,6 @@ NSString *OCErrorMessage = @"oc_message";
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
-    
-  //  NSLog(@"elementName: %@:%@", elementName,self.xmlString);
     
     if ([elementName isEqualToString:k_excepcion_element]) {
         
@@ -113,7 +113,7 @@ NSString *OCErrorMessage = @"oc_message";
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
-  //  NSLog(@"Finish: %@", self.resultDict);
+    //NSLog(@"Finish: %@", self.resultDict);
     
     [self checkTheResultLookingForErrors];
 
@@ -124,9 +124,19 @@ NSString *OCErrorMessage = @"oc_message";
 - (void) checkTheResultLookingForErrors{
     
     NSError *error = nil;
+    NSString *errorMessage = [self.resultDict objectForKey:OCErrorMessage];
+    if (errorMessage != nil) {
+        errorMessage = [errorMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    }
     
     if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden_character_error]) {
-        error = [UtilsFramework getErrorByCodeId:OCServerErrorForbiddenCharacters];
+        error = [UtilsFramework getErrorByCodeId:OCErrorForbiddenCharacters];
+    } else if ([[self.resultDict objectForKey:OCErrorException] isEqualToString:k_forbidden] &&
+               errorMessage != nil && errorMessage.length > 0) {
+        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenWithSpecificMessage andCustomMessageFromTheServer:[self.resultDict objectForKey:OCErrorMessage]];
+    } else {
+        //TODO: here we should control an status error code on the XML to know the exact error
+        error = [UtilsFramework getErrorWithCode:OCErrorForbiddenUnknown andCustomMessageFromTheServer:errorMessage];
     }
     
     self.finishBlock(error);
