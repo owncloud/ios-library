@@ -2177,6 +2177,7 @@
                                         forbiddenCharacters: NO
                                         capabilities: NO
                                         fedSharesOptionShare: NO
+                                        publicShareLinkOptionName: NO
                                         ];
     OCServerFeatures *supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"4.0.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result %@ for version 4.0.0 did not match the expected value %@", supportedFeatures, expectedResult);
@@ -2190,6 +2191,7 @@
                       forbiddenCharacters: NO
                       capabilities: NO
                       fedSharesOptionShare: NO
+                      publicShareLinkOptionName: NO
                       ];
     
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"5.0.27"];
@@ -2204,6 +2206,7 @@
                       forbiddenCharacters: NO
                       capabilities: NO
                       fedSharesOptionShare: NO
+                      publicShareLinkOptionName: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"7.0.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 7.0.0 did not match the expected value");
@@ -2218,6 +2221,7 @@
                       forbiddenCharacters: YES
                       capabilities: NO
                       fedSharesOptionShare: NO
+                      publicShareLinkOptionName: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.1.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.1.0 did not match the expected value");
@@ -2231,6 +2235,7 @@
                       forbiddenCharacters: YES
                       capabilities: YES
                       fedSharesOptionShare: NO
+                      publicShareLinkOptionName: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.2.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.2.0 did not match the expected value");
@@ -2244,9 +2249,24 @@
                       forbiddenCharacters: YES
                       capabilities: YES
                       fedSharesOptionShare: YES
+                      publicShareLinkOptionName: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"9.1.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 9.1.0 did not match the expected value");
+    
+    
+    // 6: 10.0.0 <= version
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: YES
+                      cookies: YES
+                      forbiddenCharacters: YES
+                      capabilities: YES
+                      fedSharesOptionShare: YES
+                      publicShareLinkOptionName: YES
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"10.0.0"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 10.0.0 did not match the expected value");
     
 }
 

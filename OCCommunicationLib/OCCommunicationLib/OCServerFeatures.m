@@ -38,7 +38,9 @@
             castedOther.hasCookiesSupport == self.hasCookiesSupport &&
             castedOther.hasForbiddenCharactersSupport == self.hasForbiddenCharactersSupport &&
             castedOther.hasCapabilitiesSupport == self.hasCapabilitiesSupport &&
-            castedOther.hasFedSharesOptionShareSupport == self.hasFedSharesOptionShareSupport);
+            castedOther.hasFedSharesOptionShareSupport == self.hasFedSharesOptionShareSupport &&
+            castedOther.hasPublicShareLinkOptionNameSupport == self.hasPublicShareLinkOptionNameSupport
+            );
 
 }
 
