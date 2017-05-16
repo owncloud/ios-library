@@ -1685,6 +1685,46 @@
 
 
 ///----------------------------------
+/// @name Test create public share
+///----------------------------------
+
+/**
+ * This test checks the update of properties of a public share
+ */
+- (void) testCreatePublicShare {
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    
+    // SETUP: share a folder and get its remote share id
+    
+    // test 1: Create public link with all possible parameters set
+    [_sharedOCCommunication shareFileOrFolderByServerPath: k_base_url
+                                     withFileOrFolderPath: [NSString stringWithFormat:@"/%@", k_path_test_folder]
+                                                 password: @"testPassword"
+                                           expirationTime: @"2100-05-24"
+                                             publicUpload: @"true"
+                                                 linkName: @"UrielIsTheBest"
+                                          onCommunication: _sharedOCCommunication
+                                           successRequest:^(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer) {
+                                               NSLog(@"Create public share OK");
+                                               dispatch_semaphore_signal(semaphore);
+                                           }
+                                           failureRequest:^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+                                               XCTFail(@"Create public share failed with error code %ld and info %@", error.code, error.userInfo);
+                                               dispatch_semaphore_signal(semaphore);
+                                           }
+     ];
+    
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+
+///----------------------------------
 /// @name Test update public share
 ///----------------------------------
 
@@ -1708,7 +1748,7 @@
                                            shareId = remoteShareId;
                                            dispatch_semaphore_signal(semaphore);
                                        } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-                                           XCTFail(@"Error during setup");
+                                           XCTFail(@"Error during setup with error code %ld and info %@", error.code, error.userInfo);
                                            dispatch_semaphore_signal(semaphore);
                                        }
      ];
@@ -2391,7 +2431,7 @@
         NSLog(@"Share with remote user");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        XCTFail(@"Error share with remote user");
+        XCTFail(@"Error code %ld and info %@", error.code, [error.userInfo valueForKey:NSLocalizedDescriptionKey]);
         dispatch_semaphore_signal(semaphore);
     }];
     
