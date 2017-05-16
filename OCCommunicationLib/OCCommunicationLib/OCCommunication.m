@@ -907,7 +907,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -932,17 +932,18 @@
             {
                 NSString *url = parser.url;
                 NSString *token = parser.token;
+                NSInteger remoteShareId = parser.remoteShareId;
                 
                 if (url != nil) {
                     
-                    successRequest(response, url, request.redirectedServer);
+                    successRequest(response, url, remoteShareId, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(response, token, request.redirectedServer);
+                    successRequest(response, token, remoteShareId, request.redirectedServer);
                     
                 }else{
                     

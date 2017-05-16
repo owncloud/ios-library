@@ -676,9 +676,10 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:passw
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer)) sucessRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
 __deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
+
 
 
 

@@ -209,6 +209,41 @@
     
 }
 
+
+///-------------------------------------
+/// @name Create public share for file
+///-------------------------------------
+
+/**
+ * This method share a file with a publci share
+ *
+ * @param NSString -> remotePath to file
+ */
+
+- (void) createPublicShareFor:(NSString*)remotePath {
+    
+    //We create a semaphore to wait until we recive the responses from Async calls
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url
+                                  andFileOrFolderPath:remotePath
+                                      onCommunication:_sharedOCCommunication
+                                       successRequest:^(NSURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer) {
+        NSLog(@"File shared by link");
+        dispatch_semaphore_signal(semaphore);
+    } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
+        NSLog(@"Error sharing file by link");
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Run loop
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+}
+
+
 #pragma mark - Tests
 
 
@@ -1585,7 +1620,7 @@
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *listOfShared, NSString *redirectedServer) {
+    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder] onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *listOfShared, NSInteger remoteShareId, NSString *redirectedServer) {
         NSLog(@"Folder shared");
         dispatch_semaphore_signal(semaphore);
     } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
@@ -1648,63 +1683,132 @@
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
 }
 
-///-----------------------------------
-/// @name Test unshare items
-///-----------------------------------
+
+///----------------------------------
+/// @name Test update public share
+///----------------------------------
 
 /**
- * This test try unshare a item
+ * This test checks the update of properties of a public share
  */
-- (void) testUnShareAFolder {
+- (void) testUpdatePublicShare {
     
-    //1. create the folder and share it
-    [self testShareAFolder];
+    __block NSInteger shareId;
     
     //We create a semaphore to wait until we recive the responses from Async calls
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    //2. read the folder to obtain the info of OCSharedDto
-    [_sharedOCCommunication readSharedByServer:k_base_url onCommunication: _sharedOCCommunication successRequest:^(NSURLResponse *response, NSArray *listOfShared, NSString *redirectedServer) {
-        
-        OCSharedDto *shared;
-        
-        for (OCSharedDto *current in listOfShared) {
-            if ([current.path isEqualToString:[NSString stringWithFormat:@"/%@/", k_path_test_folder]]) {
-                shared = current;
-            }
-        }
-        
-        if (shared) {
-            
-            //3. Unshare the folder
-            [_sharedOCCommunication unShareFileOrFolderByServer:k_base_url andIdRemoteShared:shared.idRemoteShared onCommunication:_sharedOCCommunication successRequest:^(NSURLResponse *response, NSString *redirectedServer) {
-                NSLog(@"File unshared");
-                dispatch_semaphore_signal(semaphore);
-                
-            } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-                XCTFail(@"Error unsharing folder");
-                dispatch_semaphore_signal(semaphore);
-            }];
-            
-            
-            
-        } else {
-            XCTFail(@"Folder not shared on testUnShareAFolder");
-            dispatch_semaphore_signal(semaphore);
-        }
-        
-    } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
-        
-        XCTFail(@"Error reading shares on testUnShareAFolder");
-        dispatch_semaphore_signal(semaphore);
-        
-    }];
+
+    // SETUP: share a folder and get its remote share id
     
+    [_sharedOCCommunication shareFileOrFolderByServer:k_base_url
+                                  andFileOrFolderPath:[NSString stringWithFormat:@"/%@", k_path_test_folder]
+                                      onCommunication:_sharedOCCommunication
+                                       successRequest:^(NSURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer) {
+                                           shareId = remoteShareId;
+                                           dispatch_semaphore_signal(semaphore);
+                                       } failureRequest:^(NSURLResponse *response, NSError *error, NSString *redirectedServer) {
+                                           XCTFail(@"Error during setup");
+                                           dispatch_semaphore_signal(semaphore);
+                                       }
+     ];
     
-    // Run loop
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+    
+    // test 1: Set password
+    [_sharedOCCommunication updateShare: shareId
+                           ofServerPath: k_base_url
+                    withPasswordProtect: @"testPassword"
+                      andExpirationTime: nil
+                        andPublicUpload: nil
+                            andLinkName: nil
+                        onCommunication: _sharedOCCommunication
+                         successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
+                             NSLog(@"Set password OK");
+                             dispatch_semaphore_signal(semaphore);
+                         }
+                         failureRequest: ^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+                             XCTFail(@"Set password failed with error code %ld and info %@", error.code, error.userInfo);
+                             dispatch_semaphore_signal(semaphore);
+                         }
+     ];
+
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+    
+    // test 2: Set valid expiration date
+    [_sharedOCCommunication updateShare: shareId
+                           ofServerPath: k_base_url
+                    withPasswordProtect: nil
+                      andExpirationTime: @"2100-05-24"
+                        andPublicUpload: nil
+                            andLinkName: nil
+                        onCommunication: _sharedOCCommunication
+                         successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
+                             NSLog(@"Set expiraton date OK");
+                             dispatch_semaphore_signal(semaphore);
+                         }
+                         failureRequest: ^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+                             XCTFail(@"Set expiration date failed with error code %ld and info %@", error.code, error.userInfo);
+                             dispatch_semaphore_signal(semaphore);
+                         }
+     ];
+    
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
+    
+    // test 3: Set invalid expiration date
+    [_sharedOCCommunication updateShare: shareId
+                           ofServerPath: k_base_url
+                    withPasswordProtect: nil
+                      andExpirationTime: @"2014-05-24"
+                        andPublicUpload: nil
+                            andLinkName: nil
+                        onCommunication: _sharedOCCommunication
+                         successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
+                             XCTFail(@"Set invalid expiration date unexpectedly finished with success");
+                             dispatch_semaphore_signal(semaphore);
+                         }
+                         failureRequest: ^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+                             NSLog(@"Set invalid expiration date finished with error code %ld, as expected", error.code);
+                             dispatch_semaphore_signal(semaphore);
+                         }
+     ];
+    
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+
+    
+    // test 4: Set public uploads on a folder
+    [_sharedOCCommunication updateShare: shareId
+                           ofServerPath: k_base_url
+                    withPasswordProtect: nil
+                      andExpirationTime: nil
+                        andPublicUpload: @"true"
+                            andLinkName: nil
+                        onCommunication: _sharedOCCommunication
+                         successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
+                             NSLog(@"Set public uploads on a folder OK");
+                             dispatch_semaphore_signal(semaphore);
+                         }
+                         failureRequest: ^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
+                             XCTFail(@"Set public uploads on a folder failed with error code %ld and info %@", error.code, error.userInfo);
+                             dispatch_semaphore_signal(semaphore);
+                         }
+     ];
+    
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
+    
 }
 
 
@@ -1737,11 +1841,11 @@
 
 
 ///-----------------------------------
-/// @name Test read capabilities
+/// @name Test share link with password
 ///-----------------------------------
 
 /**
- * This test check get capabilities
+ * This test check the creation of a link with password
  */
 - (void) testShareLinkWithPassword {
     
@@ -1768,7 +1872,7 @@
 ///-----------------------------------
 
 /**
- * This test check the creation of a link with expiration date
+ * This test check the creation of a link with expiration date and password
  */
 - (void) testShareLinkWithExpirationDateAndPassword {
     
