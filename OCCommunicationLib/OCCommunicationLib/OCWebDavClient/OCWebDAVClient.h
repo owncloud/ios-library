@@ -318,6 +318,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder with password
  *
  * @param serverPath -> NSString: Server path where we want to share a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
@@ -331,13 +333,16 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 - (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath andPassword:(NSString * _Nonnull)password
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-                                failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                                failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
+__deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder
  *
  * @param serverPath -> NSString: Server path where we want to share a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
@@ -350,7 +355,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 - (void)shareByLinkFileOrFolderByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) filePath
                   onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                           success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
+__deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
 
 
 ///-----------------------------------
@@ -441,7 +447,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 ///-----------------------------------
 
 /**
- * * DEPRECATED use - updateShareItem:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:andLinkName:onCommunication: instead
+ * DEPRECATED use - updateShareItem:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:andLinkName:onCommunication: instead
  *
  * Method to update a share link
  *
@@ -462,7 +468,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
          onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                  success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                  failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure
-        __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
+__deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
 
 ///-----------------------------------
 /// @name searchUsersAndGroupsWith
