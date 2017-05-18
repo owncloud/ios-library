@@ -448,7 +448,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                 andPath:(NSString * _Nonnull)filePath
                                password:(NSString * _Nullable)password
                          expirationTime:(NSString * _Nullable)expirationTime
-                            publicUpload:(BOOL)publicUpload
+                            publicUpload:(NSString * _Nullable)publicUpload
                                linkName:(NSString * _Nullable)linkName
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
@@ -467,11 +467,16 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     if (expirationTime) {
         self.postStringForShare = [NSString stringWithFormat:@"%@&expireDate=%@",self.postStringForShare,expirationTime];
     }
-    if (publicUpload) {
-        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
-    }
     if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"%@&name=%@",self.postStringForShare,linkName];
+    }
+    if ([publicUpload isEqualToString:@"true"]) {
+        
+        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
+        
+    } else if ([publicUpload isEqualToString:@"false"]) {
+        
+        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"false"];
     }
 
     

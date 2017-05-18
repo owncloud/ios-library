@@ -781,7 +781,7 @@
                   withFileOrFolderPath:(NSString *)filePath
                               password:(NSString *)password
                         expirationTime:(NSString *)expirationTime
-                          publicUpload:(BOOL)publicUpload
+                          publicUpload:(NSString *)publicUpload
                               linkName:(NSString *)linkName
                        onCommunication:(OCCommunication *)sharedOCCommunication
                         successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest

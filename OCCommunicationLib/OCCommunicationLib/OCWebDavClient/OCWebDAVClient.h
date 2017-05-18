@@ -288,17 +288,16 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 /// @name shareByLinkFileOrFolderByServer
 ///-----------------------------------
 
-/**
- * Method to share a file or folder with password
+/*!
+ * @brief:Method to share a file or folder with password
  *
- * @param serverPath -> NSString: Server path where we want to share a file or folder. Ex: http://10.40.40.20/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
- * @param filePath -> NSString: Path of the server where is the file. Ex: /File.pdf
+ * @param serverPath -> NSString: Server path where we want to share a file or folder, for example: http://domain/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares
+ * @param filePath -> NSString: Path of the server where is the file, for example, if the file is in the root folder: /File.pdf
  * @param password -> NSString: Password
- * @param password -> password
- * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
- * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
- * @param linkName -> NSString name of the link
- * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param expirationTime -> NSString: expirationTime in format "YYYY-MM-dd"
+ * @param publicUpload -> NSString: @"true", @"false" or nil if not used
+ * @param linkName -> NSString: name of the link
+ * @param sharedOCCommunication -> OCCommunication: Singleton of communication to add the operation on the queue.
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  *
@@ -307,7 +306,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
                                 andPath:(NSString * _Nonnull)filePath
                                password:(NSString * _Nullable)password
                          expirationTime:(NSString * _Nullable)expirationTime
-                           publicUpload:(BOOL)publicUpload
+                           publicUpload:(NSString * _Nullable)publicUpload
                                linkName:(NSString * _Nullable)linkName
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success

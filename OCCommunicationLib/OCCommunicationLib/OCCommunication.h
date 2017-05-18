@@ -605,26 +605,29 @@ typedef enum {
 /// @name shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication
 ///-----------------------------------
 
-/**
- * Method to share a file or folder with password
+/*!
+ * @brief Method to share a file or folder
  *
- * @param serverPath -> NSString server path
- * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
- * @param password -> password
- * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
- * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
- * @param linkName -> NSString name of the link
- * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ * @param serverPath -> NSString:full remote server path, for example:
+ *      -> http://www.myowncloudserver.com
+ *      -> http://domain/(subfoldersServer)
+ *      -> http://domain/sub1/sub2/...
+ * @param filePath -> NSString: path of the file that we want to share, for example, if the file is in the root folder: /file.pdf
+ * @param password -> NSString: password
+ * @param expirationTime -> NSString: expirationTime in format "YYYY-MM-dd"
+ * @param publicUpload -> NSString: @"true", @"false" or nil if not used
+ * @param linkName -> NSString: name of the link
+ * @param sharedOCCommunication -> OCCommunication: Singleton of communication to add the operation on the queue.
  *
  * @return shareLink or token of the file that we shared. URL or Ex:572d48de3814c90117fbca6442f2f3b2
  *
- * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ * @warning full public URL to share the file on a link, for example: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
  */
 - (void) shareFileOrFolderByServerPath:(NSString *)serverPath
                   withFileOrFolderPath:(NSString *)filePath
                               password:(NSString *)password
                         expirationTime:(NSString *)expirationTime
-                          publicUpload:(BOOL)publicUpload
+                          publicUpload:(NSString *)publicUpload
                               linkName:(NSString *)linkName
                        onCommunication:(OCCommunication *)sharedOCCommunication
                         successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
