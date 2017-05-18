@@ -10,7 +10,7 @@
 
 @implementation OCServerFeatures
 
-- (id)initWithSupportForShare:(BOOL)share sharee:(BOOL)sharee cookies:(BOOL)cookies forbiddenCharacters:(BOOL)forbiddenCharacters capabilities:(BOOL)capabilites fedSharesOptionShare:(BOOL)fedSharesOptionShare {
+- (id)initWithSupportForShare:(BOOL)share sharee:(BOOL)sharee cookies:(BOOL)cookies forbiddenCharacters:(BOOL)forbiddenCharacters capabilities:(BOOL)capabilites fedSharesOptionShare:(BOOL)fedSharesOptionShare publicShareLinkOptionName:(BOOL)publicShareLinkOptionName {
     
     self = [super init];
     if (self) {
@@ -21,6 +21,7 @@
         _hasForbiddenCharactersSupport = forbiddenCharacters;
         _hasCapabilitiesSupport = capabilites;
         _hasFedSharesOptionShareSupport = fedSharesOptionShare;
+        _hasPublicShareLinkOptionNameSupport = publicShareLinkOptionName;
     }
     
     return self;
@@ -37,7 +38,9 @@
             castedOther.hasCookiesSupport == self.hasCookiesSupport &&
             castedOther.hasForbiddenCharactersSupport == self.hasForbiddenCharactersSupport &&
             castedOther.hasCapabilitiesSupport == self.hasCapabilitiesSupport &&
-            castedOther.hasFedSharesOptionShareSupport == self.hasFedSharesOptionShareSupport);
+            castedOther.hasFedSharesOptionShareSupport == self.hasFedSharesOptionShareSupport &&
+            castedOther.hasPublicShareLinkOptionNameSupport == self.hasPublicShareLinkOptionNameSupport
+            );
 
 }
 

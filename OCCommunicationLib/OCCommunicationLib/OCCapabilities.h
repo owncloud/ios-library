@@ -40,6 +40,7 @@
 //Other share link features
 @property (nonatomic) BOOL isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled;
 @property (nonatomic) BOOL isFilesSharingAllowPublicUploadsEnabled;
+@property (nonatomic) BOOL isFilesSharingAllowUserCreateMultiplePublicLinksEnabled;
 
 //Other Shares Features
 @property (nonatomic) BOOL isFilesSharingAllowUserSendMailNotificationAboutOtherUsersEnabled;

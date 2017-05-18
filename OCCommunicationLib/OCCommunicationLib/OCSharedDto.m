@@ -2,7 +2,7 @@
 //  OCSharedDto.m
 //  Owncloud iOs Client
 //
-// Copyright (C) 2016, ownCloud GmbH. ( http://www.owncloud.org/ )
+// Copyright (C) 2017, ownCloud GmbH. ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,5 +26,36 @@
 #import "OCSharedDto.h"
 
 @implementation OCSharedDto
+
+- (id)initWithSharedDto:(OCSharedDto *)oSharedDto{
+    
+    self = [super init];
+    if (self) {
+        // Custom initialization
+        _idRemoteShared = oSharedDto.idRemoteShared;
+        _isDirectory = oSharedDto.isDirectory;
+        _itemSource = oSharedDto.itemSource;
+        _parent = oSharedDto.parent;
+        _shareType = oSharedDto.shareType;
+        _shareWith = oSharedDto.shareWith;
+        _fileSource = oSharedDto.fileSource;
+        _path = oSharedDto.path;
+        _permissions = oSharedDto.permissions;
+        _sharedDate = oSharedDto.sharedDate;
+        _expirationDate = oSharedDto.expirationDate;
+        _token = oSharedDto.token;
+        _storage = oSharedDto.storage;
+        _mailSend= oSharedDto.mailSend;
+        _uidOwner = oSharedDto.uidOwner;
+        _shareWithDisplayName= oSharedDto.shareWithDisplayName;
+        _displayNameOwner = oSharedDto.displayNameOwner;
+        _uidFileOwner = oSharedDto.uidFileOwner;
+        _fileTarget = oSharedDto.fileTarget;
+        _name = oSharedDto.name;
+        _url= oSharedDto.url;
+    }
+    
+    return self;
+}
 
 @end

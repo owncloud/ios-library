@@ -88,6 +88,14 @@
     if ([elementName isEqualToString:@"url"]) {
         self.url = [NSString stringWithString:self.xmlChars];
     }
+    
+    if ([elementName isEqualToString:@"url"]) {
+        self.url = [NSString stringWithString:self.xmlChars];
+    }
+    
+    if ([elementName isEqualToString:@"id"]) {
+        self.remoteShareId = [self.xmlChars intValue];
+    }
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {

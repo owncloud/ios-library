@@ -704,8 +704,9 @@
     BOOL hasForbiddenCharactersSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_forbidden_characters];
     BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_capabilities];
     BOOL hasFedSharesOptionShareSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_share_option_fed_share];
+    BOOL hasPublicShareLinkOptionNameSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_public_share_link_option_name];
     
-    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport];
+    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport publicShareLinkOptionName:hasPublicShareLinkOptionNameSupport];
     
     return supportedFeatures;
 }
@@ -776,6 +777,76 @@
     }];
 }
 
+- (void) shareFileOrFolderByServerPath:(NSString *)serverPath
+                  withFileOrFolderPath:(NSString *)filePath
+                              password:(NSString *)password
+                        expirationTime:(NSString *)expirationTime
+                          publicUpload:(NSString *)publicUpload
+                              linkName:(NSString *)linkName
+                       onCommunication:(OCCommunication *)sharedOCCommunication
+                        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+                        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+    
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    linkName = [linkName encodeString:NSUTF8StringEncoding];
+    password = [password encodeString:NSUTF8StringEncoding];
+
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath password:password expirationTime:expirationTime publicUpload:publicUpload linkName:linkName
+                             onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+        NSData *responseData = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+        //  NSLog(@"response: %@", [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:responseData];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                NSString *url = parser.url;
+                NSString *token = parser.token;
+                
+                if (url != nil) {
+                    
+                    successRequest(response, url, request.redirectedServer);
+                    
+                }else if (token != nil){
+                    //We remove the \n and the empty spaces " "
+                    token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    
+                    successRequest(response, token, request.redirectedServer);
+                    
+                }else{
+                    
+                    NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                    failureRequest(response, error, request.redirectedServer);
+                }
+                
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(response, error, request.redirectedServer);
+            }
+        }
+        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
+    }];
+    
+}
+
+
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
@@ -783,6 +854,7 @@
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    password = [password encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
@@ -839,7 +911,7 @@
 
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer)) successRequest
                     failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
@@ -864,17 +936,18 @@
             {
                 NSString *url = parser.url;
                 NSString *token = parser.token;
+                NSInteger remoteShareId = parser.remoteShareId;
                 
                 if (url != nil) {
                     
-                    successRequest(response, url, request.redirectedServer);
+                    successRequest(response, url, remoteShareId, request.redirectedServer);
                     
                 }else if (token != nil){
                     //We remove the \n and the empty spaces " "
                     token = [token stringByReplacingOccurrencesOfString:@"\n" withString:@""];
                     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
                     
-                    successRequest(response, token, request.redirectedServer);
+                    successRequest(response, token, remoteShareId, request.redirectedServer);
                     
                 }else{
                     
@@ -975,7 +1048,7 @@
     OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
     
-    
+
     [request isShareFileOrFolderByServer:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
         
@@ -998,7 +1071,6 @@
                     isShared = YES;
                     shareDto = [sharedList objectAtIndex:0];
                 }
-                
             }
      
             //Return success
@@ -1010,21 +1082,87 @@
     }];
 }
 
-- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
-                   onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
+- (void) updateShare:(NSInteger)shareId
+        ofServerPath:(NSString *)serverPath
+ withPasswordProtect:(NSString*)password
+   andExpirationTime:(NSString*)expirationTime
+     andPublicUpload:(NSString *)publicUpload
+         andLinkName:(NSString *)linkName
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
+
+    serverPath = [serverPath encodeString:NSUTF8StringEncoding];
+    serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
+    serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)shareId]];
+    linkName = [linkName encodeString:NSUTF8StringEncoding];
+    password = [password encodeString:NSUTF8StringEncoding];
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password
+           andExpirationTime:expirationTime andPublicUpload:publicUpload andLinkName:linkName
+             onCommunication:sharedOCCommunication
+    success:^(NSHTTPURLResponse *response, id responseObject) {
+        
+        NSData *responseData = (NSData*) responseObject;
+        
+        OCXMLShareByLinkParser *parser = [[OCXMLShareByLinkParser alloc]init];
+        
+//        NSLog(@"responseData: %@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        
+        [parser initParserWithData:responseData];
+        
+        switch (parser.statusCode) {
+            case kOCSharedAPISuccessful:
+            {
+                //OCXMLSharedParser *parserSharedDto = [[OCXMLSharedParser alloc] init];
+                //[parserSharedDto initParserWithData:[NSKeyedArchiver archivedDataWithRootObject:parser.data]];
+                
+                //TODO: update parser to get new OCSharedDto and return it instead of NSData responseData
+
+                successRequest(response, responseData, request.redirectedServer);
+                break;
+            }
+                
+            default:
+            {
+                NSError *error = [UtilsFramework getErrorWithCode:parser.statusCode andCustomMessageFromTheServer:parser.message];
+                failureRequest(response, error, request.redirectedServer);
+            }
+        }
+        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response, error, request.redirectedServer);
+    }];
+    
+}
+
+- (void) updateShare:(NSInteger)shareId
+        ofServerPath:(NSString *)serverPath
+ withPasswordProtect:(NSString*)password
+   andExpirationTime:(NSString*)expirationTime
+      andPermissions:(NSInteger)permissions
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest{
     
     
     serverPath = [serverPath encodeString:NSUTF8StringEncoding];
     serverPath = [serverPath stringByAppendingString:k_url_acces_shared_api];
     serverPath = [serverPath stringByAppendingString:[NSString stringWithFormat:@"/%ld",(long)shareId]];
+    password = [password encodeString:NSUTF8StringEncoding];
     
     OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
     
     
-    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password andExpirationTime:expirationTime andPermissions:permissions onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+    [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password
+           andExpirationTime:expirationTime andPermissions:permissions
+             onCommunication:sharedOCCommunication
+    success:^(NSHTTPURLResponse *response, id responseObject) {
         
         NSData *responseData = (NSData*) responseObject;
         
@@ -1189,10 +1327,12 @@
             NSNumber *filesSharingShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"enabled"];
             NSNumber *filesSharingAllowPublicUploadsEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"upload"];
             NSNumber *filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"send_mail"];
+            NSNumber *filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber= (NSNumber*)[fileSharingPublic valueForKey:@"multiple"];
             
             capabilities.isFilesSharingShareLinkEnabled = filesSharingShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowPublicUploadsEnabled = filesSharingAllowPublicUploadsEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled = filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber.boolValue;
+            capabilities.isFilesSharingAllowUserCreateMultiplePublicLinksEnabled = filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber;
             
             NSDictionary *fileSharingPublicExpireDate = [fileSharingPublic valueForKey:@"expire_date"];
             
@@ -1216,6 +1356,7 @@
             NSNumber *filesSharingAllowUserSendMailNotificationAboutOtherUsersEnabledNumber = (NSNumber*)[fileSharingUser valueForKey:@"send_mail"];
             
             capabilities.isFilesSharingAllowUserSendMailNotificationAboutOtherUsersEnabled = filesSharingAllowUserSendMailNotificationAboutOtherUsersEnabledNumber.boolValue;
+            
             
             //FEDERATION
             

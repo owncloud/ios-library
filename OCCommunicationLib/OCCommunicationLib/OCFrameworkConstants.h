@@ -71,6 +71,9 @@
 //Version of the server that supports enable/disabled share privilege option for federated shares
 #define k_version_support_share_option_fed_share [NSArray arrayWithObjects:  @"9", @"1", @"0", nil]
 
+//Version of the server that supports multiple share links and public share links with option to change the name of the link
+#define k_version_support_public_share_link_option_name [NSArray arrayWithObjects:  @"10", @"0", @"0", nil]
+
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
 

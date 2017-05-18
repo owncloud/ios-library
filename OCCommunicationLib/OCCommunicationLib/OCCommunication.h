@@ -580,6 +580,7 @@ typedef enum {
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+
 ///-----------------------------------
 /// @name readSharedByServer
 ///-----------------------------------
@@ -599,11 +600,47 @@ typedef enum {
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+
+///-----------------------------------
+/// @name shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication
+///-----------------------------------
+
+/*!
+ * @brief Method to share a file or folder
+ *
+ * @param serverPath -> NSString:full remote server path, for example:
+ *      -> http://www.myowncloudserver.com
+ *      -> http://domain/(subfoldersServer)
+ *      -> http://domain/sub1/sub2/...
+ * @param filePath -> NSString: path of the file that we want to share, for example, if the file is in the root folder: /file.pdf
+ * @param password -> NSString: password
+ * @param expirationTime -> NSString: expirationTime in format "YYYY-MM-dd"
+ * @param publicUpload -> NSString: @"true", @"false" or nil if not used
+ * @param linkName -> NSString: name of the link
+ * @param sharedOCCommunication -> OCCommunication: Singleton of communication to add the operation on the queue.
+ *
+ * @return shareLink or token of the file that we shared. URL or Ex:572d48de3814c90117fbca6442f2f3b2
+ *
+ * @warning full public URL to share the file on a link, for example: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ */
+- (void) shareFileOrFolderByServerPath:(NSString *)serverPath
+                  withFileOrFolderPath:(NSString *)filePath
+                              password:(NSString *)password
+                        expirationTime:(NSString *)expirationTime
+                          publicUpload:(NSString *)publicUpload
+                              linkName:(NSString *)linkName
+                       onCommunication:(OCCommunication *)sharedOCCommunication
+                        successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
+                        failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+
+
 ///-----------------------------------
 /// @name shareFileOrFolderByServer 
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder with password
  *
  * @param serverPath -> NSString server path
@@ -618,7 +655,8 @@ typedef enum {
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath andPassword:(NSString *)password
                    onCommunication:(OCCommunication *)sharedOCCommunication
                     successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+__deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
 
 
 
@@ -627,6 +665,8 @@ typedef enum {
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * Method to share a file or folder
  *
  * @param serverPath -> NSString server path
@@ -639,8 +679,10 @@ typedef enum {
  */
 - (void) shareFileOrFolderByServer: (NSString *) serverPath andFileOrFolderPath: (NSString *) filePath
                    onCommunication:(OCCommunication *)sharedOCCommunication
-                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSString *redirectedServer)) successRequest
-                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest ;
+                    successRequest:(void(^)(NSHTTPURLResponse *response, NSString *shareLink, NSInteger remoteShareId, NSString *redirectedServer)) sucessRequest
+                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+__deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
+
 
 
 
@@ -699,6 +741,7 @@ typedef enum {
                       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer, BOOL isShared, id shareDto)) successRequest
                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+
 ///-----------------------------------
 /// @name UpdteShared
 ///-----------------------------------
@@ -708,21 +751,60 @@ typedef enum {
  *
  * @param shareID -> NSInteger share id, you can get this data of these calls (readSharedByServer...)
  * @param serverPath -> NSString server path
- * @param filePath -> path of the file that we want to share. Ex: /file.pdf <- If the file is on the root folder
  * @param password -> password
- * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
  * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
+ * @param linkName -> NSString name of the link
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
  *
- * @warning it only can be updated one parameter for each request so if you want to update the password the date must be nil and the permission 0
+ * @warning it only can be updated one parameter for each request so if you want to update the password the rest of paremeter must be nil
  * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ * or use the URL parameter if exist
  */
-- (void) updateShare:(NSInteger)shareId ofServerPath:(NSString *)serverPath withPasswordProtect:(NSString*)password andExpirationTime:(NSString*)expirationTime andPermissions:(NSInteger)permissions
+- (void) updateShare:(NSInteger)shareId
+        ofServerPath:(NSString *)serverPath
+ withPasswordProtect:(NSString*)password
+   andExpirationTime:(NSString*)expirationTime
+     andPublicUpload:(NSString *)publicUpload
+         andLinkName:(NSString *)linkName
+     onCommunication:(OCCommunication *)sharedOCCommunication
+      successRequest:(void(^)(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer)) successRequest
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureReques;
+
+
+///-----------------------------------
+/// @name UpdteShared
+///-----------------------------------
+
+/**
+ * * DEPRECATED use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead
+ *
+ * Method to update a shared file with password and expiration time
+ *
+ * @param shareID -> NSInteger share id, you can get this data of these calls (readSharedByServer...)
+ * @param serverPath -> NSString server path
+ * @param password -> password
+ * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ *
+ * @return token of the file that we shared. Ex:572d48de3814c90117fbca6442f2f3b2
+ *
+ * @warning it only can be updated one parameter for each request so if you want to update the password the rest of paremeter must be nil
+ * @warning to create the full URL to share the file on a link we have to atatch the token to: http://www.myowncloudserver.com/public.php?service=files&t=572d48de3814c90117fbca6442f2f3b2
+ * or use the URL parameter if exist
+ */
+- (void) updateShare:(NSInteger)shareId
+        ofServerPath:(NSString *)serverPath
+ withPasswordProtect:(NSString*)password
+   andExpirationTime:(NSString*)expirationTime
+      andPermissions:(NSInteger)permissions
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSString *redirectedServer)) successRequest
-      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest
+__deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
 
 
 ///-----------------------------------

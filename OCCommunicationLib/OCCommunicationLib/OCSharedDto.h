@@ -2,7 +2,7 @@
 //  OCSharedDto.h
 //  OCCommunicationLib
 //
-// Copyright (C) 2016, ownCloud GmbH. ( http://www.owncloud.org/ )
+// Copyright (C) 2017, ownCloud GmbH. ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,10 @@ typedef enum {
 @property (nonatomic, copy) NSString *displayNameOwner;
 @property (nonatomic, copy) NSString *uidFileOwner;
 @property (nonatomic, copy) NSString *fileTarget;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *url;
 
+
+- (id)initWithSharedDto:(OCSharedDto *)oSharedDto;
 
 @end

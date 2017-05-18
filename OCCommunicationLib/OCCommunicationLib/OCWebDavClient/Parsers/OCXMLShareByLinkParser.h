@@ -32,6 +32,7 @@
 @property (nonatomic, strong) NSString *token;
 @property (nonatomic, strong) NSString *message;
 @property (nonatomic, strong) NSString *url;
+@property (nonatomic) NSInteger remoteShareId;
 @property (nonatomic) NSInteger statusCode;
 
 - (void)initParserWithData: (NSData*)data;

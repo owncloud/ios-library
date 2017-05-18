@@ -14,7 +14,8 @@
 @property BOOL hasForbiddenCharactersSupport;
 @property BOOL hasCapabilitiesSupport;
 @property BOOL hasFedSharesOptionShareSupport;
+@property BOOL hasPublicShareLinkOptionNameSupport;
 
-- (id)initWithSupportForShare:(BOOL)share sharee:(BOOL)sharee cookies:(BOOL)cookies forbiddenCharacters:(BOOL)forbiddenCharacters capabilities:(BOOL)capabilites fedSharesOptionShare:(BOOL)fedSharesOptionShare;
+- (id)initWithSupportForShare:(BOOL)share sharee:(BOOL)sharee cookies:(BOOL)cookies forbiddenCharacters:(BOOL)forbiddenCharacters capabilities:(BOOL)capabilites fedSharesOptionShare:(BOOL)fedSharesOptionShare publicShareLinkOptionName:(BOOL)publicShareLinkOptionName;
 
 @end
