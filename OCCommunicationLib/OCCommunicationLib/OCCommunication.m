@@ -504,9 +504,6 @@
 
             NSData *responseData = (NSData*) responseObject;
             
-            NSString* newStr = [NSString stringWithUTF8String:[responseData bytes]];
-            NSLog(@"newStr: %@", newStr);
-            
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
             [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
