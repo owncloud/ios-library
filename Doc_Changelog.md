@@ -1,4 +1,12 @@
-## What's new in 2.0.3 version
+## What's new in 2.1.0 version
+- Added support multiple share links
+- Added new method to get supported server features by version
+- Improve error handling
+- Update user endpoint
+- Update travis file
+
+
+## 2.0.3 version
 - Added specific error code for maintenance mode
 - Added specific error code for quota excess
 - Improved recognition of SAML expiration

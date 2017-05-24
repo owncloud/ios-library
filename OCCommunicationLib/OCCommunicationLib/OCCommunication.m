@@ -504,9 +504,6 @@
 
             NSData *responseData = (NSData*) responseObject;
             
-            NSString* newStr = [NSString stringWithUTF8String:[responseData bytes]];
-            NSLog(@"newStr: %@", newStr);
-            
             OCXMLServerErrorsParser *serverErrorParser = [OCXMLServerErrorsParser new];
             
             [serverErrorParser startToParseWithData:responseData withCompleteBlock:^(NSError *err) {
@@ -1233,12 +1230,12 @@
                 NSArray *groupsExact = [exactDict valueForKey:@"groups"];
                 NSArray *remotesExact = [exactDict valueForKey:@"remotes"];
                 
-                [self addUserItemOfType:shareTypeUser fromArray:usersFounded ToList:itemList];
-                [self addUserItemOfType:shareTypeUser fromArray:usersExact ToList:itemList];
-                [self addUserItemOfType:shareTypeRemote fromArray:usersRemote ToList:itemList];
-                [self addUserItemOfType:shareTypeRemote fromArray:remotesExact ToList:itemList];
-                [self addGroupItemFromArray:groupsFounded ToList:itemList];
-                [self addGroupItemFromArray:groupsExact ToList:itemList];
+                [self addShareeItemOfType:shareTypeUser fromArray:usersFounded ToList:itemList];
+                [self addShareeItemOfType:shareTypeUser fromArray:usersExact ToList:itemList];
+                [self addShareeItemOfType:shareTypeRemote fromArray:usersRemote ToList:itemList];
+                [self addShareeItemOfType:shareTypeRemote fromArray:remotesExact ToList:itemList];
+                [self addShareeItemOfType:shareTypeGroup fromArray:groupsFounded ToList:itemList];
+                [self addShareeItemOfType:shareTypeGroup fromArray:groupsExact ToList:itemList];
             
             }else{
                 
@@ -1431,51 +1428,31 @@
 
 #pragma mark - Utils
 
-- (void) addUserItemOfType:(NSInteger) shareeType fromArray:(NSArray*) usersArray ToList: (NSMutableArray *) itemList
+- (void) addShareeItemOfType:(NSInteger) shareeType fromArray:(NSArray*) shareesArray ToList: (NSMutableArray *) itemList
 {
 
-    for (NSDictionary *userFound in usersArray) {
-        OCShareUser *user = [OCShareUser new];
+    for (NSDictionary *shareeFound in shareesArray) {
+        OCShareUser *sharee = [OCShareUser new];
         
-        if ([[userFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
-            NSNumber *number = [userFound valueForKey:@"label"];
-            user.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
+        if ([[shareeFound valueForKey:@"label"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [shareeFound valueForKey:@"label"];
+            sharee.displayName = [NSString stringWithFormat:@"%ld", number.longValue];
         }else{
-            user.displayName = [userFound valueForKey:@"label"];
+            sharee.displayName = [shareeFound valueForKey:@"label"];
         }
         
-        NSDictionary *userValues = [userFound valueForKey:@"value"];
+        NSDictionary *shareeValues = [shareeFound valueForKey:@"value"];
         
-        if ([[userValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-            NSNumber *number = [userValues valueForKey:@"shareWith"];
-            user.name = [NSString stringWithFormat:@"%ld", number.longValue];
+        if ([[shareeValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *number = [shareeValues valueForKey:@"shareWith"];
+            sharee.name = [NSString stringWithFormat:@"%ld", number.longValue];
         }else{
-            user.name = [userValues valueForKey:@"shareWith"];
+            sharee.name = [shareeValues valueForKey:@"shareWith"];
         }
-        user.shareeType = shareeType;
-        user.server = [userValues valueForKey:@"server"];
+        sharee.shareeType = shareeType;
+        sharee.server = [shareeValues valueForKey:@"server"];
         
-        [itemList addObject:user];
-    }
-}
-
-- (void) addGroupItemFromArray:(NSArray*) groupsArray ToList: (NSMutableArray *) itemList
-{
-    for (NSDictionary *groupFound in groupsArray) {
-        
-        OCShareUser *group = [OCShareUser new];
-        
-        NSDictionary *groupValues = [groupFound valueForKey:@"value"];
-        if ([[groupValues valueForKey:@"shareWith"] isKindOfClass:[NSNumber class]]) {
-            NSNumber *number = [groupValues valueForKey:@"shareWith"];
-            group.name = [NSString stringWithFormat:@"%ld", number.longValue];
-        }else{
-            group.name = [groupValues valueForKey:@"shareWith"];
-        }
-        group.shareeType = shareTypeGroup;
-        
-        [itemList addObject:group];
-        
+        [itemList addObject:sharee];
     }
 }
 
