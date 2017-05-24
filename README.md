@@ -1,4 +1,4 @@
-# ownCloud iOS Library v 2.0.3
+# ownCloud iOS Library v 2.1.0
 
 ### Introduction
 Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
@@ -92,7 +92,7 @@ Source: http://nvie.com/posts/a-successful-git-branching-model
 
 ownCloud iOS library is available under the MIT License. 
  
-Copyright (c) 2016 ownCloud (http://www.owncloud.org/)
+Copyright (c) 2017 ownCloud (http://www.owncloud.org/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
