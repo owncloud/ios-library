@@ -1323,11 +1323,13 @@
             
             NSNumber *filesSharingShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"enabled"];
             NSNumber *filesSharingAllowPublicUploadsEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"upload"];
+            NSNumber *filesSharingSupportsUploadOnlyEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"supports_upload_only"];
             NSNumber *filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"send_mail"];
             NSNumber *filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber= (NSNumber*)[fileSharingPublic valueForKey:@"multiple"];
             
             capabilities.isFilesSharingShareLinkEnabled = filesSharingShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowPublicUploadsEnabled = filesSharingAllowPublicUploadsEnabledNumber.boolValue;
+            capabilities.isFilesSharingSupportsUploadOnlyEnabled = filesSharingSupportsUploadOnlyEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled = filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserCreateMultiplePublicLinksEnabled = filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber;
             
