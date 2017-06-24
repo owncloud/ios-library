@@ -479,7 +479,7 @@
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/Utils",
 				);
 				INFOPLIST_FILE = "OCLibraryExample/OCLibraryExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "owncloud.${PRODUCT_NAME:rfc1034identifier}";
@@ -505,7 +505,7 @@
 					"$(SRCROOT)/../OCCommunicationLib/OCCommunicationLib/Utils",
 				);
 				INFOPLIST_FILE = "OCLibraryExample/OCLibraryExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "owncloud.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
