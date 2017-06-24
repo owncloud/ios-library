@@ -1329,7 +1329,7 @@
             capabilities.isFilesSharingShareLinkEnabled = filesSharingShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowPublicUploadsEnabled = filesSharingAllowPublicUploadsEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled = filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber.boolValue;
-            capabilities.isFilesSharingAllowUserCreateMultiplePublicLinksEnabled = filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber;
+            capabilities.isFilesSharingAllowUserCreateMultiplePublicLinksEnabled = filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber.boolValue;
             
             NSDictionary *fileSharingPublicExpireDate = [fileSharingPublic valueForKey:@"expire_date"];
             
