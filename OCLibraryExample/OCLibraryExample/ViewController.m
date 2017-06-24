@@ -276,7 +276,12 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     //Encoding
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    self.downloadTask = [[AppDelegate sharedOCCommunication] downloadFile:serverUrl toDestiny:localPath withLIFOSystem:YES defaultPriority:YES onCommunication:[AppDelegate sharedOCCommunication] progress:^(NSProgress *progress) {
+    self.downloadTask = [[AppDelegate sharedOCCommunication]
+                         downloadFileSession:serverUrl
+                         toDestiny:localPath
+                         defaultPriority:YES
+                         onCommunication:[AppDelegate sharedOCCommunication]
+                         progress:^(NSProgress *progress) {
         
         //We make it on the main thread because it is an UX modification
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -376,7 +381,11 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     
     //Upload block
     
-    self.uploadTask = [[AppDelegate sharedOCCommunication] uploadFile:imagePath toDestiny:serverUrl onCommunication:[AppDelegate sharedOCCommunication] progress:^(NSProgress *progress) {
+    self.uploadTask = [[AppDelegate sharedOCCommunication]
+                       uploadFileSession:imagePath
+                       toDestiny:serverUrl
+                       onCommunication:[AppDelegate sharedOCCommunication]
+                       progress:^(NSProgress *progress) {
         
         NSLog(@"progtress");
         
