@@ -702,8 +702,9 @@
     BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_capabilities];
     BOOL hasFedSharesOptionShareSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_share_option_fed_share];
     BOOL hasPublicShareLinkOptionNameSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_public_share_link_option_name];
+    BOOL hasPublicShareLinkOptionUploadOnlySupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_public_share_link_option_upload_only];
     
-    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport publicShareLinkOptionName:hasPublicShareLinkOptionNameSupport];
+    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport publicShareLinkOptionName:hasPublicShareLinkOptionNameSupport publicShareLinkOptionUploadOnlySupport:hasPublicShareLinkOptionUploadOnlySupport];
     
     return supportedFeatures;
 }
