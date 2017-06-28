@@ -75,7 +75,7 @@
 #define k_version_support_public_share_link_option_name [NSArray arrayWithObjects:  @"10", @"0", @"0", nil]
 
 //Version of the server that supports enable/disabled upload only (file listing, write only) option for public links of folders
-#define k_version_support_public_share_link_option_upload_only [NSArray arrayWithObjects:  @"10", @"0", @"2", nil]
+#define k_version_support_public_share_link_option_upload_only [NSArray arrayWithObjects:  @"10", @"0", @"1", nil]
 
 //Name of the session using for upload files with NSURLSession
 #define k_session_name @"com.owncloud.upload.session"
