@@ -781,6 +781,7 @@
                         expirationTime:(NSString *)expirationTime
                           publicUpload:(NSString *)publicUpload
                               linkName:(NSString *)linkName
+                           permissions:(NSInteger)permissions
                        onCommunication:(OCCommunication *)sharedOCCommunication
                         successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
@@ -795,7 +796,12 @@
     request = [self getRequestWithCredentials:request];
     
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath password:password expirationTime:expirationTime publicUpload:publicUpload linkName:linkName
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath
+                                    password:password
+                              expirationTime:expirationTime
+                                publicUpload:publicUpload
+                                    linkName:linkName
+                                 permissions:permissions
                              onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         NSData *responseData = (NSData*) responseObject;
         
@@ -1086,6 +1092,7 @@
    andExpirationTime:(NSString*)expirationTime
      andPublicUpload:(NSString *)publicUpload
          andLinkName:(NSString *)linkName
+      andPermissions:(NSInteger)permissions
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
@@ -1102,6 +1109,7 @@
     
     [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password
            andExpirationTime:expirationTime andPublicUpload:publicUpload andLinkName:linkName
+              andPermissions:permissions
              onCommunication:sharedOCCommunication
     success:^(NSHTTPURLResponse *response, id responseObject) {
         

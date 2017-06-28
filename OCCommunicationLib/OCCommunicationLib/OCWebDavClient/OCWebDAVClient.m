@@ -450,6 +450,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                          expirationTime:(NSString * _Nullable)expirationTime
                             publicUpload:(NSString * _Nullable)publicUpload
                                linkName:(NSString * _Nullable)linkName
+                            permissions:(NSInteger)permissions
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
@@ -472,8 +473,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }
     if ([publicUpload isEqualToString:@"true"]) {
         
-        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
-        
+        if (permissions != 0) {
+            self.postStringForShare = [NSString stringWithFormat:@"%@permissions=%ld",self.postStringForShare,permissions];
+        } else {
+            self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
+        }
+
     } else if ([publicUpload isEqualToString:@"false"]) {
         
         self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"false"];
@@ -576,6 +581,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
        andExpirationTime:(NSString * _Nullable)expirationTime
          andPublicUpload:(NSString * _Nullable)publicUpload
              andLinkName:(NSString * _Nullable)linkName
+          andPermissions:(NSInteger)permissions
          onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                  success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                  failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure {
@@ -595,7 +601,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }else if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
     } if ([publicUpload isEqualToString:@"true"]) {
-        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
+        if (permissions != 0) {
+            self.postStringForShare = [NSString stringWithFormat:@"permissions=%ld",permissions];
+        } else {
+            self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
+        }
     } else if ([publicUpload isEqualToString:@"false"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
     }
