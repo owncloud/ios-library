@@ -602,7 +602,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
     } if ([publicUpload isEqualToString:@"true"]) {
         if (permissions != 0) {
-            self.postStringForShare = [NSString stringWithFormat:@"permissions=%ld",permissions];
+            self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
         } else {
             self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
         }
@@ -637,7 +637,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     } else if (expirationTime) {
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
     }else if (permissions > 0) {
-        self.postStringForShare = [NSString stringWithFormat:@"permissions=%ld",(long)permissions];
+        self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
     }
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
