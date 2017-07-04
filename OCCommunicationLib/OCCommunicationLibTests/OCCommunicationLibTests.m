@@ -1706,6 +1706,7 @@
                                            expirationTime: @"2100-05-24"
                                              publicUpload: @"true"
                                                  linkName: @"UrielIsTheBest"
+                                              permissions: 0
                                           onCommunication: _sharedOCCommunication
                                            successRequest:^(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer) {
                                                NSLog(@"Create public share OK");
@@ -1765,6 +1766,7 @@
                       andExpirationTime: nil
                         andPublicUpload: nil
                             andLinkName: nil
+                         andPermissions: 0
                         onCommunication: _sharedOCCommunication
                          successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
                              NSLog(@"Set password OK");
@@ -1788,6 +1790,7 @@
                       andExpirationTime: @"2100-05-24"
                         andPublicUpload: nil
                             andLinkName: nil
+                         andPermissions: 0
                         onCommunication: _sharedOCCommunication
                          successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
                              NSLog(@"Set expiraton date OK");
@@ -1811,6 +1814,7 @@
                       andExpirationTime: @"2014-05-24"
                         andPublicUpload: nil
                             andLinkName: nil
+                         andPermissions: 0
                         onCommunication: _sharedOCCommunication
                          successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
                              XCTFail(@"Set invalid expiration date unexpectedly finished with success");
@@ -1834,6 +1838,7 @@
                       andExpirationTime: nil
                         andPublicUpload: @"true"
                             andLinkName: nil
+                         andPermissions: 0
                         onCommunication: _sharedOCCommunication
                          successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
                              NSLog(@"Set public uploads on a folder OK");
@@ -1885,6 +1890,8 @@
 ///-----------------------------------
 
 /**
+ * DEPRECATED use -  shareFileOrFolderByServerPath:withFileOrFolderPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ *
  * This test check the creation of a link with password
  */
 - (void) testShareLinkWithPassword {
@@ -1912,6 +1919,8 @@
 ///-----------------------------------
 
 /**
+ * DEPRECATED use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead
+ *
  * This test check the creation of a link with expiration date and password
  */
 - (void) testShareLinkWithExpirationDateAndPassword {
@@ -2271,6 +2280,8 @@
 ///-----------------------------------
 
 /**
+ * DEPRECATED use + getFeaturesSupportedByServerForVersion: instead
+ *
  * This test check if we can get all the features supported by the server
  */
 - (void) testGetFeaturesSupportedByServer {
@@ -2322,6 +2333,7 @@
                                         capabilities: NO
                                         fedSharesOptionShare: NO
                                         publicShareLinkOptionName: NO
+                                        publicShareLinkOptionUploadOnlySupport: NO
                                         ];
     OCServerFeatures *supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"4.0.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result %@ for version 4.0.0 did not match the expected value %@", supportedFeatures, expectedResult);
@@ -2336,6 +2348,7 @@
                       capabilities: NO
                       fedSharesOptionShare: NO
                       publicShareLinkOptionName: NO
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"5.0.27"];
@@ -2351,6 +2364,7 @@
                       capabilities: NO
                       fedSharesOptionShare: NO
                       publicShareLinkOptionName: NO
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"7.0.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 7.0.0 did not match the expected value");
@@ -2366,6 +2380,7 @@
                       capabilities: NO
                       fedSharesOptionShare: NO
                       publicShareLinkOptionName: NO
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.1.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.1.0 did not match the expected value");
@@ -2380,6 +2395,7 @@
                       capabilities: YES
                       fedSharesOptionShare: NO
                       publicShareLinkOptionName: NO
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"8.2.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 8.2.0 did not match the expected value");
@@ -2394,6 +2410,7 @@
                       capabilities: YES
                       fedSharesOptionShare: YES
                       publicShareLinkOptionName: NO
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"9.1.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 9.1.0 did not match the expected value");
@@ -2408,9 +2425,24 @@
                       capabilities: YES
                       fedSharesOptionShare: YES
                       publicShareLinkOptionName: YES
+                      publicShareLinkOptionUploadOnlySupport: NO
                       ];
     supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"10.0.0"];
     XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 10.0.0 did not match the expected value");
+    
+    // 7: 10.0.1 <= version
+    expectedResult = [[OCServerFeatures alloc]
+                      initWithSupportForShare: YES
+                      sharee: YES
+                      cookies: YES
+                      forbiddenCharacters: YES
+                      capabilities: YES
+                      fedSharesOptionShare: YES
+                      publicShareLinkOptionName: YES
+                      publicShareLinkOptionUploadOnlySupport: YES
+                      ];
+    supportedFeatures = [_sharedOCCommunication getFeaturesSupportedByServerForVersion:@"10.0.1"];
+    XCTAssertEqualObjects(supportedFeatures, expectedResult, @"Result for version 10.0.1 did not match the expected value");
     
 }
 

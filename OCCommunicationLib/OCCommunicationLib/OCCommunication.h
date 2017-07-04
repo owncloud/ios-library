@@ -617,6 +617,11 @@ typedef enum {
  * @param expirationTime -> NSString: expirationTime in format "YYYY-MM-dd"
  * @param publicUpload -> NSString: @"true", @"false" or nil if not used
  * @param linkName -> NSString: name of the link
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
+ *                      (default: 31, for public shares: 1,
+ *                      for public shares of folder with allow uploads: 15,
+ *                      for public shares of folder with upload only: 4)
+ *
  * @param sharedOCCommunication -> OCCommunication: Singleton of communication to add the operation on the queue.
  *
  * @return shareLink or token of the file that we shared. URL or Ex:572d48de3814c90117fbca6442f2f3b2
@@ -629,6 +634,7 @@ typedef enum {
                         expirationTime:(NSString *)expirationTime
                           publicUpload:(NSString *)publicUpload
                               linkName:(NSString *)linkName
+                           permissions:(NSInteger)permissions
                        onCommunication:(OCCommunication *)sharedOCCommunication
                         successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
@@ -753,7 +759,12 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:passw
  * @param serverPath -> NSString server path
  * @param password -> password
  * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
- * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
+ * @param publicUpload -> NSString: @"true", @"false" or nil if not used
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
+ *                      (default: 31, for public shares: 1,
+ *                      for public shares of folder with allow uploads: 15,
+ *                      for public shares of folder with upload only: 4)
+ *
  * @param linkName -> NSString name of the link
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
@@ -769,6 +780,7 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:withFileOrFolderPath:passw
    andExpirationTime:(NSString*)expirationTime
      andPublicUpload:(NSString *)publicUpload
          andLinkName:(NSString *)linkName
+      andPermissions:(NSInteger)permissions
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureReques;
