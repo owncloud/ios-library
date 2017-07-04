@@ -1854,30 +1854,6 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
     
-  //TODO: use with a server 10.0.1
-//    // test 5: Set public uploads on a folder with show file listing disabled = permissions 4
-//    [_sharedOCCommunication updateShare: shareId
-//                           ofServerPath: k_base_url
-//                    withPasswordProtect: nil
-//                      andExpirationTime: nil
-//                        andPublicUpload: @"true"
-//                            andLinkName: nil
-//                         andPermissions: 4
-//                        onCommunication: _sharedOCCommunication
-//                         successRequest: ^(NSHTTPURLResponse *response, NSData* responseData, NSString *redirectedServer) {
-//                             NSLog(@"Set public uploads on a folder and show file listing disabled OK");
-//                             dispatch_semaphore_signal(semaphore);
-//                         }
-//                         failureRequest: ^(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer) {
-//                             XCTFail(@"Set public uploads on a folder and show file listing disabled failed with error code %ld and info %@", error.code, error.userInfo);
-//                             dispatch_semaphore_signal(semaphore);
-//                         }
-//     ];
-//    
-//    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
-//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-//                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:k_timeout_webdav]];
-    
 }
 
 
