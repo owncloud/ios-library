@@ -151,7 +151,7 @@ typedef enum {
  *
  * @param userAgent -> String with the user agent. Ex. "iOS-ownCloud"
  */
-- (void) setUserAgent:(NSString *)userAgent;
+- (void) setUserAgent:(NSString *) userAgent;
 
 
 /*
