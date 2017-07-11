@@ -176,8 +176,7 @@
     self.password = token;
 }
 
-#pragma mark - Setting User Agent
-- (void) setUserAgent:(NSString *) userAgent {
+- (void) setValueOfUserAgent:(NSString *) userAgent {
     self.userAgent = userAgent;
 }
 

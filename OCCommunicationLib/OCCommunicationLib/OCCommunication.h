@@ -144,6 +144,10 @@ typedef enum {
  */
 - (void) setCredentialsOauthWithToken:(NSString*) token;
 
+///-----------------------------------
+/// @name Set User Agent
+///-----------------------------------
+
 /**
  * @optional
  *
@@ -151,7 +155,7 @@ typedef enum {
  *
  * @param userAgent -> String with the user agent. Ex. "iOS-ownCloud"
  */
-- (void) setUserAgent:(NSString *) userAgent;
+- (void) setValueOfUserAgent:(NSString *) userAgent;
 
 
 /*
