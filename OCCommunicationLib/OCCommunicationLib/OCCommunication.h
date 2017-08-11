@@ -51,8 +51,29 @@ typedef enum {
     OCErrorMovingFolderInsideItself = 112, //On move file or folder
     OCErrorFileToUploadDoesNotExist = 120, //The file that we want upload does not exist
     OCErrorForbiddenUnknown = 130, //For example, no write permissions to the target folder of an upload
-    OCErrorForbiddenWithSpecificMessage = 131 // For example, forbidden due to a firewall rule
+    OCErrorForbiddenWithSpecificMessage = 131, // For example, forbidden due to a firewall rule
+    
+    OCErrorWrongConnection = 1000,
+    OCErrorNoNetworkConntion = 1010,
+    OCErrorTimeout = 1020,
+    OCErrorConnectTimeout = 1030,
+    OCErrorHostNotAvailable = 1040,
+    OCErrorServiceUnavailable = 1050,
+    OCErrorSslRecoverablePeerUnverified = 1060,
+    OCErrorBadVersion = 1070,
+    OCErrorIncorrectAddress = 1080,
+    OCErrorSslError = 1090,
+    OCErrorUnauthorized = 1100,
+    OCErrorServerNotConfigured = 1110,
+    OCErrorFileNotFound = 1120,
+    OCErrorOAuth2Error = 1130,
+    OCErrorOAuth2ErrorAccessDenied = 1140,
+    OCErrorAccountNotNew = 1150,
+    OCErrorAccountNotTheSame = 1160,
+    OCErrorRedirectToNonSecureConnection = 1170
+    
 } OCErrorEnum;
+
 
 //Private properties
 @property NSInteger kindOfCredential;
