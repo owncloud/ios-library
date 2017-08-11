@@ -67,6 +67,9 @@ typedef enum {
 @property NSInteger kindOfCredential;
 @property (nonatomic, strong) NSString *user;
 @property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) NSString *refreshToken;
+@property (nonatomic, strong) NSDate *expiresIn;
+
 @property (nonatomic, strong) NSString *userAgent;
 
 //Public properties

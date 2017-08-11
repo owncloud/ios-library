@@ -171,7 +171,7 @@
             
         case AuthenticationMethodBEARER_TOKEN:
             
-            [self setCredentialsOauthWithToken:credentials.accessToken];
+            [self setCredentialsOauthWithToken:credentials.accessToken refreshToken:credentials.refreshToken expiresIn:credentials.expiresIn];
             break;
             
         default:
@@ -191,7 +191,7 @@
     self.password = cookie;
 }
 
-- (void) setCredentialsOauthWithToken:(NSString*) token {
+- (void) setCredentialsOauthWithToken:(NSString*)token  refreshToken:(NSString *)refreshToken expiresIn:(NSString *)expiresIn {
     self.kindOfCredential = credentialOauth;
     self.password = token;
 }

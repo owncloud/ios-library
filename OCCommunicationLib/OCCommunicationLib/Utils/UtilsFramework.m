@@ -664,10 +664,21 @@
     BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
     BOOL canChange = [self isPermissionToCanChange:permissionValue];
     
-    
     BOOL canEdit = (canCreate && canChange && canRead);
     
     return canEdit;
-    
 }
+
++(BOOL) isTokenExpired:(NSString *)expiresIn {
+    
+    BOOL expired = NO;
+    
+    NSDate* now = [NSDate date];
+    //TODO:
+    
+    
+    return expired;
+}
+
+
 @end
