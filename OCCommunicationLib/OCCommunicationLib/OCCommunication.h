@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import "OCServerFeatures.h"
+#import "OCCredentialsDto.h"
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
@@ -128,42 +129,19 @@ typedef enum {
 
 #pragma mark - Credentials
 
+
 ///-----------------------------------
-/// @name Set Credential With User
+/// @name Set Credentials
 ///-----------------------------------
 
 /**
  * Method to set credentials with user and password
  *
- * @param user -> NSString username
- * @param password -> NSString password
+ * @param credentials -> OCCredentialsDto credentials
  */
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password;
 
+- (void) setCredentials:(OCCredentialsDto *) credentials;
 
-///-----------------------------------
-/// @name Set Credential with cookie
-///-----------------------------------
-
-/**
- * Method that set credentials with cookie.
- * Used for SAML servers.
- *
- * @param cookie -> NSString cookie string
- */
-- (void) setCredentialsWithCookie:(NSString*) cookie;
-
-
-///-----------------------------------
-/// @name Set Credential with OAuth
-///-----------------------------------
-
-/**
- * Method to set credentials for OAuth with token
- *
- * @param token -> NSString token
- */
-- (void) setCredentialsOauthWithToken:(NSString*) token;
 
 ///-----------------------------------
 /// @name Set User Agent

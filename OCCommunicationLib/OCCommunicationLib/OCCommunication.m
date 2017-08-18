@@ -160,6 +160,26 @@
 
 #pragma mark - Setting Credentials
 
+
+- (void) setCredentials:(OCCredentialsDto *) credentials {
+
+    switch (credentials.authenticationMethod) {
+        case AuthenticationMethodSAML_WEB_SSO:
+            
+            [self setCredentialsWithCookie:credentials.accessToken];
+            break;
+            
+        case AuthenticationMethodBEARER_TOKEN:
+            
+            [self setCredentialsOauthWithToken:credentials.accessToken];
+            break;
+            
+        default:
+            [self setCredentialsWithUser:credentials.userName andPassword:credentials.accessToken];
+            break;
+    }
+}
+
 - (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
     self.kindOfCredential = credentialNormal;
     self.user = user;

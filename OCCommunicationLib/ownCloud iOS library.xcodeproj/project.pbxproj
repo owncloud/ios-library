@@ -18,6 +18,7 @@
 		59A5B722191907F100724BE3 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B717191907F100724BE3 /* AFURLRequestSerialization.m */; };
 		59A5B723191907F100724BE3 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */; };
 		59A5B724191907F100724BE3 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A5B71B191907F100724BE3 /* AFURLSessionManager.m */; };
+		7F6F496D1F46C70C009F8813 /* OCCredentialsDto.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F496C1F46C70C009F8813 /* OCCredentialsDto.m */; };
 		EA05999A1BB96D14002C2864 /* OCShareUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA0599991BB96D14002C2864 /* OCShareUser.m */; };
 		EA73DC831B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EA73DC821B1C48EA00C3AC21 /* OCXMLServerErrorsParser.m */; };
 		EA7CC89B183E11E600B6A4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7CC89A183E11E600B6A4B4 /* Foundation.framework */; };
@@ -99,6 +100,8 @@
 		59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLResponseSerialization.m; path = ExternalLibs/AFNetworking/AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		59A5B71A191907F100724BE3 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFURLSessionManager.h; path = ExternalLibs/AFNetworking/AFURLSessionManager.h; sourceTree = "<group>"; };
 		59A5B71B191907F100724BE3 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLSessionManager.m; path = ExternalLibs/AFNetworking/AFURLSessionManager.m; sourceTree = "<group>"; };
+		7F6F496B1F46C6EB009F8813 /* OCCredentialsDto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCCredentialsDto.h; sourceTree = "<group>"; };
+		7F6F496C1F46C70C009F8813 /* OCCredentialsDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCCredentialsDto.m; sourceTree = "<group>"; };
 		EA0599981BB96D14002C2864 /* OCShareUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCShareUser.h; sourceTree = "<group>"; };
 		EA0599991BB96D14002C2864 /* OCShareUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCShareUser.m; sourceTree = "<group>"; };
 		EA73DC811B1C48EA00C3AC21 /* OCXMLServerErrorsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCXMLServerErrorsParser.h; path = OCWebDavClient/Parsers/OCXMLServerErrorsParser.h; sourceTree = "<group>"; };
@@ -214,6 +217,8 @@
 			children = (
 				EAABAA30183E688900909831 /* OCFileDto.h */,
 				EAABAA31183E688900909831 /* OCFileDto.m */,
+				7F6F496B1F46C6EB009F8813 /* OCCredentialsDto.h */,
+				7F6F496C1F46C70C009F8813 /* OCCredentialsDto.m */,
 				EA0599981BB96D14002C2864 /* OCShareUser.h */,
 				EA0599991BB96D14002C2864 /* OCShareUser.m */,
 				13AA8634187C211900A10927 /* OCSharedDto.h */,
@@ -444,6 +449,7 @@
 				EA05999A1BB96D14002C2864 /* OCShareUser.m in Sources */,
 				59A5B723191907F100724BE3 /* AFURLResponseSerialization.m in Sources */,
 				EA7CC92C183E14A100B6A4B4 /* OCHTTPRequestOperation.m in Sources */,
+				7F6F496D1F46C70C009F8813 /* OCCredentialsDto.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

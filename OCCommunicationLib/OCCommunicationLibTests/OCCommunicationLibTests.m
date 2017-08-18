@@ -68,7 +68,11 @@
     [super setUp];
     
     _sharedOCCommunication = [[OCCommunication alloc] init];
-    [_sharedOCCommunication setCredentialsWithUser:k_user andPassword:k_password];
+    OCCredentialsDto* credentials = [[OCCredentialsDto alloc] init];
+    credentials.authenticationMethod = AuthenticationMethodBASIC_HTTP_AUTH;
+    credentials.userName = k_user;
+    credentials.accessToken = k_password;
+    [_sharedOCCommunication setCredentials credentials];
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
