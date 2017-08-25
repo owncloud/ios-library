@@ -194,6 +194,8 @@
 - (void) setCredentialsOauthWithToken:(NSString*)token  refreshToken:(NSString *)refreshToken expiresIn:(NSString *)expiresIn {
     self.kindOfCredential = credentialOauth;
     self.password = token;
+    self.refreshToken = refreshToken;
+    self.expiresIn = expiresIn;
 }
 
 - (void) setValueOfUserAgent:(NSString *) userAgent {

@@ -68,7 +68,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *user;
 @property (nonatomic, strong) NSString *password;
 @property (nonatomic, strong) NSString *refreshToken;
-@property (nonatomic, strong) NSDate *expiresIn;
+@property (nonatomic, strong) NSString *expiresIn;
 
 @property (nonatomic, strong) NSString *userAgent;
 
