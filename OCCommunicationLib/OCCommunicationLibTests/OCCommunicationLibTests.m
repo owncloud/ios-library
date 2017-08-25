@@ -72,7 +72,7 @@
     credentials.authenticationMethod = AuthenticationMethodBASIC_HTTP_AUTH;
     credentials.userName = k_user;
     credentials.accessToken = k_password;
-    [_sharedOCCommunication setCredentials credentials];
+    [_sharedOCCommunication setCredentials:credentials];
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
     
     //Create Tests folder
