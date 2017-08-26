@@ -702,8 +702,9 @@
     BOOL hasCapabilitiesSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_capabilities];
     BOOL hasFedSharesOptionShareSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_share_option_fed_share];
     BOOL hasPublicShareLinkOptionNameSupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_public_share_link_option_name];
+    BOOL hasPublicShareLinkOptionUploadOnlySupport = [UtilsFramework isServerVersion:version higherThanLimitVersion:k_version_support_public_share_link_option_upload_only];
     
-    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport publicShareLinkOptionName:hasPublicShareLinkOptionNameSupport];
+    OCServerFeatures *supportedFeatures = [[OCServerFeatures alloc] initWithSupportForShare:hasShareSupport sharee:hasShareeSupport cookies:hasCookiesSupport forbiddenCharacters:hasForbiddenCharactersSupport capabilities:hasCapabilitiesSupport fedSharesOptionShare:hasFedSharesOptionShareSupport publicShareLinkOptionName:hasPublicShareLinkOptionNameSupport publicShareLinkOptionUploadOnlySupport:hasPublicShareLinkOptionUploadOnlySupport];
     
     return supportedFeatures;
 }
@@ -780,6 +781,7 @@
                         expirationTime:(NSString *)expirationTime
                           publicUpload:(NSString *)publicUpload
                               linkName:(NSString *)linkName
+                           permissions:(NSInteger)permissions
                        onCommunication:(OCCommunication *)sharedOCCommunication
                         successRequest:(void(^)(NSHTTPURLResponse *response, NSString *token, NSString *redirectedServer)) successRequest
                         failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
@@ -794,7 +796,12 @@
     request = [self getRequestWithCredentials:request];
     
     
-    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath password:password expirationTime:expirationTime publicUpload:publicUpload linkName:linkName
+    [request shareByLinkFileOrFolderByServer:serverPath andPath:filePath
+                                    password:password
+                              expirationTime:expirationTime
+                                publicUpload:publicUpload
+                                    linkName:linkName
+                                 permissions:permissions
                              onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         NSData *responseData = (NSData*) responseObject;
         
@@ -1085,6 +1092,7 @@
    andExpirationTime:(NSString*)expirationTime
      andPublicUpload:(NSString *)publicUpload
          andLinkName:(NSString *)linkName
+      andPermissions:(NSInteger)permissions
      onCommunication:(OCCommunication *)sharedOCCommunication
       successRequest:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer)) successRequest
       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
@@ -1101,6 +1109,7 @@
     
     [request updateShareItem:shareId ofServerPath:serverPath withPasswordProtect:password
            andExpirationTime:expirationTime andPublicUpload:publicUpload andLinkName:linkName
+              andPermissions:permissions
              onCommunication:sharedOCCommunication
     success:^(NSHTTPURLResponse *response, id responseObject) {
         
@@ -1323,11 +1332,13 @@
             
             NSNumber *filesSharingShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"enabled"];
             NSNumber *filesSharingAllowPublicUploadsEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"upload"];
+            NSNumber *filesSharingSupportsUploadOnlyEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"supports_upload_only"];
             NSNumber *filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber = (NSNumber*)[fileSharingPublic valueForKey:@"send_mail"];
             NSNumber *filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber= (NSNumber*)[fileSharingPublic valueForKey:@"multiple"];
             
             capabilities.isFilesSharingShareLinkEnabled = filesSharingShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowPublicUploadsEnabled = filesSharingAllowPublicUploadsEnabledNumber.boolValue;
+            capabilities.isFilesSharingSupportsUploadOnlyEnabled = filesSharingSupportsUploadOnlyEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserSendMailNotificationAboutShareLinkEnabled = filesSharingAllowUserSendMailNotificationAboutShareLinkEnabledNumber.boolValue;
             capabilities.isFilesSharingAllowUserCreateMultiplePublicLinksEnabled = filesSharingAllowUserCreateMultiplePublicLinksEnabledNumber.boolValue;
             

@@ -297,6 +297,10 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  * @param expirationTime -> NSString: expirationTime in format "YYYY-MM-dd"
  * @param publicUpload -> NSString: @"true", @"false" or nil if not used
  * @param linkName -> NSString: name of the link
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
+ *                      (default: 31, for public shares: 1,
+ *                      for public shares of folder with allow uploads: 15,
+ *                      for public shares of folder with upload only: 4)
  * @param sharedOCCommunication -> OCCommunication: Singleton of communication to add the operation on the queue.
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
@@ -308,6 +312,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
                          expirationTime:(NSString * _Nullable)expirationTime
                            publicUpload:(NSString * _Nullable)publicUpload
                                linkName:(NSString * _Nullable)linkName
+                            permissions:(NSInteger)permissions
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
@@ -426,6 +431,10 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expiratio
  * @param expirationTime -> expirationTime in format "YYYY-MM-dd"
  * @param publicUpload -> NSString allow pulic upload to a public shared folder
  * @param linkName -> NSString name of the link
+ * @param permissions -> NSInteger 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
+ *                      (default: 31, for public shares: 1,
+ *                      for public shares of folder with allow uploads: 15,
+ *                      for public shares of folder with upload only: 4)
  * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
  * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
  * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
@@ -436,6 +445,7 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expiratio
        andExpirationTime:(NSString * _Nullable)expirationTime
          andPublicUpload:(NSString * _Nullable)publicUpload
              andLinkName:(NSString * _Nullable)linkName
+          andPermissions:(NSInteger)permissions
          onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                  success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                  failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
