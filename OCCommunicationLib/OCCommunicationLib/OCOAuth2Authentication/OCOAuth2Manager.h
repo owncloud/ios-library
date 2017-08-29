@@ -1,8 +1,8 @@
 //
-//  OCCredentialsDto.h
+//  OCOAuth2Manager.h
 //  ownCloud iOS library
 //
-//  Created by Noelia Alvarez on 27/10/14.
+//  Created by Noelia Alvarez on 28/08/2017.
 //
 // Copyright (C) 2017, ownCloud GmbH.  ( http://www.owncloud.org/ )
 //
@@ -24,31 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-//
 
 #import <Foundation/Foundation.h>
+#import "OCCredentialsDto.h"
+#import "OCCommunication.h"
+#import "OCOAuth2Configuration.h"
+#import "UtilsFramework.h"
 
-typedef NS_ENUM (NSUInteger, AuthenticationMethod){
-    AuthenticationMethodUNKNOWN = 0,
-    AuthenticationMethodNONE = 1,
-    AuthenticationMethodBASIC_HTTP_AUTH = 2,
-    AuthenticationMethodBEARER_TOKEN = 3,
-    AuthenticationMethodSAML_WEB_SSO = 4,
-};
+@interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate>
 
-@interface OCCredentialsDto : NSObject <NSCopying>
-
-@property (nonatomic, copy) NSString *userName;
-@property (nonatomic, copy) NSString *accessToken; // password for basic auth, cookies for SAML, access token for OAuth2...
-@property (nonatomic) AuthenticationMethod authenticationMethod;
-
-//optionals credentials used with oauth2
-@property (nonatomic, copy) NSString *refreshToken;
-@property (nonatomic, copy) NSString *expiresIn;
-@property (nonatomic, copy) NSString *tokenType;
-
-
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-
+- (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+                             refreshToken:(NSString *)refreshToken
+                                  success:(void(^)(OCCredentialsDto *userCredDto))success
+                                  failure:(void(^)(NSString *error))failure;
 @end

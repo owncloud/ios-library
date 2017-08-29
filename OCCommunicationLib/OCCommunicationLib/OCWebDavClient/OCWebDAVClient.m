@@ -34,6 +34,7 @@
 #import "AFURLSessionManager.h"
 #import "NSString+Encode.h"
 #import "OCConstants.h"
+#import "OCOAuth2Manager.h"
 
 #define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"
 #define k_server_information_json @"status.php"
@@ -117,6 +118,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return operation;
 }
 
+#pragma mark - Main network operation
 - (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, id))success failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
@@ -145,6 +147,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //TODO: get refresh token
+                    
                     //TODO: set new token.
                     //NSString *refreshToken = @"newToken";
                     //sharedOCCommunication.password = refreshToken;
