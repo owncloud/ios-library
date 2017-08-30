@@ -126,6 +126,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                               success:^(OCCredentialsDto *userCredDto) {
                                                   //TODO: set and store new token.
                                                   
+                                                  [sharedOCCommunication.credentialsStorage storeCredentials:userCredDto];
                                                   
                                                   NSString *newAccessToken = userCredDto.accessToken;
                                                   sharedOCCommunication.password = newAccessToken;
@@ -185,6 +186,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                     success:^(OCCredentialsDto *userCredDto) {
                         //TODO: set and store new token.
                         
+                        [sharedOCCommunication.credentialsStorage storeCredentials:userCredDto];
                         
                         NSString *newAccessToken = userCredDto.accessToken;
                         sharedOCCommunication.password = newAccessToken;

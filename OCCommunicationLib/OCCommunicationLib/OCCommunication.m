@@ -169,7 +169,6 @@
             break;
             
         case AuthenticationMethodBEARER_TOKEN:
-            
             [self setCredentialsOauthWithToken:credentials.accessToken refreshToken:credentials.refreshToken expiresIn:credentials.expiresIn];
             break;
             

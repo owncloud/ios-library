@@ -27,6 +27,7 @@
 #import "OCServerFeatures.h"
 #import "OCCredentialsDto.h"
 #import "OCOAuth2Configuration.h"
+#import "OCCredentialsStorage.h"
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
@@ -74,6 +75,8 @@ typedef enum {
 @property (nonatomic, strong) NSString *userAgent;
 
 @property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
+@property (weak) id<OCCredentialsStorageDelegate> credentialsStorage;
+
 
 //Public properties
 @property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;

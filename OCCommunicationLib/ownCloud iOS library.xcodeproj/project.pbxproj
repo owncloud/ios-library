@@ -89,6 +89,7 @@
 		4033BE521F5429F900D76200 /* OCOAuth2Manager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCOAuth2Manager.m; sourceTree = "<group>"; };
 		4033BE541F54385900D76200 /* OCOAuth2Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCOAuth2Configuration.h; path = OCCommunicationLib/OCOAuth2Authentication/OCOAuth2Configuration.h; sourceTree = SOURCE_ROOT; };
 		4033BE551F54385900D76200 /* OCOAuth2Configuration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCOAuth2Configuration.m; path = OCCommunicationLib/OCOAuth2Authentication/OCOAuth2Configuration.m; sourceTree = SOURCE_ROOT; };
+		40B2981A1F57196F008EC53F /* OCCredentialsStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCCredentialsStorage.h; sourceTree = "<group>"; };
 		40D4039B1E955C020003A855 /* OCServerFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCServerFeatures.h; sourceTree = "<group>"; };
 		40D4039C1E955C020003A855 /* OCServerFeatures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCServerFeatures.m; sourceTree = "<group>"; };
 		591BFBF31B1C809000AB8D3A /* OCConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OCConstants.h; path = Utils/OCConstants.h; sourceTree = "<group>"; };
@@ -195,6 +196,7 @@
 				4033BE521F5429F900D76200 /* OCOAuth2Manager.m */,
 				4033BE541F54385900D76200 /* OCOAuth2Configuration.h */,
 				4033BE551F54385900D76200 /* OCOAuth2Configuration.m */,
+				40B2981A1F57196F008EC53F /* OCCredentialsStorage.h */,
 			);
 			path = OCOAuth2Authentication;
 			sourceTree = "<group>";
