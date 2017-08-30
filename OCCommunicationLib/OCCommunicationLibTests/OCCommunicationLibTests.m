@@ -75,6 +75,8 @@
     [_sharedOCCommunication setCredentials:credentials];
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
     
+    //TODO: set oauthconfiguration an credentialsStorage
+    
     //Create Tests folder
     [self createFolderWithName:k_path_test_folder];
     

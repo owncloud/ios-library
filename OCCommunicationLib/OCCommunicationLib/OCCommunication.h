@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "OCServerFeatures.h"
 #import "OCCredentialsDto.h"
+#import "OCOAuth2Configuration.h"
 
 @class OCHTTPRequestOperation;
 @class AFURLSessionManager;
@@ -71,6 +72,8 @@ typedef enum {
 @property (nonatomic, strong) NSString *expiresIn;
 
 @property (nonatomic, strong) NSString *userAgent;
+
+@property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
 
 //Public properties
 @property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;
@@ -128,6 +131,7 @@ typedef enum {
  * Method to set credentials with user and password
  *
  * @param credentials -> OCCredentialsDto credentials
+ * @param oauth2Configuration -> OCOAuth2Configuration for bearer auth method, send it as nil for any other method of authentication
  */
 
 - (void) setCredentials:(OCCredentialsDto *) credentials;

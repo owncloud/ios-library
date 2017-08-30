@@ -31,10 +31,26 @@
 #import "OCOAuth2Configuration.h"
 #import "UtilsFramework.h"
 
-@interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate>
+@interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
-- (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
-                             refreshToken:(NSString *)refreshToken
-                                  success:(void(^)(OCCredentialsDto *userCredDto))success
-                                  failure:(void(^)(NSString *error))failure;
+
+/**
+ * Method to get the new auth data by the oauth refresh token
+ *
+ * @param url -> NSURL with the url of the path
+ * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
+ *
+ * @param oauth2Configuration -> OCOAuth2Configuration with all the oauth parameters
+ * @param refreshToken -> NSString with the refreshToken
+ * @param userAgent -> NSString with the custom user agent or nil
+ *
+**/
+
++ (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+             refreshToken:(NSString *)refreshToken
+                userAgent:(NSString *)userAgent
+                  success:(void(^)(OCCredentialsDto *userCredDto))success
+                  failure:(void(^)(NSError *error))failure;
+
+
 @end

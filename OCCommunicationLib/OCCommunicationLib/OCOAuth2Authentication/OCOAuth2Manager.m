@@ -29,12 +29,17 @@
 
 @implementation OCOAuth2Manager
 
-- (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
++ (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
              refreshToken:(NSString *)refreshToken
+                userAgent:(NSString *)userAgent
                    success:(void(^)(OCCredentialsDto *userCredDto))success
-                  failure:(void(^)(NSString *error))failure {
+                  failure:(void(^)(NSError *error))failure {
     
-    [self refreshTokenAuthRequestByOAuth2Configuration:oauth2Configuration refreshToken:refreshToken success:^(NSData *data, NSError *error) {
+    [UtilsFramework deleteAllCookies];
+    
+    [self refreshTokenAuthRequestByOAuth2Configuration:oauth2Configuration refreshToken:refreshToken userAgent:userAgent
+     
+    success:^(NSHTTPURLResponse *response, NSError *error, NSData *data) {
         
         NSDictionary *dictJSON;
         OCCredentialsDto *userCredDto;
@@ -42,12 +47,22 @@
         if (data != nil) {
             
             NSError *errorJSON = nil;
+            NSLog(@"data = %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             dictJSON = [NSJSONSerialization JSONObjectWithData:data
                                                        options:kNilOptions
                                                          error:&errorJSON];
-            if (errorJSON != nil) {
+            if (errorJSON == nil) {
                 if (dictJSON[@"error"] != nil && ![dictJSON[@"error"] isEqual:[NSNull null]] ) {
-                    failure(dictJSON[@"error"]);
+                    
+                    NSString *message = (NSString*)[dictJSON objectForKey:@"error"];
+                    
+                    if ([message isKindOfClass:[NSNull class]]) {
+                        message = @"";
+                    }
+                    
+                    NSError *error = [UtilsFramework getErrorWithCode:response.statusCode andCustomMessageFromTheServer:message];
+                    
+                    failure(error);
                 } else {
                     userCredDto.userName = dictJSON[@"user_id"];
                     userCredDto.accessToken = dictJSON[@"access_token"];
@@ -61,42 +76,49 @@
             }
             
         } else {
-            failure(error.localizedDescription);
+            failure(error);
         }
         
     } failure:^(NSHTTPURLResponse *response, NSError *error) {
-        
+        failure(error);
     }];
     
 }
 
-- (void) refreshTokenAuthRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
++ (void) refreshTokenAuthRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                          refreshToken:(NSString *)refreshToken
-                              success:(void(^)(NSData *data, NSError *error))success
+                            userAgent:(NSString *)userAgent
+                              success:(void(^)(NSHTTPURLResponse *response, NSError *error, NSData *data))success
                               failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure {
+
+    NSString *url = [NSString stringWithFormat:@"%@/%@",oauth2Configuration.url, oauth2Configuration.tokenEndpoint];
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:oauth2Configuration.mURL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     
     [request setHTTPMethod:@"POST"];
-    [request setValue:oauth2Configuration.mUserAgent forHTTPHeaderField:@"User-Agent"];
+    if (userAgent != nil) {
+        [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
+    }
+    
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
-    NSString *authId = [NSString stringWithFormat:@"%@:%@",oauth2Configuration.mClientId,oauth2Configuration.mClientSecret];
+    NSString *authId = [NSString stringWithFormat:@"%@:%@",oauth2Configuration.clientId,oauth2Configuration.clientSecret];
     NSString *base64EncodedAuthId = [UtilsFramework AFBase64EncodedStringFromString:authId];
     NSString *authorizationValue = [NSString stringWithFormat:@"Basic %@",base64EncodedAuthId];
     [request setValue:authorizationValue forHTTPHeaderField:@"Authorization"];
     
-    NSString *body = [NSString stringWithFormat:@"grant_type=refresh_token&refresh_token=%@&redirect_uri=%@&client_id=%@",refreshToken,oauth2Configuration.mRedirectUri,oauth2Configuration.mClientId];
+    NSString *body = [NSString stringWithFormat:@"grant_type=refresh_token&client_id=%@&refresh_token=%@",oauth2Configuration.clientId,refreshToken];
+    
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLSession *session = nil;
     
-    session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
         if (data != nil) {
-            success(data, error);
+            success((NSHTTPURLResponse*)response, error, data);
         } else {
             NSLog(@"Error %@",error.localizedDescription);
             failure((NSHTTPURLResponse*)response, error);

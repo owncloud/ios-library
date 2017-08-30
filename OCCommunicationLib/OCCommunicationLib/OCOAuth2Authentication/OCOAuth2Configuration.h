@@ -29,12 +29,13 @@
 
 @interface OCOAuth2Configuration : NSObject
 
-@property (nonatomic, copy) NSURL *mURL;
-@property (nonatomic, copy) NSString *mClientId;
-@property (nonatomic, copy) NSString *mClientSecret;
-@property (nonatomic, copy) NSString *mRedirectUri;
-@property (nonatomic, copy) NSString *mAuthorizationEndpoint;
-@property (nonatomic, copy) NSString *mTokenEndpoint;
-@property (nonatomic, copy) NSString *mUserAgent;
+@property (nonatomic, copy) NSURL *url;
+@property (nonatomic, copy) NSString *clientId;
+@property (nonatomic, copy) NSString *clientSecret;
+@property (nonatomic, copy) NSString *redirectUri;
+@property (nonatomic, copy) NSString *authorizationEndpoint;
+@property (nonatomic, copy) NSString *tokenEndpoint;
 
+- (id)initWithURL:(NSURL *)url clientId:(NSString *)clientId clientSecret:(NSString *)clientSecret redirectUri:(NSString *)redirectUri authorizationEndpoint:(NSString *)authorizationEndpoint tokenEndpoint:(NSString *)tokenEndpoint;
+    
 @end

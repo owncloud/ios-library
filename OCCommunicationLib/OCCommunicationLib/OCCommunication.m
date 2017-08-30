@@ -160,7 +160,6 @@
 
 #pragma mark - Setting Credentials
 
-
 - (void) setCredentials:(OCCredentialsDto *) credentials {
 
     switch (credentials.authenticationMethod) {
