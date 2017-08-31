@@ -34,6 +34,7 @@
 @class AFSecurityPolicy;
 @class OCCapabilities;
 
+@protocol OCCredentialsStorageDelegate;
 
 @interface OCCommunication : NSObject
 
@@ -67,10 +68,7 @@ typedef enum {
 
 //Private properties
 @property NSInteger kindOfCredential;
-@property (nonatomic, strong) NSString *user;
-@property (nonatomic, strong) NSString *password;
-@property (nonatomic, strong) NSString *refreshToken;
-@property (nonatomic, strong) NSString *expiresIn;
+@property (nonatomic, strong) OCCredentialsDto *credDto;
 
 @property (nonatomic, strong) NSString *userAgent;
 
@@ -134,7 +132,6 @@ typedef enum {
  * Method to set credentials with user and password
  *
  * @param credentials -> OCCredentialsDto credentials
- * @param oauth2Configuration -> OCOAuth2Configuration for bearer auth method, send it as nil for any other method of authentication
  */
 
 - (void) setCredentials:(OCCredentialsDto *) credentials;

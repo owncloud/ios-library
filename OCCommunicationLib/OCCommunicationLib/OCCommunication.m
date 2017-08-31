@@ -161,40 +161,24 @@
 #pragma mark - Setting Credentials
 
 - (void) setCredentials:(OCCredentialsDto *) credentials {
-
+    
+    self.credDto = credentials;
+    
     switch (credentials.authenticationMethod) {
         case AuthenticationMethodSAML_WEB_SSO:
-            
-            [self setCredentialsWithCookie:credentials.accessToken];
+            self.kindOfCredential = credentialCookie;
             break;
             
         case AuthenticationMethodBEARER_TOKEN:
-            [self setCredentialsOauthWithToken:credentials.accessToken refreshToken:credentials.refreshToken expiresIn:credentials.expiresIn];
+            self.kindOfCredential = credentialOauth;
             break;
             
         default:
-            [self setCredentialsWithUser:credentials.userName andPassword:credentials.accessToken];
+            self.kindOfCredential = credentialNormal;
             break;
     }
 }
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
-    self.kindOfCredential = credentialNormal;
-    self.user = user;
-    self.password = password;
-}
-
-- (void) setCredentialsWithCookie:(NSString*) cookie {
-    self.kindOfCredential = credentialCookie;
-    self.password = cookie;
-}
-
-- (void) setCredentialsOauthWithToken:(NSString*)token  refreshToken:(NSString *)refreshToken expiresIn:(NSString *)expiresIn {
-    self.kindOfCredential = credentialOauth;
-    self.password = token;
-    self.refreshToken = refreshToken;
-    self.expiresIn = expiresIn;
-}
 
 - (void) setValueOfUserAgent:(NSString *) userAgent {
     self.userAgent = userAgent;
@@ -223,16 +207,15 @@
                 break;
             case credentialNormal:
             {
-                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.user, self.password];
+                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.credDto.userName, self.credDto.accessToken];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
                 break;
             }
             case credentialCookie:
-                //NSLog(@"Cookie: %@", self.password);
-                [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
+                [myRequest addValue:self.credDto.accessToken forHTTPHeaderField:@"Cookie"];
                 break;
             case credentialOauth:
-                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.password] forHTTPHeaderField:@"Authorization"];
+                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
                 break;
@@ -252,13 +235,13 @@
                 //Without credentials
                 break;
             case credentialNormal:
-                [myRequest setAuthorizationHeaderWithUsername:self.user password:self.password];
+                [myRequest setAuthorizationHeaderWithUsername:self.credDto.userName password:self.credDto.accessToken];
                 break;
             case credentialCookie:
-                [myRequest setAuthorizationHeaderWithCookie:self.password];
+                [myRequest setAuthorizationHeaderWithCookie:self.credDto.accessToken];
                 break;
             case credentialOauth:
-                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.password]];
+                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken]];
                 break;
             default:
                 break;
