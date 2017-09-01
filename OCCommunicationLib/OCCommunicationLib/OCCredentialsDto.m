@@ -34,6 +34,7 @@
     self = [super init];
     if (self) {
         // Custom initialization
+        _userId = oCredDto.userId;
         _userName = oCredDto.userName;
         _accessToken = oCredDto.accessToken;
         _refreshToken = oCredDto.refreshToken;
@@ -47,6 +48,7 @@
 
 -(id) copyWithZone:(NSZone *)zone {
     OCCredentialsDto *credDtoCopy = [[OCCredentialsDto alloc]init];
+    credDtoCopy.userId = self.userId;
     credDtoCopy.userName = self.userName;
     credDtoCopy.accessToken = self.accessToken;
     credDtoCopy.refreshToken = self.refreshToken;
@@ -59,6 +61,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
+    [aCoder encodeObject:self.userId forKey:@"userId"];
     [aCoder encodeObject:self.userName forKey:@"userName"];
     [aCoder encodeObject:self.accessToken forKey:@"accessToken"];
     [aCoder encodeObject:self.refreshToken forKey:@"refreshToken"];
@@ -70,6 +73,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super init]) {
+        self.userId = [aDecoder decodeObjectForKey:@"userId"];
         self.userName = [aDecoder decodeObjectForKey:@"userName"];
         self.accessToken = [aDecoder decodeObjectForKey:@"accessToken"];
         self.refreshToken = [aDecoder decodeObjectForKey:@"refreshToken"];
