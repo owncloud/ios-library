@@ -126,6 +126,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                               success:^(OCCredentialsDto *userCredDto) {
                                                   
                                                   //set and store new credentials
+                                                  
+                                                  userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                   [sharedOCCommunication setCredentials:userCredDto];
                                                   
                                                   if (sharedOCCommunication.credentialsStorage != nil) {
@@ -187,6 +189,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                     success:^(OCCredentialsDto *userCredDto) {
                        
                         //set and store new credentials
+                        
+                        userCredDto.userId = sharedOCCommunication.credDto.userId;
                         [sharedOCCommunication setCredentials:userCredDto];
                         
                         if (sharedOCCommunication.credentialsStorage != nil) {
