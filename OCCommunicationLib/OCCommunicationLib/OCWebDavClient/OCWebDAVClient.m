@@ -145,6 +145,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                                         success:success
                                                                         failure:failure
                                                    ];
+                                                  [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
                                                   [operation resume];
                                                   
                                               } failure:^(NSError *error) {
@@ -210,6 +211,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                               success:success
                                               failure:failure
                         ];
+                        [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
                         [operation resume];
                         
                     } failure:^(NSError *error) {
@@ -375,6 +377,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         return localDestinationUrl;
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
         if (error) {
+            
+            //TODO:retry op
+            
             failure(response, error);
         } else {
             success(response,filePath);
@@ -444,6 +449,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             uploadProgress(progress);
         } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
                 if (error) {
+                    
+                    //TODO:retry op
+                    
                     failure(response, responseObject, error);
                 } else {
                     success(response,responseObject);
