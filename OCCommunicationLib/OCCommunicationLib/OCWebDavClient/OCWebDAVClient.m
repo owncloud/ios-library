@@ -109,7 +109,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
-    OCHTTPRequestOperation *operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+    __block   OCHTTPRequestOperation *operation;
+    
+    operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject, token);
         } else {
@@ -129,20 +131,21 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   
                                                   userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                   [sharedOCCommunication setCredentials:userCredDto];
-                                                  [request addValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                                                  
+                                                  [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
 
                                                   
                                                   if (sharedOCCommunication.credentialsStorage != nil) {
                                                       [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
                                                   }
                                                   
-                                                  [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                                                operation = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
                                                                 onCommunication:sharedOCCommunication
                                                            withUserSessionToken:token
                                                                         success:success
                                                                         failure:failure
                                                    ];
-                                                  
+                                                  [operation resume];
                                                   
                                               } failure:^(NSError *error) {
                                                   failure(nil, nil, error, nil);
@@ -173,7 +176,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
-    OCHTTPRequestOperation *operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+    __block OCHTTPRequestOperation *operation;
+    
+    operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject);
         } else {
@@ -194,18 +199,18 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         
                         userCredDto.userId = sharedOCCommunication.credDto.userId;
                         [sharedOCCommunication setCredentials:userCredDto];
-                        [request addValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                        [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                         
                         if (sharedOCCommunication.credentialsStorage != nil) {
                             [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
                         }
                         
-                        [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                        operation = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
                                       onCommunication:sharedOCCommunication
                                               success:success
                                               failure:failure
-                         ];
-
+                        ];
+                        [operation resume];
                         
                     } failure:^(NSError *error) {
                         failure(nil,nil,error);
