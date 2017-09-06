@@ -33,6 +33,6 @@
 @protocol OCCredentialsStorageDelegate <NSObject>
 
 
-+ (void)storeCurrentCredentialsOfSharedOCCommunication:(OCCommunication *)sharedOCCommunication;
+- (void)storeCurrentCredentialsOfSharedOCCommunication:(OCCommunication *)sharedOCCommunication;
 
 @end

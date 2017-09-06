@@ -30,12 +30,11 @@
 @implementation OCOAuth2Configuration
 
 
-- (id)initWithURLString:(NSString *)url clientId:(NSString *)clientId clientSecret:(NSString *)clientSecret redirectUri:(NSString *)redirectUri authorizationEndpoint:(NSString *)authorizationEndpoint tokenEndpoint:(NSString *)tokenEndpoint {
+- (id)initWithClientId:(NSString *)clientId clientSecret:(NSString *)clientSecret redirectUri:(NSString *)redirectUri authorizationEndpoint:(NSString *)authorizationEndpoint tokenEndpoint:(NSString *)tokenEndpoint {
     
     self = [super init];
     if (self) {
         // Custom initialization
-        _url = url;
         _clientId = clientId;
         _clientSecret = clientSecret;
         _redirectUri = redirectUri;

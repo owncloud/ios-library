@@ -73,7 +73,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *userAgent;
 
 @property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
-@property (weak) id<OCCredentialsStorageDelegate> credentialsStorage;
+@property (nonatomic, strong) id<OCCredentialsStorageDelegate> credentialsStorage;
 
 
 //Public properties
@@ -150,6 +150,10 @@ typedef enum {
  */
 - (void) setValueOfUserAgent:(NSString *) userAgent;
 
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration;
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage;
 
 /*
  * Method to update the a request with the current credentials

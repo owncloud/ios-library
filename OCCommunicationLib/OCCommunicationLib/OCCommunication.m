@@ -184,6 +184,15 @@
     self.userAgent = userAgent;
 }
 
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration {
+    self.oauth2Configuration = oauth2Configuration;
+}
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage {
+    self.credentialsStorage = credentialsStorage;
+}
+
 ///-----------------------------------
 /// @name getRequestWithCredentials
 ///-----------------------------------

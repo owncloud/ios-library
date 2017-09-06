@@ -30,19 +30,20 @@
 @implementation OCOAuth2Manager
 
 + (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
-             refreshToken:(NSString *)refreshToken
-                userAgent:(NSString *)userAgent
-                   success:(void(^)(OCCredentialsDto *userCredDto))success
-                  failure:(void(^)(NSError *error))failure {
+                          withOriginalURLString:(NSString *)originalURL
+                             refreshToken:(NSString *)refreshToken
+                                userAgent:(NSString *)userAgent
+                                  success:(void(^)(OCCredentialsDto *userCredDto))success
+                                  failure:(void(^)(NSError *error))failure {
     
     [UtilsFramework deleteAllCookies];
     
-    [self refreshTokenAuthRequestByOAuth2Configuration:oauth2Configuration refreshToken:refreshToken userAgent:userAgent
+    [self refreshTokenAuthRequestByOAuth2Configuration:oauth2Configuration withOriginalURLString:originalURL refreshToken:refreshToken userAgent:userAgent
      
     success:^(NSHTTPURLResponse *response, NSError *error, NSData *data) {
         
         NSDictionary *dictJSON;
-        OCCredentialsDto *userCredDto;
+        OCCredentialsDto *userCredDto = [OCCredentialsDto new];
         
         if (data != nil) {
             
@@ -86,14 +87,21 @@
 }
 
 + (void) refreshTokenAuthRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
-                         refreshToken:(NSString *)refreshToken
-                            userAgent:(NSString *)userAgent
-                              success:(void(^)(NSHTTPURLResponse *response, NSError *error, NSData *data))success
-                              failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure {
-
-    NSString *url = [NSString stringWithFormat:@"%@/%@",oauth2Configuration.url, oauth2Configuration.tokenEndpoint];
+                                      withOriginalURLString:(NSString *)originalURL
+                                         refreshToken:(NSString *)refreshToken
+                                            userAgent:(NSString *)userAgent
+                                              success:(void(^)(NSHTTPURLResponse *response, NSError *error, NSData *data))success
+                                              failure:(void(^)(NSHTTPURLResponse *response, NSError *error))failure {
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSString *originalURLStringWithoutWebdavPath = originalURL;
+    NSString *partToRemove = k_url_webdav_server;
+    if([originalURL length] >= [partToRemove length]){
+        originalURLStringWithoutWebdavPath = [originalURL substringToIndex:[originalURL length] - [partToRemove length]];
+    }
+    
+    NSURL *urlToGetToken = [[NSURL URLWithString:originalURLStringWithoutWebdavPath] URLByAppendingPathComponent:oauth2Configuration.tokenEndpoint];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:urlToGetToken];
     
     [request setHTTPMethod:@"POST"];
     if (userAgent != nil) {

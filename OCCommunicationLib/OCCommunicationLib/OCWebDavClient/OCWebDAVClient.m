@@ -121,7 +121,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration withOriginalURLString:self.originalUrlServer refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
                      
                                               success:^(OCCredentialsDto *userCredDto) {
                                                   
@@ -129,6 +129,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   
                                                   userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                   [sharedOCCommunication setCredentials:userCredDto];
+                                                  [request addValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+
                                                   
                                                   if (sharedOCCommunication.credentialsStorage != nil) {
                                                       [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
@@ -184,7 +186,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration  withOriginalURLString:self.originalUrlServer refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
                      
                     success:^(OCCredentialsDto *userCredDto) {
                        
@@ -192,6 +194,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         
                         userCredDto.userId = sharedOCCommunication.credDto.userId;
                         [sharedOCCommunication setCredentials:userCredDto];
+                        [request addValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                         
                         if (sharedOCCommunication.credentialsStorage != nil) {
                             [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];

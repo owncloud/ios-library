@@ -30,6 +30,7 @@
 #import "OCCommunication.h"
 #import "OCOAuth2Configuration.h"
 #import "UtilsFramework.h"
+#import "OCFrameworkConstants.h"
 
 @interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
@@ -47,10 +48,11 @@
 **/
 
 + (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
-             refreshToken:(NSString *)refreshToken
-                userAgent:(NSString *)userAgent
-                  success:(void(^)(OCCredentialsDto *userCredDto))success
-                  failure:(void(^)(NSError *error))failure;
+                          withOriginalURLString:(NSString *)originalURL
+                             refreshToken:(NSString *)refreshToken
+                                userAgent:(NSString *)userAgent
+                                  success:(void(^)(OCCredentialsDto *userCredDto))success
+                                  failure:(void(^)(NSError *error))failure;
 
 
 @end
