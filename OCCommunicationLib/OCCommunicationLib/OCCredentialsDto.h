@@ -39,6 +39,7 @@ typedef NS_ENUM (NSUInteger, AuthenticationMethod){
 @interface OCCredentialsDto : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy) NSString *baseURL;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *accessToken; // password for basic auth, cookies for SAML, access token for OAuth2...
 @property (nonatomic) AuthenticationMethod authenticationMethod;

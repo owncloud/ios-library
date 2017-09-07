@@ -48,7 +48,7 @@
 **/
 
 + (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
-                          withOriginalURLString:(NSString *)originalURL
+                          withBaseURL:(NSString *)baseURL
                              refreshToken:(NSString *)refreshToken
                                 userAgent:(NSString *)userAgent
                                   success:(void(^)(OCCredentialsDto *userCredDto))success
