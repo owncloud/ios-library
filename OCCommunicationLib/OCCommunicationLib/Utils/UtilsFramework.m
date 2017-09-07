@@ -238,6 +238,17 @@
             error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
+            
+        case OCErrorServerMaintenanceMode:
+        case kOCErrorServerMaintenanceError:
+        {
+            NSMutableDictionary* details =  [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"maintenance_mode_on_server_message", nil) forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
+            break;
+        }
+            
         case OCErrorForbiddenUnknown:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];

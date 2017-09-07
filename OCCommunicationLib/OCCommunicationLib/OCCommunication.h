@@ -53,6 +53,7 @@ typedef enum {
     OCErrorFileToUploadDoesNotExist = 120, //The file that we want upload does not exist
     OCErrorForbiddenUnknown = 130, //For example, no write permissions to the target folder of an upload
     OCErrorForbiddenWithSpecificMessage = 131, // For example, forbidden due to a firewall rule
+    OCErrorServerMaintenanceMode = 140,
     
     OCErrorOAuth2Error = 1000,
     OCErrorOAuth2ErrorAccessDenied = 1010,
