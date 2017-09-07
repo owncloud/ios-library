@@ -509,7 +509,7 @@
     
     remotePath = [remotePath encodeString:NSUTF8StringEncoding];
     
-    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
+    NSURLSessionUploadTask *uploadTask = [request putWithSessionLocalPath:localPath atRemotePath:remotePath onCommunication:sharedOCCommunication progress:^(NSProgress *progress) {
             uploadProgress(progress);
         } success:^(NSURLResponse *response, id responseObjec){
             [UtilsFramework addCookiesToStorageFromResponse:(NSURLResponse *) response andPath:[NSURL URLWithString:remotePath]];
