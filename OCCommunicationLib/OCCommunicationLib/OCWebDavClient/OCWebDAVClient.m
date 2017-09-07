@@ -40,7 +40,6 @@
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
 #define k_group_sharee_type 1
-#define k_retry_ntimes 2
 
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
@@ -409,7 +408,64 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [operation resume];
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+#pragma mark - upload requests
+
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSMutableURLRequest *)request fromFileURL:(NSURL *)fileURL retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure {
+ 
+    __block NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:fileURL progress:^(NSProgress * _Nonnull progress) {
+        uploadProgress(progress);
+    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (!error) {
+            success(response,responseObject);
+        } else {
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.kindOfCredential == credentialOauth) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure(response, responseObject, error);
+                    }
+                } else {
+                      //TODO:retry op
+                    //get refresh token
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration withOriginalURLString:self.originalUrlServer refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
+                     
+                                                              success:^(OCCredentialsDto *userCredDto) {
+                                                                  
+                                                                  //set and store new credentials
+                                                                  
+                                                                  userCredDto.userId = sharedOCCommunication.credDto.userId;
+                                                                  [sharedOCCommunication setCredentials:userCredDto];
+                                                                  
+                                                                  [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                                                                  
+                                                                  
+                                                                  if (sharedOCCommunication.credentialsStorage != nil) {
+                                                                      [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                                                                  }
+                                                                  
+                                                                  uploadTask = [self uploadTaskWithRequest:request
+                                                                                               fromFileURL:fileURL
+                                                                                     retryingNumberOfTimes:(ntimes -1)
+                                                                                           onCommunication:sharedOCCommunication
+                                                                                                  progress:uploadProgress
+                                                                                                   success:success
+                                                                                                   failure:failure];
+                                                                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
+                                                                  [uploadTask resume];
+                                                                  
+                                                              } failure:^(NSError *error) {
+                                                                  failure(response, responseObject, error);
+                                                              }];
+                }
+            } else {
+                failure(response, responseObject, error);
+            }
+        }
+    }];
+
+    return uploadTask;
+}
+
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -445,21 +501,11 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         
-        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull progress) {
-            uploadProgress(progress);
-        } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-                if (error) {
-                    
-                    //TODO:retry op
-                    
-                    failure(response, responseObject, error);
-                } else {
-                    success(response,responseObject);
-                }
-        }];
+        NSURLSessionUploadTask *uploadTask = [self uploadTaskWithRequest:request fromFileURL:file retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication progress:uploadProgress success:success failure:failure];
         
         [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
         [uploadTask resume];
+        
         return uploadTask;
     }
 }

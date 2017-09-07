@@ -23,6 +23,9 @@
 // THE SOFTWARE.
 //
 
+//Retry ntimes request
+#define k_retry_ntimes 2
+
 //Timeout to weddav requests
 #define k_timeout_webdav 30 //seconds
 

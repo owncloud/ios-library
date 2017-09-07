@@ -207,13 +207,14 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  
  @param localSource is a string with the path of the file to upload
  @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
+ @param retryingNumberOfTimes The number of times that the request will be silently retry
  @param progress A progress object monitoring the current upload progress.
  @param success A block callback, to be fired upon successful completion, with NSURLResponse and string of redirected server.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
  *
  @warning NSURLSession and NSRULSessionUploadTask only can be supported in iOS 7.
  */
-- (NSURLSessionUploadTask * _Nonnull)putWithSessionLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
+- (NSURLSessionUploadTask * _Nonnull)putWithSessionLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
 ///-----------------------------------
 /// @name requestForUserNameByCookie
