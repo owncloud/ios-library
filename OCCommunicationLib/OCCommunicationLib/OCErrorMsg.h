@@ -24,14 +24,17 @@
 //
 
 
+#define kOCErrorServerBadRequest 400
 #define kOCErrorServerUnauthorized 401
-//In the server we received a 403 also when the server is enforce to set a password.
 #define kOCErrorServerForbidden 403
 #define kOCErrorServerPathNotFound 404
 #define kOCErrorServerMethodNotPermitted 405
 #define kOCErrorProxyAuth 407
 #define kOCErrorServerTimeout 408
+#define kOCErrorServerConflict 409
 #define kOCErrorServerInternalError 500
+#define kOCErrorServerNotImplemented 501
+#define kOCErrorServerBadGateway 502
 #define kOCErrorServerMaintenanceError 503
 #define kOCErrorServerInsufficientStorage 507
 
