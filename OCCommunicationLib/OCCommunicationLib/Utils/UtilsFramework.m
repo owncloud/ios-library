@@ -257,6 +257,25 @@
             error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenUnknown userInfo:details];
             break;
         }
+            
+        case OCErrorOAuth2ErrorAccessDenied:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"oauth2_error_access_denied", nil)  forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenUnknown userInfo:details];
+            break;
+        }
+            
+        case OCErrorOAuth2Error:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"oauth2_error", nil)  forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenUnknown userInfo:details];
+            break;
+        }
+            
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
