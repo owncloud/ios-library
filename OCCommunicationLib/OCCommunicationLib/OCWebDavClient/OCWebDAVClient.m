@@ -123,8 +123,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration withBaseURL:sharedOCCommunication.credDto.baseURL refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
-                     
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
                                               success:^(OCCredentialsDto *userCredDto) {
                                                   
                                                   //set and store new credentials
@@ -193,8 +195,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration  withBaseURL:sharedOCCommunication.credDto.baseURL refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
-                     
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
                     success:^(OCCredentialsDto *userCredDto) {
                        
                         //set and store new credentials
@@ -359,7 +363,89 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [self mr_listPath:path depth:1 withUserSessionToken:token onCommunication:sharedOCCommunication success:success failure:failure];
 }
 
-- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
+
+#pragma mark - download requests
+
+- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSMutableURLRequest *)request
+                                               toPath:(NSString *)localDestination
+                                      defaultPriority:(BOOL)defaultPriority
+                                retryingNumberOfTimes:(NSInteger)ntimes
+                                      onCommunication:(OCCommunication *)sharedOCCommunication
+                                             progress:(void(^)(NSProgress *progress))downloadProgress
+                                              success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
+    
+    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
+
+    __block NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
+         //TODO: detect corrupted file
+        downloadProgress(progress);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        //TODO: detect corrupted file
+        return localDestinationUrl;
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        
+        if (!error) {
+            success(response,filePath);
+        } else {
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.kindOfCredential == credentialOauth) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure(response, error);
+                    }
+                } else {
+                    //get refresh token
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
+                    success:^(OCCredentialsDto *userCredDto) {
+                        
+                        //set and store new credentials
+                        
+                        userCredDto.userId = sharedOCCommunication.credDto.userId;
+                        userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                        [sharedOCCommunication setCredentials:userCredDto];
+                        
+                        [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                        
+                        if (sharedOCCommunication.credentialsStorage != nil) {
+                            [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                        }
+                        
+                        downloadTask = [self downloadTaskWithRequest:request
+                                                              toPath:localDestination
+                                                     defaultPriority:defaultPriority
+                                               retryingNumberOfTimes:(ntimes -1)
+                                                     onCommunication:sharedOCCommunication
+                                                            progress:downloadProgress
+                                                             success:success
+                                                             failure:failure];
+                        
+                        [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
+                        [downloadTask resume];
+                        
+                    } failure:^(NSError *error) {
+                        failure(response, error);
+                    }];
+                }
+            } else {
+                failure(response, error);
+            }
+        }
+    }];
+    
+    return downloadTask;
+}
+
+
+
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource
+                                               toPath:(NSString *)localDestination
+                                      defaultPriority:(BOOL)defaultPriority
+                                      onCommunication:(OCCommunication *)sharedOCCommunication
+                                             progress:(void(^)(NSProgress *progress))downloadProgress
+                                              success:(void(^)(NSURLResponse *response, NSURL *filePath))success
+                                              failure:(void(^)(NSURLResponse *response, NSError *error))failure {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
@@ -371,33 +457,22 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     //We add the cookies of that URL
     request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     
-    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
-    
-    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
-        downloadProgress(progress);
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return localDestinationUrl;
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        if (error) {
-            
-            //TODO:retry op
-            
-            failure(response, error);
-        } else {
-            success(response,filePath);
-        }
-    }];
-    
+    NSURLSessionDownloadTask *downloadTask = [self downloadTaskWithRequest:request
+                                                                    toPath:localDestination
+                                                           defaultPriority:defaultPriority
+                                                     retryingNumberOfTimes:k_retry_ntimes
+                                                           onCommunication:sharedOCCommunication
+                                                                  progress:downloadProgress
+                                                                   success:success
+                                                                   failure:failure];
+
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
     
-    
-    if (defaultPriority) {
+    //if (defaultPriority) {
          [downloadTask resume];
-    }
+   // }
     
     return downloadTask;
-
-
 }
 
 - (void)makeCollection:(NSString *)path onCommunication:
@@ -413,7 +488,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 #pragma mark - upload requests
 
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSMutableURLRequest *)request fromFileURL:(NSURL *)fileURL retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure {
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSMutableURLRequest *)request
+                                      fromFileURL:(NSURL *)fileURL
+                            retryingNumberOfTimes:(NSInteger)ntimes
+                                  onCommunication:(OCCommunication *)sharedOCCommunication
+                                         progress:(void(^)(NSProgress *progress))uploadProgress
+                                          success:(void(^)(NSURLResponse *, NSString *))success
+                                          failure:(void(^)(NSURLResponse *, id, NSError *))failure {
  
     __block NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:fileURL progress:^(NSProgress * _Nonnull progress) {
         uploadProgress(progress);
@@ -427,20 +508,20 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         failure(response, responseObject, error);
                     }
                 } else {
-                      //TODO:retry op
                     //get refresh token
-                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration withBaseURL:sharedOCCommunication.credDto.baseURL refreshToken:sharedOCCommunication.credDto.refreshToken userAgent:sharedOCCommunication.userAgent
-                     
+                    [OCOAuth2Manager getAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
                                                               success:^(OCCredentialsDto *userCredDto) {
                                                                   
                                                                   //set and store new credentials
-                                                                  
+                                                
                                                                   userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                                   userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
                                                                   [sharedOCCommunication setCredentials:userCredDto];
                                                                   
                                                                   [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
-                                                                  
                                                                   
                                                                   if (sharedOCCommunication.credentialsStorage != nil) {
                                                                       [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
@@ -469,7 +550,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     return uploadTask;
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource
+                                       atRemotePath:(NSString *)remoteDestination
+                                    onCommunication:(OCCommunication *)sharedOCCommunication
+                                           progress:(void(^)(NSProgress *progress))uploadProgress
+                                            success:(void(^)(NSURLResponse *, NSString *))success
+                                            failure:(void(^)(NSURLResponse *, id, NSError *))failure
+                               failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -505,7 +592,13 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         
-        NSURLSessionUploadTask *uploadTask = [self uploadTaskWithRequest:request fromFileURL:file retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication progress:uploadProgress success:success failure:failure];
+        NSURLSessionUploadTask *uploadTask = [self uploadTaskWithRequest:request
+                                                             fromFileURL:file
+                                                   retryingNumberOfTimes:k_retry_ntimes
+                                                         onCommunication:sharedOCCommunication
+                                                                progress:uploadProgress
+                                                                 success:success
+                                                                 failure:failure];
         
         [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
         [uploadTask resume];
