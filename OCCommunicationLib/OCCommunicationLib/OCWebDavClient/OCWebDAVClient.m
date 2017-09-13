@@ -377,11 +377,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
 
     __block NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
-         //TODO: detect corrupted file
         downloadProgress(progress);
     } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        //TODO: detect corrupted file
-        return localDestinationUrl;
+        
+        if (((NSHTTPURLResponse*)response).statusCode == 401) {
+            return nil;
+        } else {
+            return localDestinationUrl;
+        }
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
         
         if (!error) {
@@ -468,10 +471,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
     
-    //if (defaultPriority) {
+    if (defaultPriority) {
          [downloadTask resume];
-   // }
-    
+    }
+
     return downloadTask;
 }
 
