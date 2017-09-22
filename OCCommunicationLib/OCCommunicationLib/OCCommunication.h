@@ -38,15 +38,6 @@
 
 @interface OCCommunication : NSObject
 
-//Type of credential
-typedef enum {
-    credentialNotSet = -1,
-    credentialNormal = 0, //user, password
-    credentialCookie = 1,
-    credentialOauth = 2
-} kindOfCredentialEnum;
-
-
 typedef enum {
     OCErrorUnknown = 90, //On all errors
     OCErrorForbiddenCharacters = 100, //On create folder and rename
@@ -67,7 +58,6 @@ typedef enum {
 
 
 //Private properties
-@property NSInteger kindOfCredential;
 @property (nonatomic, strong) OCCredentialsDto *credDto;
 
 @property (nonatomic, strong) NSString *userAgent;

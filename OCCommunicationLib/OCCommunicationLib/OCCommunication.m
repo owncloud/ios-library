@@ -58,9 +58,6 @@
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
         
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
-        
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.isCookiesAvailable = YES;
@@ -116,9 +113,6 @@
         self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
-        
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
@@ -135,9 +129,6 @@
     
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
-        
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
@@ -164,20 +155,6 @@
 - (void) setCredentials:(OCCredentialsDto *) credentials {
     
     self.credDto = credentials;
-    
-    switch (credentials.authenticationMethod) {
-        case AuthenticationMethodSAML_WEB_SSO:
-            self.kindOfCredential = credentialCookie;
-            break;
-            
-        case AuthenticationMethodBEARER_TOKEN:
-            self.kindOfCredential = credentialOauth;
-            break;
-            
-        default:
-            self.kindOfCredential = credentialNormal;
-            break;
-    }
 }
 
 
@@ -211,20 +188,21 @@
     if ([request isKindOfClass:[NSMutableURLRequest class]]) {
         NSMutableURLRequest *myRequest = (NSMutableURLRequest *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
+            case AuthenticationMethodBASIC_HTTP_AUTH:
             {
                 NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.credDto.userName, self.credDto.accessToken];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
                 break;
             }
-            case credentialCookie:
+            case AuthenticationMethodSAML_WEB_SSO:
                 [myRequest addValue:self.credDto.accessToken forHTTPHeaderField:@"Cookie"];
                 break;
-            case credentialOauth:
+            case AuthenticationMethodBEARER_TOKEN:
                 [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
@@ -240,17 +218,18 @@
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
+            case AuthenticationMethodBASIC_HTTP_AUTH:
                 [myRequest setAuthorizationHeaderWithUsername:self.credDto.userName password:self.credDto.accessToken];
                 break;
-            case credentialCookie:
+            case AuthenticationMethodSAML_WEB_SSO:
                 [myRequest setAuthorizationHeaderWithCookie:self.credDto.accessToken];
                 break;
-            case credentialOauth:
+            case AuthenticationMethodBEARER_TOKEN:
                 [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken]];
                 break;
             default:
