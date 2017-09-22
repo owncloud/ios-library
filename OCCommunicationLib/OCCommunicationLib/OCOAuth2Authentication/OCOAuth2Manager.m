@@ -29,7 +29,7 @@
 
 @implementation OCOAuth2Manager
 
-+ (void) getAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
++ (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                           withBaseURL:(NSString *)baseURL
                              refreshToken:(NSString *)refreshToken
                                 userAgent:(NSString *)userAgent
@@ -38,7 +38,7 @@
     
     [UtilsFramework deleteAllCookies];
     
-    [self refreshTokenAuthRequestByOAuth2Configuration:oauth2Configuration withBaseURL:baseURL refreshToken:refreshToken userAgent:userAgent
+    [self refreshAuthDataRequestByOAuth2Configuration:oauth2Configuration withBaseURL:baseURL refreshToken:refreshToken userAgent:userAgent
      
     success:^(NSHTTPURLResponse *response, NSError *error, NSData *data) {
         
@@ -86,7 +86,7 @@
     
 }
 
-+ (void) refreshTokenAuthRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
++ (void) refreshAuthDataRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                       withBaseURL:(NSString *)baseURL
                                          refreshToken:(NSString *)refreshToken
                                             userAgent:(NSString *)userAgent
