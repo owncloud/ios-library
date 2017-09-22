@@ -28,11 +28,11 @@
 #import <Foundation/Foundation.h>
 #import "OCCommunication.h"
 
-@class OCCommunication;
+@class OCCredentialsDto;
 
 @protocol OCCredentialsStorageDelegate <NSObject>
 
 
-- (void)storeCurrentCredentialsOfSharedOCCommunication:(OCCommunication *)sharedOCCommunication;
+- (void)storeCredentials:(OCCredentialsDto *)credDto;
 
 @end

@@ -139,7 +139,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
                                                   
                                                   if (sharedOCCommunication.credentialsStorage != nil) {
-                                                      [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                                                      [sharedOCCommunication.credentialsStorage storeCredentials:sharedOCCommunication.credDto];
                                                   }
                                                   
                                                 operation = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
@@ -209,7 +209,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                         
                         if (sharedOCCommunication.credentialsStorage != nil) {
-                            [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                            [sharedOCCommunication.credentialsStorage storeCredentials:sharedOCCommunication.credDto];
                         }
                         
                         operation = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
@@ -412,7 +412,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                         
                         if (sharedOCCommunication.credentialsStorage != nil) {
-                            [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                            [sharedOCCommunication.credentialsStorage storeCredentials:sharedOCCommunication.credDto];
                         }
                         
                         downloadTask = [self downloadTaskWithRequest:request
@@ -527,7 +527,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                                   [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                                                                   
                                                                   if (sharedOCCommunication.credentialsStorage != nil) {
-                                                                      [sharedOCCommunication.credentialsStorage storeCurrentCredentialsOfSharedOCCommunication:sharedOCCommunication];
+                                                                      [sharedOCCommunication.credentialsStorage storeCredentials:sharedOCCommunication.credDto];
                                                                   }
                                                                   
                                                                   uploadTask = [self uploadTaskWithRequest:request
