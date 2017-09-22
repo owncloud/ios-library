@@ -61,8 +61,8 @@
                         message = @"";
                     }
                     
-                    NSError *error = [UtilsFramework getErrorWithCode:response.statusCode andCustomMessageFromTheServer:message];
-                    
+                    NSError *error = [UtilsFramework getErrorByCodeId:OCErrorOAuth2Error];
+
                     failure(error);
                 } else {
                     userCredDto.userName = dictJSON[@"user_id"];
