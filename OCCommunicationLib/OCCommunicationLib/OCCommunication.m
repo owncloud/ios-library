@@ -24,7 +24,6 @@
 //
 
 #import "OCCommunication.h"
-#import "OCHTTPRequestOperation.h"
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
 #import "OCXMLSharedParser.h"
@@ -1409,7 +1408,7 @@
     request = [self getRequestWithCredentials:request];
     
     
-    OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+    NSURLSessionDataTask *sessionDataTask = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(NSHTTPURLResponse *response, id responseObject) {
                 NSData *responseData = (NSData*) responseObject;
                 
@@ -1419,9 +1418,9 @@
                 failureRequest(response, error, request.redirectedServer);
             }];
     
-    [operation resume];
+    [sessionDataTask resume];
 
-    return operation;
+    return sessionDataTask;
 }
 
 #pragma mark - Clear Cache

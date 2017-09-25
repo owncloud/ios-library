@@ -29,7 +29,6 @@
 #import "OCOAuth2Configuration.h"
 #import "OCCredentialsStorage.h"
 
-@class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
 @class OCCapabilities;

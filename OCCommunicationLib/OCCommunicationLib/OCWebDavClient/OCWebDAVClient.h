@@ -27,7 +27,6 @@
 
 
 #import "AFHTTPSessionManager.h"
-#import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;
 @class OCChunkDto;
@@ -534,7 +533,7 @@ __deprecated_msg("Use - updateShareItem:ofServerPath:withPasswordProtect:andExpi
  * @return nsData -> thumbnail of the file with the size requested
  *
  */
-- (OCHTTPRequestOperation * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
+- (NSURLSessionDataTask * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
                             success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                             failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
