@@ -33,6 +33,6 @@
 @protocol OCCredentialsStorageDelegate <NSObject>
 
 
-- (void)storeCredentials:(OCCredentialsDto *)credDto;
+- (void)saveCredentials:(OCCredentialsDto *)credDto;
 
 @end
