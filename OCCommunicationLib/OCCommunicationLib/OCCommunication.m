@@ -24,7 +24,6 @@
 //
 
 #import "OCCommunication.h"
-#import "OCHTTPRequestOperation.h"
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
 #import "OCXMLSharedParser.h"
@@ -38,6 +37,7 @@
 #import "OCShareUser.h"
 #import "OCCapabilities.h"
 #import "OCServerFeatures.h"
+
 
 @interface OCCommunication ()
 
@@ -56,9 +56,6 @@
         
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
-        
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
@@ -115,9 +112,6 @@
         self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
-        
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
@@ -134,9 +128,6 @@
     
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
-        
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
@@ -160,44 +151,23 @@
 
 #pragma mark - Setting Credentials
 
-
 - (void) setCredentials:(OCCredentialsDto *) credentials {
-
-    switch (credentials.authenticationMethod) {
-        case AuthenticationMethodSAML_WEB_SSO:
-            
-            [self setCredentialsWithCookie:credentials.accessToken];
-            break;
-            
-        case AuthenticationMethodBEARER_TOKEN:
-            
-            [self setCredentialsOauthWithToken:credentials.accessToken];
-            break;
-            
-        default:
-            [self setCredentialsWithUser:credentials.userName andPassword:credentials.accessToken];
-            break;
-    }
+    
+    self.credDto = credentials;
 }
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
-    self.kindOfCredential = credentialNormal;
-    self.user = user;
-    self.password = password;
-}
-
-- (void) setCredentialsWithCookie:(NSString*) cookie {
-    self.kindOfCredential = credentialCookie;
-    self.password = cookie;
-}
-
-- (void) setCredentialsOauthWithToken:(NSString*) token {
-    self.kindOfCredential = credentialOauth;
-    self.password = token;
-}
 
 - (void) setValueOfUserAgent:(NSString *) userAgent {
     self.userAgent = userAgent;
+}
+
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration {
+    self.oauth2Configuration = oauth2Configuration;
+}
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage {
+    self.credentialsStorage = credentialsStorage;
 }
 
 ///-----------------------------------
@@ -217,22 +187,22 @@
     if ([request isKindOfClass:[NSMutableURLRequest class]]) {
         NSMutableURLRequest *myRequest = (NSMutableURLRequest *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
+            case AuthenticationMethodBASIC_HTTP_AUTH:
             {
-                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.user, self.password];
+                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.credDto.userName, self.credDto.accessToken];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
                 break;
             }
-            case credentialCookie:
-                //NSLog(@"Cookie: %@", self.password);
-                [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
+            case AuthenticationMethodSAML_WEB_SSO:
+                [myRequest addValue:self.credDto.accessToken forHTTPHeaderField:@"Cookie"];
                 break;
-            case credentialOauth:
-                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.password] forHTTPHeaderField:@"Authorization"];
+            case AuthenticationMethodBEARER_TOKEN:
+                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
                 break;
@@ -247,18 +217,19 @@
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
-                [myRequest setAuthorizationHeaderWithUsername:self.user password:self.password];
+            case AuthenticationMethodBASIC_HTTP_AUTH:
+                [myRequest setAuthorizationHeaderWithUsername:self.credDto.userName password:self.credDto.accessToken];
                 break;
-            case credentialCookie:
-                [myRequest setAuthorizationHeaderWithCookie:self.password];
+            case AuthenticationMethodSAML_WEB_SSO:
+                [myRequest setAuthorizationHeaderWithCookie:self.credDto.accessToken];
                 break;
-            case credentialOauth:
-                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.password]];
+            case AuthenticationMethodBEARER_TOKEN:
+                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken]];
                 break;
             default:
                 break;
@@ -1437,7 +1408,7 @@
     request = [self getRequestWithCredentials:request];
     
     
-    OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+    NSURLSessionDataTask *sessionDataTask = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(NSHTTPURLResponse *response, id responseObject) {
                 NSData *responseData = (NSData*) responseObject;
                 
@@ -1447,9 +1418,9 @@
                 failureRequest(response, error, request.redirectedServer);
             }];
     
-    [operation resume];
+    [sessionDataTask resume];
 
-    return operation;
+    return sessionDataTask;
 }
 
 #pragma mark - Clear Cache

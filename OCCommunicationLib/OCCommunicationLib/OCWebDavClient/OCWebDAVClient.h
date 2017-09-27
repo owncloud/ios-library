@@ -27,7 +27,6 @@
 
 
 #import "AFHTTPSessionManager.h"
-#import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;
 @class OCChunkDto;
@@ -207,6 +206,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  
  @param localSource is a string with the path of the file to upload
  @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
+ @param retryingNumberOfTimes The number of times that the request will be silently retry
  @param progress A progress object monitoring the current upload progress.
  @param success A block callback, to be fired upon successful completion, with NSURLResponse and string of redirected server.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
@@ -533,7 +533,7 @@ __deprecated_msg("Use - updateShareItem:ofServerPath:withPasswordProtect:andExpi
  * @return nsData -> thumbnail of the file with the size requested
  *
  */
-- (OCHTTPRequestOperation * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
+- (NSURLSessionDataTask * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
                             success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                             failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 

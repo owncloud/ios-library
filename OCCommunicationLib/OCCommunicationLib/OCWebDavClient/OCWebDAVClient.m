@@ -34,11 +34,13 @@
 #import "AFURLSessionManager.h"
 #import "NSString+Encode.h"
 #import "OCConstants.h"
+#import "OCOAuth2Manager.h"
 
 #define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
 #define k_group_sharee_type 1
+#define k_retry_ntimes 2  //Retry ntimes request
 
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
@@ -91,7 +93,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [self.defaultHeaders setObject:userAgent forKey:@"User-Agent"];
 }
 
-- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString*)token success:(void(^)(NSHTTPURLResponse *operation, id response, NSString *token))success failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error, NSString *token))failure {
+#pragma mark - Main network operation token
+
+- (NSURLSessionDataTask *)mr_operationWithRequest:(NSMutableURLRequest *)request retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication withUserSessionToken:(NSString*)token success:(void(^)(NSHTTPURLResponse *operation, id response, NSString *token))success failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error, NSString *token))failure {
     
     //If is not nil is a redirection so we keep the original url server
     if (!self.originalUrlServer) {
@@ -105,18 +109,64 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
-    OCHTTPRequestOperation *operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+    __block   NSURLSessionDataTask *sessionDataTask;
+    
+    sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject, token);
         } else {
-            failure((NSHTTPURLResponse*)response, responseObject, error, token);
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure((NSHTTPURLResponse*)response, responseObject, error, token);
+                    }
+                } else {
+                    
+                    //get refresh token
+                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
+                                              success:^(OCCredentialsDto *userCredDto) {
+                                                  
+                                                  //set and store new credentials
+                                                  
+                                                  userCredDto.userId = sharedOCCommunication.credDto.userId;
+                                                  userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                                                  [sharedOCCommunication setCredentials:userCredDto];
+                                                  
+                                                  [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+
+                                                  
+                                                  if (sharedOCCommunication.credentialsStorage != nil) {
+                                                      [sharedOCCommunication.credentialsStorage saveCredentials:sharedOCCommunication.credDto];
+                                                  }
+                                                  
+                                                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                                                                onCommunication:sharedOCCommunication
+                                                           withUserSessionToken:token
+                                                                        success:success
+                                                                        failure:failure
+                                                   ];
+                                                  [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+                                                  [sessionDataTask resume];
+                                                  
+                                              } failure:^(NSError *error) {
+                                                  failure(nil, nil, error, nil);
+                                                  
+                                              }];
+                }
+            } else {
+                failure((NSHTTPURLResponse*)response, responseObject, error, token);
+            }
         }
     }];
     
-    return operation;
+    return sessionDataTask;
 }
 
-- (OCHTTPRequestOperation *)mr_operationWithRequest:(NSMutableURLRequest *)request onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, id))success failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
+#pragma mark - Main network operation
+- (NSURLSessionDataTask *)mr_operationWithRequest:(NSMutableURLRequest *)request retryingNumberOfTimes:(NSInteger)ntimes onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *, id))success failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
     
     //If is not nil is a redirection so we keep the original url server
     if (!self.originalUrlServer) {
@@ -130,17 +180,58 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
+    __block NSURLSessionDataTask *sessionDataTask;
     
-    OCHTTPRequestOperation *operation = (OCHTTPRequestOperation*) [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-         if (!error) {
+    sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (!error) {
             success((NSHTTPURLResponse*)response,responseObject);
         } else {
-            failure((NSHTTPURLResponse*)response, responseObject, error);
+            
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure((NSHTTPURLResponse*)response, responseObject, error);
+                    }
+                } else {
+                    
+                    //get refresh token
+                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
+                    success:^(OCCredentialsDto *userCredDto) {
+                       
+                        //set and store new credentials
+                        
+                        userCredDto.userId = sharedOCCommunication.credDto.userId;
+                        userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                        [sharedOCCommunication setCredentials:userCredDto];
+                        [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                        
+                        if (sharedOCCommunication.credentialsStorage != nil) {
+                            [sharedOCCommunication.credentialsStorage saveCredentials:sharedOCCommunication.credDto];
+                        }
+                        
+                        sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                                      onCommunication:sharedOCCommunication
+                                              success:success
+                                              failure:failure
+                        ];
+                        [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+                        [sessionDataTask resume];
+                        
+                    } failure:^(NSError *error) {
+                        failure(nil,nil,error);
+                    }];
+                }
+            } else {
+                failure((NSHTTPURLResponse*)response, responseObject, error);
+                
+            }
         }
     }];
     
-    return operation;
-    
+    return sessionDataTask;
 }
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method path:(NSString *)path parameters:(NSDictionary *)parameters {
@@ -181,9 +272,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:source parameters:nil];
     [request setValue:destination forHTTPHeaderField:@"Destination"];
 	[request setValue:@"T" forHTTPHeaderField:@"Overwrite"];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+	NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)deletePath:(NSString *)path
@@ -193,9 +284,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     _requestMethod = @"DELETE";
     NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
-	OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+	NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 
@@ -220,9 +311,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)mr_listPath:(NSString *)path depth:(NSUInteger)depth withUserSessionToken:(NSString*)token onCommunication:
@@ -246,9 +337,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)propertiesOfPath:(NSString *)path
@@ -272,7 +363,92 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [self mr_listPath:path depth:1 withUserSessionToken:token onCommunication:sharedOCCommunication success:success failure:failure];
 }
 
-- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource toPath:(NSString *)localDestination defaultPriority:(BOOL)defaultPriority onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))downloadProgress success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure{
+
+#pragma mark - download requests
+
+- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSMutableURLRequest *)request
+                                               toPath:(NSString *)localDestination
+                                      defaultPriority:(BOOL)defaultPriority
+                                retryingNumberOfTimes:(NSInteger)ntimes
+                                      onCommunication:(OCCommunication *)sharedOCCommunication
+                                             progress:(void(^)(NSProgress *progress))downloadProgress
+                                              success:(void(^)(NSURLResponse *response, NSURL *filePath))success failure:(void(^)(NSURLResponse *response, NSError *error))failure {
+    
+    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
+
+    __block NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
+        downloadProgress(progress);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        
+        if (((NSHTTPURLResponse*)response).statusCode == 401) {
+            return nil;
+        } else {
+            return localDestinationUrl;
+        }
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        
+        if (!error) {
+            success(response,filePath);
+        } else {
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure(response, error);
+                    }
+                } else {
+                    //get refresh token
+                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
+                    success:^(OCCredentialsDto *userCredDto) {
+                        
+                        //set and store new credentials
+                        
+                        userCredDto.userId = sharedOCCommunication.credDto.userId;
+                        userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                        [sharedOCCommunication setCredentials:userCredDto];
+                        
+                        [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                        
+                        if (sharedOCCommunication.credentialsStorage != nil) {
+                            [sharedOCCommunication.credentialsStorage saveCredentials:sharedOCCommunication.credDto];
+                        }
+                        
+                        downloadTask = [self downloadTaskWithRequest:request
+                                                              toPath:localDestination
+                                                     defaultPriority:defaultPriority
+                                               retryingNumberOfTimes:(ntimes -1)
+                                                     onCommunication:sharedOCCommunication
+                                                            progress:downloadProgress
+                                                             success:success
+                                                             failure:failure];
+                        
+                        [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
+                        [downloadTask resume];
+                        
+                    } failure:^(NSError *error) {
+                        failure(response, error);
+                    }];
+                }
+            } else {
+                failure(response, error);
+            }
+        }
+    }];
+    
+    return downloadTask;
+}
+
+
+
+- (NSURLSessionDownloadTask *)downloadWithSessionPath:(NSString *)remoteSource
+                                               toPath:(NSString *)localDestination
+                                      defaultPriority:(BOOL)defaultPriority
+                                      onCommunication:(OCCommunication *)sharedOCCommunication
+                                             progress:(void(^)(NSProgress *progress))downloadProgress
+                                              success:(void(^)(NSURLResponse *response, NSURL *filePath))success
+                                              failure:(void(^)(NSURLResponse *response, NSError *error))failure {
     
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:remoteSource parameters:nil];
     
@@ -284,30 +460,22 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     //We add the cookies of that URL
     request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
     
-    NSURL *localDestinationUrl = [NSURL fileURLWithPath:localDestination];
-    
-    NSURLSessionDownloadTask *downloadTask = [sharedOCCommunication.downloadSessionManager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull progress) {
-        downloadProgress(progress);
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return localDestinationUrl;
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        if (error) {
-            failure(response, error);
-        } else {
-            success(response,filePath);
-        }
-    }];
-    
+    NSURLSessionDownloadTask *downloadTask = [self downloadTaskWithRequest:request
+                                                                    toPath:localDestination
+                                                           defaultPriority:defaultPriority
+                                                     retryingNumberOfTimes:k_retry_ntimes
+                                                           onCommunication:sharedOCCommunication
+                                                                  progress:downloadProgress
+                                                                   success:success
+                                                                   failure:failure];
+
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
-    
     
     if (defaultPriority) {
          [downloadTask resume];
     }
-    
+
     return downloadTask;
-
-
 }
 
 - (void)makeCollection:(NSString *)path onCommunication:
@@ -316,12 +484,82 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
     _requestMethod = @"MKCOL";
 	NSMutableURLRequest *request = [self requestWithMethod:_requestMethod path:path parameters:nil];
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
-- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource atRemotePath:(NSString *)remoteDestination onCommunication:(OCCommunication *)sharedOCCommunication progress:(void(^)(NSProgress *progress))uploadProgress success:(void(^)(NSURLResponse *, NSString *))success failure:(void(^)(NSURLResponse *, id, NSError *))failure failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
+#pragma mark - upload requests
+
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSMutableURLRequest *)request
+                                      fromFileURL:(NSURL *)fileURL
+                            retryingNumberOfTimes:(NSInteger)ntimes
+                                  onCommunication:(OCCommunication *)sharedOCCommunication
+                                         progress:(void(^)(NSProgress *progress))uploadProgress
+                                          success:(void(^)(NSURLResponse *, NSString *))success
+                                          failure:(void(^)(NSURLResponse *, id, NSError *))failure {
+ 
+    __block NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:fileURL progress:^(NSProgress * _Nonnull progress) {
+        uploadProgress(progress);
+    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (!error) {
+            success(response,responseObject);
+        } else {
+            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+                if (ntimes <= 0) {
+                    if (failure) {
+                        failure(response, responseObject, error);
+                    }
+                } else {
+                    //get refresh token
+                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                                                          withBaseURL:sharedOCCommunication.credDto.baseURL
+                                                         refreshToken:sharedOCCommunication.credDto.refreshToken
+                                                            userAgent:sharedOCCommunication.userAgent
+                                                              success:^(OCCredentialsDto *userCredDto) {
+                                                                  
+                                                                  //set and store new credentials
+                                                
+                                                                  userCredDto.userId = sharedOCCommunication.credDto.userId;
+                                                                  userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                                                                  [sharedOCCommunication setCredentials:userCredDto];
+                                                                  
+                                                                  [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
+                                                                  
+                                                                  if (sharedOCCommunication.credentialsStorage != nil) {
+                                                                      [sharedOCCommunication.credentialsStorage saveCredentials:sharedOCCommunication.credDto];
+                                                                  }
+                                                                  
+                                                                  uploadTask = [self uploadTaskWithRequest:request
+                                                                                               fromFileURL:fileURL
+                                                                                     retryingNumberOfTimes:(ntimes -1)
+                                                                                           onCommunication:sharedOCCommunication
+                                                                                                  progress:uploadProgress
+                                                                                                   success:success
+                                                                                                   failure:failure];
+                                                                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
+                                                                  [uploadTask resume];
+                                                                  
+                                                              } failure:^(NSError *error) {
+                                                                  failure(response, responseObject, error);
+                                                              }];
+                }
+            } else {
+                failure(response, responseObject, error);
+            }
+        }
+    }];
+
+    return uploadTask;
+}
+
+- (NSURLSessionUploadTask *)putWithSessionLocalPath:(NSString *)localSource
+                                       atRemotePath:(NSString *)remoteDestination
+                                    onCommunication:(OCCommunication *)sharedOCCommunication
+                                           progress:(void(^)(NSProgress *progress))uploadProgress
+                                            success:(void(^)(NSURLResponse *, NSString *))success
+                                            failure:(void(^)(NSURLResponse *, id, NSError *))failure
+                               failureBeforeRequest:(void(^)(NSError *)) failureBeforeRequest {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -357,18 +595,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         
-        NSURLSessionUploadTask *uploadTask = [sharedOCCommunication.uploadSessionManager uploadTaskWithRequest:request fromFile:file progress:^(NSProgress * _Nonnull progress) {
-            uploadProgress(progress);
-        } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-                if (error) {
-                    failure(response, responseObject, error);
-                } else {
-                    success(response,responseObject);
-                }
-        }];
+        NSURLSessionUploadTask *uploadTask = [self uploadTaskWithRequest:request
+                                                             fromFileURL:file
+                                                   retryingNumberOfTimes:k_retry_ntimes
+                                                         onCommunication:sharedOCCommunication
+                                                                progress:uploadProgress
+                                                                 success:success
+                                                                 failure:failure];
         
         [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
         [uploadTask resume];
+        
         return uploadTask;
     }
 }
@@ -387,9 +624,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: apiUserUrl parameters: nil];
 	[request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void) getStatusOfTheServer:(NSString *)serverPath onCommunication:
@@ -404,9 +641,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
     request.HTTPShouldHandleCookies = false;
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)listSharedByServer:(NSString *)serverPath
@@ -420,9 +657,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)listSharedByServer:(NSString *)serverPath andPath:(NSString *) path
@@ -438,9 +675,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 
@@ -487,9 +724,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [request setHTTPBody:[self.postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath andPassword:(NSString *)password
@@ -504,9 +741,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3&password=%@",filePath,password];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)shareByLinkFileOrFolderByServer:(NSString *)serverPath andPath:(NSString *) filePath
@@ -521,9 +758,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=3",filePath];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void)shareWith:(NSString *)userOrGroup shareeType:(NSInteger)shareeType inServer:(NSString *) serverPath andPath:(NSString *) filePath andPermissions:(NSInteger) permissions onCommunication:(OCCommunication *)sharedOCCommunication
@@ -538,9 +775,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     self.postStringForShare = [NSString stringWithFormat: @"path=%@&shareType=%ld&shareWith=%@&permissions=%ld",filePath, (long)shareeType, userOrGroup, (long)permissions];
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 
@@ -554,9 +791,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 
@@ -570,9 +807,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void) updateShareItem:(NSInteger)shareId
@@ -612,9 +849,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void) updateShareItem:(NSInteger)shareId
@@ -642,9 +879,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void) searchUsersAndGroupsWith:(NSString *)searchString forPage:(NSInteger)page with:(NSInteger)resultsPerPage ofServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *operation, id response))success
@@ -665,9 +902,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 }
 
 - (void) getCapabilitiesOfServer:(NSString*)serverPath onCommunication:(OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *operation, id response))success
@@ -679,9 +916,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [operation resume];
+    [sessionDataTask resume];
 
     
 }
@@ -689,7 +926,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 
 #pragma mark - Remote thumbnails
 
-- (OCHTTPRequestOperation *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCCommunication
+- (NSURLSessionDataTask *) getRemoteThumbnailByServer:(NSString*)serverPath ofFilePath:(NSString*)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication *)sharedOCCommunication
                             success:(void(^)(NSHTTPURLResponse *operation, id response))success
                             failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure{
     _requestMethod = @"GET";
@@ -699,10 +936,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
-    OCHTTPRequestOperation *operation = [self mr_operationWithRequest:request onCommunication:sharedOCCommunication success:success failure:failure];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     
-    return operation;
+    return sessionDataTask;
 }
 
 

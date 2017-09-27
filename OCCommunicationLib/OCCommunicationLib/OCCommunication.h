@@ -26,23 +26,16 @@
 #import <Foundation/Foundation.h>
 #import "OCServerFeatures.h"
 #import "OCCredentialsDto.h"
+#import "OCOAuth2Configuration.h"
+#import "OCCredentialsStorage.h"
 
-@class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
 @class OCCapabilities;
 
+@protocol OCCredentialsStorageDelegate;
 
 @interface OCCommunication : NSObject
-
-//Type of credential
-typedef enum {
-    credentialNotSet = -1,
-    credentialNormal = 0, //user, password
-    credentialCookie = 1,
-    credentialOauth = 2
-} kindOfCredentialEnum;
-
 
 typedef enum {
     OCErrorUnknown = 90, //On all errors
@@ -64,10 +57,13 @@ typedef enum {
 
 
 //Private properties
-@property NSInteger kindOfCredential;
-@property (nonatomic, strong) NSString *user;
-@property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) OCCredentialsDto *credDto;
+
 @property (nonatomic, strong) NSString *userAgent;
+
+@property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
+@property (nonatomic, strong) id<OCCredentialsStorageDelegate> credentialsStorage;
+
 
 //Public properties
 @property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;
@@ -143,6 +139,10 @@ typedef enum {
  */
 - (void) setValueOfUserAgent:(NSString *) userAgent;
 
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration;
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage;
 
 /*
  * Method to update the a request with the current credentials

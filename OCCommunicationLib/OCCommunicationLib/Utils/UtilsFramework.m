@@ -664,10 +664,10 @@
     BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
     BOOL canChange = [self isPermissionToCanChange:permissionValue];
     
-    
     BOOL canEdit = (canCreate && canChange && canRead);
     
     return canEdit;
-    
 }
+
+
 @end

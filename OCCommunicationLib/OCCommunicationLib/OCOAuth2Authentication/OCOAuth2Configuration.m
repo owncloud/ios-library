@@ -1,8 +1,10 @@
 //
-//  OCHTTPRequestOperation.m
-//  Owncloud iOs Client
+//  OCOAuth2Configuration.m
+//  ownCloud iOS library
 //
-// Copyright (C) 2016, ownCloud GmbH. ( http://www.owncloud.org/ )
+//  Created by Noelia Alvarez on 28/08/2017.
+//
+// Copyright (C) 2017, ownCloud GmbH.  ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +25,23 @@
 // THE SOFTWARE.
 //
 
+#import "OCOAuth2Configuration.h"
 
-#import "OCHTTPRequestOperation.h"
-
-@interface OCHTTPRequestOperation ()
-@property (readwrite, nonatomic, strong) NSMutableURLRequest *request;
-@end
+@implementation OCOAuth2Configuration
 
 
-@implementation OCHTTPRequestOperation
-
-@synthesize request;
+- (id)initWithClientId:(NSString *)clientId clientSecret:(NSString *)clientSecret redirectUri:(NSString *)redirectUri authorizationEndpoint:(NSString *)authorizationEndpoint tokenEndpoint:(NSString *)tokenEndpoint {
+    
+    self = [super init];
+    if (self) {
+        // Custom initialization
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _redirectUri = redirectUri;
+        _authorizationEndpoint = authorizationEndpoint;
+        _tokenEndpoint = tokenEndpoint;
+    }
+    return self;
+}
 
 @end
