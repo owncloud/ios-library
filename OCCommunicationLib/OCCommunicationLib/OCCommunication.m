@@ -170,6 +170,10 @@
     self.credentialsStorage = credentialsStorage;
 }
 
+- (void) setValueTrustedCertificatesStore:(id<OCTrustedCertificatesStore>)trustedCertificatesStore {
+    self.trustedCertificatesStore = trustedCertificatesStore;
+}
+
 ///-----------------------------------
 /// @name getRequestWithCredentials
 ///-----------------------------------

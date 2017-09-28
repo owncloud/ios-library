@@ -292,9 +292,8 @@
     // authentication challenge with the certificates that were previously accepted by the user in the OC app. If
     // it match any of them, we allow to go on.
 
-    //SSLCertificateManager *sslCertificateManager = [[SSLCertificateManager alloc] init];
-    BOOL trusted = YES;//TODO:->//[sslCertificateManager isTrustedServerCertificateIn:challenge];
-    if (trusted) {
+    if (self.trustedCertificatesStore != nil && [self.trustedCertificatesStore isTrustedServerCertificateIn:challenge]) {
+        // trusted
         NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
         completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
     } else {

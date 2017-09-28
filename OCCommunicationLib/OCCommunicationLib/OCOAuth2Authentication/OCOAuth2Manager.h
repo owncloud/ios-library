@@ -32,10 +32,13 @@
 #import "UtilsFramework.h"
 #import "OCFrameworkConstants.h"
 #import "OCCredentialsDto.h"
-//#import "SSLCertificateManager.h"
+#import "OCTrustedCertificatesStore.h"
 
 
 @interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
+
+
+@property (nonatomic, strong) id<OCTrustedCertificatesStore> trustedCertificatesStore;
 
 
 - (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
@@ -76,6 +79,7 @@
                                 userAgent:(NSString *)userAgent
                                   success:(void(^)(OCCredentialsDto *userCredDto))success
                                   failure:(void(^)(NSError *error))failure;
+
 
 
 @end

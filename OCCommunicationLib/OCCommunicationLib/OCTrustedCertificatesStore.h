@@ -1,10 +1,10 @@
 //
-//  OCCredentialsStorage.h
+//  OCTrustedCertificatesStore.h
 //  ownCloud iOS library
 //
-//  Created by Noelia Alvarez on 30/08/2017.
+//  Created by David A. Velasco on 28/9/17.
 //
-// Copyright (C) 2017, ownCloud GmbH.  ( http://www.owncloud.org/ )
+// Copyright (C) 2017, ownCloud GmbH. ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,24 @@
 // THE SOFTWARE.
 //
 
+
+#ifndef OCTrustedCertificatesStore_h
+#define OCTrustedCertificatesStore_h
+
 #import <Foundation/Foundation.h>
 
-@class OCCredentialsDto;
-
-@protocol OCCredentialsStorageDelegate <NSObject>
+@protocol OCTrustedCertificatesStore <NSObject>
 
 
-- (void)saveCredentials:(OCCredentialsDto *)credDto;
+/*
+ * Checks if the challenge passed as a parameter corresponds to server certificate not trusted by iOS system,
+ * and if it is trusted by the user anyway, searching for it in the app-level store of certificates that
+ * were previously approved by her.
+ */
+- (BOOL) isTrustedServerCertificateIn:(NSURLAuthenticationChallenge *) challenge;
 
 @end
+
+#endif /* OCTrustedCertificatesStore_h */
+
+

@@ -28,6 +28,7 @@
 #import "OCCredentialsDto.h"
 #import "OCOAuth2Configuration.h"
 #import "OCCredentialsStorage.h"
+#import "OCTrustedCertificatesStore.h"
 
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
@@ -63,6 +64,7 @@ typedef enum {
 
 @property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
 @property (nonatomic, strong) id<OCCredentialsStorageDelegate> credentialsStorage;
+@property (nonatomic, strong) id<OCTrustedCertificatesStore> trustedCertificatesStore;
 
 
 //Public properties
@@ -143,6 +145,8 @@ typedef enum {
 - (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration;
 
 - (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage;
+
+- (void) setValueTrustedCertificatesStore:(id<OCTrustedCertificatesStore>)trustedCertificatesStore;
 
 /*
  * Method to update the a request with the current credentials
