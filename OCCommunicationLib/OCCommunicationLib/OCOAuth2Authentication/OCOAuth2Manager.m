@@ -155,11 +155,12 @@
     
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        if (data != nil) {
-            completion(data, (NSHTTPURLResponse*)response, error);
-        } else {
+        if (error != nil) {
             NSLog(@"Error %@",error.localizedDescription);
-            completion(nil, (NSHTTPURLResponse*)response, error);
+            completion(data, nil, error);
+            
+        } else {
+            completion(data, (NSHTTPURLResponse*)response, error);
         }
     }];
     
