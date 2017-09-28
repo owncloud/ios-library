@@ -31,7 +31,7 @@
 
 
 
-+ (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                             withServerPath:(NSString *)serverPath {
     
     NSString *oauth2RedirectUri = oauth2Configuration.redirectUri;
@@ -69,7 +69,7 @@
 
 #pragma mark - access token
 
-+ (void) authDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) authDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                            withBaseURL:(NSString *)baseURL
                               authCode:(NSString *)authCode
                              userAgent:(NSString *)userAgent
@@ -121,7 +121,7 @@
 
 }
 
-+ (void) authDataRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) authDataRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                       withURL:(NSURL *)url
                                      authCode:(NSString *)authCode
                                     userAgent:(NSString *)userAgent
@@ -171,7 +171,7 @@
 
 #pragma mark - Refresh token
 
-+ (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                           withBaseURL:(NSString *)baseURL
                              refreshToken:(NSString *)refreshToken
                                 userAgent:(NSString *)userAgent
@@ -228,7 +228,7 @@
     
 }
 
-+ (void) refreshAuthDataRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) refreshAuthDataRequestByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                       withBaseURL:(NSString *)baseURL
                                          refreshToken:(NSString *)refreshToken
                                             userAgent:(NSString *)userAgent
@@ -274,7 +274,7 @@
 }
 
 
-#pragma mark - methods from URLSessionDelegate
+#pragma mark - methods from NSURLSessionDelegate
 
 // Delegate method called when the server responded with an authentication challenge.
 // Since iOS is so great, it is also called when the server certificate is not trusted, so that the client
@@ -298,12 +298,14 @@
         NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
         completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
     } else {
+        // If this method was called due to untrusted server certificate and this was not accepted by the user before,
+        // or if it was called due to a different authentication challenge, default handling will lead the task to fail.
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling,nil);
     }
 }
 
 
-/// MARK : methods from URLSessionTaskDelegate
+/// MARK : methods from NSURLSessionTaskDelegate
 
 // Delegate method called when the server responsed with a redirection
 //
@@ -318,11 +320,9 @@
     
     NSLog(@"DetectAuthenticationMethod: redirect detected in URLSessionTaskDelegate implementation");
     
-     // let's resuse the last request performed by the task (it's a POST) and set in it the redirected URL from the request proposed by the system
-    NSMutableURLRequest *newRequest;
-    
     if (task.currentRequest) {
-        newRequest.URL = request.URL;
+        NSMutableURLRequest *newRequest = [task.currentRequest mutableCopy];    // let's resuse the last request performed by the task (it's a POST) ...
+        newRequest.URL = request.URL;                                           // ... and then override the URL with the redirected one proposed by the system
         
         completionHandler(newRequest); //follow
     } else {

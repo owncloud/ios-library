@@ -38,7 +38,7 @@
 @interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
 
-+ (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                             withServerPath:(NSString *)serverPath;
 
 
@@ -52,7 +52,7 @@
  *
  **/
 
-+ (void) authDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) authDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                            withBaseURL:(NSString *)baseURL
                               authCode:(NSString *)authCode
                              userAgent:(NSString *)userAgent
@@ -70,7 +70,7 @@
  *
 **/
 
-+ (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                           withBaseURL:(NSString *)baseURL
                              refreshToken:(NSString *)refreshToken
                                 userAgent:(NSString *)userAgent

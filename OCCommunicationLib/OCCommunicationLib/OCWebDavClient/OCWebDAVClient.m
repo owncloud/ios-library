@@ -123,7 +123,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                    OCOAuth2Manager* oAuth2Manager = [OCOAuth2Manager new];
+                    [oAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
                                                           withBaseURL:sharedOCCommunication.credDto.baseURL
                                                          refreshToken:sharedOCCommunication.credDto.refreshToken
                                                             userAgent:sharedOCCommunication.userAgent
@@ -195,7 +196,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 } else {
                     
                     //get refresh token
-                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                    OCOAuth2Manager* oAuth2Manager = [OCOAuth2Manager new];
+                    [oAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
                                                           withBaseURL:sharedOCCommunication.credDto.baseURL
                                                          refreshToken:sharedOCCommunication.credDto.refreshToken
                                                             userAgent:sharedOCCommunication.userAgent
@@ -397,7 +399,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                     }
                 } else {
                     //get refresh token
-                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                    OCOAuth2Manager* oAuth2Manager = [OCOAuth2Manager new];
+                    [oAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
                                                           withBaseURL:sharedOCCommunication.credDto.baseURL
                                                          refreshToken:sharedOCCommunication.credDto.refreshToken
                                                             userAgent:sharedOCCommunication.userAgent
@@ -512,7 +515,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                     }
                 } else {
                     //get refresh token
-                    [OCOAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
+                    OCOAuth2Manager* oAuth2Manager = [OCOAuth2Manager new];
+                    [oAuth2Manager refreshAuthDataByOAuth2Configuration:sharedOCCommunication.oauth2Configuration
                                                           withBaseURL:sharedOCCommunication.credDto.baseURL
                                                          refreshToken:sharedOCCommunication.credDto.refreshToken
                                                             userAgent:sharedOCCommunication.userAgent
