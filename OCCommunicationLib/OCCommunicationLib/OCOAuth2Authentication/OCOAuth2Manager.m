@@ -141,7 +141,11 @@
     [request setValue:authorizationValue forHTTPHeaderField:@"Authorization"];
     
     
-    NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&code=%@&redirect_uri=%@",authCode,oauth2Configuration.clientId];
+    NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&code=%@&redirect_uri=%@&client_id=%@",
+                      authCode,
+                      oauth2Configuration.redirectUri,
+                      oauth2Configuration.clientId
+                      ];
     
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     
