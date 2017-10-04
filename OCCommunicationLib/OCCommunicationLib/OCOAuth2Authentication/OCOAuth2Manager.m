@@ -34,15 +34,12 @@
 - (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                                             withServerPath:(NSString *)serverPath {
     
-    NSString *oauth2RedirectUri = oauth2Configuration.redirectUri;
-    NSString *oauth2RedirectUriEncoded = [oauth2RedirectUri stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
-    
     NSString *baseURL = [NSString stringWithFormat:@"%@%@",serverPath,oauth2Configuration.authorizationEndpoint];
     
     NSURLComponents *urlComponents = [[NSURLComponents alloc] initWithString:baseURL];
     NSDictionary *queryDictionary = @{
                                       @"response_type"  : @"code",
-                                      @"redirect_uri" : oauth2RedirectUriEncoded,
+                                      @"redirect_uri" : oauth2Configuration.redirectUri,
                                       @"client_id" : oauth2Configuration.clientId
                                       };
     NSMutableArray *queryItems = [NSMutableArray array];
