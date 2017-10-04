@@ -105,6 +105,7 @@
 		59A5B719191907F100724BE3 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLResponseSerialization.m; path = ExternalLibs/AFNetworking/AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		59A5B71A191907F100724BE3 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFURLSessionManager.h; path = ExternalLibs/AFNetworking/AFURLSessionManager.h; sourceTree = "<group>"; };
 		59A5B71B191907F100724BE3 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AFURLSessionManager.m; path = ExternalLibs/AFNetworking/AFURLSessionManager.m; sourceTree = "<group>"; };
+		7F4E820F1F7D4DFA00C20454 /* OCTrustedCertificatesStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTrustedCertificatesStore.h; sourceTree = "<group>"; };
 		7F6F496B1F46C6EB009F8813 /* OCCredentialsDto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCCredentialsDto.h; sourceTree = "<group>"; };
 		7F6F496C1F46C70C009F8813 /* OCCredentialsDto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCCredentialsDto.m; sourceTree = "<group>"; };
 		EA0599981BB96D14002C2864 /* OCShareUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCShareUser.h; sourceTree = "<group>"; };
@@ -247,6 +248,7 @@
 				EA7CC932183E150000B6A4B4 /* OCCommunication.h */,
 				EA7CC933183E150000B6A4B4 /* OCCommunication.m */,
 				EAABAB1218574A7C00909831 /* OCErrorMsg.h */,
+				7F4E820F1F7D4DFA00C20454 /* OCTrustedCertificatesStore.h */,
 				EAABAB171858593500909831 /* UploadSupport */,
 				EA7CC91C183E147C00B6A4B4 /* OCWebDavClient */,
 				EA7CC8E7183E133800B6A4B4 /* Utils */,

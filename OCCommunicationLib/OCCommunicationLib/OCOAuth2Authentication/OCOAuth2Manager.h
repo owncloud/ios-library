@@ -31,28 +31,55 @@
 #import "OCOAuth2Configuration.h"
 #import "UtilsFramework.h"
 #import "OCFrameworkConstants.h"
+#import "OCCredentialsDto.h"
+#import "OCTrustedCertificatesStore.h"
+
 
 @interface OCOAuth2Manager : NSObject  <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
 
+@property (nonatomic, strong) id<OCTrustedCertificatesStore> trustedCertificatesStore;
+
+
+- (NSURL *) getOAuth2URLToGetAuthCodeByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+                                            withServerPath:(NSString *)serverPath;
+
+
+/**
+ * Method to get the auth data by the auth code
+ *
+ * @param baseURL -> NSString with the url of the path obteined from method getOAuth2URLToGetTokenByOAuth2Configuration:withServerPath:
+ * @param oauth2Configuration -> OCOAuth2Configuration with all the oauth parameters
+ * @param authCode -> NSString with the auth code
+ * @param userAgent -> NSString with the custom user agent or nil
+ *
+ **/
+
+- (void) authDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+                           withBaseURL:(NSString *)baseURL
+                              authCode:(NSString *)authCode
+                             userAgent:(NSString *)userAgent
+                        withCompletion:(void(^)(OCCredentialsDto *userCredDto, NSError *error))completion;
+
 /**
  * Method to get the new auth data by the oauth refresh token
  *
- * @param url -> NSURL with the url of the path
+ * @param baseURL -> NSString with the url of the path
  * Ex: http://www.myowncloudserver.com/owncloud/remote.php/webdav/Music
  *
- * @param oauth2Configuration -> OCOAuth2Configuration with all the oauth parameters
  * @param refreshToken -> NSString with the refreshToken
+ * @param oauth2Configuration -> OCOAuth2Configuration with all the oauth parameters
  * @param userAgent -> NSString with the custom user agent or nil
  *
 **/
 
-+ (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
+- (void) refreshAuthDataByOAuth2Configuration:(OCOAuth2Configuration *)oauth2Configuration
                           withBaseURL:(NSString *)baseURL
                              refreshToken:(NSString *)refreshToken
                                 userAgent:(NSString *)userAgent
                                   success:(void(^)(OCCredentialsDto *userCredDto))success
                                   failure:(void(^)(NSError *error))failure;
+
 
 
 @end
