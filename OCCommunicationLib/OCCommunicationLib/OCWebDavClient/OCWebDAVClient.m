@@ -40,8 +40,7 @@
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
 #define k_group_sharee_type 1
-#define k_retry_ntimes 2  //Retry ntimes request
-
+#define k_retry_ntimes 5  //Retry ntimes request
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
 NSString const *OCWebDAVETagKey				= @"getetag";
@@ -115,7 +114,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject, token);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401 &&
+                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure((NSHTTPURLResponse*)response, responseObject, error, token);
@@ -143,8 +143,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   if (sharedOCCommunication.credentialsStorage != nil) {
                                                       [sharedOCCommunication.credentialsStorage saveCredentials:sharedOCCommunication.credDto];
                                                   }
-                                                  
-                                                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                                                
+                                                  sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes -1)
                                                                 onCommunication:sharedOCCommunication
                                                            withUserSessionToken:token
                                                                         success:success
@@ -158,6 +158,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   
                                               }];
                 }
+            } else if (error.code == kCFURLErrorCancelled) {
+                
+                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes -1)
+                                                onCommunication:sharedOCCommunication
+                                           withUserSessionToken:token
+                                                        success:success
+                                                        failure:failure
+                                   ];
+                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+                [sessionDataTask resume];
+                
             } else {
                 failure((NSHTTPURLResponse*)response, responseObject, error, token);
             }
@@ -228,6 +239,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         failure(nil,nil,error);
                     }];
                 }
+            } else if (error.code == kCFURLErrorCancelled){
+                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
+                                                onCommunication:sharedOCCommunication
+                                                        success:success
+                                                        failure:failure
+                                   ];
+                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+                [sessionDataTask resume];
             } else {
                 failure((NSHTTPURLResponse*)response, responseObject, error);
                 
@@ -437,6 +456,22 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         failure(response, error);
                     }];
                 }
+                
+                
+            } else if (error.code == kCFURLErrorCancelled) {
+                
+                downloadTask = [self downloadTaskWithRequest:request
+                                                      toPath:localDestination
+                                             defaultPriority:defaultPriority
+                                       retryingNumberOfTimes:(ntimes -1)
+                                             onCommunication:sharedOCCommunication
+                                                    progress:downloadProgress
+                                                     success:success
+                                                     failure:failure];
+                
+                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
+                [downloadTask resume];
+
             } else {
                 failure(response, error);
             }
@@ -545,13 +580,25 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                                                                   progress:uploadProgress
                                                                                                    success:success
                                                                                                    failure:failure];
-                                                                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
+                                                                  [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
                                                                   [uploadTask resume];
                                                                   
                                                               } failure:^(NSError *error) {
                                                                   failure(response, responseObject, error);
                                                               }];
                 }
+            } else if (error.code == kCFURLErrorCancelled ) {
+                
+                uploadTask = [self uploadTaskWithRequest:request
+                                             fromFileURL:fileURL
+                                   retryingNumberOfTimes:(ntimes -1)
+                                         onCommunication:sharedOCCommunication
+                                                progress:uploadProgress
+                                                 success:success
+                                                 failure:failure];
+                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
+                [uploadTask resume];
+
             } else {
                 failure(response, responseObject, error);
             }
