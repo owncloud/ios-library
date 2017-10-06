@@ -40,7 +40,7 @@
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
 #define k_group_sharee_type 1
-#define k_retry_ntimes 5  //Retry ntimes request
+#define k_retry_ntimes 3  //Retry ntimes request
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
 NSString const *OCWebDAVETagKey				= @"getetag";
@@ -513,8 +513,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,responseObject);
         } else {
-            if ( (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) ||
-            error.code == kCFURLErrorCancelled ){
+            if ( ((NSHTTPURLResponse*)response).statusCode == 401 &&
+                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN ){
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, responseObject, error);
