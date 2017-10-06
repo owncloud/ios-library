@@ -158,17 +158,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   
                                               }];
                 }
-            } else if (error.code == kCFURLErrorCancelled) {
-                
-                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes -1)
-                                                onCommunication:sharedOCCommunication
-                                           withUserSessionToken:token
-                                                        success:success
-                                                        failure:failure
-                                   ];
-                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-                [sessionDataTask resume];
-                
             } else {
                 failure((NSHTTPURLResponse*)response, responseObject, error, token);
             }
@@ -239,14 +228,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         failure(nil,nil,error);
                     }];
                 }
-            } else if (error.code == kCFURLErrorCancelled){
-                sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:(ntimes - 1)
-                                                onCommunication:sharedOCCommunication
-                                                        success:success
-                                                        failure:failure
-                                   ];
-                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-                [sessionDataTask resume];
             } else {
                 failure((NSHTTPURLResponse*)response, responseObject, error);
                 
@@ -458,20 +439,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                 }
                 
                 
-            } else if (error.code == kCFURLErrorCancelled) {
-                
-                downloadTask = [self downloadTaskWithRequest:request
-                                                      toPath:localDestination
-                                             defaultPriority:defaultPriority
-                                       retryingNumberOfTimes:(ntimes -1)
-                                             onCommunication:sharedOCCommunication
-                                                    progress:downloadProgress
-                                                     success:success
-                                                     failure:failure];
-                
-                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.downloadSessionManager];
-                [downloadTask resume];
-
             } else {
                 failure(response, error);
             }
@@ -546,7 +513,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,responseObject);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if ( (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) ||
+            error.code == kCFURLErrorCancelled ){
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, responseObject, error);
@@ -587,18 +555,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                                   failure(response, responseObject, error);
                                                               }];
                 }
-            } else if (error.code == kCFURLErrorCancelled ) {
-                
-                uploadTask = [self uploadTaskWithRequest:request
-                                             fromFileURL:fileURL
-                                   retryingNumberOfTimes:(ntimes -1)
-                                         onCommunication:sharedOCCommunication
-                                                progress:uploadProgress
-                                                 success:success
-                                                 failure:failure];
-                [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.uploadSessionManager];
-                [uploadTask resume];
-
             } else {
                 failure(response, responseObject, error);
             }
