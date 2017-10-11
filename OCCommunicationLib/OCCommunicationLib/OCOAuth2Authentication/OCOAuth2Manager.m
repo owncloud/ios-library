@@ -192,18 +192,10 @@
                                                        options:kNilOptions
                                                          error:&errorJSON];
             if (errorJSON == nil) {
-                if (dictJSON[@"error"] != nil && ![dictJSON[@"error"] isEqual:[NSNull null]] ) {
+                if (dictJSON[@"user_id"] != nil &&
+                    dictJSON[@"access_token"] != nil &&
+                    dictJSON[@"refresh_token"] != nil ) {
                     
-                    NSString *message = (NSString*)[dictJSON objectForKey:@"error"];
-                    
-                    if ([message isKindOfClass:[NSNull class]]) {
-                        message = @"";
-                    }
-                    
-                    NSError *error = [UtilsFramework getErrorByCodeId:OCErrorOAuth2Error];
-
-                    failure(error);
-                } else {
                     userCredDto.userName = dictJSON[@"user_id"];
                     userCredDto.accessToken = dictJSON[@"access_token"];
                     userCredDto.refreshToken = dictJSON[@"refresh_token"];
@@ -212,6 +204,12 @@
                     userCredDto.authenticationMethod = AuthenticationMethodBEARER_TOKEN;
                     
                     success(userCredDto);
+                    
+                } else {
+                        
+                    NSError *error = [UtilsFramework getErrorByCodeId:OCErrorOAuth2Error];
+                        
+                    failure(error);
                 }
             }
             
