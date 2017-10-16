@@ -215,11 +215,29 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (NSURLSessionUploadTask * _Nonnull)putWithSessionLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
+
+///-----------------------------------
+/// @name requestUserData
+///-----------------------------------
+
+/**
+ * Method to obtain the User data of server
+ *
+ *
+ */
+- (void) requestUserDataOfServer:(NSString * _Nonnull) path
+                  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+
+
 ///-----------------------------------
 /// @name requestForUserNameByCookie
 ///-----------------------------------
 
 /**
+ * DEPRECATED use - requestUserDataOfServer:onCommunication: instead
+ *
  * Method to obtain the User name by the cookie of the session
  *
  * @param NSString the cookie of the session
@@ -227,7 +245,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void) requestUserNameOfServer:(NSString * _Nonnull) path byCookie:(NSString * _Nonnull) cookieString onCommunication:
 (OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
+__deprecated_msg("Use - requestUserDataOfServer:onCommunication: instead");
 
 
 ///-----------------------------------

@@ -485,10 +485,43 @@ typedef enum {
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure;
 
 ///-----------------------------------
+/// @name getUserDataOfServer
+///-----------------------------------
+
+/**
+ * Method to get the User data.
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ */
+- (void) getUserDataOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                     success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest;
+
+///-----------------------------------
+/// @name getUserDisplayNameOfServer
+///-----------------------------------
+
+/**
+ * Method to get the User display name.
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ */
+- (void) getUserDisplayNameOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                            success:(void(^)(NSHTTPURLResponse *response, NSString *displayName, NSString *redirectedServer))success
+                            failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest;
+
+
+///-----------------------------------
 /// @name requestForUserNameByCookie
 ///-----------------------------------
 
 /**
+ *  DEPRECATED use - getUserDataOfServer:onCommunication: or getUserDisplayNameOfServer:onCommunication: instead
+ *
  * Method to get the User name by the cookie of the session. Used with SAML servers.
  *
  * @param cookieString -> NSString The cookie of the session
@@ -501,14 +534,15 @@ typedef enum {
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
-                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure;
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure
+__deprecated_msg("Use - getUserDataOfServer:onCommunication: or getUserDisplayNameOfServer:onCommunication: instead");
 
 ///-----------------------------------
 /// @name Get Features Supported By Server
 ///-----------------------------------
 
 /**
- * DEPRECATED use + getFeaturesSupportedByServerForVersion: instead
+ * DEPRECATED use - getFeaturesSupportedByServerForVersion: instead
  *
  * Method get the features supported by the path server using the version string.
  *
@@ -530,7 +564,8 @@ typedef enum {
 
 - (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                        successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer)) success
-                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure __deprecated_msg("Use + getFeaturesSupportedByServerForVersion: instead");
+                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure
+__deprecated_msg("Use - getFeaturesSupportedByServerForVersion: instead");
 
 
 ///-----------------------------------

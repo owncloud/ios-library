@@ -36,11 +36,11 @@
 #import "OCConstants.h"
 #import "OCOAuth2Manager.h"
 
-#define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"
 #define k_server_information_json @"status.php"
 #define k_api_header_request @"OCS-APIREQUEST"
+
 #define k_group_sharee_type 1
-#define k_retry_ntimes 3  //Retry ntimes request
+#define k_retry_ntimes 2  //Retry ntimes request
 
 NSString const *OCWebDAVContentTypeKey		= @"getcontenttype";
 NSString const *OCWebDAVETagKey				= @"getetag";
@@ -135,6 +135,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                   
                                                   userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                   userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                                                  userCredDto.userDisplayName = sharedOCCommunication.credDto.userDisplayName;
                                                   [sharedOCCommunication setCredentials:userCredDto];
                                                   
                                                   [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
@@ -209,6 +210,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         
                         userCredDto.userId = sharedOCCommunication.credDto.userId;
                         userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                        userCredDto.userDisplayName = sharedOCCommunication.credDto.userDisplayName;
                         [sharedOCCommunication setCredentials:userCredDto];
                         [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
                         
@@ -413,6 +415,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                         
                         userCredDto.userId = sharedOCCommunication.credDto.userId;
                         userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                        userCredDto.userDisplayName = sharedOCCommunication.credDto.userDisplayName;
                         [sharedOCCommunication setCredentials:userCredDto];
                         
                         [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
@@ -533,6 +536,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                 
                                                                   userCredDto.userId = sharedOCCommunication.credDto.userId;
                                                                   userCredDto.baseURL = sharedOCCommunication.credDto.baseURL;
+                                                                  userCredDto.userDisplayName = sharedOCCommunication.credDto.userDisplayName;
                                                                   [sharedOCCommunication setCredentials:userCredDto];
                                                                   
                                                                   [request setValue:[NSString stringWithFormat:@"Bearer %@", userCredDto.accessToken] forHTTPHeaderField:@"Authorization"];
@@ -621,14 +625,34 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     }
 }
 
-- (void) requestUserNameOfServer:(NSString * _Nonnull) path byCookie:(NSString * _Nonnull) cookieString onCommunication:
-(OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
+
+- (void) requestUserDataOfServer:(NSString * _Nonnull) path
+                  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
     
     NSString *apiUserUrl = nil;
     apiUserUrl = [NSString stringWithFormat:@"%@%@", path, k_api_user_url_json];
     
-    NSLog(@"api user name call: %@", apiUserUrl);
+    _requestMethod = @"GET";
+    
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: apiUserUrl parameters: nil];
+    [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
+    
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
+    [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+    [sessionDataTask resume];
+}
+
+
+- (void) requestUserNameOfServer:(NSString * _Nonnull) path
+                        byCookie:(NSString * _Nonnull) cookieString
+                 onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                         success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure {
+    
+    NSString *apiUserUrl = nil;
+    apiUserUrl = [NSString stringWithFormat:@"%@%@", path, k_api_user_url_json];
     
     _requestMethod = @"GET";
     

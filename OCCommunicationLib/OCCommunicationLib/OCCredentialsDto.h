@@ -49,6 +49,8 @@ typedef NS_ENUM (NSUInteger, AuthenticationMethod){
 @property (nonatomic, copy) NSString *expiresIn;
 @property (nonatomic, copy) NSString *tokenType;
 
+@property (nonatomic, copy) NSString *userDisplayName;
+
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;

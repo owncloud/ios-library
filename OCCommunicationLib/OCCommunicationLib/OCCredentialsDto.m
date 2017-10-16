@@ -42,6 +42,7 @@
         _expiresIn = oCredDto.expiresIn;
         _tokenType = oCredDto.tokenType;
         _authenticationMethod = oCredDto.authenticationMethod;
+        _userDisplayName = oCredDto.userDisplayName;
     }
     
     return self;
@@ -57,6 +58,7 @@
     credDtoCopy.expiresIn = self.expiresIn;
     credDtoCopy.tokenType = self.tokenType;
     credDtoCopy.authenticationMethod = self.authenticationMethod;
+    credDtoCopy.userDisplayName = self.userDisplayName;
     
     return credDtoCopy;
 }
@@ -71,6 +73,7 @@
     [aCoder encodeObject:self.expiresIn forKey:@"expiresIn"];
     [aCoder encodeObject:self.tokenType forKey:@"tokenType"];
     [aCoder encodeInteger:self.authenticationMethod forKey:@"authenticationMethod"];
+    [aCoder encodeObject:self.userDisplayName forKey:@"userDisplayName"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -84,6 +87,8 @@
         self.expiresIn = [aDecoder decodeObjectForKey:@"tokenType"];
         self.tokenType = [aDecoder decodeObjectForKey:@"tokenType"];
         self.authenticationMethod = [aDecoder decodeIntegerForKey:@"authenticationMethod"];
+        self.userDisplayName = [aDecoder decodeObjectForKey:@"userDisplayName"];
+
     }
     return self;
 }

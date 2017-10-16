@@ -627,6 +627,67 @@
     
 }
 
+
+///-----------------------------------
+/// @name Get UserData
+///-----------------------------------
+
+- (void) getUserDataOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                     success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    
+    [request requestUserDataOfServer:path onCommunication:sharedOCCommunication
+    success:^(NSHTTPURLResponse *response, id responseObject) {
+        success(response, responseObject, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+    }];
+}
+
+///-----------------------------------
+/// @name Get User Display Name
+///-----------------------------------
+
+- (void) getUserDisplayNameOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                            success:(void(^)(NSHTTPURLResponse *response, NSString *displayName, NSString *redirectedServer))success
+                            failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    [request requestUserDataOfServer:path onCommunication:sharedOCCommunication
+                             success:^(NSHTTPURLResponse *response, id responseObject) {
+                                 
+                                 NSError *jsonError = nil;
+                                 NSString *displayName = @"";
+                                 
+                                 NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+                                 
+                                 if (!jsonDict) {
+                                     
+                                     NSLog(@"json error: %@", jsonError);
+                                 } else {
+                                     
+                                     NSDictionary *ocsDict = [jsonDict objectForKey:k_json_ocs];
+                                     
+                                     NSDictionary *userDataDict = [ocsDict objectForKey:k_json_ocs_data];
+                                     
+                                     displayName = [userDataDict objectForKey:k_json_ocs_data_display_name];
+                                 }
+                                 
+                                 success(response, displayName, request.redirectedServer);
+                                 
+                             } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+                                 
+                                 [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+                             }];
+}
+
+
 ///-----------------------------------
 /// @name Get UserName by cookie
 ///-----------------------------------
