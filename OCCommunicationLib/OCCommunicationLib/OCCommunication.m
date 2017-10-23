@@ -644,7 +644,7 @@
     success:^(NSHTTPURLResponse *response, id responseObject) {
         success(response, responseObject, request.redirectedServer);
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+        failureRequest(response,error, request.redirectedServer);
     }];
 }
 
@@ -667,7 +667,7 @@
                                  
                                  NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
                                  
-                                 if (!jsonDict) {
+                                 if (jsonError) {
                                      
                                      NSLog(@"json error: %@", jsonError);
                                  } else {
@@ -679,11 +679,15 @@
                                      displayName = [userDataDict objectForKey:k_json_ocs_data_display_name];
                                  }
                                  
+                                 for(NSString *key in [jsonDict allKeys]) {
+                                     NSLog(@"%@",[jsonDict objectForKey:key]);
+                                 }
+                                 
                                  success(response, displayName, request.redirectedServer);
                                  
                              } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-                                 
-                                 [self returnErrorWithResponse:response andResponseData:responseData andError:error failureRequest:failureRequest andRequest:request];
+                                 failureRequest(response,error, request.redirectedServer);
+                                 NSLog(@"Display name not updated");
                              }];
 }
 
