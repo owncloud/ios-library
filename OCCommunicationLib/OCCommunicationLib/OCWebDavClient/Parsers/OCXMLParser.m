@@ -196,7 +196,9 @@ NSString *OCCWebDAVURIKey           = @"uri";
         
     } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
         //ETAG
+#ifdef DEBUG
         NSLog(@"getetag: %@", _xmlChars);
+#endif
         
         NSString *stringClean = _xmlChars;
         stringClean = [_xmlChars stringByReplacingOccurrencesOfString:@"\"" withString:@""];
@@ -236,7 +238,9 @@ NSString *OCCWebDAVURIKey           = @"uri";
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
+#ifdef DEBUG
     NSLog(@"Finish xml directory list parse");
+#endif
 }
 
 // Decode a percent escape encoded string.
