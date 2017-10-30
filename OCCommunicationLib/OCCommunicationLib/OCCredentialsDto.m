@@ -48,6 +48,9 @@
     return self;
 }
 
+
+#pragma mark - NSCopying
+
 -(id) copyWithZone:(NSZone *)zone {
     OCCredentialsDto *credDtoCopy = [[OCCredentialsDto alloc]init];
     credDtoCopy.userId = self.userId;
@@ -63,6 +66,12 @@
     return credDtoCopy;
 }
 
+#pragma mark - NSSecureCoding
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:self.userId forKey:@"userId"];
@@ -76,7 +85,7 @@
     [aCoder encodeObject:self.userDisplayName forKey:@"userDisplayName"];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super init]) {
         self.userId = [aDecoder decodeObjectForKey:@"userId"];

@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCCapabilities : NSObject
+@interface OCCapabilities : NSObject <NSCopying>
 
 /*VERSION*/
 @property (nonatomic) NSInteger versionMajor;
@@ -76,6 +76,7 @@
 @property (nonatomic) BOOL isFileUndeleteEnabled;
 @property (nonatomic) BOOL isFileVersioningEnabled;
 
-
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (id)initWithCoder:(NSCoder *)aDecoder;
 
 @end
