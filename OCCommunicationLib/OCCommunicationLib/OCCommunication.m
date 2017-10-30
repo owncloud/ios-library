@@ -243,7 +243,7 @@
            [myRequest setUserAgent:self.userAgent];
         }
     
-        return request;
+        return myRequest;
         
     } else {
         NSLog(@"We do not know witch kind of object is");
