@@ -125,6 +125,9 @@
                                withCompletion:(void(^)(NSData *data,NSHTTPURLResponse *httpResponse, NSError *error))completion {
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:url.absoluteString];
+    
     [request setHTTPMethod:@"POST"];
     if (userAgent != nil) {
         [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
@@ -175,7 +178,7 @@
                                   success:(void(^)(OCCredentialsDto *userCredDto))success
                                   failure:(void(^)(NSError *error))failure {
     
-    [UtilsFramework deleteAllCookies];
+    //[UtilsFramework deleteAllCookies];
     
     [self refreshAuthDataRequestByOAuth2Configuration:oauth2Configuration withBaseURL:baseURL refreshToken:refreshToken userAgent:userAgent
      
@@ -234,6 +237,8 @@
     NSURL *urlToGetToken = [[NSURL URLWithString:baseURL] URLByAppendingPathComponent:oauth2Configuration.tokenEndpoint];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:urlToGetToken];
+    
+    request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:baseURL];
     
     [request setHTTPMethod:@"POST"];
     if (userAgent != nil) {
