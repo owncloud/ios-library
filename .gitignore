@@ -1,6 +1,7 @@
 # Xcode
 .DS_Store
 */build/*
+_build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -16,6 +17,8 @@ DerivedData
 .idea/
 *.hmap
 *.xccheckout
+*.pyc
+xcshareddata/
 
 #CocoaPods
 Pods

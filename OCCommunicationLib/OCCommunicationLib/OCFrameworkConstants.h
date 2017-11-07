@@ -37,6 +37,20 @@
 
 #define k_domain_error_code @"com.owncloud"
 
+//URL for webdav
+//#define k_url_webdav_server @"remote.php/odav/"
+#define k_url_webdav_server @"remote.php/webdav/"
+#define k_url_webdav_server_without_last_slash @"remote.php/webdav"
+
+//URL path for list of files in web interface
+#define k_url_path_list_of_files_in_web @"index.php/apps/files"
+
+//URL to access user data API
+#define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"
+#define k_json_ocs @"ocs"
+#define k_json_ocs_data @"data"
+#define k_json_ocs_data_display_name @"display-name"
+
 //Url to access to Shared API to create
 #define k_url_acces_shared_api @"ocs/v1.php/apps/files_sharing/api/v1/shares"
 

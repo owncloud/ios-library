@@ -68,8 +68,14 @@
     [super setUp];
     
     _sharedOCCommunication = [[OCCommunication alloc] init];
-    [_sharedOCCommunication setCredentialsWithUser:k_user andPassword:k_password];
+    OCCredentialsDto* credentials = [[OCCredentialsDto alloc] init];
+    credentials.authenticationMethod = AuthenticationMethodBASIC_HTTP_AUTH;
+    credentials.userName = k_user;
+    credentials.accessToken = k_password;
+    [_sharedOCCommunication setCredentials:credentials];
     [_sharedOCCommunication setSecurityPolicyManagers:[_sharedOCCommunication  createSecurityPolicy]];
+    
+    //TODO: set oauthconfiguration an credentialsStorage
     
     //Create Tests folder
     [self createFolderWithName:k_path_test_folder];

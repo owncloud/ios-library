@@ -238,6 +238,17 @@
             error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
             break;
         }
+            
+        case OCErrorServerMaintenanceMode:
+        case kOCErrorServerMaintenanceError:
+        {
+            NSMutableDictionary* details =  [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"maintenance_mode_on_server_message", nil) forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:kOCErrorServerForbidden userInfo:details];
+            break;
+        }
+            
         case OCErrorForbiddenUnknown:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
@@ -246,6 +257,25 @@
             error = [NSError errorWithDomain:k_domain_error_code code:OCErrorForbiddenUnknown userInfo:details];
             break;
         }
+            
+        case OCErrorOAuth2ErrorAccessDenied:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"oauth2_error_access_denied", nil)  forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorOAuth2ErrorAccessDenied userInfo:details];
+            break;
+        }
+            
+        case OCErrorOAuth2Error:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"oauth2_error", nil)  forKey:NSLocalizedDescriptionKey];
+            
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorOAuth2Error userInfo:details];
+            break;
+        }
+            
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];
@@ -465,7 +495,10 @@
  *
  */
 + (void) deleteAllCookies {
+    
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSLog(@"Deleting cookie storage: %@", cookieStorage);
+
     for (NSHTTPCookie *each in cookieStorage.cookies) {
         [cookieStorage deleteCookie:each];
     }
@@ -634,10 +667,10 @@
     BOOL canCreate = [self isPermissionToCanCreate:permissionValue];
     BOOL canChange = [self isPermissionToCanChange:permissionValue];
     
-    
     BOOL canEdit = (canCreate && canChange && canRead);
     
     return canEdit;
-    
 }
+
+
 @end

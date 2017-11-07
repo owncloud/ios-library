@@ -27,7 +27,6 @@
 
 
 #import "AFHTTPSessionManager.h"
-#import "OCHTTPRequestOperation.h"
 
 @class OCCommunication;
 @class OCChunkDto;
@@ -207,6 +206,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  
  @param localSource is a string with the path of the file to upload
  @param remoteDestination A remote path, relative to the HTTP client's base URL, to write the data to.
+ @param retryingNumberOfTimes The number of times that the request will be silently retry
  @param progress A progress object monitoring the current upload progress.
  @param success A block callback, to be fired upon successful completion, with NSURLResponse and string of redirected server.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
@@ -215,11 +215,29 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (NSURLSessionUploadTask * _Nonnull)putWithSessionLocalPath:(NSString * _Nonnull)localSource atRemotePath:(NSString * _Nonnull)remoteDestination onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication progress:(void(^ _Nonnull)(NSProgress * _Nonnull progress))uploadProgress success:(void(^ _Nonnull)(NSURLResponse * _Nonnull, NSString * _Nonnull))success failure:(void(^ _Nonnull)(NSURLResponse * _Nonnull, id _Nonnull, NSError * _Nonnull))failure failureBeforeRequest:(void(^ _Nonnull)(NSError * _Nonnull)) failureBeforeRequest;
 
+
+///-----------------------------------
+/// @name requestUserData
+///-----------------------------------
+
+/**
+ * Method to obtain the User data of server
+ *
+ *
+ */
+- (void) requestUserDataOfServer:(NSString * _Nonnull) path
+                  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                          success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
+                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+
+
 ///-----------------------------------
 /// @name requestForUserNameByCookie
 ///-----------------------------------
 
 /**
+ * DEPRECATED use - requestUserDataOfServer:onCommunication: instead
+ *
  * Method to obtain the User name by the cookie of the session
  *
  * @param NSString the cookie of the session
@@ -227,7 +245,8 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
  */
 - (void) requestUserNameOfServer:(NSString * _Nonnull) path byCookie:(NSString * _Nonnull) cookieString onCommunication:
 (OCCommunication * _Nonnull)sharedOCCommunication success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
-                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;
+                         failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
+__deprecated_msg("Use - requestUserDataOfServer:onCommunication: instead");
 
 
 ///-----------------------------------
@@ -322,7 +341,7 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
 ///-----------------------------------
 
 /**
- * DEPRECATED use -  shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ * DEPRECATED use -  shareByLinkFileOrFolderByServer:andPath:password:expirationTime:publicUpload:linkName:permissions:onCommunication instead
  *
  * Method to share a file or folder with password
  *
@@ -338,14 +357,14 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
                         onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                                 success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                                 failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
-__deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
+__deprecated_msg("Use - shareByLinkFileOrFolderByServer:andPath:password:expirationTime:publicUpload:linkName:permissions:onCommunication instead");
 
 ///-----------------------------------
 /// @name shareFileOrFolderByServer
 ///-----------------------------------
 
 /**
- * DEPRECATED use -  shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication instead
+ * DEPRECATED use -  shareByLinkFileOrFolderByServer:andPath:password:expirationTime:publicUpload:linkName:permissions:onCommunication instead
  *
  * Method to share a file or folder
  *
@@ -360,7 +379,7 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expiratio
                   onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                           success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                           failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
-__deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expirationTime:publicUpload:linkName:onCommunication  instead");
+__deprecated_msg("Use - shareByLinkFileOrFolderByServer:andPath:password:expirationTime:publicUpload:linkName:permissions:onCommunication instead");
 
 
 ///-----------------------------------
@@ -456,7 +475,7 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expiratio
 ///-----------------------------------
 
 /**
- * DEPRECATED use - updateShareItem:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:andLinkName:onCommunication: instead
+ * DEPRECATED use - updateShareItem:ofServerPath:withPasswordProtect:andExpirationTime:andPublicUpload:andLinkName:andPermissions:onCommunication: instead
  *
  * Method to update a share link
  *
@@ -477,7 +496,7 @@ __deprecated_msg("Use - shareFileOrFolderByServerPath:andPath:password:expiratio
          onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                  success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                  failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure
-__deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirationTime:andPermissions:andLinkName:onCommunication:  instead");
+__deprecated_msg("Use - updateShareItem:ofServerPath:withPasswordProtect:andExpirationTime:andPublicUpload:andLinkName:andPermissions:onCommunication: instead");
 
 ///-----------------------------------
 /// @name searchUsersAndGroupsWith
@@ -533,7 +552,7 @@ __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirati
  * @return nsData -> thumbnail of the file with the size requested
  *
  */
-- (OCHTTPRequestOperation * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
+- (NSURLSessionDataTask * _Nonnull) getRemoteThumbnailByServer:(NSString * _Nonnull)serverPath ofFilePath:(NSString * _Nonnull)filePath  withWidth:(NSInteger)fileWidth andHeight:(NSInteger)fileHeight onCommunication:(OCCommunication * _Nonnull)sharedOCComunication
                             success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                             failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 

@@ -1,8 +1,10 @@
 //
-//  OCErrorMsg.h
-//  Owncloud iOs Client
+//  OCTrustedCertificatesStore.h
+//  ownCloud iOS library
 //
-// Copyright (C) 2016, ownCloud GmbH. ( http://www.owncloud.org/ )
+//  Created by David A. Velasco on 28/9/17.
+//
+// Copyright (C) 2017, ownCloud GmbH. ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +26,23 @@
 //
 
 
-#define kOCErrorServerBadRequest 400
-#define kOCErrorServerUnauthorized 401
-#define kOCErrorServerForbidden 403
-#define kOCErrorServerPathNotFound 404
-#define kOCErrorServerMethodNotPermitted 405
-#define kOCErrorProxyAuth 407
-#define kOCErrorServerTimeout 408
-#define kOCErrorServerConflict 409
-#define kOCErrorServerInternalError 500
-#define kOCErrorServerNotImplemented 501
-#define kOCErrorServerBadGateway 502
-#define kOCErrorServerMaintenanceError 503
-#define kOCErrorServerInsufficientStorage 507
+#ifndef OCTrustedCertificatesStore_h
+#define OCTrustedCertificatesStore_h
 
-#define kOCErrorSharedAPIWrong 400
-#define kOCSharedAPISuccessful 100
-#define kOCShareeAPISuccessful 200
+#import <Foundation/Foundation.h>
+
+@protocol OCTrustedCertificatesStore <NSObject>
+
+
+/*
+ * Checks if the challenge passed as a parameter corresponds to server certificate not trusted by iOS system,
+ * and if it is trusted by the user anyway, searching for it in the app-level store of certificates that
+ * were previously approved by her.
+ */
+- (BOOL) isTrustedServerCertificateIn:(NSURLAuthenticationChallenge *) challenge;
+
+@end
+
+#endif /* OCTrustedCertificatesStore_h */
+
+

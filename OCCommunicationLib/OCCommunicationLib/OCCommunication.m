@@ -24,7 +24,6 @@
 //
 
 #import "OCCommunication.h"
-#import "OCHTTPRequestOperation.h"
 #import "UtilsFramework.h"
 #import "OCXMLParser.h"
 #import "OCXMLSharedParser.h"
@@ -38,6 +37,7 @@
 #import "OCShareUser.h"
 #import "OCCapabilities.h"
 #import "OCServerFeatures.h"
+
 
 @interface OCCommunication ()
 
@@ -56,9 +56,6 @@
         
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
-        
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
@@ -115,9 +112,6 @@
         self.isCookiesAvailable = YES;
         self.isForbiddenCharactersAvailable = NO;
         
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
-        
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
         self.uploadSessionManager = uploadSessionManager;
@@ -134,9 +128,6 @@
     
         //Init the Donwload queue array
         self.downloadTaskNetworkQueueArray = [NSMutableArray new];
-        
-        //Credentials not set yet
-        self.kindOfCredential = credentialNotSet;
         
         [self setSecurityPolicyManagers:[self createSecurityPolicy]];
         
@@ -160,20 +151,27 @@
 
 #pragma mark - Setting Credentials
 
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password  {
-    self.kindOfCredential = credentialNormal;
-    self.user = user;
-    self.password = password;
+- (void) setCredentials:(OCCredentialsDto *) credentials {
+    
+    self.credDto = credentials;
 }
 
-- (void) setCredentialsWithCookie:(NSString*) cookie {
-    self.kindOfCredential = credentialCookie;
-    self.password = cookie;
+
+- (void) setValueOfUserAgent:(NSString *) userAgent {
+    self.userAgent = userAgent;
 }
 
-- (void) setCredentialsOauthWithToken:(NSString*) token {
-    self.kindOfCredential = credentialOauth;
-    self.password = token;
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration {
+    self.oauth2Configuration = oauth2Configuration;
+}
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage {
+    self.credentialsStorage = credentialsStorage;
+}
+
+- (void) setValueTrustedCertificatesStore:(id<OCTrustedCertificatesStore>)trustedCertificatesStore {
+    self.trustedCertificatesStore = trustedCertificatesStore;
 }
 
 ///-----------------------------------
@@ -193,22 +191,22 @@
     if ([request isKindOfClass:[NSMutableURLRequest class]]) {
         NSMutableURLRequest *myRequest = (NSMutableURLRequest *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
+            case AuthenticationMethodBASIC_HTTP_AUTH:
             {
-                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.user, self.password];
+                NSString *basicAuthCredentials = [NSString stringWithFormat:@"%@:%@", self.credDto.userName, self.credDto.accessToken];
                 [myRequest addValue:[NSString stringWithFormat:@"Basic %@", [UtilsFramework AFBase64EncodedStringFromString:basicAuthCredentials]] forHTTPHeaderField:@"Authorization"];
                 break;
             }
-            case credentialCookie:
-                //NSLog(@"Cookie: %@", self.password);
-                [myRequest addValue:self.password forHTTPHeaderField:@"Cookie"];
+            case AuthenticationMethodSAML_WEB_SSO:
+                [myRequest addValue:self.credDto.accessToken forHTTPHeaderField:@"Cookie"];
                 break;
-            case credentialOauth:
-                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.password] forHTTPHeaderField:@"Authorization"];
+            case AuthenticationMethodBEARER_TOKEN:
+                [myRequest addValue:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken] forHTTPHeaderField:@"Authorization"];
                 break;
             default:
                 break;
@@ -223,18 +221,19 @@
     } else if([request isKindOfClass:[OCWebDAVClient class]]) {
         OCWebDAVClient *myRequest = (OCWebDAVClient *)request;
         
-        switch (self.kindOfCredential) {
-            case credentialNotSet:
+        switch (self.credDto.authenticationMethod) {
+            case AuthenticationMethodNONE:
+            case AuthenticationMethodUNKNOWN:
                 //Without credentials
                 break;
-            case credentialNormal:
-                [myRequest setAuthorizationHeaderWithUsername:self.user password:self.password];
+            case AuthenticationMethodBASIC_HTTP_AUTH:
+                [myRequest setAuthorizationHeaderWithUsername:self.credDto.userName password:self.credDto.accessToken];
                 break;
-            case credentialCookie:
-                [myRequest setAuthorizationHeaderWithCookie:self.password];
+            case AuthenticationMethodSAML_WEB_SSO:
+                [myRequest setAuthorizationHeaderWithCookie:self.credDto.accessToken];
                 break;
-            case credentialOauth:
-                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.password]];
+            case AuthenticationMethodBEARER_TOKEN:
+                [myRequest setAuthorizationHeaderWithToken:[NSString stringWithFormat:@"Bearer %@", self.credDto.accessToken]];
                 break;
             default:
                 break;
@@ -244,7 +243,7 @@
            [myRequest setUserAgent:self.userAgent];
         }
     
-        return request;
+        return myRequest;
         
     } else {
         NSLog(@"We do not know witch kind of object is");
@@ -627,6 +626,71 @@
     }];
     
 }
+
+
+///-----------------------------------
+/// @name Get UserData
+///-----------------------------------
+
+- (void) getUserDataOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                     success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    
+    [request requestUserDataOfServer:path onCommunication:sharedOCCommunication
+    success:^(NSHTTPURLResponse *response, id responseObject) {
+        success(response, responseObject, request.redirectedServer);
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        failureRequest(response,error, request.redirectedServer);
+    }];
+}
+
+///-----------------------------------
+/// @name Get User Display Name
+///-----------------------------------
+
+- (void) getUserDisplayNameOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                            success:(void(^)(NSHTTPURLResponse *response, NSString *displayName, NSString *redirectedServer))success
+                            failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
+    
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    [request requestUserDataOfServer:path onCommunication:sharedOCCommunication
+                             success:^(NSHTTPURLResponse *response, id responseObject) {
+                                 
+                                 NSError *jsonError = nil;
+                                 NSString *displayName = @"";
+                                 
+                                 NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+                                 
+                                 if (jsonError) {
+                                     
+                                     NSLog(@"json error: %@", jsonError);
+                                 } else {
+                                     
+                                     NSDictionary *ocsDict = [jsonDict objectForKey:k_json_ocs];
+                                     
+                                     NSDictionary *userDataDict = [ocsDict objectForKey:k_json_ocs_data];
+                                     
+                                     displayName = [userDataDict objectForKey:k_json_ocs_data_display_name];
+                                 }
+                                 
+                                 for(NSString *key in [jsonDict allKeys]) {
+                                     NSLog(@"%@",[jsonDict objectForKey:key]);
+                                 }
+                                 
+                                 success(response, displayName, request.redirectedServer);
+                                 
+                             } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+                                 failureRequest(response,error, request.redirectedServer);
+                                 NSLog(@"Display name not updated");
+                             }];
+}
+
 
 ///-----------------------------------
 /// @name Get UserName by cookie
@@ -1413,7 +1477,7 @@
     request = [self getRequestWithCredentials:request];
     
     
-    OCHTTPRequestOperation *operation = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
+    NSURLSessionDataTask *sessionDataTask = [request getRemoteThumbnailByServer:serverPath ofFilePath:filePath withWidth:fileWidth andHeight:fileHeight onCommunication:sharedOCComunication
             success:^(NSHTTPURLResponse *response, id responseObject) {
                 NSData *responseData = (NSData*) responseObject;
                 
@@ -1423,9 +1487,9 @@
                 failureRequest(response, error, request.redirectedServer);
             }];
     
-    [operation resume];
+    [sessionDataTask resume];
 
-    return operation;
+    return sessionDataTask;
 }
 
 #pragma mark - Clear Cache

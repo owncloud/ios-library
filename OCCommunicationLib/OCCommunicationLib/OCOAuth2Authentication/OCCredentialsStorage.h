@@ -1,8 +1,10 @@
 //
-//  OCErrorMsg.h
-//  Owncloud iOs Client
+//  OCCredentialsStorage.h
+//  ownCloud iOS library
 //
-// Copyright (C) 2016, ownCloud GmbH. ( http://www.owncloud.org/ )
+//  Created by Noelia Alvarez on 30/08/2017.
+//
+// Copyright (C) 2017, ownCloud GmbH.  ( http://www.owncloud.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,21 +25,13 @@
 // THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
 
-#define kOCErrorServerBadRequest 400
-#define kOCErrorServerUnauthorized 401
-#define kOCErrorServerForbidden 403
-#define kOCErrorServerPathNotFound 404
-#define kOCErrorServerMethodNotPermitted 405
-#define kOCErrorProxyAuth 407
-#define kOCErrorServerTimeout 408
-#define kOCErrorServerConflict 409
-#define kOCErrorServerInternalError 500
-#define kOCErrorServerNotImplemented 501
-#define kOCErrorServerBadGateway 502
-#define kOCErrorServerMaintenanceError 503
-#define kOCErrorServerInsufficientStorage 507
+@class OCCredentialsDto;
 
-#define kOCErrorSharedAPIWrong 400
-#define kOCSharedAPISuccessful 100
-#define kOCShareeAPISuccessful 200
+@protocol OCCredentialsStorageDelegate <NSObject>
+
+
+- (void)saveCredentials:(OCCredentialsDto *)credDto;
+
+@end

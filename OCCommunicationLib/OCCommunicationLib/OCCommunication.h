@@ -25,23 +25,18 @@
 
 #import <Foundation/Foundation.h>
 #import "OCServerFeatures.h"
+#import "OCCredentialsDto.h"
+#import "OCOAuth2Configuration.h"
+#import "OCCredentialsStorage.h"
+#import "OCTrustedCertificatesStore.h"
 
-@class OCHTTPRequestOperation;
 @class AFURLSessionManager;
 @class AFSecurityPolicy;
 @class OCCapabilities;
 
+@protocol OCCredentialsStorageDelegate;
 
 @interface OCCommunication : NSObject
-
-//Type of credential
-typedef enum {
-    credentialNotSet = -1,
-    credentialNormal = 0, //user, password
-    credentialCookie = 1,
-    credentialOauth = 2
-} kindOfCredentialEnum;
-
 
 typedef enum {
     OCErrorUnknown = 90, //On all errors
@@ -51,14 +46,26 @@ typedef enum {
     OCErrorMovingFolderInsideItself = 112, //On move file or folder
     OCErrorFileToUploadDoesNotExist = 120, //The file that we want upload does not exist
     OCErrorForbiddenUnknown = 130, //For example, no write permissions to the target folder of an upload
-    OCErrorForbiddenWithSpecificMessage = 131 // For example, forbidden due to a firewall rule
+    OCErrorForbiddenWithSpecificMessage = 131, // For example, forbidden due to a firewall rule
+    OCErrorServerMaintenanceMode = 140,
+    
+    OCErrorOAuth2Error = 1000,
+    OCErrorOAuth2ErrorAccessDenied = 1010,
+    
+    OCErrorSslRecoverablePeerUnverified = 1100
+
 } OCErrorEnum;
 
+
 //Private properties
-@property NSInteger kindOfCredential;
-@property (nonatomic, strong) NSString *user;
-@property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) OCCredentialsDto *credDto;
+
 @property (nonatomic, strong) NSString *userAgent;
+
+@property (nonatomic, strong) OCOAuth2Configuration *oauth2Configuration;
+@property (nonatomic, strong) id<OCCredentialsStorageDelegate> credentialsStorage;
+@property (nonatomic, strong) id<OCTrustedCertificatesStore> trustedCertificatesStore;
+
 
 //Public properties
 @property (nonatomic, strong) NSMutableArray *downloadTaskNetworkQueueArray;
@@ -107,42 +114,23 @@ typedef enum {
 
 #pragma mark - Credentials
 
+
 ///-----------------------------------
-/// @name Set Credential With User
+/// @name Set Credentials
 ///-----------------------------------
 
 /**
  * Method to set credentials with user and password
  *
- * @param user -> NSString username
- * @param password -> NSString password
+ * @param credentials -> OCCredentialsDto credentials
  */
-- (void) setCredentialsWithUser:(NSString*) user andPassword:(NSString*) password;
+
+- (void) setCredentials:(OCCredentialsDto *) credentials;
 
 
 ///-----------------------------------
-/// @name Set Credential with cookie
+/// @name Set User Agent
 ///-----------------------------------
-
-/**
- * Method that set credentials with cookie.
- * Used for SAML servers.
- *
- * @param cookie -> NSString cookie string
- */
-- (void) setCredentialsWithCookie:(NSString*) cookie;
-
-
-///-----------------------------------
-/// @name Set Credential with OAuth
-///-----------------------------------
-
-/**
- * Method to set credentials for OAuth with token
- *
- * @param token -> NSString token
- */
-- (void) setCredentialsOauthWithToken:(NSString*) token;
 
 /**
  * @optional
@@ -151,8 +139,14 @@ typedef enum {
  *
  * @param userAgent -> String with the user agent. Ex. "iOS-ownCloud"
  */
-- (void) setUserAgent:(NSString *)userAgent;
+- (void) setValueOfUserAgent:(NSString *) userAgent;
 
+
+- (void) setValueOauth2Configuration:(OCOAuth2Configuration *)oauth2Configuration;
+
+- (void) setValueCredentialsStorage:(id<OCCredentialsStorageDelegate>)credentialsStorage;
+
+- (void) setValueTrustedCertificatesStore:(id<OCTrustedCertificatesStore>)trustedCertificatesStore;
 
 /*
  * Method to update the a request with the current credentials
@@ -491,10 +485,43 @@ typedef enum {
                    failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure;
 
 ///-----------------------------------
+/// @name getUserDataOfServer
+///-----------------------------------
+
+/**
+ * Method to get the User data.
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ */
+- (void) getUserDataOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                     success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest;
+
+///-----------------------------------
+/// @name getUserDisplayNameOfServer
+///-----------------------------------
+
+/**
+ * Method to get the User display name.
+ *
+ * @param path -> NSString server path
+ *
+ * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
+ */
+- (void) getUserDisplayNameOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
+                            success:(void(^)(NSHTTPURLResponse *response, NSString *displayName, NSString *redirectedServer))success
+                            failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest;
+
+
+///-----------------------------------
 /// @name requestForUserNameByCookie
 ///-----------------------------------
 
 /**
+ *  DEPRECATED use - getUserDataOfServer:onCommunication: or getUserDisplayNameOfServer:onCommunication: instead
+ *
  * Method to get the User name by the cookie of the session. Used with SAML servers.
  *
  * @param cookieString -> NSString The cookie of the session
@@ -507,14 +534,15 @@ typedef enum {
 
 - (void) getUserNameByCookie:(NSString *) cookieString ofServerPath:(NSString *)path onCommunication:
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *response, NSData *responseData, NSString *redirectedServer))success
-                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure;
+                     failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failure
+__deprecated_msg("Use - getUserDataOfServer:onCommunication: or getUserDisplayNameOfServer:onCommunication: instead");
 
 ///-----------------------------------
 /// @name Get Features Supported By Server
 ///-----------------------------------
 
 /**
- * DEPRECATED use + getFeaturesSupportedByServerForVersion: instead
+ * DEPRECATED use - getFeaturesSupportedByServerForVersion: instead
  *
  * Method get the features supported by the path server using the version string.
  *
@@ -536,7 +564,8 @@ typedef enum {
 
 - (void) getFeaturesSupportedByServer:(NSString*) path onCommunication:(OCCommunication *)sharedOCCommunication
                        successRequest:(void(^)(NSHTTPURLResponse *response, BOOL hasShareSupport, BOOL hasShareeSupport, BOOL hasCookiesSupport, BOOL hasForbiddenCharactersSupport, BOOL hasCapabilitiesSupport, BOOL hasFedSharesOptionShareSupport, NSString *redirectedServer)) success
-                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure __deprecated_msg("Use + getFeaturesSupportedByServerForVersion: instead");
+                       failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failure
+__deprecated_msg("Use - getFeaturesSupportedByServerForVersion: instead");
 
 
 ///-----------------------------------
