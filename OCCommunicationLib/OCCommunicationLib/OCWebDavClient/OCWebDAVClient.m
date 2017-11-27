@@ -741,19 +741,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"%@&name=%@",self.postStringForShare,linkName];
     }
-    if ([publicUpload isEqualToString:@"true"]) {
-        
-        if (permissions != 0) {
-            self.postStringForShare = [NSString stringWithFormat:@"%@&permissions=%d",self.postStringForShare,(int)permissions];
-        } else {
-            self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
-        }
-
+    
+    if (permissions != 0) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&permissions=%d",self.postStringForShare,(int)permissions];
+    } else if ([publicUpload isEqualToString:@"true"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
     } else if ([publicUpload isEqualToString:@"false"]) {
-        
         self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"false"];
     }
-
     
     [request setHTTPBody:[self.postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -858,7 +853,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSParameterAssert(success);
     
-    _requestMethod = @"PUT";
+    _requestMethod = @"PUT"; 
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
@@ -870,12 +865,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
     }else if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
-    } if ([publicUpload isEqualToString:@"true"]) {
-        if (permissions != 0) {
-            self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
-        } else {
-            self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
-        }
+    } if (permissions != 0) {
+        self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
+    } else if ([publicUpload isEqualToString:@"true"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
     } else if ([publicUpload isEqualToString:@"false"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
     }
