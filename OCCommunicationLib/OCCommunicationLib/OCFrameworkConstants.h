@@ -50,6 +50,7 @@
 #define k_json_ocs @"ocs"
 #define k_json_ocs_data @"data"
 #define k_json_ocs_data_display_name @"display-name"
+#define k_json_ocs_data_user_id @"id"
 
 //Url to access to Shared API to create
 #define k_url_acces_shared_api @"ocs/v1.php/apps/files_sharing/api/v1/shares"
