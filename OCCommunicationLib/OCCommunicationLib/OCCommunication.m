@@ -653,7 +653,7 @@
 ///-----------------------------------
 
 - (void) getUserDisplayNameOfServer:(NSString *)path onCommunication:(OCCommunication *)sharedOCCommunication
-                            success:(void(^)(NSHTTPURLResponse *response, NSString *displayName, NSString *redirectedServer))success
+                            success:(void(^)(NSHTTPURLResponse *response, NSString *serverUserId, NSString *displayName, NSString *redirectedServer))success
                             failure:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer))failureRequest {
     
     OCWebDAVClient *request = [OCWebDAVClient new];
@@ -664,6 +664,7 @@
                                  
                                  NSError *jsonError = nil;
                                  NSString *displayName = @"";
+                                 NSString *serverUserId = @"";
                                  
                                  NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
                                  
@@ -677,13 +678,15 @@
                                      NSDictionary *userDataDict = [ocsDict objectForKey:k_json_ocs_data];
                                      
                                      displayName = [userDataDict objectForKey:k_json_ocs_data_display_name];
+                                     
+                                      serverUserId = [userDataDict objectForKey:k_json_ocs_data_user_id];
                                  }
                                  
                                  for(NSString *key in [jsonDict allKeys]) {
                                      NSLog(@"%@",[jsonDict objectForKey:key]);
                                  }
                                  
-                                 success(response, displayName, request.redirectedServer);
+                                 success(response, serverUserId, displayName, request.redirectedServer);
                                  
                              } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
                                  failureRequest(response,error, request.redirectedServer);
