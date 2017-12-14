@@ -1494,6 +1494,33 @@
     return sessionDataTask;
 }
 
+#pragma mark private link open in app
+
+-(NSURL *) getFullPathFromPrivateLink:(NSURL *) privateLinkURL {
+
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    NSString *locationPath = [NSString alloc];
+    
+    [request simpleGetRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
+        NSDictionary *headers= [response allHeaderFields];
+        NSLog(@"LOG ---> headers %@", [headers description]);
+        
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+        NSDictionary *headers= [response allHeaderFields];
+        NSLog(@"LOG ---> headers %@", [headers description]);
+        NSLog(@"LOG ---> error en el status negro %@", error);
+        
+    }];
+    
+    return nil;
+}
+
+
 #pragma mark - Clear Cache
 
 - (void)eraseURLCache

@@ -913,5 +913,23 @@ __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirati
                      successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+#pragma mark - Private Links redirection full path
 
+///-----------------------------------
+/// @name getFullPathFromPrivateLink
+///-----------------------------------
+
+/**
+ * Method to get the full path of a folder of file shared by private link
+ * Currently the private link is in the next form: "https://owncloduserver/f/fileid"
+ * 
+ * This Method make a simple GET request to the server and in one of the headers of the response sends the full
+ * path of the file.
+ *
+ * @param privateLinkURL    ->  NSURL with the private link URL.
+ *
+ * @return NSURL    ->  Full path of the file or folder shared with the private links passed as a parameter.
+ */
+
+-(NSURL *) getFullPathFromPrivateLink:(NSURL *) privateLinkURL;
 @end

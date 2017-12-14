@@ -683,6 +683,22 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sessionDataTask resume];
 }
 
+
+- (void) simpleGetRequest: (NSURL *)path
+                  onCommunication:(OCCommunication *)sharedOCCommunication
+                  success:(void(^)(NSHTTPURLResponse *operation, id responseObject))success
+                  failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure {
+
+    _requestMethod = @"GET";
+    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: path.absoluteString parameters: nil];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
+//    [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
+    [sessionDataTask resume];
+
+    
+}
+
+
 - (void) getStatusOfTheServer:(NSString *)serverPath onCommunication:
 (OCCommunication *)sharedOCCommunication success:(void(^)(NSHTTPURLResponse *operation, id responseObject))success
                             failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure  {

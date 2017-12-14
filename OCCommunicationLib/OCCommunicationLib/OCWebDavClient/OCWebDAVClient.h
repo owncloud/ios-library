@@ -248,6 +248,23 @@ extern NSString * _Nullable OCWebDAVModificationDateKey;
                          failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure
 __deprecated_msg("Use - requestUserDataOfServer:onCommunication: instead");
 
+///-----------------------------------
+/// @name simpleGetRequest
+///-----------------------------------
+
+/**
+ * Method to do a simple GET Request.
+ *
+ * @param path -> url of the server
+ * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
+ *
+ */
+- (void) simpleGetRequest: (NSURL * _Nonnull)path
+                  onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
+                  success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull responseObject))success
+                  failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
 ///-----------------------------------
 /// @name Get status of the server
