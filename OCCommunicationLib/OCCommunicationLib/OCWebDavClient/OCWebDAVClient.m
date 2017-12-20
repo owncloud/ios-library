@@ -119,8 +119,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject, token);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 &&
-                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure((NSHTTPURLResponse*)response, responseObject, error, token);
@@ -200,7 +201,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             success((NSHTTPURLResponse*)response,responseObject);
         } else {
             
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure((NSHTTPURLResponse*)response, responseObject, error);
@@ -404,7 +407,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,filePath);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, error);
@@ -524,8 +529,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,responseObject);
         } else {
-            if ( ((NSHTTPURLResponse*)response).statusCode == 401 &&
-                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN ){
+            if ( ((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil){
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, responseObject, error);
