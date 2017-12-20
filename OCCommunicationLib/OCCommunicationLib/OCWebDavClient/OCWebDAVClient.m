@@ -101,6 +101,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.originalUrlServer = [request.URL absoluteString];
     }
     
+    NSLog(@"Before adding cookies, Main Request with token");
+//    NSLog(@"Before adding cookies, Main Request with token for userId:%@ username:%@ url:%@  headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
         request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -108,6 +111,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
+    //NSLog(@"Main Request with token for userId:%@ username:%@ url:%@  headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     __block   NSURLSessionDataTask *sessionDataTask;
     
     sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
@@ -176,6 +181,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.originalUrlServer = [request.URL absoluteString];
     }
     
+    NSLog(@"Before adding cookies");
+    //NSLog(@"Before adding cookies, Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
         request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -183,6 +191,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
+   // NSLog(@"Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     __block NSURLSessionDataTask *sessionDataTask;
     
     sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
@@ -316,7 +326,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
-    
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     [sessionDataTask resume];
@@ -341,7 +350,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
-    
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
@@ -599,6 +607,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             self.originalUrlServer = [request.URL absoluteString];
         }
         
+        NSLog(@"Before adding cookies, Request put");
+//        NSLog(@"Before adding cookies, Request put for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
         if (sharedOCCommunication.isCookiesAvailable) {
             //We add the cookies of that URL
             request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -606,6 +617,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             [UtilsFramework deleteAllCookies];
         }
         
+       // NSLog(@"Request put for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
