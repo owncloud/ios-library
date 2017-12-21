@@ -16,7 +16,7 @@ Method 2. Include the library project as a Subproject.
 
 Choosing one method or the other one just depends on your own preferences as well as whether you have the source code and the project file of the static library at your disposal.
 
-#####Method 1: Header and library binary files
+##### Method 1: Header and library binary files
 __Step 1__.  Compile the "ownCloud iOS library" and run the project, the libownCloudiOS.a will be generated. 
 
 You need these files: 
@@ -45,7 +45,7 @@ __Step 3.__  Add the path of the library headers. In your project target "build 
 __Step 4.__  In your project target "build settings" add the flag "-Obj-C" to the "Other Linker Flag" option
 
 
-#####Method 2: Subprojects
+##### Method 2: Subprojects
 
 __Step 1.__ Add the file "ownCloud iOS library.xcodeproj" to your project using drag and drop.
 
@@ -64,7 +64,7 @@ RayWenderlich.com <http://www.raywenderlich.com/41377/creating-a-static-library-
  
 Apple.com <https://developer.apple.com/library/ios/technotes/iOSStaticLibraries/Articles/configuration.html#/apple_ref/doc/uid/TP40012554-CH3-SW2>
 
-###  Branching strategy
+### Branching strategy
 
 The repository holds two main branches with an infinite lifetime:
 
@@ -88,7 +88,7 @@ Both of them branch off from master and must merge back into stable branch throu
 
 Source: http://nvie.com/posts/a-successful-git-branching-model  
 
-###  License
+### License
 
 ownCloud iOS library is available under the MIT License. 
  
