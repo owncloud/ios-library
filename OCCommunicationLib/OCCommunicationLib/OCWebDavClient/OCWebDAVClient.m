@@ -101,6 +101,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.originalUrlServer = [request.URL absoluteString];
     }
     
+    NSLog(@"Before adding cookies, Main Request with token");
+//    NSLog(@"Before adding cookies, Main Request with token for userId:%@ username:%@ url:%@  headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
         request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -108,14 +111,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
+    //NSLog(@"Main Request with token for userId:%@ username:%@ url:%@  headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     __block   NSURLSessionDataTask *sessionDataTask;
     
     sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (!error) {
             success((NSHTTPURLResponse*)response,responseObject, token);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 &&
-                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure((NSHTTPURLResponse*)response, responseObject, error, token);
@@ -176,6 +182,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.originalUrlServer = [request.URL absoluteString];
     }
     
+    NSLog(@"Before adding cookies");
+    //NSLog(@"Before adding cookies, Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     if (sharedOCCommunication.isCookiesAvailable) {
         //We add the cookies of that URL
         request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -183,6 +192,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
+   // NSLog(@"Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
     __block NSURLSessionDataTask *sessionDataTask;
     
     sessionDataTask = [sharedOCCommunication.networkSessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
@@ -190,7 +201,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             success((NSHTTPURLResponse*)response,responseObject);
         } else {
             
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure((NSHTTPURLResponse*)response, responseObject, error);
@@ -316,7 +329,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
-    
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     [sessionDataTask resume];
@@ -341,7 +353,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
-    
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
@@ -396,7 +407,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,filePath);
         } else {
-            if (((NSHTTPURLResponse*)response).statusCode == 401 && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN) {
+            if (((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil) {
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, error);
@@ -516,8 +529,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         if (!error) {
             success(response,responseObject);
         } else {
-            if ( ((NSHTTPURLResponse*)response).statusCode == 401 &&
-                sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN ){
+            if ( ((NSHTTPURLResponse*)response).statusCode == 401
+                && sharedOCCommunication.credDto.authenticationMethod == AuthenticationMethodBEARER_TOKEN
+                && sharedOCCommunication.credDto.userId != nil){
                 if (ntimes <= 0) {
                     if (failure) {
                         failure(response, responseObject, error);
@@ -599,6 +613,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             self.originalUrlServer = [request.URL absoluteString];
         }
         
+        NSLog(@"Before adding cookies, Request put");
+//        NSLog(@"Before adding cookies, Request put for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
         if (sharedOCCommunication.isCookiesAvailable) {
             //We add the cookies of that URL
             request = [UtilsFramework getRequestWithCookiesByRequest:request andOriginalUrlServer:self.originalUrlServer];
@@ -606,6 +623,8 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
             [UtilsFramework deleteAllCookies];
         }
         
+       // NSLog(@"Request put for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+
         NSURL *file = [NSURL fileURLWithPath:localSource];
         
         sharedOCCommunication.uploadSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -673,8 +692,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     _requestMethod = @"GET";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: urlString parameters: nil];
-
-    request.HTTPShouldHandleCookies = false;
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
@@ -743,19 +760,14 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"%@&name=%@",self.postStringForShare,linkName];
     }
-    if ([publicUpload isEqualToString:@"true"]) {
-        
-        if (permissions != 0) {
-            self.postStringForShare = [NSString stringWithFormat:@"%@&permissions=%d",self.postStringForShare,(int)permissions];
-        } else {
-            self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
-        }
-
+    
+    if (permissions != 0) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&permissions=%d",self.postStringForShare,(int)permissions];
+    } else if ([publicUpload isEqualToString:@"true"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"true"];
     } else if ([publicUpload isEqualToString:@"false"]) {
-        
         self.postStringForShare = [NSString stringWithFormat:@"%@&publicUpload=%@",self.postStringForShare,@"false"];
     }
-
     
     [request setHTTPBody:[self.postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -860,7 +872,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSParameterAssert(success);
     
-    _requestMethod = @"PUT";
+    _requestMethod = @"PUT"; 
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
     
@@ -872,12 +884,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
     }else if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
-    } if ([publicUpload isEqualToString:@"true"]) {
-        if (permissions != 0) {
-            self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
-        } else {
-            self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
-        }
+    } if (permissions != 0) {
+        self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
+    } else if ([publicUpload isEqualToString:@"true"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
     } else if ([publicUpload isEqualToString:@"false"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
     }

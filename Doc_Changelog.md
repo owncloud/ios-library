@@ -1,4 +1,14 @@
-## What's new in 2.1.0 version
+## What's new in 2.2.0 version
+- Added OAuth2 support with automatic refresh of new tokens
+- Added support to new public share link option that allows you to share a folder with only the option of uploading files to it
+- Added methods to get user data and features supported by server
+- Fix updating share link permissions
+- Improved cookies handling
+- Improved OCErrors
+- Updated travis file
+
+
+## 2.1.0 version
 - Added support multiple share links
 - Added new method to get supported server features by version
 - Improve error handling
