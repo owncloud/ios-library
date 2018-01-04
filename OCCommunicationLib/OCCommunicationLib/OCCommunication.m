@@ -1496,30 +1496,32 @@
 
 #pragma mark private link open in app
 
--(NSURL *) getFullPathFromPrivateLink:(NSURL *) privateLinkURL {
-
+-(void)getFullPathFromPrivateLink:(NSURL *)privateLinkURL success:(void (^)(NSURL *))successRequest failure:(void (^)(NSError *))failureRequest {
     OCWebDAVClient *request = [OCWebDAVClient new];
-    
+    request = [self getRequestWithCredentials:request];
     if (self.userAgent) {
         [request setUserAgent:self.userAgent];
     }
     
-    NSString *locationPath = [NSString alloc];
+//    NSString *locationPath = [NSString alloc];
     
     [request simpleGetRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
-        NSDictionary *headers= [response allHeaderFields];
-        NSLog(@"LOG ---> headers %@", [headers description]);
+        successRequest(response.URL);
+//        NSDictionary *headers= [response allHeaderFields];
+//        NSLog(@"LOG ---> headers %@", [headers description]);
         
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        NSDictionary *headers= [response allHeaderFields];
-        NSLog(@"LOG ---> headers %@", [headers description]);
-        NSLog(@"LOG ---> error en el status negro %@", error);
+//        NSDictionary *headers= [response allHeaderFields];
+        NSLog(@"LOG ---> url from error requesting redirection %@", response.URL);
+        NSLog(@"LOG ---> url from error requesting redirection %@", response);
+        
+        failureRequest(error);
+//        NSLog(@"LOG ---> headers %@", [headers description]);
+//        NSLog(@"LOG ---> error en el status negro %@", error);
         
     }];
     
-    return nil;
 }
-
 
 #pragma mark - Clear Cache
 

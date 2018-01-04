@@ -192,7 +192,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         [UtilsFramework deleteAllCookies];
     }
     
-   // NSLog(@"Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
+    NSLog(@"Request for userId:%@ username:%@ url:%@ headers-> %@ ",sharedOCCommunication.credDto.userId, sharedOCCommunication.credDto.userName,request.URL, request.allHTTPHeaderFields);
 
     __block NSURLSessionDataTask *sessionDataTask;
     
@@ -688,14 +688,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                   onCommunication:(OCCommunication *)sharedOCCommunication
                   success:(void(^)(NSHTTPURLResponse *operation, id responseObject))success
                   failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure {
-
-    _requestMethod = @"GET";
-    NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path: path.absoluteString parameters: nil];
-    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
-//    [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
-    [sessionDataTask resume];
-
     
+    NSMutableURLRequest *originRequest = [self sharedRequestWithMethod:@"GET" path: path.absoluteString parameters: nil];
+    
+    [sharedOCCommunication.networkSessionManager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
+    
+        NSMutableURLRequest *mutableRedirectedRequest = [self sharedRequestWithMethod:@"GET" path: request.URL.absoluteString parameters: nil];
+        NSURLRequest *inmutableRedirectedRequest = [mutableRedirectedRequest copy];
+        return inmutableRedirectedRequest;
+    }];
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:originRequest retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
+    [sessionDataTask resume];
 }
 
 

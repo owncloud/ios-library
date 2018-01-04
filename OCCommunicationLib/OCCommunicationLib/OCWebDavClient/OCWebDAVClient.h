@@ -253,13 +253,12 @@ __deprecated_msg("Use - requestUserDataOfServer:onCommunication: instead");
 ///-----------------------------------
 
 /**
- * Method to do a simple GET Request.
- *
- * @param path -> url of the server
- * @param sharedOCCommunication Singleton of communication to add the operation on the queue.
- * @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
- * @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
- *
+ @brief Method to do a simple <i>GET</i> Request.
+
+ @param path URL of the server
+ @param sharedOCCommunication Singleton of communication to add the operation on the queue.
+ @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a data with the json file.
+ @param failure A block callback, to be fired upon the failure of the request, with two arguments: the request operation and error.
  */
 - (void) simpleGetRequest: (NSURL * _Nonnull)path
                   onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
