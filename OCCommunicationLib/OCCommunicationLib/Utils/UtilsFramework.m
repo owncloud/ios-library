@@ -479,7 +479,7 @@
     NSArray *cookieStorage = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:originalUrlServer]];
     NSDictionary *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookieStorage];
     
-    [request setValue:@"" forHTTPHeaderField:@"Cookie"];
+//    [request setValue:@"" forHTTPHeaderField:@"Cookie"];
     for (NSString *key in cookieHeaders) {
         [request addValue:cookieHeaders[key] forHTTPHeaderField:key];
     }

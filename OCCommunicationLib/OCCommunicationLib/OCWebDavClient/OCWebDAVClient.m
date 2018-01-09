@@ -693,9 +693,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     [sharedOCCommunication.networkSessionManager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
     
-        NSMutableURLRequest *mutableRedirectedRequest = [self sharedRequestWithMethod:@"GET" path: request.URL.absoluteString parameters: nil];
-        NSURLRequest *inmutableRedirectedRequest = [mutableRedirectedRequest copy];
-        return inmutableRedirectedRequest;
+//        NSMutableURLRequest *mutableRedirectedRequest = [self sharedRequestWithMethod:@"GET" path: request.URL.absoluteString parameters: nil];
+//        NSURLRequest *inmutableRedirectedRequest = [mutableRedirectedRequest copy];
+//        return inmutableRedirectedRequest;
+        return request;
     }];
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:originRequest retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
     [sessionDataTask resume];
