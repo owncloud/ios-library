@@ -1,4 +1,7 @@
-## What's new in 2.2.0 version
+## What's new in 2.2.1 version
+- Bug fixed possible crash
+
+## 2.2.0 version
 - Added OAuth2 support with automatic refresh of new tokens
 - Added support to new public share link option that allows you to share a folder with only the option of uploading files to it
 - Added methods to get user data and features supported by server
