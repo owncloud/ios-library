@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode8.3
+osx_image: xcode9.2
 #xcode_project: OCCommunicationLib/ownCloud iOS library.xcodeproj
 #xcode_scheme: ownCloud iOS library
 #xcode_sdk: iphonesimulator
