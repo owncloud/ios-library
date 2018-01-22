@@ -7,7 +7,7 @@ osx_image: xcode8.3
 script:
 - set -o pipefail && xcodebuild -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' clean test build | xcpretty -c
 #- xctool test -project 'OCCommunicationLib/ownCloud iOS library.xcodeproj' -scheme 'ownCloud iOS library' -sdk iphonesimulator -UseSanitizedBuildSystemEnvironment=YES
-
+ 
 before_install:
 - brew update; brew update
 - echo "#define k_base_url @\"$baseUrlTravis\"" > OCCommunicationLib/OCCommunicationLibTests/ConfigTests.h

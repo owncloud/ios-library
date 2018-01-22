@@ -1,4 +1,4 @@
-# ownCloud iOS Library v 2.2.0
+# ownCloud iOS Library v 2.2.1
 
 ### Introduction
 Using ownCloud iOS library it will be the easiest way to communicate with ownCloud servers.
@@ -116,6 +116,6 @@ ownCloud iOS library uses some classes based in  https://github.com/zwaldowski/D
 
 ### Compatibility
 
-ownCloud iOS library supports iOS 9 and iOS10 and works in Xcode 8.
+ownCloud iOS library supports iOS 9, iOS10, iOS11 and works in Xcode 8 and Xcode 9.
 
 ownCloud iOS library supports ownCloud server from version 4.5.
