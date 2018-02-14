@@ -326,7 +326,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 		depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
@@ -351,7 +351,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><id xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
@@ -684,20 +684,34 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 }
 
 
-- (void) simpleGetRequest: (NSURL *)path
+- (void) simpleHEADRequest: (NSURL *)path
                   onCommunication:(OCCommunication *)sharedOCCommunication
                   success:(void(^)(NSHTTPURLResponse *operation, id responseObject))success
                   failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure {
     
-    NSMutableURLRequest *originRequest = [self sharedRequestWithMethod:@"GET" path: path.absoluteString parameters: nil];
-    
+    NSMutableURLRequest *originRequest = [self sharedRequestWithMethod:@"HEAD" path: path.absoluteString parameters: nil];
+
+    __block NSHTTPURLResponse *httpResponse;
+    __block BOOL redirected = NO;
+
     [sharedOCCommunication.networkSessionManager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
 
-        
-        
+        httpResponse = [(NSHTTPURLResponse *) response copy];
+        redirected = YES;
         return request;
     }];
-    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:originRequest retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
+
+    NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:originRequest retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response , id responseObject) {
+        if (redirected) {
+            success(httpResponse, responseObject);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
+            failure(response, responseObject, error);
+        }
+
+    } failure:^(NSHTTPURLResponse *response, id  _Nullable responseObject, NSError *error) {
+        failure(response, responseObject, error);
+    }];
     [sessionDataTask resume];
 }
 

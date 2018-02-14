@@ -399,7 +399,7 @@
             
 //            NSString* newStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStrReadFolder: %@", newStr);
-            
+
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
@@ -1504,11 +1504,20 @@
         [request setUserAgent:self.userAgent];
     }
     
-    [request simpleGetRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
-        successRequest(response.URL);
-        
+    [request simpleHEADRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
+
+        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
+
+        NSString *location = [headers objectForKey:@"Location"];
+
+        if (location == nil) {
+            successRequest(nil);
+        } else {
+            NSURL *locationURL = [[NSURL alloc] initWithString:location];
+            successRequest(locationURL);
+        }
+
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        //TODO: manage the failure.
         failureRequest(error);
     }];
     
