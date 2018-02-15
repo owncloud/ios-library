@@ -1511,7 +1511,8 @@
         NSString *location = [headers objectForKey:@"Location"];
 
         if (location == nil) {
-            successRequest(nil);
+            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
+            failureRequest(error);
         } else {
             NSURL *locationURL = [[NSURL alloc] initWithString:location];
             successRequest(locationURL);
