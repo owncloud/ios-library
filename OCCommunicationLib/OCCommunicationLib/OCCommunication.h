@@ -931,6 +931,6 @@ __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirati
  * @return NSURL    ->  Full path of the file or folder shared with the private links passed as a parameter. This is in the schema of the a query parameters.
  */
 
--(void) getFullPathFromPrivateLink:(NSURL *) privateLinkURL success:(void(^)(NSURL *path))successRequest failure:(void(^)(NSError *error)) failureRequest;
+-(void) getFullPathFromPrivateLink:(NSString *) privateLinkURL success:(void(^)(NSString *path))successRequest failure:(void(^)(NSError *error)) failureRequest;
 
 @end

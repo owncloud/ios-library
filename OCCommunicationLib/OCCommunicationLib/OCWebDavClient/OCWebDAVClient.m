@@ -683,13 +683,12 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sessionDataTask resume];
 }
 
-
-- (void) simpleHEADRequest: (NSURL *)path
+- (void) simpleHEADRequest: (NSString *)path
                   onCommunication:(OCCommunication *)sharedOCCommunication
                   success:(void(^)(NSHTTPURLResponse *operation, id responseObject))success
                   failure:(void(^)(NSHTTPURLResponse *operation, id  _Nullable responseObject, NSError *error))failure {
     
-    NSMutableURLRequest *originRequest = [self sharedRequestWithMethod:@"HEAD" path: path.absoluteString parameters: nil];
+    NSMutableURLRequest *originRequest = [self sharedRequestWithMethod:@"HEAD" path: path parameters: nil];
 
     __block NSHTTPURLResponse *httpResponse;
     __block BOOL redirected = NO;
