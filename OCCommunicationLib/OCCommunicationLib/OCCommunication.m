@@ -1514,7 +1514,7 @@
             NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
             failureRequest(error);
         } else {
-            successRequest(location);
+            successRequest([location stringByRemovingPercentEncoding]);
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
