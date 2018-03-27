@@ -1496,7 +1496,7 @@
 
 #pragma mark private link open in app
 
--(void)getFullPathFromPrivateLink:(NSString *)privateLinkURL success:(void (^)(NSString *))successRequest failure:(void (^)(NSError *))failureRequest {
+-(void)getWebdavLocationPathFromPrivateLinkURL:(NSString *)privateLinkURL success:(void (^)(NSString *))successRequest failure:(void (^)(NSError *))failureRequest {
     OCWebDAVClient *request = [OCWebDAVClient new];
     request = [self getRequestWithCredentials:request];
     
@@ -1518,7 +1518,18 @@
         }
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
-        failureRequest(error);
+
+
+        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
+
+        NSString *location = [headers objectForKey:@"Webdav-Location"];
+
+        if (location == nil) {
+            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
+            failureRequest(error);
+        } else {
+            successRequest([location stringByRemovingPercentEncoding]);
+        }
     }];
     
 }
