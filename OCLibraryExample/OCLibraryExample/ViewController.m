@@ -199,10 +199,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
 - (void) setCredencialsInOCCommunication {
     
     //Sett credencials
-    OCCredentialsDto *creds=[OCCredentialsDto new];
-    creds.userName=user;
-    creds.accessToken=password;
-    creds.authenticationMethod=AuthenticationMethodBASIC_HTTP_AUTH;
+    [[AppDelegate sharedOCCommunication] setCredentialsWithUser:user andPassword:password];
     
 }
 
