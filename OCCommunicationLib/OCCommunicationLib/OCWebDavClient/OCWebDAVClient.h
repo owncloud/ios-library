@@ -556,7 +556,4 @@ __deprecated_msg("Use - updateShareItem:ofServerPath:withPasswordProtect:andExpi
                             success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id _Nonnull response))success
                             failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull operation, id  _Nullable responseObject, NSError * _Nonnull error))failure;
 
-
-- (NSMutableURLRequest * _Nonnull)sharedRequestWithMethod:(NSString * _Nonnull)method path:(NSString * _Nonnull)path parameters:(NSDictionary * _Nullable)parameters;
-
 @end
