@@ -204,6 +204,7 @@ static NSString *pathOfUploadFile = @"1_new_file.jpg";
     creds.accessToken=password;
     creds.authenticationMethod=AuthenticationMethodBASIC_HTTP_AUTH;
     
+    [[AppDelegate sharedOCCommunication] setCredentials:creds];
 }
 
 /*
