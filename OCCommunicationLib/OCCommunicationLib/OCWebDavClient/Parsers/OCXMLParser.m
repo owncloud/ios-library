@@ -245,10 +245,10 @@ NSString *OCCWebDAVURIKey           = @"uri";
 
 // Decode a percent escape encoded string.
 - (NSString*) decodeFromPercentEscapeString:(NSString *) string {
-    return (__bridge NSString *) CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
-                                                                                         (__bridge CFStringRef) string,
-                                                                                         CFSTR(""),
-                                                                                         kCFStringEncodingUTF8);
+    return (__bridge NSString *) CFURLCreateStringByReplacingPercentEscapes(NULL,
+                                                                            (__bridge CFStringRef) string,
+                                                                            CFSTR("")
+                                                                            );
 }
 
 
