@@ -800,15 +800,10 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
                                                     retryingNumberOfTimes:k_retry_ntimes
                                                           onCommunication:sharedOCCommunication
                                                                   success:^(NSHTTPURLResponse *response , id responseObject) {
-        if (response) {
             success(response, responseObject);
-        } else {
-            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
-            failure(response, responseObject, error);
-        }
 
     } failure:^(NSHTTPURLResponse *response, id  _Nullable responseObject, NSError *error) {
-        failure(response, responseObject, error);
+        failure(response, responseObject, [UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
     }];
     [self setRedirectionBlockOnDatataskWithOCCommunication:sharedOCCommunication andSessionManager:sharedOCCommunication.networkSessionManager];
     [sessionDataTask resume];

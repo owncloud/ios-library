@@ -275,7 +275,35 @@
             error = [NSError errorWithDomain:k_domain_error_code code:OCErrorOAuth2Error userInfo:details];
             break;
         }
-            
+
+        case OCErrorPrivateLinkRedirectionFailed:
+        case OCErrorPrivateLinkFileNotExists:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"private_link_redirection_failed", nil)  forKey:NSLocalizedDescriptionKey];
+
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorPrivateLinkRedirectionFailed userInfo:details];
+            break;
+        }
+
+        case OCErrorPrivateLinkFileNotCachedOffline:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"error_connecting_with_server", nil)  forKey:NSLocalizedDescriptionKey];
+
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorPrivateLinkFileNotCachedOffline userInfo:details];
+            break;
+        }
+
+        case OCErrorPrivateLinkErrorCachingFile:
+        {
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:NSLocalizedString(@"private_link_not_reachable", nil)  forKey:NSLocalizedDescriptionKey];
+
+            error = [NSError errorWithDomain:k_domain_error_code code:OCErrorPrivateLinkErrorCachingFile userInfo:details];
+            break;
+        }
+
         default:
         {
             NSMutableDictionary* details = [NSMutableDictionary dictionary];

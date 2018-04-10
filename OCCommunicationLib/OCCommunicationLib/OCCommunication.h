@@ -52,7 +52,12 @@ typedef enum {
     OCErrorOAuth2Error = 1000,
     OCErrorOAuth2ErrorAccessDenied = 1010,
     
-    OCErrorSslRecoverablePeerUnverified = 1100
+    OCErrorSslRecoverablePeerUnverified = 1100,
+
+    OCErrorPrivateLinkRedirectionFailed = 1200,
+    OCErrorPrivateLinkFileNotExists = 1201,
+    OCErrorPrivateLinkFileNotCachedOffline = 1202,
+    OCErrorPrivateLinkErrorCachingFile = 1203
 
 } OCErrorEnum;
 

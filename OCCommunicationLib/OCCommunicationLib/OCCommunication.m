@@ -1511,8 +1511,7 @@
         NSString *location = [headers objectForKey:@"Webdav-Location"];
 
         if (location == nil) {
-            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
-            failureRequest(error);
+            failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
         } else {
             successRequest([location stringByRemovingPercentEncoding]);
         }
@@ -1525,8 +1524,7 @@
         NSString *location = [headers objectForKey:@"Webdav-Location"];
 
         if (location == nil) {
-            NSError *error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:404 userInfo:nil];
-            failureRequest(error);
+            failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
         } else {
             successRequest([location stringByRemovingPercentEncoding]);
         }
