@@ -194,7 +194,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
     } else if ([elementName isEqualToString:@"oc:fileid"]) {
         _currentFile.ocId = _xmlChars;
     } else if ([elementName isEqualToString:@"oc:privatelink"]) {
-        _currentFile.ocPrivateLink = _xmlChars;
+        _currentFile.ocPrivatelink = _xmlChars;
     } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
         //ETAG
 #ifdef DEBUG

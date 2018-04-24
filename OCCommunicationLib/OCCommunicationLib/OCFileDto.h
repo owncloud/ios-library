@@ -36,6 +36,6 @@
 @property (nonatomic, copy) NSString *etag;
 @property (nonatomic, copy) NSString *permissions;
 @property (nonatomic, copy) NSString *ocId;
-@property (nonatomic, copy) NSString *ocPrivateLink;
+@property (nonatomic, copy) NSString *ocPrivatelink;
 
 @end
