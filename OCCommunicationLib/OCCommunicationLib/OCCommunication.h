@@ -52,7 +52,12 @@ typedef enum {
     OCErrorOAuth2Error = 1000,
     OCErrorOAuth2ErrorAccessDenied = 1010,
     
-    OCErrorSslRecoverablePeerUnverified = 1100
+    OCErrorSslRecoverablePeerUnverified = 1100,
+
+    OCErrorPrivateLinkRedirectionFailed = 1200,
+    OCErrorPrivateLinkFileNotExists = 1201,
+    OCErrorPrivateLinkFileNotCachedOffline = 1202,
+    OCErrorPrivateLinkErrorCachingFile = 1203
 
 } OCErrorEnum;
 
@@ -913,5 +918,24 @@ __deprecated_msg("Use - updateShare:ofServerPath:withPasswordProtect:andExpirati
                      successRequest:(void(^)(NSHTTPURLResponse *response, NSData *thumbnail, NSString *redirectedServer)) successRequest
                      failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
+#pragma mark - Private Links redirection full path
+
+///-----------------------------------
+/// @name getFullPathFromPrivateLink
+///-----------------------------------
+
+/**
+ * Method to get the full path of a folder of file shared by private link
+ * Currently the private link is in the next form: "https://owncloduserver/f/fileid"
+ * 
+ * This Method make a simple GET request to the server and in one of the headers of the response sends the full
+ * path of the file.
+ *
+ * @param privateLinkURL    ->  NSURL with the private link URL.
+ *
+ * @return NSURL    ->  Full path of the file or folder shared with the private links passed as a parameter. This is in the schema of the a query parameters.
+ */
+
+-(void) getWebdavLocationPathFromPrivateLinkURL:(NSString *) privateLinkURL success:(void(^)(NSString *path))successRequest failure:(void(^)(NSError *error)) failureRequest;
 
 @end

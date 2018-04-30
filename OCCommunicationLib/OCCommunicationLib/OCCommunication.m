@@ -399,7 +399,7 @@
             
 //            NSString* newStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 //            NSLog(@"newStrReadFolder: %@", newStr);
-            
+
             OCXMLParser *parser = [[OCXMLParser alloc]init];
             [parser initParserWithData:responseData];
             NSMutableArray *directoryList = [parser.directoryList mutableCopy];
@@ -1492,6 +1492,44 @@
     [sessionDataTask resume];
 
     return sessionDataTask;
+}
+
+#pragma mark private link open in app
+
+-(void)getWebdavLocationPathFromPrivateLinkURL:(NSString *)privateLinkURL success:(void (^)(NSString *))successRequest failure:(void (^)(NSError *))failureRequest {
+    OCWebDAVClient *request = [OCWebDAVClient new];
+    request = [self getRequestWithCredentials:request];
+    
+    if (self.userAgent) {
+        [request setUserAgent:self.userAgent];
+    }
+    
+    [request simpleHEADRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
+
+        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
+
+        NSString *location = [headers objectForKey:@"Webdav-Location"];
+
+        if (location == nil) {
+            failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
+        } else {
+            successRequest([location stringByRemovingPercentEncoding]);
+        }
+
+    } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
+
+
+        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
+
+        NSString *location = [headers objectForKey:@"Webdav-Location"];
+
+        if (location == nil) {
+            failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
+        } else {
+            successRequest([location stringByRemovingPercentEncoding]);
+        }
+    }];
+    
 }
 
 #pragma mark - Clear Cache

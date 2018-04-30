@@ -41,9 +41,13 @@
 //#define k_url_webdav_server @"remote.php/odav/"
 #define k_url_webdav_server @"remote.php/webdav/"
 #define k_url_webdav_server_without_last_slash @"remote.php/webdav"
+#define k_url_webdav_server_with_first_slash @"/remote.php/webdav/"
+
 
 //URL path for list of files in web interface
 #define k_url_path_list_of_files_in_web @"index.php/apps/files"
+#define k_url_files_share_link @"apps/files/"
+#define k_url_files_private_link @"/remote.php/dav/files/"
 
 //URL to access user data API
 #define k_api_user_url_json @"ocs/v1.php/cloud/user?format=json"

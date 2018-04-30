@@ -191,7 +191,7 @@ NSString *OCCWebDAVURIKey           = @"uri";
             }
         }
         
-    } else if ([elementName isEqualToString:@"oc:id"]) {
+    } else if ([elementName isEqualToString:@"oc:fileid"]) {
         _currentFile.ocId = _xmlChars;
         
     } else if ([elementName hasSuffix:@":getetag"] && [_xmlChars length]) {
