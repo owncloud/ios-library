@@ -57,8 +57,7 @@ typedef enum {
     OCErrorPrivateLinkRedirectionFailed = 1200,
     OCErrorPrivateLinkFileNotExists = 1201,
     OCErrorPrivateLinkFileNotCachedOffline = 1202,
-    OCErrorPrivateLinkErrorCachingFile = 1203,
-    OCErrorPrivateLinkErrorCachingFile4 = 1204
+    OCErrorPrivateLinkErrorCachingFile = 1203
 
 } OCErrorEnum;
 
