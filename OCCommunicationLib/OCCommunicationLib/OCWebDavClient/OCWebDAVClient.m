@@ -429,7 +429,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
 		depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/><privatelink xmlns=\"http://owncloud.org/ns\"/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication success:success failure:failure];
@@ -454,7 +454,7 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         depthHeader = @"infinity";
     [request setValue: depthHeader forHTTPHeaderField: @"Depth"];
     
-    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[@"<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:propfind xmlns:D=\"DAV:\"><D:prop><D:resourcetype/><D:getlastmodified/><size xmlns=\"http://owncloud.org/ns\"/><D:creationdate/><fileid xmlns=\"http://owncloud.org/ns\"/><D:getcontentlength/><D:displayname/><D:quota-available-bytes/><D:getetag/><permissions xmlns=\"http://owncloud.org/ns\"/><D:quota-used-bytes/><D:getcontenttype/><privatelink xmlns=\"http://owncloud.org/ns\"/></D:prop></D:propfind>" dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:@"application/xml" forHTTPHeaderField:@"Content-Type"];
     
     NSURLSessionDataTask *sessionDataTask = [self mr_operationWithRequest:request retryingNumberOfTimes:k_retry_ntimes onCommunication:sharedOCCommunication withUserSessionToken:token success:success failure:failure];
