@@ -1506,9 +1506,7 @@
     
     [request simpleHEADRequest:privateLinkURL onCommunication:self success:^(NSHTTPURLResponse *response, id responseObject) {
 
-        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
-
-        NSString *location = [headers objectForKey:@"Webdav-Location"];
+        NSString *location = [response allHeaderFields][@"Webdav-Location"];
 
         if (location == nil) {
             failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
@@ -1518,10 +1516,7 @@
 
     } failure:^(NSHTTPURLResponse *response, NSData *responseData, NSError *error) {
 
-
-        NSDictionary *headers = [[NSDictionary alloc] initWithDictionary:[response allHeaderFields]];
-
-        NSString *location = [headers objectForKey:@"Webdav-Location"];
+        NSString *location = [response allHeaderFields][@"Webdav-Location"];
 
         if (location == nil) {
             failureRequest([UtilsFramework getErrorByCodeId:OCErrorPrivateLinkRedirectionFailed]);
