@@ -633,7 +633,7 @@
     
     NSInteger permissionsValue = 0;
 
-	if(canRead && isFolder) {
+	if(canRead) {
 		permissionsValue = permissionsValue + k_read_share_permission;
 	}
     if (canEdit && !isFolder) {

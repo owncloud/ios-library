@@ -1009,9 +1009,9 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         self.postStringForShare = [NSString stringWithFormat:@"password=%@",password];
     } else if (expirationTime) {
         self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
-    }else if (linkName) {
+    } else if (linkName) {
         self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
-    } if (permissions != 0) {
+    } else if (permissions != 0) {
         self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
     } else if ([publicUpload isEqualToString:@"true"]) {
         self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
