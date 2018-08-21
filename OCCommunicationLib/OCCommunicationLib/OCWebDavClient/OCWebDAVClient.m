@@ -1006,22 +1006,17 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     self.postStringForShare = @"";
     
     if (password) {
-        self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"password=%@",password]];
-    }
-	if (expirationTime) {
-		self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"expireDate=%@",expirationTime]];
-    }
-	if (linkName) {
-		self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"name=%@",linkName]];
-    }
-	if (permissions != 0) {
-		self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"permissions=%d",(int)permissions]];
-    }
-	if ([publicUpload isEqualToString:@"true"]) {
-		self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"publicUpload=%@",@"true"]];
-    }
-	if ([publicUpload isEqualToString:@"false"]) {
-		self.postStringForShare = [self getPath:self.postStringForShare withNewParameter:[NSString stringWithFormat:@"publicUpload=%@",@"false"]];
+        self.postStringForShare = [NSString stringWithFormat:@"password=%@",password];
+    } else if (expirationTime) {
+        self.postStringForShare = [NSString stringWithFormat:@"expireDate=%@",expirationTime];
+    }else if (linkName) {
+        self.postStringForShare = [NSString stringWithFormat:@"name=%@",linkName];
+    } if (permissions != 0) {
+        self.postStringForShare = [NSString stringWithFormat:@"permissions=%d",(int)permissions];
+    } else if ([publicUpload isEqualToString:@"true"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"true"];
+    } else if ([publicUpload isEqualToString:@"false"]) {
+        self.postStringForShare = [NSString stringWithFormat:@"publicUpload=%@",@"false"];
     }
     
     [request setHTTPBody:[_postStringForShare dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1172,19 +1167,6 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
         }
         
     }];
-}
-
-//Mark: Utils Path
-
-- (NSString *) getPath:(NSString *) path withNewParameter:(NSString *) parameter {
-
-	if(path.length > 0) {
-		path = [NSString stringWithFormat:@"%@&", path];
-	}
-
-	path = [NSString stringWithFormat:@"%@%@", path, parameter];
-
-	return path;
 }
 
 
