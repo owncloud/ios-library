@@ -841,15 +841,21 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     [sessionDataTask resume];
 }
 
-- (void)listSharedByServer:(NSString *)serverPath andPath:(NSString *) path
+- (void)listSharedByServer:(NSString *)serverPath andPath:(NSString *) path andSubfiles:(BOOL) isSubFiles
            onCommunication:(OCCommunication *)sharedOCCommunication
                    success:(void(^)(NSHTTPURLResponse *, id))success
                    failure:(void(^)(NSHTTPURLResponse *, id  _Nullable responseObject, NSError *))failure {
     
     NSParameterAssert(success);
-	
-    NSString *postString = [NSString stringWithFormat: @"?path=%@&subfiles=true",path];
-    serverPath = [serverPath stringByAppendingString:postString];
+
+	if (isSubFiles) {
+		NSString *postString = [NSString stringWithFormat: @"?path=%@&subfiles=true",path];
+		serverPath = [serverPath stringByAppendingString:postString];
+	} else {
+		NSString *postString = [NSString stringWithFormat: @"?path=%@&reshares=true&subfiles=false",path];
+		serverPath = [serverPath stringByAppendingString:postString];
+	}
+
     _requestMethod = @"GET";
     
     NSMutableURLRequest *request = [self sharedRequestWithMethod:_requestMethod path:serverPath parameters:nil];
