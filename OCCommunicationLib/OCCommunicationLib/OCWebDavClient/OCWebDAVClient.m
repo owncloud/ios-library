@@ -848,13 +848,15 @@ NSString const *OCWebDAVModificationDateKey	= @"modificationdate";
     
     NSParameterAssert(success);
 
+	NSString *urlSufix;
+
 	if (isSubFiles) {
-		NSString *postString = [NSString stringWithFormat: @"?path=%@&subfiles=true",path];
-		serverPath = [serverPath stringByAppendingString:postString];
+		urlSufix = [NSString stringWithFormat: @"?path=%@&subfiles=true",path];
 	} else {
-		NSString *postString = [NSString stringWithFormat: @"?path=%@&reshares=true&subfiles=false",path];
-		serverPath = [serverPath stringByAppendingString:postString];
+		urlSufix = [NSString stringWithFormat: @"?path=%@&reshares=true&subfiles=false",path];
 	}
+
+	serverPath = [serverPath stringByAppendingString:urlSufix];
 
     _requestMethod = @"GET";
     
