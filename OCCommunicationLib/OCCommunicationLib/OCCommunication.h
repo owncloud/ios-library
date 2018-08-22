@@ -624,15 +624,16 @@ __deprecated_msg("Use - getFeaturesSupportedByServerForVersion: instead");
  *
  * @param serverPath -> NSString server path
  * @param path -> Path of the folder that we want to know that shareds that contain
+ * @param isSubFiles -> Bool used on folders to know the first level of that concrete path
  * @param sharedOCCommunication -> OCCommunication Singleton of communication to add the operation on the queue.
  *
  * @return NSArray with all the OCSharedDto of shareds files
  *
  */
-- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
-            onCommunication:(OCCommunication *)sharedOCCommunication
-             successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
-             failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
+- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path andSubfiles:(BOOL) isSubFiles
+			onCommunication:(OCCommunication *)sharedOCCommunication
+			 successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
+			 failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest;
 
 
 ///-----------------------------------

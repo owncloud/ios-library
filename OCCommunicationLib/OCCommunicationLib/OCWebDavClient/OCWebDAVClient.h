@@ -309,11 +309,12 @@ __deprecated_msg("Use - requestUserDataOfServer:onCommunication: instead");
  
  @param serverPath -> The url of the server including the path of the Share API.
  @param path -> The path of the folder that we want to know the shared
+ @param isSubFiles -> Bool used on folders to know the first level of that concrete path
  @param sharedOCCommunication Singleton of communication to add the operation on the queue.
  @param success A block callback, to be fired upon successful completion, with two arguments: the request operation and a dictionary with the properties of the directory and its contents.
  @param failure A block callback, to be fired upon the failure of either the request or the parsing of the request's data, with two arguments: the request operation and the network or parsing error that occurred.
  */
-- (void)listSharedByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) path
+- (void)listSharedByServer:(NSString * _Nonnull)serverPath andPath:(NSString * _Nonnull) path andSubfiles:(BOOL) isSubFiles
            onCommunication:(OCCommunication * _Nonnull)sharedOCCommunication
                    success:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id _Nonnull))success
                    failure:(void(^ _Nonnull)(NSHTTPURLResponse * _Nonnull, id  _Nullable responseObject, NSError * _Nonnull))failure;

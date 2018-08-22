@@ -806,7 +806,7 @@
     }];
 }
 
-- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path
+- (void) readSharedByServer: (NSString *) serverPath andPath: (NSString *) path andSubfiles:(BOOL) isSubFiles
             onCommunication:(OCCommunication *)sharedOCCommunication
              successRequest:(void(^)(NSHTTPURLResponse *response, NSArray *listOfShared, NSString *redirectedServer)) successRequest
              failureRequest:(void(^)(NSHTTPURLResponse *response, NSError *error, NSString *redirectedServer)) failureRequest {
@@ -820,7 +820,7 @@
     request = [self getRequestWithCredentials:request];
     
     
-    [request listSharedByServer:serverPath andPath:path onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
+    [request listSharedByServer:serverPath andPath:path andSubfiles:(BOOL) isSubFiles onCommunication:sharedOCCommunication success:^(NSHTTPURLResponse *response, id responseObject) {
         if (successRequest) {
             NSData *responseData = (NSData*) responseObject;
             OCXMLSharedParser *parser = [[OCXMLSharedParser alloc]init];
