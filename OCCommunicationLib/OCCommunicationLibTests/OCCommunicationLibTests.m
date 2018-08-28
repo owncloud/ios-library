@@ -1436,10 +1436,10 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/test@.jpg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionUploadTask *uploadTask = nil;
@@ -1531,10 +1531,10 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     //Upload test file
-    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"video" ofType:@"MOV"];
+    NSString *localPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"test" ofType:@"jpeg"];
     
     //Path of server file file (Special character added in file name)
-    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/video@.mov", k_webdav_base_url, k_path_test_folder];
+    NSString *serverUrl = [NSString stringWithFormat:@"%@%@/Test Upload/test@.jpg", k_webdav_base_url, k_path_test_folder];
     serverUrl = [serverUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionUploadTask *uploadTask = nil;
